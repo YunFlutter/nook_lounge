@@ -1,0 +1,6268 @@
+[
+    {
+        "name": "아그리아스나비",
+        "url": "https://nookipedia.com/wiki/Agrias%20butterfly",
+        "number": "10",
+        "image_url": "https://dodo.ac/np/images/6/60/Agrias_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/db/Agrias_Butterfly_NH.png",
+        "catchphrase": "I caught an agrias butterfly! I wonder if it finds me disagrias-able?",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "3000",
+        "sell_flick": "4500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught an agrias butterfly! I wonder if it finds me disagrias-able?"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "개미",
+        "url": "https://nookipedia.com/wiki/Ant",
+        "number": "69",
+        "image_url": "https://dodo.ac/np/images/5/5d/Ant_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/4a/Ant_NH.png",
+        "catchphrase": "I caught an ant! TELL ME WHERE THE QUEEN IS!",
+        "catchphrase2": "",
+        "location": "썩은 무/사탕/막대사탕 위 또는 주변",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "80",
+        "sell_flick": "120",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught an ant! TELL ME WHERE THE QUEEN IS!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "아틀라스나방",
+        "url": "https://nookipedia.com/wiki/Atlas%20moth",
+        "number": "14",
+        "image_url": "https://dodo.ac/np/images/7/7f/Atlas_Moth_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/a/a4/Atlas_Moth_NH.png",
+        "catchphrase": "I caught an Atlas moth! I bet it never gets lost!",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "3000",
+        "sell_flick": "4500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 4시",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught an Atlas moth! I bet it never gets lost!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오후 7시 – 오전 4시",
+            "5": "오후 7시 – 오전 4시",
+            "6": "오후 7시 – 오전 4시",
+            "7": "오후 7시 – 오전 4시",
+            "8": "오후 7시 – 오전 4시",
+            "9": "오후 7시 – 오전 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 4시",
+            "2": "오후 7시 – 오전 4시",
+            "3": "오후 7시 – 오전 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오후 7시 – 오전 4시",
+            "11": "오후 7시 – 오전 4시",
+            "12": "오후 7시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "도롱이벌레",
+        "url": "https://nookipedia.com/wiki/Bagworm",
+        "number": "68",
+        "image_url": "https://dodo.ac/np/images/1/17/Bagworm_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/08/Bagworm_NH.png",
+        "catchphrase": "I caught a bagworm! Guess I'm a bragworm!",
+        "catchphrase2": "",
+        "location": "활엽수/삼나무를 흔들기",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "600",
+        "sell_flick": "900",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a bagworm! Guess I'm a bragworm!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "장수잠자리",
+        "url": "https://nookipedia.com/wiki/Banded%20dragonfly",
+        "number": "34",
+        "image_url": "https://dodo.ac/np/images/3/35/Banded_Dragonfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/6e/Banded_Dragonfly_NH.png",
+        "catchphrase": "I did it! Did you see that? I caught a banded dragonfly!",
+        "catchphrase2": "",
+        "location": "물가 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "4500",
+        "sell_flick": "6750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I did it! Did you see that? I caught a banded dragonfly!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "방울벌레",
+        "url": "https://nookipedia.com/wiki/Bell%20cricket",
+        "number": "21",
+        "image_url": "https://dodo.ac/np/images/4/4a/Bell_Cricket_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/d2/Bell_Cricket_NH.png",
+        "catchphrase": "I caught a bell cricket! It would make a great bellhop!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "430",
+        "sell_flick": "645",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "9월 – 10월",
+        "s_availability": "3월 – 4월",
+        "catchphrases": [
+            "I caught a bell cricket! It would make a great bellhop!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 10월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 4월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 5시 – 오전 8시",
+            "10": "오후 5시 – 오전 8시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 5시 – 오전 8시",
+            "4": "오후 5시 – 오전 8시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번"
+        ]
+    },
+    {
+        "name": "유포루스바구미",
+        "url": "https://nookipedia.com/wiki/Blue%20weevil%20beetle",
+        "number": "49",
+        "image_url": "https://dodo.ac/np/images/2/20/Blue_Weevil_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c3/Blue_Weevil_Beetle_NH.png",
+        "catchphrase": "I caught a blue weevil beetle! It's the lesser of blue weevils!",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "800",
+        "sell_flick": "1200",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a blue weevil beetle! It's the lesser of blue weevils!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "유지매미",
+        "url": "https://nookipedia.com/wiki/Brown%20cicada",
+        "number": "26",
+        "image_url": "https://dodo.ac/np/images/4/44/Brown_Cicada_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/2e/Brown_Cicada_NH.png",
+        "catchphrase": "I caught a brown cicada! Now it probably feels blue, cicada.",
+        "catchphrase2": "",
+        "location": "나무(활엽수/삼나무) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "250",
+        "sell_flick": "375",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a brown cicada! Now it probably feels blue, cicada."
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "지네",
+        "url": "https://nookipedia.com/wiki/Centipede",
+        "number": "77",
+        "image_url": "https://dodo.ac/np/images/d/d2/Centipede_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/89/Centipede_NH.png",
+        "catchphrase": "I caught a centipede! 99 more and I'll have a dollarpede!",
+        "catchphrase2": "",
+        "location": "바위를 쳤을 때",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_flick": "450",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 4시 – 오후 11시",
+        "n_availability": "9월 – 6월",
+        "s_availability": "3월 – 12월",
+        "catchphrases": [
+            "I caught a centipede! 99 more and I'll have a dollarpede!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 6월",
+                "time": "오후 4시 – 오후 11시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 12월",
+                "time": "오후 4시 – 오후 11시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 4시 – 오후 11시",
+            "2": "오후 4시 – 오후 11시",
+            "3": "오후 4시 – 오후 11시",
+            "4": "오후 4시 – 오후 11시",
+            "5": "오후 4시 – 오후 11시",
+            "6": "오후 4시 – 오후 11시",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 4시 – 오후 11시",
+            "10": "오후 4시 – 오후 11시",
+            "11": "오후 4시 – 오후 11시",
+            "12": "오후 4시 – 오후 11시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 4시 – 오후 11시",
+            "4": "오후 4시 – 오후 11시",
+            "5": "오후 4시 – 오후 11시",
+            "6": "오후 4시 – 오후 11시",
+            "7": "오후 4시 – 오후 11시",
+            "8": "오후 4시 – 오후 11시",
+            "9": "오후 4시 – 오후 11시",
+            "10": "오후 4시 – 오후 11시",
+            "11": "오후 4시 – 오후 11시",
+            "12": "오후 4시 – 오후 11시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "매미 허물",
+        "url": "https://nookipedia.com/wiki/Cicada%20shell",
+        "number": "31",
+        "image_url": "https://dodo.ac/np/images/d/d1/Cicada_Shell_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/77/Cicada_Shell_NH.png",
+        "catchphrase": "I found a cicada shell! I'm glad the little guy came out of it!",
+        "catchphrase2": "",
+        "location": "나무(활엽수/삼나무) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "10",
+        "sell_flick": "15",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I found a cicada shell! I'm glad the little guy came out of it!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "알락하늘소",
+        "url": "https://nookipedia.com/wiki/Citrus%20long-horned%20beetle",
+        "number": "47",
+        "image_url": "https://dodo.ac/np/images/9/9a/Citrus_Long-Horned_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/24/Citrus_Long-Horned_Beetle_NH.png",
+        "catchphrase": "I caught a citrus long-horned beetle! Orange you happy for me?",
+        "catchphrase2": "",
+        "location": "그루터기 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "350",
+        "sell_flick": "525",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a citrus long-horned beetle! Orange you happy for me?"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "청띠제비나비",
+        "url": "https://nookipedia.com/wiki/Common%20bluebottle",
+        "number": "5번",
+        "image_url": "https://dodo.ac/np/images/2/21/Common_Bluebottle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/b3/Common_Bluebottle_NH.png",
+        "catchphrase": "I caught a common bluebottle! I'll put it in a rare green jar!",
+        "catchphrase2": "",
+        "location": "비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_flick": "450",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 7시",
+        "n_availability": "4월 – 8월",
+        "s_availability": "10월 – 2월",
+        "catchphrases": [
+            "I caught a common bluebottle! I'll put it in a rare green jar!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 8월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 2월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 4시 – 오후 7시",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "오전 4시 – 오후 7시",
+            "8": "오전 4시 – 오후 7시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 7시",
+            "2": "오전 4시 – 오후 7시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 4시 – 오후 7시",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "배추흰나비",
+        "url": "https://nookipedia.com/wiki/Common%20butterfly",
+        "number": "1번",
+        "image_url": "https://dodo.ac/np/images/f/f8/Common_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/9f/Common_Butterfly_NH.png",
+        "catchphrase": "I caught a common butterfly! They often flutter by!",
+        "catchphrase2": "",
+        "location": "비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "160",
+        "sell_flick": "240",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 7시",
+        "n_availability": "9월 – 6월",
+        "s_availability": "3월 – 12월",
+        "catchphrases": [
+            "I caught a common butterfly! They often flutter by!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 6월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 12월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 4시 – 오후 7시",
+            "2": "오전 4시 – 오후 7시",
+            "3": "오전 4시 – 오후 7시",
+            "4": "오전 4시 – 오후 7시",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 4시 – 오후 7시",
+            "10": "오전 4시 – 오후 7시",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 4시 – 오후 7시",
+            "4": "오전 4시 – 오후 7시",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "오전 4시 – 오후 7시",
+            "8": "오전 4시 – 오후 7시",
+            "9": "오전 4시 – 오후 7시",
+            "10": "오전 4시 – 오후 7시",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "귀뚜라미",
+        "url": "https://nookipedia.com/wiki/Cricket",
+        "number": "20",
+        "image_url": "https://dodo.ac/np/images/8/8f/Cricket_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1c/Cricket_NH.png",
+        "catchphrase": "I caught a cricket! What a chirp thrill!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "130",
+        "sell_flick": "195",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "9월 – 11월",
+        "s_availability": "3월 – 5월",
+        "catchphrases": [
+            "I caught a cricket! What a chirp thrill!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 11월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 5월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 5시 – 오전 8시",
+            "10": "오후 5시 – 오전 8시",
+            "11": "오후 5시 – 오전 8시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 5시 – 오전 8시",
+            "4": "오후 5시 – 오전 8시",
+            "5": "오후 5시 – 오전 8시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "5번"
+        ]
+    },
+    {
+        "name": "엘라푸스가위사슴벌레",
+        "url": "https://nookipedia.com/wiki/Cyclommatus%20stag",
+        "number": "59",
+        "image_url": "https://dodo.ac/np/images/a/a0/Cyclommatus_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/64/Cyclommatus_Stag_NH.png",
+        "catchphrase": "I caught a cyclommatus stag! Those mandibles are a mouthful!",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "100",
+        "sell_nook": "8000",
+        "sell_flick": "12000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a cyclommatus stag! Those mandibles are a mouthful!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "실잠자리",
+        "url": "https://nookipedia.com/wiki/Damselfly",
+        "number": "35",
+        "image_url": "https://dodo.ac/np/images/c/c8/Damselfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/f6/Damselfly_NH.png",
+        "catchphrase": "I caught a damselfly! Now it's a damselfly in distress!",
+        "catchphrase2": "",
+        "location": "물가 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "500",
+        "sell_flick": "750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "11월 – 2월",
+        "s_availability": "5월 – 8월",
+        "catchphrases": [
+            "I caught a damselfly! Now it's a damselfly in distress!"
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번"
+        ]
+    },
+    {
+        "name": "왕잠자리",
+        "url": "https://nookipedia.com/wiki/Darner%20dragonfly",
+        "number": "33",
+        "image_url": "https://dodo.ac/np/images/5/5c/Darner_Dragonfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/57/Darner_Dragonfly_NH.png",
+        "catchphrase": "I caught a darner dragonfly! It better watch its mouth!",
+        "catchphrase2": "",
+        "location": "물가 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "230",
+        "sell_flick": "345",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "4월 – 10월",
+        "s_availability": "10월 – 4월",
+        "catchphrases": [
+            "I caught a darner dragonfly! It better watch its mouth!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 10월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 4월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "물방개",
+        "url": "https://nookipedia.com/wiki/Diving%20beetle",
+        "number": "39",
+        "image_url": "https://dodo.ac/np/images/7/78/Diving_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/0e/Diving_Beetle_NH.png",
+        "catchphrase": "I caught a diving beetle! Now I'm making a splash!",
+        "catchphrase2": "",
+        "location": "강/연못 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "800",
+        "sell_flick": "1200",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "5월 – 9월",
+        "s_availability": "11월 – 3월",
+        "catchphrases": [
+            "I caught a diving beetle! Now I'm making a splash!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 9월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 3월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 8시 – 오후 7시",
+            "6": "오전 8시 – 오후 7시",
+            "7": "오전 8시 – 오후 7시",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 7시",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 8시 – 오후 7시",
+            "12": "오전 8시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "풍이",
+        "url": "https://nookipedia.com/wiki/Drone%20beetle",
+        "number": "53",
+        "image_url": "https://dodo.ac/np/images/4/48/Drone_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/3f/Drone_Beetle_NH.png",
+        "catchphrase": "I caught a drone beetle! Shouldn't you have more propellers?",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_flick": "300",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "6월 – 8월",
+        "s_availability": "12월 – 2월",
+        "catchphrases": [
+            "I caught a drone beetle! Shouldn't you have more propellers?"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "6번",
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "12"
+        ]
+    },
+    {
+        "name": "쇠똥구리",
+        "url": "https://nookipedia.com/wiki/Dung%20beetle",
+        "number": "50",
+        "image_url": "https://dodo.ac/np/images/c/c4/Dung_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/f8/Dung_Beetle_NH.png",
+        "catchphrase": "I caught a dung beetle! This species likes feces!",
+        "catchphrase2": "",
+        "location": "눈덩이를 굴릴 때",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "3000",
+        "sell_flick": "4500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "12월 – 2월",
+        "s_availability": "6월 – 8월",
+        "catchphrases": [
+            "I caught a dung beetle! This species likes feces!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "12"
+        ],
+        "s_availability_array": [
+            "6번",
+            "7번",
+            "8번"
+        ]
+    },
+    {
+        "name": "보라금풍뎅이",
+        "url": "https://nookipedia.com/wiki/Earth-boring%20dung%20beetle",
+        "number": "51",
+        "image_url": "https://dodo.ac/np/images/5/53/Earth-Boring_Dung_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/12/Earth-Boring_Dung_Beetle_NH.png",
+        "catchphrase": "I caught an earth-boring dung beetle! It's not boring at all!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_flick": "450",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "7월 – 9월",
+        "s_availability": "1월 – 3월",
+        "catchphrases": [
+            "I caught an earth-boring dung beetle! It's not boring at all!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번"
+        ]
+    },
+    {
+        "name": "몰포나비",
+        "url": "https://nookipedia.com/wiki/Emperor%20butterfly",
+        "number": "9",
+        "image_url": "https://dodo.ac/np/images/c/cf/Emperor_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/f1/Emperor_Butterfly_NH.png",
+        "catchphrase": "I caught an emperor butterfly! It's not your average monarch!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "4000",
+        "sell_flick": "6000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "12월 – 3월; 6월 – 9월",
+        "s_availability": "6월 – 9월; 12월 – 3월",
+        "catchphrases": [
+            "I caught an emperor butterfly! It's not your average monarch!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 3월; 6월 – 9월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 9월; 12월 – 3월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "오후 5시 – 오전 8시",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 5시 – 오전 8시",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "오후 5시 – 오전 8시",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 5시 – 오전 8시"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "오후 5시 – 오전 8시",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 5시 – 오전 8시",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "오후 5시 – 오전 8시",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 5시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "12"
+        ]
+    },
+    {
+        "name": "쓰르라미",
+        "url": "https://nookipedia.com/wiki/Evening%20cicada",
+        "number": "30",
+        "image_url": "https://dodo.ac/np/images/b/ba/Evening_Cicada_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/f6/Evening_Cicada_NH.png",
+        "catchphrase": "I caught an evening cicada! Better than an odding cicada...",
+        "catchphrase2": "I caught an evening cicada! This time it's WETTER than an odding cicada.",
+        "location": "나무(활엽수/삼나무) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "550",
+        "sell_flick": "825",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught an evening cicada! Better than an odding cicada...",
+            "I caught an evening cicada! This time it's WETTER than an odding cicada."
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시",
+            "8": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시",
+            "2": "오전 4시 – 오전 8시 & 오후 4시 – 오후 7시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "반디",
+        "url": "https://nookipedia.com/wiki/Firefly",
+        "number": "36",
+        "image_url": "https://dodo.ac/np/images/d/d6/Firefly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/50/Firefly_NH.png",
+        "catchphrase": "I caught a firefly! I'm on fire now!",
+        "catchphrase2": "",
+        "location": "물가 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_flick": "450",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 4시",
+        "n_availability": "6월",
+        "s_availability": "12월",
+        "catchphrases": [
+            "I caught a firefly! I'm on fire now!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 7시 – 오전 4시",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 7시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "6번"
+        ],
+        "s_availability_array": [
+            "12"
+        ]
+    },
+    {
+        "name": "벼룩",
+        "url": "https://nookipedia.com/wiki/Flea",
+        "number": "74",
+        "image_url": "https://dodo.ac/np/images/8/89/Flea_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/3e/Flea_NH.png",
+        "catchphrase": "I caught a flea! The curse is lifted.",
+        "catchphrase2": "",
+        "location": "주민 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "70",
+        "sell_flick": "105",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "4월 – 11월",
+        "s_availability": "10월 – 5월",
+        "catchphrases": [
+            "I caught a flea! The curse is lifted."
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "파리",
+        "url": "https://nookipedia.com/wiki/Fly",
+        "number": "72",
+        "image_url": "https://dodo.ac/np/images/1/15/Fly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/d4/Fly_NH.png",
+        "catchphrase": "I caught a fly! I was just wingin' it...",
+        "catchphrase2": "",
+        "location": "쓰레기/썩은 무 주변 비행",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "60",
+        "sell_flick": "90",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a fly! I was just wingin' it..."
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "곰매미",
+        "url": "https://nookipedia.com/wiki/Giant%20cicada",
+        "number": "28",
+        "image_url": "https://dodo.ac/np/images/e/e3/Giant_Cicada_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/59/Giant_Cicada_NH.png",
+        "catchphrase": "I caught a giant cicada! I guess it's PRETTY big...",
+        "catchphrase2": "I caught a giant cicada! Guess it doesn't feel like singing in the rain!",
+        "location": "나무(활엽수/삼나무) 위",
+        "weather": "모든 날씨",
+        "rarity": "흔함",
+        "total_catch": "20",
+        "sell_nook": "500",
+        "sell_flick": "750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a giant cicada! I guess it's PRETTY big...",
+            "I caught a giant cicada! Guess it doesn't feel like singing in the rain!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "왕사슴벌레",
+        "url": "https://nookipedia.com/wiki/Giant%20stag",
+        "number": "57",
+        "image_url": "https://dodo.ac/np/images/0/08/Giant_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/6b/Giant_Stag_NH.png",
+        "catchphrase": "Whoaaa! I caught a giant stag! I'm gonna need way bigger pockets...",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "10000",
+        "sell_flick": "15000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 11시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "Whoaaa! I caught a giant stag! I'm gonna need way bigger pockets..."
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 11시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 11시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 11시 – 오전 8시",
+            "8": "오후 11시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 11시 – 오전 8시",
+            "2": "오후 11시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "물장군",
+        "url": "https://nookipedia.com/wiki/Giant%20water%20bug",
+        "number": "40",
+        "image_url": "https://dodo.ac/np/images/8/86/Giant_Water_Bug_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/68/Giant_Water_Bug_NH.png",
+        "catchphrase": "I caught a giant water bug! It should've stayed in the water!",
+        "catchphrase2": "",
+        "location": "강/연못 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "2000",
+        "sell_flick": "3000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 8시",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught a giant water bug! It should've stayed in the water!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오후 7시 – 오전 8시",
+            "5": "오후 7시 – 오전 8시",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오후 7시 – 오전 8시",
+            "11": "오후 7시 – 오전 8시",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "기라파톱사슴벌레",
+        "url": "https://nookipedia.com/wiki/Giraffe%20stag",
+        "number": "61",
+        "image_url": "https://dodo.ac/np/images/c/c7/Giraffe_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/a/a3/Giraffe_Stag_NH.png",
+        "catchphrase": "I caught a giraffe stag! Does that make it a longhorn?",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "100",
+        "sell_nook": "12000",
+        "sell_flick": "18000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a giraffe stag! Does that make it a longhorn?"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "황금사슴벌레",
+        "url": "https://nookipedia.com/wiki/Golden%20stag",
+        "number": "60",
+        "image_url": "https://dodo.ac/np/images/b/ba/Golden_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1d/Golden_Stag_NH.png",
+        "catchphrase": "Wooooow! I caught a golden stag! Does this mean I can retire?",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "100",
+        "sell_nook": "12000",
+        "sell_flick": "18000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "Wooooow! I caught a golden stag! Does this mean I can retire?"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "골리앗왕꽃무지",
+        "url": "https://nookipedia.com/wiki/Goliath%20beetle",
+        "number": "54",
+        "image_url": "https://dodo.ac/np/images/3/3e/Goliath_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/43/Goliath_Beetle_NH.png",
+        "catchphrase": "I caught a goliath beetle! Am I a legend or what?",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "100",
+        "sell_nook": "8000",
+        "sell_flick": "12000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a goliath beetle! Am I a legend or what?"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 5시 – 오전 8시",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "오후 5시 – 오전 8시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "오후 5시 – 오전 8시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 5시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "12"
+        ]
+    },
+    {
+        "name": "여치",
+        "url": "https://nookipedia.com/wiki/Grasshopper",
+        "number": "19",
+        "image_url": "https://dodo.ac/np/images/3/37/Grasshopper_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1d/Grasshopper_NH.png",
+        "catchphrase": "I caught a grasshopper! They're a grass act!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "160",
+        "sell_flick": "240",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "7월 – 9월",
+        "s_availability": "1월 – 3월",
+        "catchphrases": [
+            "I caught a grasshopper! They're a grass act!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 9월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번"
+        ]
+    },
+    {
+        "name": "왕오색나비",
+        "url": "https://nookipedia.com/wiki/Great%20purple%20emperor",
+        "number": "7번",
+        "image_url": "https://dodo.ac/np/images/8/81/Great_Purple_Emperor_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/3f/Great_Purple_Emperor_NH.png",
+        "catchphrase": "I caught a great purple emperor! Its purple reign is over now!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "3000",
+        "sell_flick": "4500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 7시",
+        "n_availability": "5월 – 8월",
+        "s_availability": "11월 – 2월",
+        "catchphrases": [
+            "I caught a great purple emperor! Its purple reign is over now!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 8월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 2월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "오전 4시 – 오후 7시",
+            "8": "오전 4시 – 오후 7시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 7시",
+            "2": "오전 4시 – 오후 7시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "소라게",
+        "url": "https://nookipedia.com/wiki/Hermit%20crab",
+        "number": "70",
+        "image_url": "https://dodo.ac/np/images/6/6b/Hermit_Crab_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8f/Hermit_Crab_NH.png",
+        "catchphrase": "I caught a hermit crab! I think it wanted to be left alone!",
+        "catchphrase2": "",
+        "location": "해안가에 위장",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_flick": "1500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 8시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a hermit crab! I think it wanted to be left alone!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "오후 7시 – 오전 8시",
+            "5": "오후 7시 – 오전 8시",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "오후 7시 – 오전 8시",
+            "11": "오후 7시 – 오전 8시",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "오후 7시 – 오전 8시",
+            "5": "오후 7시 – 오전 8시",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "오후 7시 – 오전 8시",
+            "11": "오후 7시 – 오전 8시",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "꿀벌",
+        "url": "https://nookipedia.com/wiki/Honeybee",
+        "number": "24",
+        "image_url": "https://dodo.ac/np/images/5/51/Honeybee_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8b/Honeybee_NH.png",
+        "catchphrase": "I caught a honeybee! Ah, sweet success!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_flick": "300",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "3월 – 7월",
+        "s_availability": "9월 – 1월",
+        "catchphrases": [
+            "I caught a honeybee! Ah, sweet success!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 7월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 1월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "코카서스장수풍뎅이",
+        "url": "https://nookipedia.com/wiki/Horned%20atlas",
+        "number": "63",
+        "image_url": "https://dodo.ac/np/images/2/2a/Horned_Atlas_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/06/Horned_Atlas_NH.png",
+        "catchphrase": "I caught a horned atlas! I didn't even need a map!",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "100",
+        "sell_nook": "8000",
+        "sell_flick": "12000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a horned atlas! I didn't even need a map!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "장수풍뎅이",
+        "url": "https://nookipedia.com/wiki/Horned%20dynastid",
+        "number": "62",
+        "image_url": "https://dodo.ac/np/images/1/10/Horned_Dynastid_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/4f/Horned_Dynastid_NH.png",
+        "catchphrase": "I caught a horned dynastid! I'd hate to hear it honk that schnoz!",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "1350",
+        "sell_flick": "2025",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a horned dynastid! I'd hate to hear it honk that schnoz!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "코끼리장수풍뎅이",
+        "url": "https://nookipedia.com/wiki/Horned%20elephant",
+        "number": "64",
+        "image_url": "https://dodo.ac/np/images/e/ea/Horned_Elephant_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/b9/Horned_Elephant_NH.png",
+        "catchphrase": "I caught a horned elephant! I think it's too small to ride...",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "매우 희귀",
+        "total_catch": "100",
+        "sell_nook": "8000",
+        "sell_flick": "12000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a horned elephant! I think it's too small to ride..."
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "헤라클레스장수풍뎅이",
+        "url": "https://nookipedia.com/wiki/Horned%20hercules",
+        "number": "65",
+        "image_url": "https://dodo.ac/np/images/2/21/Horned_Hercules_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/47/Horned_Hercules_NH.png",
+        "catchphrase": "I caught a horned hercules! Guess I was stronger!",
+        "catchphrase2": "",
+        "location": "야자수 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "100",
+        "sell_nook": "12000",
+        "sell_flick": "18000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a horned hercules! Guess I was stronger!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 5시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 5시 – 오전 8시",
+            "8": "오후 5시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 8시",
+            "2": "오후 5시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "비단벌레",
+        "url": "https://nookipedia.com/wiki/Jewel%20beetle",
+        "number": "45",
+        "image_url": "https://dodo.ac/np/images/4/43/Jewel_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/82/Jewel_Beetle_NH.png",
+        "catchphrase": "I caught a jewel beetle! It's a real gem!",
+        "catchphrase2": "",
+        "location": "그루터기 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "2400",
+        "sell_flick": "3600",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "4월 – 8월",
+        "s_availability": "10월 – 2월",
+        "catchphrases": [
+            "I caught a jewel beetle! It's a real gem!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "무당벌레",
+        "url": "https://nookipedia.com/wiki/Ladybug",
+        "number": "43",
+        "image_url": "https://dodo.ac/np/images/0/08/Ladybug_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/33/Ladybug_NH.png",
+        "catchphrase": "I caught a ladybug! Sorry to disturb you, ma'am.",
+        "catchphrase2": "",
+        "location": "꽃 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_flick": "300",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "3월 – 6월; 10월",
+        "s_availability": "4월; 9월 – 12월",
+        "catchphrases": [
+            "I caught a ladybug! Sorry to disturb you, ma'am."
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 6월; 10월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "4월; 9월 – 12월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 8시 – 오후 5시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 8시 – 오후 5시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "10"
+        ],
+        "s_availability_array": [
+            "4번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "방아깨비",
+        "url": "https://nookipedia.com/wiki/Long%20locust",
+        "number": "16",
+        "image_url": "https://dodo.ac/np/images/9/9d/Long_Locust_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8c/Long_Locust_NH.png",
+        "catchphrase": "I caught a long locust! Or, as I call it, a looooocust.",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_flick": "300",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "4월 – 11월",
+        "s_availability": "10월 – 5월",
+        "catchphrases": [
+            "I caught a long locust! Or, as I call it, a looooocust."
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 11월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 5월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 8시 – 오후 7시",
+            "5": "오전 8시 – 오후 7시",
+            "6": "오전 8시 – 오후 7시",
+            "7": "오전 8시 – 오후 7시",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "오전 8시 – 오후 7시",
+            "11": "오전 8시 – 오후 7시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 7시",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "오전 8시 – 오후 7시",
+            "5": "오전 8시 – 오후 7시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 8시 – 오후 7시",
+            "11": "오전 8시 – 오후 7시",
+            "12": "오전 8시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "마다가스카르비단제비나방",
+        "url": "https://nookipedia.com/wiki/Madagascan%20sunset%20moth",
+        "number": "15",
+        "image_url": "https://dodo.ac/np/images/6/69/Madagascan_Sunset_Moth_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c8/Madagascan_Sunset_Moth_NH.png",
+        "catchphrase": "I caught a Madagascan sunset moth! Wow, you're not from around here!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "2500",
+        "sell_flick": "3750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 4시",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught a Madagascan sunset moth! Wow, you're not from around here!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "오전 8시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "오전 8시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 8시 – 오후 4시",
+            "5": "오전 8시 – 오후 4시",
+            "6": "오전 8시 – 오후 4시",
+            "7": "오전 8시 – 오후 4시",
+            "8": "오전 8시 – 오후 4시",
+            "9": "오전 8시 – 오후 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 4시",
+            "2": "오전 8시 – 오후 4시",
+            "3": "오전 8시 – 오후 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 8시 – 오후 4시",
+            "11": "오전 8시 – 오후 4시",
+            "12": "오전 8시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "인면노린재",
+        "url": "https://nookipedia.com/wiki/Man-faced%20stink%20bug",
+        "number": "42",
+        "image_url": "https://dodo.ac/np/images/a/ac/Man-Faced_Stink_Bug_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1e/Man-Faced_Stink_Bug_NH.png",
+        "catchphrase": "I caught a man-faced stink bug! Reminds me of my uncle!",
+        "catchphrase2": "",
+        "location": "꽃 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "1000",
+        "sell_flick": "1500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 8시",
+        "n_availability": "3월 – 10월",
+        "s_availability": "9월 – 4월",
+        "catchphrases": [
+            "I caught a man-faced stink bug! Reminds me of my uncle!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 10월",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 4월",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 7시 – 오전 8시",
+            "4": "오후 7시 – 오전 8시",
+            "5": "오후 7시 – 오전 8시",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "오후 7시 – 오전 8시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "오후 7시 – 오전 8시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 7시 – 오전 8시",
+            "10": "오후 7시 – 오전 8시",
+            "11": "오후 7시 – 오전 8시",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "사마귀",
+        "url": "https://nookipedia.com/wiki/Mantis",
+        "number": "22",
+        "image_url": "https://dodo.ac/np/images/4/4e/Mantis_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/da/Mantis_NH.png",
+        "catchphrase": "I caught a mantis! Man, 'tis so cool!",
+        "catchphrase2": "",
+        "location": "꽃 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "430",
+        "sell_flick": "645",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "3월 – 11월",
+        "s_availability": "9월 – 5월",
+        "catchphrases": [
+            "I caught a mantis! Man, 'tis so cool!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 11월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 5월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "섬풀무치",
+        "url": "https://nookipedia.com/wiki/Migratory%20locust",
+        "number": "17",
+        "image_url": "https://dodo.ac/np/images/d/d0/Migratory_Locust_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8b/Migratory_Locust_NH.png",
+        "catchphrase": "I caught a migratory locust! Things just went south for this guy!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "600",
+        "sell_flick": "900",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "8월 – 11월",
+        "s_availability": "2월 – 5월",
+        "catchphrases": [
+            "I caught a migratory locust! Things just went south for this guy!"
+        ],
+        "availability_north": [
+            {
+                "months": "8월 – 11월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "2월 – 5월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "오전 8시 – 오후 7시",
+            "11": "오전 8시 – 오후 7시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "오전 8시 – 오후 7시",
+            "5": "오전 8시 – 오후 7시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "2번",
+            "3번",
+            "4번",
+            "5번"
+        ]
+    },
+    {
+        "name": "사슴벌레",
+        "url": "https://nookipedia.com/wiki/Miyama%20stag",
+        "number": "56",
+        "image_url": "https://dodo.ac/np/images/0/0a/Miyama_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/56/Miyama_Stag_NH.png",
+        "catchphrase": "I caught a miyama stag! Its mandibles are jaw-dropping!",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_flick": "1500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a miyama stag! Its mandibles are jaw-dropping!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "땅강아지",
+        "url": "https://nookipedia.com/wiki/Mole%20cricket",
+        "number": "37",
+        "image_url": "https://dodo.ac/np/images/4/4f/Mole_Cricket_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/89/Mole_Cricket_NH.png",
+        "catchphrase": "I caught a mole cricket! I really dug it!",
+        "catchphrase2": "",
+        "location": "언더그라운드",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "500",
+        "sell_flick": "750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "11월 – 5월",
+        "s_availability": "5월 – 11월",
+        "catchphrases": [
+            "I caught a mole cricket! I really dug it!"
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11"
+        ]
+    },
+    {
+        "name": "왕나비",
+        "url": "https://nookipedia.com/wiki/Monarch%20butterfly",
+        "number": "8번",
+        "image_url": "https://dodo.ac/np/images/3/38/Monarch_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/ec/Monarch_Butterfly_NH.png",
+        "catchphrase": "I caught a monarch butterfly! Guess the butterflies are a democracy now!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "140",
+        "sell_flick": "210",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 5시",
+        "n_availability": "9월 – 11월",
+        "s_availability": "3월 – 5월",
+        "catchphrases": [
+            "I caught a monarch butterfly! Guess the butterflies are a democracy now!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 11월",
+                "time": "오전 4시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 5월",
+                "time": "오전 4시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 4시 – 오후 5시",
+            "10": "오전 4시 – 오후 5시",
+            "11": "오전 4시 – 오후 5시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 4시 – 오후 5시",
+            "4": "오전 4시 – 오후 5시",
+            "5": "오전 4시 – 오후 5시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "5번"
+        ]
+    },
+    {
+        "name": "모기",
+        "url": "https://nookipedia.com/wiki/Mosquito",
+        "number": "73",
+        "image_url": "https://dodo.ac/np/images/8/84/Mosquito_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1c/Mosquito_NH.png",
+        "catchphrase": "I caught a mosquito! It's itching for a fight!",
+        "catchphrase2": "",
+        "location": "비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "130",
+        "sell_flick": "195",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 5시 – 오전 4시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a mosquito! It's itching for a fight!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 5시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 5시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 5시 – 오전 4시",
+            "7": "오후 5시 – 오전 4시",
+            "8": "오후 5시 – 오전 4시",
+            "9": "오후 5시 – 오전 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 5시 – 오전 4시",
+            "2": "오후 5시 – 오전 4시",
+            "3": "오후 5시 – 오전 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 5시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "12"
+        ]
+    },
+    {
+        "name": "나방",
+        "url": "https://nookipedia.com/wiki/Moth",
+        "number": "13",
+        "image_url": "https://dodo.ac/np/images/a/a0/Moth_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/a/ab/Moth_NH.png",
+        "catchphrase": "I caught a moth! And I had a ball doing it!",
+        "catchphrase2": "",
+        "location": "광원 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "130",
+        "sell_flick": "195",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 4시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a moth! And I had a ball doing it!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 7시 – 오전 4시",
+            "2": "오후 7시 – 오전 4시",
+            "3": "오후 7시 – 오전 4시",
+            "4": "오후 7시 – 오전 4시",
+            "5": "오후 7시 – 오전 4시",
+            "6": "오후 7시 – 오전 4시",
+            "7": "오후 7시 – 오전 4시",
+            "8": "오후 7시 – 오전 4시",
+            "9": "오후 7시 – 오전 4시",
+            "10": "오후 7시 – 오전 4시",
+            "11": "오후 7시 – 오전 4시",
+            "12": "오후 7시 – 오전 4시"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 4시",
+            "2": "오후 7시 – 오전 4시",
+            "3": "오후 7시 – 오전 4시",
+            "4": "오후 7시 – 오전 4시",
+            "5": "오후 7시 – 오전 4시",
+            "6": "오후 7시 – 오전 4시",
+            "7": "오후 7시 – 오전 4시",
+            "8": "오후 7시 – 오전 4시",
+            "9": "오후 7시 – 오전 4시",
+            "10": "오후 7시 – 오전 4시",
+            "11": "오후 7시 – 오전 4시",
+            "12": "오후 7시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "연꽃사마귀",
+        "url": "https://nookipedia.com/wiki/Orchid%20mantis",
+        "number": "23",
+        "image_url": "https://dodo.ac/np/images/a/a7/Orchid_Mantis_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/cd/Orchid_Mantis_NH.png",
+        "catchphrase": "I caught an orchid mantis! Our friendship is blooming!",
+        "catchphrase2": "",
+        "location": "흰 꽃 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "2400",
+        "sell_flick": "3600",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "3월 – 11월",
+        "s_availability": "9월 – 5월",
+        "catchphrases": [
+            "I caught an orchid mantis! Our friendship is blooming!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 11월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 5월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 8시 – 오후 5시",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "왕얼룩나비",
+        "url": "https://nookipedia.com/wiki/Paper%20kite%20butterfly",
+        "number": "6번",
+        "image_url": "https://dodo.ac/np/images/9/9e/Paper_Kite_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c7/Paper_Kite_Butterfly_NH.png",
+        "catchphrase": "I caught a paper kite butterfly! Do I read it, fly it, or spread it on toast?",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_flick": "1500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a paper kite butterfly! Do I read it, fly it, or spread it on toast?"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 8시 – 오후 7시",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "오전 8시 – 오후 7시",
+            "5": "오전 8시 – 오후 7시",
+            "6": "오전 8시 – 오후 7시",
+            "7": "오전 8시 – 오후 7시",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "오전 8시 – 오후 7시",
+            "11": "오전 8시 – 오후 7시",
+            "12": "오전 8시 – 오후 7시"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 7시",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "오전 8시 – 오후 7시",
+            "5": "오전 8시 – 오후 7시",
+            "6": "오전 8시 – 오후 7시",
+            "7": "오전 8시 – 오후 7시",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "오전 8시 – 오후 7시",
+            "11": "오전 8시 – 오후 7시",
+            "12": "오전 8시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "제비나비",
+        "url": "https://nookipedia.com/wiki/Peacock%20butterfly",
+        "number": "4번",
+        "image_url": "https://dodo.ac/np/images/7/77/Peacock_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8e/Peacock_Butterfly_NH.png",
+        "catchphrase": "I caught a peacock butterfly! Now it's my turn to strut my stuff!",
+        "catchphrase2": "",
+        "location": "파랑/보라/검정 꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "2500",
+        "sell_flick": "3750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 7시",
+        "n_availability": "3월 – 6월",
+        "s_availability": "9월 – 12월",
+        "catchphrases": [
+            "I caught a peacock butterfly! Now it's my turn to strut my stuff!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 6월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 12월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 4시 – 오후 7시",
+            "4": "오전 4시 – 오후 7시",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 4시 – 오후 7시",
+            "10": "오전 4시 – 오후 7시",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번"
+        ],
+        "s_availability_array": [
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "공벌레",
+        "url": "https://nookipedia.com/wiki/Pill%20bug",
+        "number": "76",
+        "image_url": "https://dodo.ac/np/images/b/b9/Pill_Bug_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/02/Pill_Bug_NH.png",
+        "catchphrase": "I caught a pill bug! That's a tough act to swallow!",
+        "catchphrase2": "",
+        "location": "바위를 쳤을 때",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "250",
+        "sell_flick": "375",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 11시 – 오후 4시",
+        "n_availability": "9월 – 6월",
+        "s_availability": "3월 – 12월",
+        "catchphrases": [
+            "I caught a pill bug! That's a tough act to swallow!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 6월",
+                "time": "오후 11시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 12월",
+                "time": "오후 11시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 11시 – 오후 4시",
+            "2": "오후 11시 – 오후 4시",
+            "3": "오후 11시 – 오후 4시",
+            "4": "오후 11시 – 오후 4시",
+            "5": "오후 11시 – 오후 4시",
+            "6": "오후 11시 – 오후 4시",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 11시 – 오후 4시",
+            "10": "오후 11시 – 오후 4시",
+            "11": "오후 11시 – 오후 4시",
+            "12": "오후 11시 – 오후 4시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 11시 – 오후 4시",
+            "4": "오후 11시 – 오후 4시",
+            "5": "오후 11시 – 오후 4시",
+            "6": "오후 11시 – 오후 4시",
+            "7": "오후 11시 – 오후 4시",
+            "8": "오후 11시 – 오후 4시",
+            "9": "오후 11시 – 오후 4시",
+            "10": "오후 11시 – 오후 4시",
+            "11": "오후 11시 – 오후 4시",
+            "12": "오후 11시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "소금쟁이",
+        "url": "https://nookipedia.com/wiki/Pondskater",
+        "number": "38",
+        "image_url": "https://dodo.ac/np/images/1/1f/Pondskater_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/ea/Pondskater_NH.png",
+        "catchphrase": "I caught a pondskater! Wonder if it can do a pond ollie...",
+        "catchphrase2": "",
+        "location": "강/연못 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "130",
+        "sell_flick": "195",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "5월 – 9월",
+        "s_availability": "11월 – 3월",
+        "catchphrases": [
+            "I caught a pondskater! Wonder if it can do a pond ollie..."
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 9월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 3월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 8시 – 오후 7시",
+            "6": "오전 8시 – 오후 7시",
+            "7": "오전 8시 – 오후 7시",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 7시",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 8시 – 오후 7시",
+            "12": "오전 8시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "알렉산드라비단제비나비",
+        "url": "https://nookipedia.com/wiki/Queen%20Alexandra%27s%20birdwing",
+        "number": "12",
+        "image_url": "https://dodo.ac/np/images/b/bb/Queen_Alexandra%27s_Birdwing_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8a/Queen_Alexandra%27s_Birdwing_NH.png",
+        "catchphrase": "I caught a Queen Alexandra's birdwing! That's a feather in my cap!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "4000",
+        "sell_flick": "6000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 4시",
+        "n_availability": "5월 – 9월",
+        "s_availability": "11월 – 3월",
+        "catchphrases": [
+            "I caught a Queen Alexandra's birdwing! That's a feather in my cap!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 9월",
+                "time": "오전 8시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 3월",
+                "time": "오전 8시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 8시 – 오후 4시",
+            "6": "오전 8시 – 오후 4시",
+            "7": "오전 8시 – 오후 4시",
+            "8": "오전 8시 – 오후 4시",
+            "9": "오전 8시 – 오후 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 4시",
+            "2": "오전 8시 – 오후 4시",
+            "3": "오전 8시 – 오후 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 8시 – 오후 4시",
+            "12": "오전 8시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "뮤엘러리사슴벌레",
+        "url": "https://nookipedia.com/wiki/Rainbow%20stag",
+        "number": "58",
+        "image_url": "https://dodo.ac/np/images/f/f7/Rainbow_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/82/Rainbow_Stag_NH.png",
+        "catchphrase": "I caught a rainbow stag! Its rainbow armor is so shiny!",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "6000",
+        "sell_flick": "9000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 8시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a rainbow stag! Its rainbow armor is so shiny!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "12"
+        ]
+    },
+    {
+        "name": "붉은목도리비단나비",
+        "url": "https://nookipedia.com/wiki/Rajah%20Brooke%27s%20birdwing",
+        "number": "11",
+        "image_url": "https://dodo.ac/np/images/8/81/Rajah_Brooke%27s_Birdwing_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/b7/Rajah_Brooke%27s_Birdwing_NH.png",
+        "catchphrase": "I caught a Rajah Brooke's birdwing! Nothing else I'd rajah be doing!",
+        "catchphrase2": "",
+        "location": "꽃 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "2500",
+        "sell_flick": "3750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "12월 – 2월; 4월 – 9월",
+        "s_availability": "6월 – 8월; 10월 – 3월",
+        "catchphrases": [
+            "I caught a Rajah Brooke's birdwing! Nothing else I'd rajah be doing!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 2월; 4월 – 9월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 8월; 10월 – 3월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "없음",
+            "4": "오전 8시 – 오후 5시",
+            "5": "오전 8시 – 오후 5시",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "없음",
+            "11": "없음",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "없음",
+            "5": "없음",
+            "6": "오전 8시 – 오후 5시",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "없음",
+            "10": "오전 8시 – 오후 5시",
+            "11": "오전 8시 – 오후 5시",
+            "12": "오전 8시 – 오후 5시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "6번",
+            "7번",
+            "8번",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "고추잠자리",
+        "url": "https://nookipedia.com/wiki/Red%20dragonfly",
+        "number": "32",
+        "image_url": "https://dodo.ac/np/images/0/09/Red_Dragonfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1d/Red_Dragonfly_NH.png",
+        "catchphrase": "I caught a red dragonfly! Didn't even have to roll for initiative!",
+        "catchphrase2": "",
+        "location": "물가 주변 비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "180",
+        "sell_flick": "270",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "9월 – 10월",
+        "s_availability": "3월 – 4월",
+        "catchphrases": [
+            "I caught a red dragonfly! Didn't even have to roll for initiative!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 10월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 4월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 8시 – 오후 7시",
+            "10": "오전 8시 – 오후 7시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 8시 – 오후 7시",
+            "4": "오전 8시 – 오후 7시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번"
+        ]
+    },
+    {
+        "name": "메뚜기",
+        "url": "https://nookipedia.com/wiki/Rice%20grasshopper",
+        "number": "18",
+        "image_url": "https://dodo.ac/np/images/7/78/Rice_Grasshopper_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/d4/Rice_Grasshopper_NH.png",
+        "catchphrase": "I caught a rice grasshopper! I've been looking for a gluten-free alternative...",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_flick": "600",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 7시",
+        "n_availability": "8월 – 11월",
+        "s_availability": "2월 – 5월",
+        "catchphrases": [
+            "I caught a rice grasshopper! I've been looking for a gluten-free alternative..."
+        ],
+        "availability_north": [
+            {
+                "months": "8월 – 11월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "2월 – 5월",
+                "time": "오전 8시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "오전 8시 – 오후 7시",
+            "9": "오전 8시 – 오후 7시",
+            "10": "오전 8시 – 오후 7시",
+            "11": "오전 8시 – 오후 7시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "오전 8시 – 오후 7시",
+            "3": "오전 8시 – 오후 7시",
+            "4": "오전 8시 – 오후 7시",
+            "5": "오전 8시 – 오후 7시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "2번",
+            "3번",
+            "4번",
+            "5번"
+        ]
+    },
+    {
+        "name": "참매미",
+        "url": "https://nookipedia.com/wiki/Robust%20cicada",
+        "number": "27",
+        "image_url": "https://dodo.ac/np/images/a/a2/Robust_Cicada_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8c/Robust_Cicada_NH.png",
+        "catchphrase": "I caught a robust cicada! It DOES seem pretty lively!",
+        "catchphrase2": "I caught a robust cicada! Not so energetic in the rain, huh?",
+        "location": "나무(활엽수/삼나무) 위",
+        "weather": "모든 날씨",
+        "rarity": "매우 흔함",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_flick": "450",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a robust cicada! It DOES seem pretty lively!",
+            "I caught a robust cicada! Not so energetic in the rain, huh?"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 8시 – 오후 5시",
+            "8": "오전 8시 – 오후 5시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 8시 – 오후 5시",
+            "2": "오전 8시 – 오후 5시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "루리하늘소",
+        "url": "https://nookipedia.com/wiki/Rosalia%20batesi%20beetle",
+        "number": "48",
+        "image_url": "https://dodo.ac/np/images/7/7c/Rosalia_Batesi_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/44/Rosalia_Batesi_Beetle_NH.png",
+        "catchphrase": "I caught a rosalia batesi beetle! That's easier to do than say!",
+        "catchphrase2": "",
+        "location": "그루터기 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "3000",
+        "sell_flick": "4500",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "5월 – 9월",
+        "s_availability": "11월 – 3월",
+        "catchphrases": [
+            "I caught a rosalia batesi beetle! That's easier to do than say!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "톱사슴벌레",
+        "url": "https://nookipedia.com/wiki/Saw%20stag",
+        "number": "55",
+        "image_url": "https://dodo.ac/np/images/0/03/Saw_Stag_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/e0/Saw_Stag_NH.png",
+        "catchphrase": "I caught a saw stag! Now I can't unsee it!",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "2000",
+        "sell_flick": "3000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a saw stag! Now I can't unsee it!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "보석풍뎅이",
+        "url": "https://nookipedia.com/wiki/Scarab%20beetle",
+        "number": "52",
+        "image_url": "https://dodo.ac/np/images/e/ee/Scarab_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/db/Scarab_Beetle_NH.png",
+        "catchphrase": "I caught a scarab beetle! It's just a dung beetle with better hobbies.",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "50",
+        "sell_nook": "10000",
+        "sell_flick": "15000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 11시 – 오전 8시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a scarab beetle! It's just a dung beetle with better hobbies."
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오후 11시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오후 11시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오후 11시 – 오전 8시",
+            "8": "오후 11시 – 오전 8시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 11시 – 오전 8시",
+            "2": "오후 11시 – 오전 8시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번"
+        ]
+    },
+    {
+        "name": "전갈",
+        "url": "https://nookipedia.com/wiki/Scorpion",
+        "number": "80",
+        "image_url": "https://dodo.ac/np/images/9/95/Scorpion_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/fe/Scorpion_NH.png",
+        "catchphrase": "I caught a scorpion! It was a sting operation!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "8000",
+        "sell_flick": "12000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 4시",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught a scorpion! It was a sting operation!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오후 7시 – 오전 4시",
+            "6": "오후 7시 – 오전 4시",
+            "7": "오후 7시 – 오전 4시",
+            "8": "오후 7시 – 오전 4시",
+            "9": "오후 7시 – 오전 4시",
+            "10": "오후 7시 – 오전 4시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 4시",
+            "2": "오후 7시 – 오전 4시",
+            "3": "오후 7시 – 오전 4시",
+            "4": "오후 7시 – 오전 4시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오후 7시 – 오전 4시",
+            "12": "오후 7시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "달팽이",
+        "url": "https://nookipedia.com/wiki/Snail",
+        "number": "75",
+        "image_url": "https://dodo.ac/np/images/e/e9/Snail_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/0b/Snail_NH.png",
+        "catchphrase": "I caught a snail! It's...not much to brag about.",
+        "catchphrase2": "",
+        "location": "바위/덤불 위",
+        "weather": "비 오는 날만",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "250",
+        "sell_flick": "375",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a snail! It's...not much to brag about."
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "거미",
+        "url": "https://nookipedia.com/wiki/Spider",
+        "number": "78",
+        "image_url": "https://dodo.ac/np/images/e/e0/Spider_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/e5/Spider_NH.png",
+        "catchphrase": "I caught a spider! I spied 'er first!",
+        "catchphrase2": "",
+        "location": "나무를 흔들기",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "600",
+        "sell_flick": "900",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 8시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a spider! I spied 'er first!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 7시 – 오전 8시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "오후 7시 – 오전 8시",
+            "5": "오후 7시 – 오전 8시",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "오후 7시 – 오전 8시",
+            "11": "오후 7시 – 오전 8시",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "times_by_month_south": {
+            "1": "오후 7시 – 오전 8시",
+            "2": "오후 7시 – 오전 8시",
+            "3": "오후 7시 – 오전 8시",
+            "4": "오후 7시 – 오전 8시",
+            "5": "오후 7시 – 오전 8시",
+            "6": "오후 7시 – 오전 8시",
+            "7": "오후 7시 – 오전 8시",
+            "8": "오후 7시 – 오전 8시",
+            "9": "오후 7시 – 오전 8시",
+            "10": "오후 7시 – 오전 8시",
+            "11": "오후 7시 – 오전 8시",
+            "12": "오후 7시 – 오전 8시"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "노린재",
+        "url": "https://nookipedia.com/wiki/Stinkbug",
+        "number": "41",
+        "image_url": "https://dodo.ac/np/images/4/42/Stinkbug_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/5b/Stinkbug_NH.png",
+        "catchphrase": "I caught a stinkbug! It lives up to its name!",
+        "catchphrase2": "",
+        "location": "꽃 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "120",
+        "sell_flick": "180",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "3월 – 10월",
+        "s_availability": "9월 – 4월",
+        "catchphrases": [
+            "I caught a stinkbug! It lives up to its name!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "타란툴라",
+        "url": "https://nookipedia.com/wiki/Tarantula",
+        "number": "79",
+        "image_url": "https://dodo.ac/np/images/b/b5/Tarantula_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/bf/Tarantula_NH.png",
+        "catchphrase": "I caught a tarantula! This situation just got hairy!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "8000",
+        "sell_flick": "12000",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오후 7시 – 오전 4시",
+        "n_availability": "11월 – 4월",
+        "s_availability": "5월 – 10월",
+        "catchphrases": [
+            "I caught a tarantula! This situation just got hairy!"
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 4월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 10월",
+                "time": "오후 7시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 7시 – 오전 4시",
+            "2": "오후 7시 – 오전 4시",
+            "3": "오후 7시 – 오전 4시",
+            "4": "오후 7시 – 오전 4시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오후 7시 – 오전 4시",
+            "12": "오후 7시 – 오전 4시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오후 7시 – 오전 4시",
+            "6": "오후 7시 – 오전 4시",
+            "7": "오후 7시 – 오전 4시",
+            "8": "오후 7시 – 오전 4시",
+            "9": "오후 7시 – 오전 4시",
+            "10": "오후 7시 – 오전 4시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ]
+    },
+    {
+        "name": "길앞잡이",
+        "url": "https://nookipedia.com/wiki/Tiger%20beetle",
+        "number": "44",
+        "image_url": "https://dodo.ac/np/images/5/58/Tiger_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/a/a0/Tiger_Beetle_NH.png",
+        "catchphrase": "I caught a tiger beetle! I pounced first!",
+        "catchphrase2": "",
+        "location": "지면",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "1500",
+        "sell_flick": "2250",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "2월 – 10월",
+        "s_availability": "8월 – 4월",
+        "catchphrases": [
+            "I caught a tiger beetle! I pounced first!"
+        ],
+        "availability_north": [
+            {
+                "months": "2월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "8월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "호랑나비",
+        "url": "https://nookipedia.com/wiki/Tiger%20butterfly",
+        "number": "3번",
+        "image_url": "https://dodo.ac/np/images/b/b6/Tiger_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/e1/Tiger_Butterfly_NH.png",
+        "catchphrase": "I caught a tiger butterfly! I've earned my stripes!",
+        "catchphrase2": "",
+        "location": "비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "240",
+        "sell_flick": "360",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 7시",
+        "n_availability": "3월 – 9월",
+        "s_availability": "9월 – 3월",
+        "catchphrases": [
+            "I caught a tiger butterfly! I've earned my stripes!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 9월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 3월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 4시 – 오후 7시",
+            "4": "오전 4시 – 오후 7시",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "오전 4시 – 오후 7시",
+            "8": "오전 4시 – 오후 7시",
+            "9": "오전 4시 – 오후 7시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 7시",
+            "2": "오전 4시 – 오후 7시",
+            "3": "오전 4시 – 오후 7시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 4시 – 오후 7시",
+            "10": "오전 4시 – 오후 7시",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "바이올린벌레",
+        "url": "https://nookipedia.com/wiki/Violin%20beetle",
+        "number": "46",
+        "image_url": "https://dodo.ac/np/images/8/86/Violin_Beetle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/16/Violin_Beetle_NH.png",
+        "catchphrase": "I caught a violin beetle! Apparently I'm as fit as a fiddle!",
+        "catchphrase2": "",
+        "location": "그루터기 위",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "450",
+        "sell_flick": "675",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "5월 – 6월; 9월 – 11월",
+        "s_availability": "3월 – 5월; 11월 – 12월",
+        "catchphrases": [
+            "I caught a violin beetle! Apparently I'm as fit as a fiddle!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 6월; 9월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 5월; 11월 – 12월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "5번",
+            "6번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "애매미",
+        "url": "https://nookipedia.com/wiki/Walker%20cicada",
+        "number": "29",
+        "image_url": "https://dodo.ac/np/images/f/f8/Walker_Cicada_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/80/Walker_Cicada_NH.png",
+        "catchphrase": "I caught a walker cicada! Pffft... I walk all the time and no one calls me \"Walker <Player>.\"",
+        "catchphrase2": "I caught a walker cicada! It must hate getting its feet wet.",
+        "location": "나무(활엽수/삼나무) 위",
+        "weather": "모든 날씨",
+        "rarity": "매우 흔함",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_flick": "600",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 8시 – 오후 5시",
+        "n_availability": "8월 – 9월",
+        "s_availability": "2월 – 3월",
+        "catchphrases": [
+            "I caught a walker cicada! Pffft... I walk all the time and no one calls me \"Walker <Player>.\"",
+            "I caught a walker cicada! It must hate getting its feet wet."
+        ],
+        "availability_north": [
+            {
+                "months": "8월 – 9월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "2월 – 3월",
+                "time": "오전 8시 – 오후 5시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "오전 8시 – 오후 5시",
+            "9": "오전 8시 – 오후 5시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "오전 8시 – 오후 5시",
+            "3": "오전 8시 – 오후 5시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "2번",
+            "3번"
+        ]
+    },
+    {
+        "name": "잎사귀벌레",
+        "url": "https://nookipedia.com/wiki/Walking%20leaf",
+        "number": "67",
+        "image_url": "https://dodo.ac/np/images/b/b9/Walking_Leaf_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/6e/Walking_Leaf_NH.png",
+        "catchphrase": "I caught a walking leaf! It seems to be taking it in stride!",
+        "catchphrase2": "",
+        "location": "나무 아래에 위장",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "600",
+        "sell_flick": "900",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "7월 – 9월",
+        "s_availability": "1월 – 3월",
+        "catchphrases": [
+            "I caught a walking leaf! It seems to be taking it in stride!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번",
+            "9"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번"
+        ]
+    },
+    {
+        "name": "긴수염대벌레",
+        "url": "https://nookipedia.com/wiki/Walking%20stick",
+        "number": "66",
+        "image_url": "https://dodo.ac/np/images/5/58/Walking_Stick_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/0f/Walking_Stick_NH.png",
+        "catchphrase": "I caught a walking stick! Check out its walking schtick! Look, these are the jokes, OK?",
+        "catchphrase2": "",
+        "location": "나무(모든 종류) 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "20",
+        "sell_nook": "600",
+        "sell_flick": "900",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+        "n_availability": "7월 – 11월",
+        "s_availability": "1월 – 5월",
+        "catchphrases": [
+            "I caught a walking stick! Check out its walking schtick! Look, these are the jokes, OK?"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 11월",
+                "time": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 5월",
+                "time": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "8": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "9": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "10": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "11": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "2": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "3": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "4": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "5": "오전 4시 – 오전 8시 & 오후 5시 – 오후 7시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번"
+        ]
+    },
+    {
+        "name": "벌",
+        "url": "https://nookipedia.com/wiki/Wasp",
+        "number": "25",
+        "image_url": "https://dodo.ac/np/images/a/a5/Wasp_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/bb/Wasp_NH.png",
+        "catchphrase": "I caught a wasp! That's gotta sting...",
+        "catchphrase2": "",
+        "location": "열매 없는 활엽수/삼나무를 흔들기",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "2500",
+        "sell_flick": "3750",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a wasp! That's gotta sting..."
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "갯강구",
+        "url": "https://nookipedia.com/wiki/Wharf%20roach",
+        "number": "71",
+        "image_url": "https://dodo.ac/np/images/1/1f/Wharf_Roach_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/eb/Wharf_Roach_NH.png",
+        "catchphrase": "I caught a wharf roach! This water-loving roach has no pier!",
+        "catchphrase2": "",
+        "location": "해변 바위 위",
+        "weather": "모든 날씨",
+        "rarity": "",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_flick": "300",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a wharf roach! This water-loving roach has no pier!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1번",
+            "2번",
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "7번",
+            "8번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "노랑나비",
+        "url": "https://nookipedia.com/wiki/Yellow%20butterfly",
+        "number": "2번",
+        "image_url": "https://dodo.ac/np/images/4/43/Yellow_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/74/Yellow_Butterfly_NH.png",
+        "catchphrase": "I caught a yellow butterfly! Shouldn't all BUTTERflies be yellow?",
+        "catchphrase2": "",
+        "location": "비행",
+        "weather": "비 제외 모든 날씨",
+        "rarity": "매우 흔함",
+        "total_catch": "0",
+        "sell_nook": "160",
+        "sell_flick": "240",
+        "tank_width": "1번",
+        "tank_length": "1번",
+        "time": "오전 4시 – 오후 7시",
+        "n_availability": "3월 – 6월; 9월 – 10월",
+        "s_availability": "3월 – 4월; 9월 – 12월",
+        "catchphrases": [
+            "I caught a yellow butterfly! Shouldn't all BUTTERflies be yellow?"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 6월; 9월 – 10월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 4월; 9월 – 12월",
+                "time": "오전 4시 – 오후 7시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 4시 – 오후 7시",
+            "4": "오전 4시 – 오후 7시",
+            "5": "오전 4시 – 오후 7시",
+            "6": "오전 4시 – 오후 7시",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 4시 – 오후 7시",
+            "10": "오전 4시 – 오후 7시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오전 4시 – 오후 7시",
+            "4": "오전 4시 – 오후 7시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오전 4시 – 오후 7시",
+            "10": "오전 4시 – 오후 7시",
+            "11": "오전 4시 – 오후 7시",
+            "12": "오전 4시 – 오후 7시"
+        },
+        "n_availability_array": [
+            "3번",
+            "4번",
+            "5번",
+            "6번",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "3번",
+            "4번",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    }
+]

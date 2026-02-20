@@ -1,0 +1,5223 @@
+[
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AAxe%20%28New%20Horizons%29",
+        "name": "도끼",
+        "uses": "100",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/fa/Axe_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABamboo%20wand%20%28New%20Horizons%29",
+        "name": "대나무 지팡이",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 3900,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/06/Bamboo_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABean-tossing%20kit%20%28New%20Horizons%29",
+        "name": "콩 뿌리기 세트",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.7.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/a5/Bean-Tossing_Kit_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABerry-vanilla%20soft%20serve%20%28New%20Horizons%29",
+        "name": "딸기&바닐라 소프트아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/a3/Berry-Vanilla_Soft_Serve_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABitter-orange%20folding%20fan%20%28New%20Horizons%29",
+        "name": "노을색 쥘부채",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/4/40/Bitter-Orange_Folding_Fan_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABlue%20balloon%20%28New%20Horizons%29",
+        "name": "파란색 풍선",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 600,
+                "currency": "벨"
+            },
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/26/Blue_Balloon_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABlue%20sparkler%20%28New%20Horizons%29",
+        "name": "파란색 스파클러",
+        "uses": "1번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 600,
+                "currency": "벨"
+            },
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/c1/Blue_Sparkler_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoba%20coffee%20%28New%20Horizons%29",
+        "name": "커피 버블티",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/ab/Boba_Coffee_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoba%20green%20tea%20%28New%20Horizons%29",
+        "name": "말차 버블티",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/17/Boba_Green_Tea_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoba%20mango%20tea%20%28New%20Horizons%29",
+        "name": "망고 버블티",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/32/Boba_Mango_Tea_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoba%20milk%20tea%20%28New%20Horizons%29",
+        "name": "오리지널 버블티",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/62/Boba_Milk_Tea_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoba%20strawberry%20tea%20%28New%20Horizons%29",
+        "name": "딸기 버블티",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/2e/Boba_Strawberry_Tea_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABubble%20blower%20%28New%20Horizons%29",
+        "name": "비눗방울",
+        "uses": "1번",
+        "hha_base": 0,
+        "sell": 37,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 150,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/3b/Bubble_Blower_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABug%20wand%20%28New%20Horizons%29",
+        "name": "곤충 지팡이",
+        "uses": "무제한",
+        "hha_base": 501,
+        "sell": 1500,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "레온",
+                "note": "곤충채집대회"
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/17/Bug_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABunny%20Day%20wand%20%28New%20Horizons%29",
+        "name": "이스터 지팡이",
+        "uses": "무제한",
+        "hha_base": 351,
+        "sell": 11100,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.1.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/6d/Bunny_Day_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20apple%20juice%20%28New%20Horizons%29",
+        "name": "캔 사과 주스",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/c3/Canned_Apple_Juice_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20coffee%20%28New%20Horizons%29",
+        "name": "캔 커피",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/30/Canned_Coffee_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20grape%20juice%20%28New%20Horizons%29",
+        "name": "캔 포도 주스",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/e/ed/Canned_Grape_Juice_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20green%20tea%20%28New%20Horizons%29",
+        "name": "캔 녹차",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/8/8b/Canned_Green_Tea_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20orange%20juice%20%28New%20Horizons%29",
+        "name": "캔 오렌지 주스",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/10/Canned_Orange_Juice_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20soda%20%28New%20Horizons%29",
+        "name": "캔 소다",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/4/49/Canned_Soda_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20sports%20drink%20%28New%20Horizons%29",
+        "name": "캔 스포츠 드링크",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/00/Canned_Sports_Drink_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACanned%20tea%20%28New%20Horizons%29",
+        "name": "캔 홍차",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/04/Canned_Tea_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACherry-blossom%20wand%20%28New%20Horizons%29",
+        "name": "벚꽃 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 2700,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/bc/Cherry-Blossom_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AChitose%20ame%20%28New%20Horizons%29",
+        "name": "장수 기원 사탕",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 250,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1000,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/f1/Chitose_Ame_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AChocolate%20cone%20%28New%20Horizons%29",
+        "name": "초콜릿 아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/e/e8/Chocolate_Cone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AChocolate%20donut%20%28New%20Horizons%29",
+        "name": "초콜릿 도넛",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/3f/Chocolate_Donut_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AChocolate%20frozen%20treat%20%28New%20Horizons%29",
+        "name": "초콜릿 아이스바",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/fc/Chocolate_Frozen_Treat_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AChocolate%20soft%20serve%20%28New%20Horizons%29",
+        "name": "초콜릿 소프트아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/d/d6/Chocolate_Soft_Serve_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AColorful%20fishing%20rod%20%28New%20Horizons%29",
+        "name": "컬러풀 낚싯대",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/7/7d/Colorful_Fishing_Rod_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/9/95/Colorful_Fishing_Rod_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/5/51/Colorful_Fishing_Rod_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/8/88/Colorful_Fishing_Rod_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/7/7f/Colorful_Fishing_Rod_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/1/1d/Colorful_Fishing_Rod_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/4/42/Colorful_Fishing_Rod_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/b/b1/Colorful_Fishing_Rod_%28Gray%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AColorful%20light%20stick%20%28New%20Horizons%29",
+        "name": "컬러풀 형광봉",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 450,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/50/Colorful_Light_Stick_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AColorful%20net%20%28New%20Horizons%29",
+        "name": "컬러풀 잠자리채",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "옐로×오렌지",
+                "image_url": "https://dodo.ac/np/images/0/0c/Colorful_Net_%28Yellow_%26_Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드×옐로",
+                "image_url": "https://dodo.ac/np/images/4/4f/Colorful_Net_%28Red_%26_Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지×블루",
+                "image_url": "https://dodo.ac/np/images/2/21/Colorful_Net_%28Orange_%26_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크×옐로",
+                "image_url": "https://dodo.ac/np/images/d/d4/Colorful_Net_%28Pink_%26_Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린×블루",
+                "image_url": "https://dodo.ac/np/images/2/2d/Colorful_Net_%28Green_%26_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플×핑크",
+                "image_url": "https://dodo.ac/np/images/4/40/Colorful_Net_%28Purple_%26_Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "화이트×블루",
+                "image_url": "https://dodo.ac/np/images/f/f4/Colorful_Net_%28White_%26_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "그레이×그린",
+                "image_url": "https://dodo.ac/np/images/e/e8/Colorful_Net_%28Gray_%26_Green%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AColorful%20shovel%20%28New%20Horizons%29",
+        "name": "컬러풀 삽",
+        "uses": "100",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/2/2a/Colorful_Shovel_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/d/d3/Colorful_Shovel_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/f/f6/Colorful_Shovel_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/f/fd/Colorful_Shovel_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/4/4e/Colorful_Shovel_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/6/66/Colorful_Shovel_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/d/da/Colorful_Shovel_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/2/28/Colorful_Shovel_%28Gray%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AColorful%20slingshot%20%28New%20Horizons%29",
+        "name": "컬러풀 새총",
+        "uses": "20",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/8/8e/Colorful_Slingshot_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/9/91/Colorful_Slingshot_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/3/35/Colorful_Slingshot_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/0/03/Colorful_Slingshot_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/4/46/Colorful_Slingshot_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/4/4b/Colorful_Slingshot_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/d/d9/Colorful_Slingshot_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/9/94/Colorful_Slingshot_%28Gray%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AColorful%20watering%20can%20%28New%20Horizons%29",
+        "name": "컬러풀 물뿌리개",
+        "uses": "60",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/d/d5/Colorful_Watering_Can_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/1/18/Colorful_Watering_Can_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/2/22/Colorful_Watering_Can_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/2/21/Colorful_Watering_Can_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/b/be/Colorful_Watering_Can_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/8/8a/Colorful_Watering_Can_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/a/a3/Colorful_Watering_Can_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/b/b0/Colorful_Watering_Can_%28Gray%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACosmos%20wand%20%28New%20Horizons%29",
+        "name": "코스모스 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1580,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/94/Cosmos_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20axe%20%28New%20Horizons%29",
+        "name": "꿈속의 도끼",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/fa/Axe_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20fishing%20rod%20%28New%20Horizons%29",
+        "name": "꿈속의 낚싯대",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/a1/Fishing_Rod_%28Blue%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20ladder%20%28New%20Horizons%29",
+        "name": "꿈속의 사다리",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/1a/Dream_Ladder_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20net%20%28New%20Horizons%29",
+        "name": "꿈속의 잠자리채",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/90/Net_%28Red%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20shovel%20%28New%20Horizons%29",
+        "name": "꿈속의 삽",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/63/Shovel_%28Red%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20timer%20%28New%20Horizons%29",
+        "name": "꿈속의 타이머",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/d/df/Dream_Timer_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADream%20vaulting%20pole%20%28New%20Horizons%29",
+        "name": "꿈속의 높이뛰기 장대",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "슬럼버 아일랜드",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/51/Vaulting_Pole_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADumbbell%20%28New%20Horizons%29",
+        "name": "덤벨",
+        "uses": "무제한",
+        "hha_base": 151,
+        "sell": 400,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "컬러",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴",
+                "note": "Sent in the mail after doing group stretching on 20 different days"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1600,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/5/5c/Dumbbell_%28Black%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/1/19/Dumbbell_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/1/1b/Dumbbell_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/e/ed/Dumbbell_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "골드",
+                "image_url": "https://dodo.ac/np/images/5/50/Dumbbell_%28Gold%29_NH_Icon.png"
+            },
+            {
+                "variation": "실버",
+                "image_url": "https://dodo.ac/np/images/4/48/Dumbbell_%28Silver%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADuster%20%28New%20Horizons%29",
+        "name": "먼지떨이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 275,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 1100,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/8/80/Duster_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AElephant%20watering%20can%20%28New%20Horizons%29",
+        "name": "코끼리 물뿌리개",
+        "uses": "60",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/9/9c/Elephant_Watering_Can_%28Gray%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/0/0a/Elephant_Watering_Can_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/2/2f/Elephant_Watering_Can_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/d/df/Elephant_Watering_Can_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/1/14/Elephant_Watering_Can_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/f/fb/Elephant_Watering_Can_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/9/94/Elephant_Watering_Can_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/8/85/Elephant_Watering_Can_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFiery%20cheer%20megaphone%20%28New%20Horizons%29",
+        "name": "파이어 응원 메가폰",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 375,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.7.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/92/Fiery_Cheer_Megaphone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFish%20fishing%20rod%20%28New%20Horizons%29",
+        "name": "물고기 낚싯대",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/6f/Fish_Fishing_Rod_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/6/6a/Fish_Fishing_Rod_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/b/bc/Fish_Fishing_Rod_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/5/51/Fish_Fishing_Rod_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/8/83/Fish_Fishing_Rod_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/5/5c/Fish_Fishing_Rod_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/9/93/Fish_Fishing_Rod_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/6/60/Fish_Fishing_Rod_%28Red%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFish%20wand%20%28New%20Horizons%29",
+        "name": "물고기 지팡이",
+        "uses": "무제한",
+        "hha_base": 501,
+        "sell": 1500,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "저스틴",
+                "note": "낚시 대회"
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/12/Fish_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFishing%20rod%20%28New%20Horizons%29",
+        "name": "낚싯대",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 600,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/a/a1/Fishing_Rod_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/a/a3/Fishing_Rod_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/0/02/Fishing_Rod_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/e/eb/Fishing_Rod_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/e/e8/Fishing_Rod_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/9/9b/Fishing_Rod_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/5/5d/Fishing_Rod_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/c/c2/Fishing_Rod_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlimsy%20axe%20%28New%20Horizons%29",
+        "name": "엉성한 도끼",
+        "uses": "40",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": "Available after unlocking the axe in the story"
+            },
+            {
+                "from": "로드리",
+                "note": "on mystery islands"
+            },
+            {
+                "from": "갑돌",
+                "note": "보트 투어에서"
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            },
+            {
+                "price": 100,
+                "currency": "너굴 마일"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/7/76/Flimsy_Axe_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlimsy%20fishing%20rod%20%28New%20Horizons%29",
+        "name": "엉성한 낚싯대",
+        "uses": "5–10",
+        "hha_base": 0,
+        "sell": 100,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "콩돌이",
+                "note": "안내소 텐트"
+            },
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "로드리",
+                "note": "On mystery islands"
+            }
+        ],
+        "buy": [
+            {
+                "price": 400,
+                "currency": "벨"
+            },
+            {
+                "price": 100,
+                "currency": "너굴 마일"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/a1/Flimsy_Fishing_Rod_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlimsy%20net%20%28New%20Horizons%29",
+        "name": "엉성한 잠자리채",
+        "uses": "10",
+        "hha_base": 0,
+        "sell": 100,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "콩돌이",
+                "note": "안내소 텐트"
+            },
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "로드리",
+                "note": "On mystery islands"
+            }
+        ],
+        "buy": [
+            {
+                "price": 400,
+                "currency": "벨"
+            },
+            {
+                "price": 100,
+                "currency": "너굴 마일"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/91/Flimsy_Net_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlimsy%20shovel%20%28New%20Horizons%29",
+        "name": "엉성한 삽",
+        "uses": "40",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": "Available after unlocking the shovel in the story"
+            },
+            {
+                "from": "로드리",
+                "note": "On mystery islands"
+            },
+            {
+                "from": "갑돌",
+                "note": "보트 투어에서"
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            },
+            {
+                "price": 100,
+                "currency": "너굴 마일"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/e/ea/Flimsy_Shovel_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlimsy%20watering%20can%20%28New%20Horizons%29",
+        "name": "엉성한 물뿌리개",
+        "uses": "20",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "콩돌이",
+                "note": "안내소 텐트"
+            },
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/51/Flimsy_Watering_Can_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlower-petal%20basket%20%28New%20Horizons%29",
+        "name": "플라워 샤워",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 300,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.10.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1200,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/4/4f/Flower-Petal_Basket_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFootball%20cheer%20megaphone%20%28New%20Horizons%29",
+        "name": "미식축구 응원 메가폰",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 375,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.7.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/a1/Football_Cheer_Megaphone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFoxtail%20%28New%20Horizons%29",
+        "name": "강아지풀",
+        "uses": "무제한",
+        "hha_base": 103,
+        "sell": 60,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/aa/Foxtail_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGlittery%20cheer%20megaphone%20%28New%20Horizons%29",
+        "name": "글리터 응원 메가폰",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 375,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.7.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/23/Glittery_Cheer_Megaphone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20axe%20%28New%20Horizons%29",
+        "name": "금도끼",
+        "uses": "200",
+        "hha_base": 0,
+        "sell": 10655,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/e/ec/Golden_Axe_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20ladder%20set-up%20kit%20%28New%20Horizons%29",
+        "name": "황금 사다리 FIX 키트",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 10720,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/61/Golden_Ladder_Set-Up_Kit_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20net%20%28New%20Horizons%29",
+        "name": "금 잠자리채",
+        "uses": "90",
+        "hha_base": 0,
+        "sell": 10400,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b5/Golden_Net_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20rod%20%28New%20Horizons%29",
+        "name": "금 낚싯대",
+        "uses": "90",
+        "hha_base": 0,
+        "sell": 10400,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/5c/Golden_Rod_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20shovel%20%28New%20Horizons%29",
+        "name": "금 삽",
+        "uses": "200",
+        "hha_base": 0,
+        "sell": 10675,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/11/Golden_Shovel_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20slingshot%20%28New%20Horizons%29",
+        "name": "금 새총",
+        "uses": "60",
+        "hha_base": 0,
+        "sell": 10300,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/e/e0/Golden_Slingshot_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20wand%20%28New%20Horizons%29",
+        "name": "황금 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 20750,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/ce/Golden_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGolden%20watering%20can%20%28New%20Horizons%29",
+        "name": "금 물뿌리개",
+        "uses": "180",
+        "hha_base": 0,
+        "sell": 10675,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/f7/Golden_Watering_Can_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGrass-green%20folding%20fan%20%28New%20Horizons%29",
+        "name": "어린잎색 쥘부채",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/61/Grass-Green_Folding_Fan_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AGreen%20balloon%20%28New%20Horizons%29",
+        "name": "초록색 풍선",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 600,
+                "currency": "벨"
+            },
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/4/46/Green_Balloon_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AHandheld%20lantern%20%28New%20Horizons%29",
+        "name": "휴대용 랜턴",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 275,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "무늬",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1100,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "별",
+                "image_url": "https://dodo.ac/np/images/c/c3/Handheld_Lantern_%28Stars%29_NH_Icon.png"
+            },
+            {
+                "variation": "달",
+                "image_url": "https://dodo.ac/np/images/2/2a/Handheld_Lantern_%28Moons%29_NH_Icon.png"
+            },
+            {
+                "variation": "스테인드글라스",
+                "image_url": "https://dodo.ac/np/images/b/bf/Handheld_Lantern_%28Stained_Glass%29_NH_Icon.png"
+            },
+            {
+                "variation": "태양",
+                "image_url": "https://dodo.ac/np/images/c/ca/Handheld_Lantern_%28Suns%29_NH_Icon.png"
+            },
+            {
+                "variation": "거위",
+                "image_url": "https://dodo.ac/np/images/6/6d/Handheld_Lantern_%28Geese%29_NH_Icon.png"
+            },
+            {
+                "variation": "나뭇잎",
+                "image_url": "https://dodo.ac/np/images/1/10/Handheld_Lantern_%28Leaves%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AHyacinth%20wand%20%28New%20Horizons%29",
+        "name": "히아신스 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1660,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/0d/Hyacinth_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AIce%20wand%20%28New%20Horizons%29",
+        "name": "얼음 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 6500,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/0a/Ice_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AIron%20ladder%20set-up%20kit%20%28New%20Horizons%29",
+        "name": "철제 사다리 FIX 키트",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 5190,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "실버",
+                "image_url": "https://dodo.ac/np/images/a/ac/Iron_Ladder_Set-Up_Kit_%28Silver%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/4/4e/Iron_Ladder_Set-Up_Kit_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/b/b6/Iron_Ladder_Set-Up_Kit_%28Brown%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AIron%20wand%20%28New%20Horizons%29",
+        "name": "철 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 3750,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/8/8a/Iron_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AKiki%20%26%20Lala%20wand%20%28New%20Horizons%29",
+        "name": "리틀트윈스타 지팡이",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 3060,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.9.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "산리오"
+            }
+        ],
+        "buy": [
+            {
+                "price": 12240,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/0a/Kiki_%26_Lala_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ALadder%20%28New%20Horizons%29",
+        "name": "사다리",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1440,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/c9/Ladder_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ALight%20stick%20%28New%20Horizons%29",
+        "name": "형광봉",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 375,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여울",
+                "note": "카운트다운"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/f8/Light_Stick_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ALily%20wand%20%28New%20Horizons%29",
+        "name": "백합 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1580,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/12/Lily_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMagic%20bag%20%28New%20Horizons%29",
+        "name": "선물 보따리",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.6.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "루돌",
+                "note": "토이데이"
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/0f/Magic_Bag_NH_Inv_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMaracas%20%28New%20Horizons%29",
+        "name": "마라카스",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 500,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.7.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": ""
+            },
+            {
+                "from": "닌텐도",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2000,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/2f/Maracas_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMatcha%20donut%20%28New%20Horizons%29",
+        "name": "녹차 도넛",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/24/Matcha_Donut_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMatcha-vanilla%20soft%20serve%20%28New%20Horizons%29",
+        "name": "녹차&바닐라 소프트아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/99/Matcha-Vanilla_Soft_Serve_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMegaphone%20%28New%20Horizons%29",
+        "name": "메가폰",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 875,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": "''닌텐도 스위치 2 에디션''"
+            }
+        ],
+        "buy": [
+            {
+                "price": 3500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/7/78/Megaphone_%28Switch_2%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMelon%20cotton%20candy%20%28New%20Horizons%29",
+        "name": "멜론맛 솜사탕",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/1/16/Melon_Cotton_Candy_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMelon-cheesecake%20cone%20%28New%20Horizons%29",
+        "name": "멜론&치즈 더블 아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/d/d8/Melon-Cheesecake_Cone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMums%20wand%20%28New%20Horizons%29",
+        "name": "국화 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1580,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/64/Mums_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AMushroom%20wand%20%28New%20Horizons%29",
+        "name": "버섯 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 3300,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "버섯 품종",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "흔한 버섯",
+                "image_url": "https://dodo.ac/np/images/0/0a/Mushroom_Wand_%28Ordinary_Mushroom%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색 버섯",
+                "image_url": "https://dodo.ac/np/images/3/35/Mushroom_Wand_%28White_Mushroom%29_NH_Icon.png"
+            },
+            {
+                "variation": "수상한 버섯",
+                "image_url": "https://dodo.ac/np/images/d/d6/Mushroom_Wand_%28Strange_Mushroom%29_NH_Icon.png"
+            },
+            {
+                "variation": "빨간색 버섯",
+                "image_url": "https://dodo.ac/np/images/4/43/Mushroom_Wand_%28Red_Mushroom%29_NH_Icon.png"
+            },
+            {
+                "variation": "노란색 버섯",
+                "image_url": "https://dodo.ac/np/images/f/f5/Mushroom_Wand_%28Yellow_Mushroom%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ANet%20%28New%20Horizons%29",
+        "name": "잠자리채",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 225,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "콩돌이",
+                "note": "안내소 텐트"
+            },
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 900,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/9/90/Net_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/8/88/Net_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/66/Net_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/5/54/Net_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/2/20/Net_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/3/3c/Net_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/c/c9/Net_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/5/57/Net_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ANice%20branch%20%28New%20Horizons%29",
+        "name": "적당한 나뭇가지",
+        "uses": "무제한",
+        "hha_base": 103,
+        "sell": 30,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/8/83/Nice_Branch_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ANook%20Inc.%20balloon%20%28New%20Horizons%29",
+        "name": "Nook Inc. 풍선",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 210,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴포털",
+                "note": "너굴 포인트 교환"
+            }
+        ],
+        "buy": [
+            {
+                "price": 30,
+                "currency": "너굴 포인트"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/9b/Nook_Inc._Balloon_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ANook%20Inc.%20handheld%20pennant%20%28New%20Horizons%29",
+        "name": "Nook Inc. 손 깃발",
+        "uses": "무제한",
+        "hha_base": 151,
+        "sell": 2500,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴포트",
+                "note": "너굴 마일 교환 코너"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "너굴 마일"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/bc/Nook_Inc._Handheld_Pennant_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ANook%20Inc.%20uchiwa%20fan%20%28New%20Horizons%29",
+        "name": "Nook Inc. 둥글부채",
+        "uses": "무제한",
+        "hha_base": 151,
+        "sell": 2000,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴포트",
+                "note": "너굴 마일 교환 코너"
+            }
+        ],
+        "buy": [
+            {
+                "price": 400,
+                "currency": "너굴 마일"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/d/d8/Nook_Inc._Uchiwa_Fan_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOcarina%20%28New%20Horizons%29",
+        "name": "오카리나",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1000,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/6f/Ocarina_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOcarina%20of%20Time%20%28New%20Horizons%29",
+        "name": "시간의 오카리나",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 625,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "''젤다의 전설''"
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b7/Ocarina_of_Time_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOrange%20frozen%20treat%20%28New%20Horizons%29",
+        "name": "오렌지 아이스바",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/07/Orange_Frozen_Treat_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOrange-mint%20cone%20%28New%20Horizons%29",
+        "name": "오렌지&민트 더블 아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/7/74/Orange-Mint_Cone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOutdoorsy%20fishing%20rod%20%28New%20Horizons%29",
+        "name": "아웃도어 낚싯대",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "카키",
+                "image_url": "https://dodo.ac/np/images/a/a9/Outdoorsy_Fishing_Rod_%28Avocado%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/1/1b/Outdoorsy_Fishing_Rod_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/d/d8/Outdoorsy_Fishing_Rod_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/6/67/Outdoorsy_Fishing_Rod_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/d/d1/Outdoorsy_Fishing_Rod_%28Beige%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/2/27/Outdoorsy_Fishing_Rod_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/b/bc/Outdoorsy_Fishing_Rod_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/e/e0/Outdoorsy_Fishing_Rod_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOutdoorsy%20net%20%28New%20Horizons%29",
+        "name": "아웃도어 잠자리채",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "카키",
+                "image_url": "https://dodo.ac/np/images/4/41/Outdoorsy_Net_%28Avocado%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/6/67/Outdoorsy_Net_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/2/21/Outdoorsy_Net_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/1/17/Outdoorsy_Net_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/6/67/Outdoorsy_Net_%28Beige%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/9/97/Outdoorsy_Net_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/c/ce/Outdoorsy_Net_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/5/55/Outdoorsy_Net_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOutdoorsy%20shovel%20%28New%20Horizons%29",
+        "name": "아웃도어 삽",
+        "uses": "100",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "카키",
+                "image_url": "https://dodo.ac/np/images/d/d9/Outdoorsy_Shovel_%28Avocado%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/a/a0/Outdoorsy_Shovel_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/e/ec/Outdoorsy_Shovel_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/6/6c/Outdoorsy_Shovel_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/b/b3/Outdoorsy_Shovel_%28Beige%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/9/9e/Outdoorsy_Shovel_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/5/52/Outdoorsy_Shovel_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/2/25/Outdoorsy_Shovel_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOutdoorsy%20slingshot%20%28New%20Horizons%29",
+        "name": "아웃도어 새총",
+        "uses": "20",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "카키",
+                "image_url": "https://dodo.ac/np/images/2/2c/Outdoorsy_Slingshot_%28Avocado%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/8/80/Outdoorsy_Slingshot_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/d/da/Outdoorsy_Slingshot_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/3/3c/Outdoorsy_Slingshot_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/6/64/Outdoorsy_Slingshot_%28Beige%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/6/6f/Outdoorsy_Slingshot_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/0/0b/Outdoorsy_Slingshot_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/3/3f/Outdoorsy_Slingshot_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOutdoorsy%20watering%20can%20%28New%20Horizons%29",
+        "name": "아웃도어 물뿌리개",
+        "uses": "60",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "카키",
+                "image_url": "https://dodo.ac/np/images/c/c0/Outdoorsy_Watering_Can_%28Avocado%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/4/40/Outdoorsy_Watering_Can_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/d/d4/Outdoorsy_Watering_Can_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/6/66/Outdoorsy_Watering_Can_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/e/ed/Outdoorsy_Watering_Can_%28Beige%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/c/c6/Outdoorsy_Watering_Can_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/a/aa/Outdoorsy_Watering_Can_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/6/63/Outdoorsy_Watering_Can_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APan%20flute%20%28New%20Horizons%29",
+        "name": "팬파이프",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 2800,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/cd/Pan_Flute_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APansy%20wand%20%28New%20Horizons%29",
+        "name": "팬지 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1580,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/f6/Pansy_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AParty%20popper%20%28New%20Horizons%29",
+        "name": "파티용 폭죽",
+        "uses": "1번",
+        "hha_base": 0,
+        "sell": 25,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "너굴",
+                "note": "[[Countdown]]"
+            }
+        ],
+        "buy": [
+            {
+                "price": 100,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/ae/Party_Popper_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APeachy-pink%20folding%20fan%20%28New%20Horizons%29",
+        "name": "분홍색 쥘부채",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/d/dc/Peachy-Pink_Folding_Fan_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APink%20balloon%20%28New%20Horizons%29",
+        "name": "핑크색 풍선",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 600,
+                "currency": "벨"
+            },
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/f1/Pink_Balloon_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APinwheel%20%28New%20Horizons%29",
+        "name": "바람개비",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/4/4a/Pinwheel_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APlain%20cotton%20candy%20%28New%20Horizons%29",
+        "name": "솜사탕",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/3d/Plain_Cotton_Candy_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APocket%20magazine%20%28New%20Horizons%29",
+        "name": "포켓 매거진",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "장르",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "패션 잡지",
+                "image_url": "https://dodo.ac/np/images/4/40/Pocket_Magazine_%28Fashion%29_NH_Icon.png"
+            },
+            {
+                "variation": "음악 잡지",
+                "image_url": "https://dodo.ac/np/images/b/b6/Pocket_Magazine_%28Music%29_NH_Icon.png"
+            },
+            {
+                "variation": "스포츠 잡지",
+                "image_url": "https://dodo.ac/np/images/0/05/Pocket_Magazine_%28Sports%29_NH_Icon.png"
+            },
+            {
+                "variation": "만화 잡지",
+                "image_url": "https://dodo.ac/np/images/9/95/Pocket_Magazine_%28Comic%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APocketbook%20%28New%20Horizons%29",
+        "name": "포켓북",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "장르",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "소설",
+                "image_url": "https://dodo.ac/np/images/9/99/Pocketbook_%28Novel%29_NH_Icon.png"
+            },
+            {
+                "variation": "원예 가이드",
+                "image_url": "https://dodo.ac/np/images/4/4d/Pocketbook_%28Gardening_Guide%29_NH_Icon.png"
+            },
+            {
+                "variation": "곤충 도감",
+                "image_url": "https://dodo.ac/np/images/e/e0/Pocketbook_%28Bug_Guide%29_NH_Icon.png"
+            },
+            {
+                "variation": "물고기 도감",
+                "image_url": "https://dodo.ac/np/images/2/27/Pocketbook_%28Fish_Guide%29_NH_Icon.png"
+            },
+            {
+                "variation": "화석 도감",
+                "image_url": "https://dodo.ac/np/images/c/c4/Pocketbook_%28Fossil_Guide%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APrinted-design%20shovel%20%28New%20Horizons%29",
+        "name": "꽃무늬 삽",
+        "uses": "100",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/3/3b/Printed-Design_Shovel_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/e/e3/Printed-Design_Shovel_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/3/3e/Printed-Design_Shovel_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/a/a2/Printed-Design_Shovel_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/68/Printed-Design_Shovel_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/b/b9/Printed-Design_Shovel_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/1/18/Printed-Design_Shovel_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/4/4a/Printed-Design_Shovel_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AProtein%20shake%20%28New%20Horizons%29",
+        "name": "프로틴 셰이크",
+        "uses": "3번",
+        "hha_base": 151,
+        "sell": 240,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "셰이커 색상",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴",
+                "note": "Sent in the mail after doing group stretching on 30 different days"
+            }
+        ],
+        "buy": [
+            {
+                "price": 960,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/d/de/Protein_Shake_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/6/64/Protein_Shake_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/c/c1/Protein_Shake_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/8/87/Protein_Shake_%28Pink%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARainbow%20soft%20serve%20%28New%20Horizons%29",
+        "name": "레인보우 소프트아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/01/Rainbow_Soft_Serve_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARamune-soda%20cotton%20candy%20%28New%20Horizons%29",
+        "name": "소다맛 솜사탕",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/8/87/Ramune-Soda_Cotton_Candy_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARamune-soda%20frozen%20treat%20%28New%20Horizons%29",
+        "name": "소다맛 아이스바",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/ab/Ramune-Soda_Frozen_Treat_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARamune-soda-lemon%20cone%20%28New%20Horizons%29",
+        "name": "소다&레몬 더블 아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/c3/Ramune-Soda-Lemon_Cone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARed%20balloon%20%28New%20Horizons%29",
+        "name": "빨간색 풍선",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 600,
+                "currency": "벨"
+            },
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/cb/Red_Balloon_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARed%20sparkler%20%28New%20Horizons%29",
+        "name": "빨간색 스파클러",
+        "uses": "1번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 600,
+                "currency": "벨"
+            },
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/f/f4/Red_Sparkler_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARose%20wand%20%28New%20Horizons%29",
+        "name": "장미 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1580,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b8/Rose_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AShamrock%20soda%20%28New%20Horizons%29",
+        "name": "성 패트릭 소다",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 250,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.8.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1000,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/55/Shamrock_Soda_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AShamrock%20wand%20%28New%20Horizons%29",
+        "name": "성 패트릭 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1560,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.8.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/5b/Shamrock_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AShell%20wand%20%28New%20Horizons%29",
+        "name": "조개껍데기 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 5100,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/2f/Shell_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AShovel%20%28New%20Horizons%29",
+        "name": "삽",
+        "uses": "100",
+        "hha_base": 0,
+        "sell": 600,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2400,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/6/63/Shovel_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/4/43/Shovel_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/0/09/Shovel_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/d/d3/Shovel_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/5/55/Shovel_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/f/fe/Shovel_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/a/a3/Shovel_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/b/bb/Shovel_%28Black%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASky-blue%20folding%20fan%20%28New%20Horizons%29",
+        "name": "하늘색 쥘부채",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b2/Sky-Blue_Folding_Fan_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASlingshot%20%28New%20Horizons%29",
+        "name": "새총",
+        "uses": "20",
+        "hha_base": 0,
+        "sell": 225,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "콩돌이",
+                "note": "안내소 텐트"
+            },
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 900,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/e/ed/Slingshot_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/c/c6/Slingshot_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/7/7f/Slingshot_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/b/b2/Slingshot_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/f/fb/Slingshot_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/3/37/Slingshot_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/5/5c/Slingshot_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/b/b2/Slingshot_%28Gray%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASparkling%20cider%20%28New%20Horizons%29",
+        "name": "sparkling cider",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 250,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.6.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1000,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/08/Sparkling_Cider_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASpooky%20treats%20basket%20%28New%20Horizons%29",
+        "name": "할로윈 간식 바구니",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 750,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "호박 색상",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            },
+            {
+                "from": "너굴 상점",
+                "note": "10"
+            },
+            {
+                "from": "아무 주민",
+                "note": "Obtained as a reward for gifting Candy or Lollipop on Halloween."
+            }
+        ],
+        "buy": [
+            {
+                "price": 3000,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/9/97/Spooky_Treats_Basket_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/2/24/Spooky_Treats_Basket_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/8/87/Spooky_Treats_Basket_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "모노톤",
+                "image_url": "https://dodo.ac/np/images/2/20/Spooky_Treats_Basket_%28Monochrome%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASpooky%20wand%20%28New%20Horizons%29",
+        "name": "할로윈 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 4300,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.5.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/32/Spooky_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStar%20net%20%28New%20Horizons%29",
+        "name": "별모양 잠자리채",
+        "uses": "30",
+        "hha_base": 0,
+        "sell": 625,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴상점(업그레이드 후)",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/a/ad/Star_Net_%28Yellow%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/c/c5/Star_Net_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/e/e4/Star_Net_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 그린",
+                "image_url": "https://dodo.ac/np/images/0/01/Star_Net_%28Light_Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/1/17/Star_Net_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/4/4d/Star_Net_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "라이트 블루",
+                "image_url": "https://dodo.ac/np/images/9/9d/Star_Net_%28Light_Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/1/1b/Star_Net_%28Green%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStar%20wand%20%28New%20Horizons%29",
+        "name": "별 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 6500,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b6/Star_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStarry%20cheer%20megaphone%20%28New%20Horizons%29",
+        "name": "스타 응원 메가폰",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 375,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.7.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "시즌"
+            }
+        ],
+        "buy": [
+            {
+                "price": 1500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/ba/Starry_Cheer_Megaphone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStone%20axe%20%28New%20Horizons%29",
+        "name": "돌도끼",
+        "uses": "100",
+        "hha_base": 0,
+        "sell": 560,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/a/a7/Stone_Axe_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStrawberry%20cone%20%28New%20Horizons%29",
+        "name": "딸기 아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/2e/Strawberry_Cone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStrawberry%20cotton%20candy%20%28New%20Horizons%29",
+        "name": "딸기맛 솜사탕",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.11.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/6b/Strawberry_Cotton_Candy_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStrawberry%20donut%20%28New%20Horizons%29",
+        "name": "딸기 도넛",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/09/Strawberry_Donut_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATakeout%20coffee%20%28New%20Horizons%29",
+        "name": "테이크아웃 커피",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 72,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "마스터",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 200,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/98/Takeout_Coffee_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATambourine%20%28New%20Horizons%29",
+        "name": "탬버린",
+        "uses": "무제한",
+        "hha_base": 103,
+        "sell": 375,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 1500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/8/8e/Tambourine_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATimer%20%28New%20Horizons%29",
+        "name": "타이머",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 210,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 840,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/c2/Timer_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATransceiver%20%28New%20Horizons%29",
+        "name": "무전기",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "도루묵",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/0/08/Transceiver_NH_Inv_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATree-branch%20wand%20%28New%20Horizons%29",
+        "name": "나뭇가지 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1550,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/c/cb/Tree-Branch_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATri%20Rod%20%28New%20Horizons%29",
+        "name": "트리 로드",
+        "uses": "무제한",
+        "hha_base": 201,
+        "sell": 3332,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "3.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 쇼핑",
+                "note": "''젤다의 전설''"
+            }
+        ],
+        "buy": [
+            {
+                "price": 13330,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/6/6c/Tri_Rod_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATulip%20wand%20%28New%20Horizons%29",
+        "name": "튤립 지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1580,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b4/Tulip_Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATweeter%20%28New%20Horizons%29",
+        "name": "코끼리 피리",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/21/Tweeter_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AUchiwa%20fan%20%28New%20Horizons%29",
+        "name": "둥글부채",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 200,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.4.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "너굴 상점",
+                "note": ""
+            },
+            {
+                "from": "여욱의 복권",
+                "note": "불꽃놀이"
+            }
+        ],
+        "buy": [
+            {
+                "price": 800,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/2/2d/Uchiwa_Fan_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AVanilla%20cone%20%28New%20Horizons%29",
+        "name": "바닐라 아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/3/34/Vanilla_Cone_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AVanilla%20soft%20serve%20%28New%20Horizons%29",
+        "name": "바닐라 소프트아이스크림",
+        "uses": "3번",
+        "hha_base": 0,
+        "sell": 150,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "여욱의 복권",
+                "note": "파니의 섬"
+            }
+        ],
+        "buy": [
+            {
+                "price": 500,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/b/b0/Vanilla_Soft_Serve_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AVaulting%20pole%20%28New%20Horizons%29",
+        "name": "높이뛰기 장대",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 600,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/5/51/Vaulting_Pole_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AVine%20ladder%20set-up%20kit%20%28New%20Horizons%29",
+        "name": "덩굴 사다리 FIX 키트",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1940,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "라이트 브라운",
+                "image_url": "https://dodo.ac/np/images/f/f3/Vine_Ladder_Set-Up_Kit_%28Light_Brown%29_NH_Icon.png"
+            },
+            {
+                "variation": "다크 브라운",
+                "image_url": "https://dodo.ac/np/images/8/8e/Vine_Ladder_Set-Up_Kit_%28Dark_Brown%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/a/ae/Vine_Ladder_Set-Up_Kit_%28White%29_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AWand%20%28New%20Horizons%29",
+        "name": "지팡이",
+        "uses": "무제한",
+        "hha_base": 0,
+        "sell": 1000,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_body_part": "",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/4/4d/Wand_NH_Icon.png"
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AWatering%20can%20%28New%20Horizons%29",
+        "name": "물뿌리개",
+        "uses": "60",
+        "hha_base": 0,
+        "sell": 600,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_body_part": "컬러",
+        "version_added": "1.0.0",
+        "unlocked": true,
+        "notes": "",
+        "availability": [
+            {
+                "from": "수예",
+                "note": ""
+            }
+        ],
+        "buy": [
+            {
+                "price": 2400,
+                "currency": "벨"
+            }
+        ],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/c/c6/Watering_Can_%28Blue%29_NH_Icon.png"
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/b/bd/Watering_Can_%28Orange%29_NH_Icon.png"
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/2/26/Watering_Can_%28Green%29_NH_Icon.png"
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/6/6a/Watering_Can_%28Red%29_NH_Icon.png"
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/d/d3/Watering_Can_%28Purple%29_NH_Icon.png"
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/0/0f/Watering_Can_%28Pink%29_NH_Icon.png"
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/d/de/Watering_Can_%28White%29_NH_Icon.png"
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/b/b2/Watering_Can_%28Black%29_NH_Icon.png"
+            }
+        ]
+    }
+]

@@ -1,0 +1,2426 @@
+[
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AAluminoid%20%28New%20Horizons%29",
+        "name": "양철 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 4,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "드럼",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "실버",
+                "image_url": "https://dodo.ac/np/images/9/97/Aluminoid_%28Silver%29_NH_Icon.png",
+                "colors": [
+                    "그레이"
+                ]
+            },
+            {
+                "variation": "경찰관",
+                "image_url": "https://dodo.ac/np/images/2/2e/Aluminoid_%28Copper%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/5/52/Aluminoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/6/64/Aluminoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AArfoid%20%28New%20Horizons%29",
+        "name": "멍멍 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/7/78/Arfoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/c/c3/Arfoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/b/b3/Arfoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/5/58/Arfoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/1/12/Arfoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABabbloid%20%28New%20Horizons%29",
+        "name": "베이비 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/9/9f/Babbloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/0/0c/Babbloid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/9/94/Babbloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/8/89/Babbloid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/6/66/Babbloid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/2/20/Babbloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "컬러풀"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABendoid%20%28New%20Horizons%29",
+        "name": "부웅 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "킥",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/8/86/Bendoid_%28Orange%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/9/9a/Bendoid_%28Beige%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/f/fa/Bendoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/5/55/Bendoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/e/e3/Bendoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/d/d0/Bendoid_%28Gray%29_NH_Icon.png",
+                "colors": [
+                    "그레이"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABloopoid%20%28New%20Horizons%29",
+        "name": "또록 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 4,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "스네어",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/b/bf/Bloopoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/7/76/Bloopoid_%28Red%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/d/dc/Bloopoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/d/d5/Bloopoid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoioingoid%20%28New%20Horizons%29",
+        "name": "가면 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "크래시",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/6/60/Boioingoid_%28Orange%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/f/ff/Boioingoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/4/42/Boioingoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/6/64/Boioingoid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/c/c8/Boioingoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            },
+            {
+                "variation": "우드",
+                "image_url": "https://dodo.ac/np/images/1/19/Boioingoid_%28Wood%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABoomoid%20%28New%20Horizons%29",
+        "name": "둥둥 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "킥",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/8/86/Boomoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "캐멀",
+                "image_url": "https://dodo.ac/np/images/a/a9/Boomoid_%28Camel%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/64/Boomoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/3/3a/Boomoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/a/ab/Boomoid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/7/7e/Boomoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABrewstoid%20%28New%20Horizons%29",
+        "name": "마스터 토용",
+        "hha_base": 153,
+        "sell": 828,
+        "variation_total": 0,
+        "customizable": false,
+        "custom_kits": 0,
+        "custom_kit_type": "",
+        "custom_body_part": "",
+        "cyrus_price": 0,
+        "sound": "스네어",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "마스터",
+                "note": "Sit down for coffee on 50 different days"
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "",
+                "image_url": "https://dodo.ac/np/images/9/95/Brewstoid_NH_Icon.png",
+                "colors": [
+                    "검은색",
+                    "그린"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABubbloid%20%28New%20Horizons%29",
+        "name": "뿌우 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/3/3b/Bubbloid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/5/50/Bubbloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/c/c9/Bubbloid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/1/17/Bubbloid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/6/64/Bubbloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ABwongoid%20%28New%20Horizons%29",
+        "name": "뚱땅 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 4,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/d/dd/Bwongoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/4/4c/Bwongoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "그린",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/d/d0/Bwongoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/3/3d/Bwongoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "하늘색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AClatteroid%20%28New%20Horizons%29",
+        "name": "딸깍 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "스네어",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "팝",
+                "image_url": "https://dodo.ac/np/images/1/1c/Clatteroid_%28Pop%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "컬러풀"
+                ]
+            },
+            {
+                "variation": "내추럴",
+                "image_url": "https://dodo.ac/np/images/a/ad/Clatteroid_%28Natural%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "쿨",
+                "image_url": "https://dodo.ac/np/images/a/a8/Clatteroid_%28Cool%29_NH_Icon.png",
+                "colors": [
+                    "블루",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "큐트",
+                "image_url": "https://dodo.ac/np/images/f/f8/Clatteroid_%28Cute%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "컬러풀"
+                ]
+            },
+            {
+                "variation": "시크",
+                "image_url": "https://dodo.ac/np/images/b/bd/Clatteroid_%28Chic%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ACrumploid%20%28New%20Horizons%29",
+        "name": "콰삭 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "스네어",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/5/5c/Crumploid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/6/61/Crumploid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/1/12/Crumploid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/1/10/Crumploid_%28Red%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/6d/Crumploid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/9/96/Crumploid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADootoid%20%28New%20Horizons%29",
+        "name": "뽀삐 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 7,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "드럼",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/4/44/Dootoid_%28Gray%29_NH_Icon.png",
+                "colors": [
+                    "그레이"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/0/00/Dootoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/0/0c/Dootoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/1/12/Dootoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/3/3f/Dootoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "블루"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/e/e9/Dootoid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/4/4a/Dootoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ADrummoid%20%28New%20Horizons%29",
+        "name": "둠칫 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "드럼",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/4/44/Drummoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "블루",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/0/0e/Drummoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/0/0d/Drummoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/5/5b/Drummoid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/e/e2/Drummoid_%28Gray%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AFlutteroid%20%28New%20Horizons%29",
+        "name": "푸르르 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "하이햇",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/8/83/Flutteroid_%28Orange%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "오렌지"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/4/45/Flutteroid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/3/3c/Flutteroid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/e/e7/Flutteroid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/4/49/Flutteroid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "하늘색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AJingloid%20%28New%20Horizons%29",
+        "name": "방울 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "크래시",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/5/55/Jingloid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플"
+                ]
+            },
+            {
+                "variation": "골드",
+                "image_url": "https://dodo.ac/np/images/b/b4/Jingloid_%28Gold%29_NH_Icon.png",
+                "colors": [
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/4/42/Jingloid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "실버",
+                "image_url": "https://dodo.ac/np/images/f/f8/Jingloid_%28Silver%29_NH_Icon.png",
+                "colors": [
+                    "그레이"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/8/80/Jingloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "컬러풀"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ALaseroid%20%28New%20Horizons%29",
+        "name": "삐융 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/f/f1/Laseroid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/1/15/Laseroid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/e/ee/Laseroid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/0/03/Laseroid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "실버",
+                "image_url": "https://dodo.ac/np/images/1/13/Laseroid_%28Silver%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "하늘색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AOinkoid%20%28New%20Horizons%29",
+        "name": "꿀꿀 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/c/c7/Oinkoid_%28Beige%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/2/21/Oinkoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/4/44/Oinkoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/7/74/Oinkoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/b/b4/Oinkoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/b/bf/Oinkoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3APetaloid%20%28New%20Horizons%29",
+        "name": "띠롱 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 7,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/3/3d/Petaloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "옐로",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/c/c0/Petaloid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/9/98/Petaloid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/d/d3/Petaloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/c/c1/Petaloid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/c/c4/Petaloid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/c/cc/Petaloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "하얀색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARattloid%20%28New%20Horizons%29",
+        "name": "땡그랑 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "크래시",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/d/dd/Rattloid_%28Red%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/d/d0/Rattloid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/f/f4/Rattloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/6/65/Rattloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/7/7a/Rattloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/4/4c/Rattloid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARingoid%20%28New%20Horizons%29",
+        "name": "딩동 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/9/99/Ringoid_%28Red%29_NH_Icon.png",
+                "colors": [
+                    "레드",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/e/e2/Ringoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/5/53/Ringoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/d/d0/Ringoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/2/27/Ringoid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/6/66/Ringoid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ARumbloid%20%28New%20Horizons%29",
+        "name": "베이스 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 7,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "킥",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/9/92/Rumbloid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/6/69/Rumbloid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/9/9b/Rumbloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/9/90/Rumbloid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/7/7c/Rumbloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/8/8b/Rumbloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "오렌지"
+                ]
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/3/3b/Rumbloid_%28Gray%29_NH_Icon.png",
+                "colors": [
+                    "그레이"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AScatteroid%20%28New%20Horizons%29",
+        "name": "쉐킷 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "하이햇",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "라이트 브라운",
+                "image_url": "https://dodo.ac/np/images/c/cb/Scatteroid_%28Light_Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "오렌지"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/e/e8/Scatteroid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/62/Scatteroid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/9/90/Scatteroid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/1/14/Scatteroid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASpikenoid%20%28New%20Horizons%29",
+        "name": "가시 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 7,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "하이햇",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/7/70/Spikenoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "옐로",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "오렌지",
+                "image_url": "https://dodo.ac/np/images/c/c1/Spikenoid_%28Orange%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/a/ad/Spikenoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "라이트 그린",
+                "image_url": "https://dodo.ac/np/images/8/87/Spikenoid_%28Light_Green%29_NH_Icon.png",
+                "colors": [
+                    "오렌지",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/8/86/Spikenoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "캐멀",
+                "image_url": "https://dodo.ac/np/images/1/19/Spikenoid_%28Camel%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/c/c4/Spikenoid_%28Gray%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "브라운"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASproingoid%20%28New%20Horizons%29",
+        "name": "뵤옹 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 4,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "스네어",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "캐멀",
+                "image_url": "https://dodo.ac/np/images/b/b0/Sproingoid_%28Camel%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/f/fc/Sproingoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/7/7a/Sproingoid_%28Red%29_NH_Icon.png",
+                "colors": [
+                    "레드"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/a/a1/Sproingoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "블루"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASqueakoid%20%28New%20Horizons%29",
+        "name": "삐뽀 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/5/52/Squeakoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "컬러풀",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/2/2a/Squeakoid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "컬러풀"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/e/eb/Squeakoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/a/a9/Squeakoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/7/77/Squeakoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ASqueezoid%20%28New%20Horizons%29",
+        "name": "끼익 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "하이햇",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/e/ed/Squeezoid_%28Beige%29_NH_Icon.png",
+                "colors": [
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/1/1c/Squeezoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/f/f8/Squeezoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/1/10/Squeezoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/3/39/Squeezoid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/b/b0/Squeezoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AStelloid%20%28New%20Horizons%29",
+        "name": "에코 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "크래시",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/a/a9/Stelloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/a/a7/Stelloid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/8/85/Stelloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/5/5e/Stelloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/4/45/Stelloid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AThwopoid%20%28New%20Horizons%29",
+        "name": "뽁 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 4,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "킥",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/e/ed/Thwopoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "베이지",
+                "image_url": "https://dodo.ac/np/images/3/38/Thwopoid_%28Beige%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "오렌지"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/5/59/Thwopoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "그레이",
+                "image_url": "https://dodo.ac/np/images/a/a7/Thwopoid_%28Gray%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "그린"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATockoid%20%28New%20Horizons%29",
+        "name": "똑딱 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "팝",
+                "image_url": "https://dodo.ac/np/images/a/af/Tockoid_%28Pop%29_NH_Icon.png",
+                "colors": [
+                    "베이지",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "내추럴",
+                "image_url": "https://dodo.ac/np/images/7/79/Tockoid_%28Natural%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "쿨",
+                "image_url": "https://dodo.ac/np/images/4/45/Tockoid_%28Cool%29_NH_Icon.png",
+                "colors": [
+                    "블루",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "큐트",
+                "image_url": "https://dodo.ac/np/images/e/e2/Tockoid_%28Cute%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "시크",
+                "image_url": "https://dodo.ac/np/images/b/b1/Tockoid_%28Chic%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "검은색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATremoloid%20%28New%20Horizons%29",
+        "name": "우와와 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/6/65/Tremoloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/1/11/Tremoloid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/0/00/Tremoloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "퍼플",
+                "image_url": "https://dodo.ac/np/images/8/8a/Tremoloid_%28Purple%29_NH_Icon.png",
+                "colors": [
+                    "퍼플"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/d/d4/Tremoloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "하얀색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3ATwangoid%20%28New%20Horizons%29",
+        "name": "디링 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/e/e1/Twangoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/6/65/Twangoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/6/67/Twangoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/f/f0/Twangoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "검은색",
+                    "블루"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/c/ca/Twangoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "검은색",
+                    "옐로"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AWallopoid%20%28New%20Horizons%29",
+        "name": "툭툭 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "드럼",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "캐멀",
+                "image_url": "https://dodo.ac/np/images/f/fb/Wallopoid_%28Camel%29_NH_Icon.png",
+                "colors": [
+                    "베이지"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/8/8d/Wallopoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/3/3d/Wallopoid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "블루",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/6/6a/Wallopoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/c/cf/Wallopoid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "하얀색"
+                ]
+            },
+            {
+                "variation": "검은색",
+                "image_url": "https://dodo.ac/np/images/d/dd/Wallopoid_%28Black%29_NH_Icon.png",
+                "colors": [
+                    "검은색",
+                    "레드"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AWhirroid%20%28New%20Horizons%29",
+        "name": "지직 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 4,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "드럼",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/c/cd/Whirroid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "레드",
+                "image_url": "https://dodo.ac/np/images/5/5e/Whirroid_%28Red%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "레드"
+                ]
+            },
+            {
+                "variation": "골드",
+                "image_url": "https://dodo.ac/np/images/3/37/Whirroid_%28Gold%29_NH_Icon.png",
+                "colors": [
+                    "그레이",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "실버",
+                "image_url": "https://dodo.ac/np/images/1/1f/Whirroid_%28Silver%29_NH_Icon.png",
+                "colors": [
+                    "그레이"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AWhistloid%20%28New%20Horizons%29",
+        "name": "후후 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 6,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/8/88/Whistloid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/4/46/Whistloid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운"
+                ]
+            },
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/e/ec/Whistloid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "그린",
+                "image_url": "https://dodo.ac/np/images/3/32/Whistloid_%28Green%29_NH_Icon.png",
+                "colors": [
+                    "그린"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/6/64/Whistloid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/3/3f/Whistloid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하얀색"
+                ]
+            }
+        ]
+    },
+    {
+        "url": "https://nookipedia.com/wiki/Item%3AXylophoid%20%28New%20Horizons%29",
+        "name": "벨 토용",
+        "hha_base": 207,
+        "sell": 828,
+        "variation_total": 5,
+        "customizable": true,
+        "custom_kits": 1,
+        "custom_kit_type": "리폼 키트",
+        "custom_body_part": "컬러",
+        "cyrus_price": 1000,
+        "sound": "멜로디",
+        "version_added": "2.0.0",
+        "unlocked": true,
+        "notes": "",
+        "grid_width": 1.0,
+        "grid_length": 1.0,
+        "availability": [
+            {
+                "from": "발굴 지점",
+                "note": ""
+            }
+        ],
+        "buy": [],
+        "variations": [
+            {
+                "variation": "옐로",
+                "image_url": "https://dodo.ac/np/images/4/44/Xylophoid_%28Yellow%29_NH_Icon.png",
+                "colors": [
+                    "퍼플",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "블루",
+                "image_url": "https://dodo.ac/np/images/f/f5/Xylophoid_%28Blue%29_NH_Icon.png",
+                "colors": [
+                    "하늘색",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "핑크",
+                "image_url": "https://dodo.ac/np/images/b/b5/Xylophoid_%28Pink%29_NH_Icon.png",
+                "colors": [
+                    "핑크",
+                    "그린"
+                ]
+            },
+            {
+                "variation": "하얀색",
+                "image_url": "https://dodo.ac/np/images/0/0d/Xylophoid_%28White%29_NH_Icon.png",
+                "colors": [
+                    "하얀색",
+                    "옐로"
+                ]
+            },
+            {
+                "variation": "브라운",
+                "image_url": "https://dodo.ac/np/images/5/55/Xylophoid_%28Brown%29_NH_Icon.png",
+                "colors": [
+                    "브라운",
+                    "블루"
+                ]
+            }
+        ]
+    }
+]

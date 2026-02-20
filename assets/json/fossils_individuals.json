@@ -1,0 +1,1038 @@
+[
+    {
+        "name": "아칸토스테가",
+        "url": "https://nookipedia.com/wiki/Acanthostega",
+        "image_url": "https://dodo.ac/np/images/e/e0/Acanthostega_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 2000,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "호박",
+        "url": "https://nookipedia.com/wiki/Amber",
+        "image_url": "https://dodo.ac/np/images/7/7f/Amber_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1200,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "옐로"
+        ]
+    },
+    {
+        "name": "암모나이트",
+        "url": "https://nookipedia.com/wiki/Ammonite",
+        "image_url": "https://dodo.ac/np/images/7/7f/Ammonite_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1100,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "안킬로사우루스의 머리",
+        "url": "https://nookipedia.com/wiki/Ankylosaurus",
+        "image_url": "https://dodo.ac/np/images/4/45/Ankylo_Skull_NH_Icon.png",
+        "fossil_group": "안킬로사우루스",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "안킬로사우루스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Ankylosaurus",
+        "image_url": "https://dodo.ac/np/images/b/bf/Ankylo_Tail_NH_Icon.png",
+        "fossil_group": "안킬로사우루스",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "안킬로사우루스의 몸통",
+        "url": "https://nookipedia.com/wiki/Ankylosaurus",
+        "image_url": "https://dodo.ac/np/images/c/c4/Ankylo_Torso_NH_Icon.png",
+        "fossil_group": "안킬로사우루스",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "아노말로카리스",
+        "url": "https://nookipedia.com/wiki/Anomalocaris",
+        "image_url": "https://dodo.ac/np/images/d/d8/Anomalocaris_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 2000,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "그레이",
+            "검은색"
+        ]
+    },
+    {
+        "name": "시조새",
+        "url": "https://nookipedia.com/wiki/Archaeopteryx",
+        "image_url": "https://dodo.ac/np/images/4/49/Archaeopteryx_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1300,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "아르켈론의 머리",
+        "url": "https://nookipedia.com/wiki/Archelon",
+        "image_url": "https://dodo.ac/np/images/b/be/Archelon_Skull_NH_Icon.png",
+        "fossil_group": "아르켈론",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "아르켈론의 몸통",
+        "url": "https://nookipedia.com/wiki/Archelon",
+        "image_url": "https://dodo.ac/np/images/f/fc/Archelon_Tail_NH_Icon.png",
+        "fossil_group": "아르켈론",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "오스트랄로피테쿠스",
+        "url": "https://nookipedia.com/wiki/Australopith",
+        "image_url": "https://dodo.ac/np/images/a/a8/Australopith_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1100,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "브라키오사우루스의 가슴",
+        "url": "https://nookipedia.com/wiki/Brachiosaurus",
+        "image_url": "https://dodo.ac/np/images/d/d0/Brachio_Chest_NH_Icon.png",
+        "fossil_group": "브라키오사우루스",
+        "interactable": false,
+        "sell": 5500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "브라키오사우루스의 허리",
+        "url": "https://nookipedia.com/wiki/Brachiosaurus",
+        "image_url": "https://dodo.ac/np/images/9/93/Brachio_Pelvis_NH_Icon.png",
+        "fossil_group": "브라키오사우루스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "브라키오사우루스의 머리",
+        "url": "https://nookipedia.com/wiki/Brachiosaurus",
+        "image_url": "https://dodo.ac/np/images/8/8f/Brachio_Skull_NH_Icon.png",
+        "fossil_group": "브라키오사우루스",
+        "interactable": false,
+        "sell": 6000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "브라키오사우루스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Brachiosaurus",
+        "image_url": "https://dodo.ac/np/images/0/0c/Brachio_Tail_NH_Icon.png",
+        "fossil_group": "브라키오사우루스",
+        "interactable": false,
+        "sell": 5500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "대변 화석",
+        "url": "https://nookipedia.com/wiki/Coprolite",
+        "image_url": "https://dodo.ac/np/images/2/24/Coprolite_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1100,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "데이노니쿠스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Deinonychus",
+        "image_url": "https://dodo.ac/np/images/9/95/Deinony_Tail_NH_Icon.png",
+        "fossil_group": "데이노니쿠스",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "데이노니쿠스의 머리",
+        "url": "https://nookipedia.com/wiki/Deinonychus",
+        "image_url": "https://dodo.ac/np/images/a/a7/Deinony_Torso_NH_Icon.png",
+        "fossil_group": "데이노니쿠스",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디메트로돈의 머리",
+        "url": "https://nookipedia.com/wiki/Dimetrodon",
+        "image_url": "https://dodo.ac/np/images/b/b8/Dimetrodon_Skull_NH_Icon.png",
+        "fossil_group": "디메트로돈",
+        "interactable": false,
+        "sell": 5500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디메트로돈의 몸통",
+        "url": "https://nookipedia.com/wiki/Dimetrodon",
+        "image_url": "https://dodo.ac/np/images/2/26/Dimetrodon_Torso_NH_Icon.png",
+        "fossil_group": "디메트로돈",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "발자국 화석",
+        "url": "https://nookipedia.com/wiki/Dinosaur%20track",
+        "image_url": "https://dodo.ac/np/images/d/d6/Dinosaur_Track_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1000,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "디플로도쿠스의 가슴",
+        "url": "https://nookipedia.com/wiki/Diplodocus",
+        "image_url": "https://dodo.ac/np/images/9/94/Diplo_Chest_NH_Icon.png",
+        "fossil_group": "디플로도쿠스",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디플로도쿠스의 목",
+        "url": "https://nookipedia.com/wiki/Diplodocus",
+        "image_url": "https://dodo.ac/np/images/4/4f/Diplo_Neck_NH_Icon.png",
+        "fossil_group": "디플로도쿠스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디플로도쿠스의 허리",
+        "url": "https://nookipedia.com/wiki/Diplodocus",
+        "image_url": "https://dodo.ac/np/images/7/77/Diplo_Pelvis_NH_Icon.png",
+        "fossil_group": "디플로도쿠스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디플로도쿠스의 머리",
+        "url": "https://nookipedia.com/wiki/Diplodocus",
+        "image_url": "https://dodo.ac/np/images/4/46/Diplo_Skull_NH_Icon.png",
+        "fossil_group": "디플로도쿠스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디플로도쿠스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Diplodocus",
+        "image_url": "https://dodo.ac/np/images/2/2d/Diplo_Tail_NH_Icon.png",
+        "fossil_group": "디플로도쿠스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "디플로도쿠스의 꼬리 끝",
+        "url": "https://nookipedia.com/wiki/Diplodocus",
+        "image_url": "https://dodo.ac/np/images/4/41/Diplo_Tail_Tip_NH_Icon.png",
+        "fossil_group": "디플로도쿠스",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "둔클레오스테우스",
+        "url": "https://nookipedia.com/wiki/Dunkleosteus",
+        "image_url": "https://dodo.ac/np/images/3/36/Dunkleosteus_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "그레이",
+            "브라운"
+        ]
+    },
+    {
+        "name": "에우스테놉테론",
+        "url": "https://nookipedia.com/wiki/Eusthenopteron",
+        "image_url": "https://dodo.ac/np/images/c/cc/Eusthenopteron_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 2000,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "이구아노돈의 머리",
+        "url": "https://nookipedia.com/wiki/Iguanodon",
+        "image_url": "https://dodo.ac/np/images/1/14/Iguanodon_Skull_NH_Icon.png",
+        "fossil_group": "이구아노돈",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "이구아노돈의 꼬리",
+        "url": "https://nookipedia.com/wiki/Iguanodon",
+        "image_url": "https://dodo.ac/np/images/0/07/Iguanodon_Tail_NH_Icon.png",
+        "fossil_group": "이구아노돈",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "이구아노돈의 몸통",
+        "url": "https://nookipedia.com/wiki/Iguanodon",
+        "image_url": "https://dodo.ac/np/images/c/c6/Iguanodon_Torso_NH_Icon.png",
+        "fossil_group": "이구아노돈",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "쥐라마이아",
+        "url": "https://nookipedia.com/wiki/Juramaia",
+        "image_url": "https://dodo.ac/np/images/5/5d/Juramaia_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1500,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "메갈로케로스의 왼쪽 반신",
+        "url": "https://nookipedia.com/wiki/Megaloceros",
+        "image_url": "https://dodo.ac/np/images/e/e1/Left_Megalo_Side_NH_Icon.png",
+        "fossil_group": "메갈로케로스",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "프테라노돈의 왼날개",
+        "url": "https://nookipedia.com/wiki/Pteranodon",
+        "image_url": "https://dodo.ac/np/images/1/11/Left_Ptera_Wing_NH_Icon.png",
+        "fossil_group": "프테라노돈",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "케찰코아틀루스의 왼날개",
+        "url": "https://nookipedia.com/wiki/Quetzalcoatlus",
+        "image_url": "https://dodo.ac/np/images/1/1a/Left_Quetzal_Wing_NH_Icon.png",
+        "fossil_group": "케찰코아틀루스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "매머드의 머리",
+        "url": "https://nookipedia.com/wiki/Mammoth",
+        "image_url": "https://dodo.ac/np/images/8/84/Mammoth_Skull_NH_Icon.png",
+        "fossil_group": "매머드",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "매머드의 몸통",
+        "url": "https://nookipedia.com/wiki/Mammoth",
+        "image_url": "https://dodo.ac/np/images/6/66/Mammoth_Torso_NH_Icon.png",
+        "fossil_group": "매머드",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "메가케롭스의 머리",
+        "url": "https://nookipedia.com/wiki/Megacerops",
+        "image_url": "https://dodo.ac/np/images/f/fb/Megacero_Skull_NH_Icon.png",
+        "fossil_group": "메가케롭스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "메가케롭스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Megacerops",
+        "image_url": "https://dodo.ac/np/images/e/ee/Megacero_Tail_NH_Icon.png",
+        "fossil_group": "메가케롭스",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "메가케롭스의 몸통",
+        "url": "https://nookipedia.com/wiki/Megacerops",
+        "image_url": "https://dodo.ac/np/images/e/ec/Megacero_Torso_NH_Icon.png",
+        "fossil_group": "메가케롭스",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "밀로쿤밍기아",
+        "url": "https://nookipedia.com/wiki/Myllokunmingia",
+        "image_url": "https://dodo.ac/np/images/d/d4/Myllokunmingia_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1500,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "그레이"
+        ]
+    },
+    {
+        "name": "오프탈모사우루스의 머리",
+        "url": "https://nookipedia.com/wiki/Ophthalmosaurus",
+        "image_url": "https://dodo.ac/np/images/e/e0/Ophthalmo_Skull_NH_Icon.png",
+        "fossil_group": "오프탈모사우루스",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "오프탈모사우루스의 몸통",
+        "url": "https://nookipedia.com/wiki/Ophthalmosaurus",
+        "image_url": "https://dodo.ac/np/images/5/5f/Ophthalmo_Torso_NH_Icon.png",
+        "fossil_group": "오프탈모사우루스",
+        "interactable": false,
+        "sell": 2000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "pachy skull",
+        "url": "https://nookipedia.com/wiki/Pachycephalosaurus",
+        "image_url": "https://dodo.ac/np/images/a/ab/Pachy_Skull_NH_Icon.png",
+        "fossil_group": "파키케팔로사우루스",
+        "interactable": true,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "pachy tail",
+        "url": "https://nookipedia.com/wiki/Pachycephalosaurus",
+        "image_url": "https://dodo.ac/np/images/2/27/Pachy_Tail_NH_Icon.png",
+        "fossil_group": "파키케팔로사우루스",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "파라사우롤로푸스의 머리",
+        "url": "https://nookipedia.com/wiki/Parasaurolophus",
+        "image_url": "https://dodo.ac/np/images/d/d5/Parasaur_Skull_NH_Icon.png",
+        "fossil_group": "파라사우롤로푸스",
+        "interactable": false,
+        "sell": 3500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "파라사우롤로푸스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Parasaurolophus",
+        "image_url": "https://dodo.ac/np/images/7/76/Parasaur_Tail_NH_Icon.png",
+        "fossil_group": "파라사우롤로푸스",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "파라사우롤로푸스의 몸통",
+        "url": "https://nookipedia.com/wiki/Parasaurolophus",
+        "image_url": "https://dodo.ac/np/images/6/68/Parasaur_Torso_NH_Icon.png",
+        "fossil_group": "파라사우롤로푸스",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "후타바사우루스의 머리",
+        "url": "https://nookipedia.com/wiki/Plesiosaurus",
+        "image_url": "https://dodo.ac/np/images/d/d8/Plesio_Skull_NH_Icon.png",
+        "fossil_group": "후타바사우루스",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "후타바사우루스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Plesiosaurus",
+        "image_url": "https://dodo.ac/np/images/e/ed/Plesio_Tail_NH_Icon.png",
+        "fossil_group": "후타바사우루스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "후타바사우루스의 몸통",
+        "url": "https://nookipedia.com/wiki/Plesiosaurus",
+        "image_url": "https://dodo.ac/np/images/7/7b/Plesio_Torso_NH_Icon.png",
+        "fossil_group": "후타바사우루스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "프테라노돈의 머리",
+        "url": "https://nookipedia.com/wiki/Pteranodon",
+        "image_url": "https://dodo.ac/np/images/f/f6/Ptera_Body_NH_Icon.png",
+        "fossil_group": "프테라노돈",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "케찰코아틀루스의 머리",
+        "url": "https://nookipedia.com/wiki/Quetzalcoatlus",
+        "image_url": "https://dodo.ac/np/images/3/3a/Quetzal_Torso_NH_Icon.png",
+        "fossil_group": "케찰코아틀루스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "메갈로케로스의 오른쪽 반신",
+        "url": "https://nookipedia.com/wiki/Megaloceros",
+        "image_url": "https://dodo.ac/np/images/e/e4/Right_Megalo_Side_NH_Icon.png",
+        "fossil_group": "메갈로케로스",
+        "interactable": false,
+        "sell": 5500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "프테라노돈의 오른날개",
+        "url": "https://nookipedia.com/wiki/Pteranodon",
+        "image_url": "https://dodo.ac/np/images/0/0c/Right_Ptera_Wing_NH_Icon.png",
+        "fossil_group": "프테라노돈",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "케찰코아틀루스의 오른날개",
+        "url": "https://nookipedia.com/wiki/Quetzalcoatlus",
+        "image_url": "https://dodo.ac/np/images/b/b3/Right_Quetzal_Wing_NH_Icon.png",
+        "fossil_group": "케찰코아틀루스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스밀로돈의 머리",
+        "url": "https://nookipedia.com/wiki/Sabertooth%20Tiger",
+        "image_url": "https://dodo.ac/np/images/6/6c/Sabertooth_Skull_NH_Icon.png",
+        "fossil_group": "스밀로돈",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스밀로돈의 몸통",
+        "url": "https://nookipedia.com/wiki/Sabertooth%20Tiger",
+        "image_url": "https://dodo.ac/np/images/1/13/Sabertooth_Tail_NH_Icon.png",
+        "fossil_group": "스밀로돈",
+        "interactable": false,
+        "sell": 2000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "상어 이빨 화석",
+        "url": "https://nookipedia.com/wiki/Shark-tooth%20pattern",
+        "image_url": "https://dodo.ac/np/images/b/b1/Shark-Tooth_Pattern_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1000,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    },
+    {
+        "name": "스피노사우루스의 머리",
+        "url": "https://nookipedia.com/wiki/Spinosaurus",
+        "image_url": "https://dodo.ac/np/images/7/7b/Spino_Skull_NH_Icon.png",
+        "fossil_group": "스피노사우루스",
+        "interactable": true,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스피노사우루스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Spinosaurus",
+        "image_url": "https://dodo.ac/np/images/4/40/Spino_Tail_NH_Icon.png",
+        "fossil_group": "스피노사우루스",
+        "interactable": false,
+        "sell": 2500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스피노사우루스의 몸통",
+        "url": "https://nookipedia.com/wiki/Spinosaurus",
+        "image_url": "https://dodo.ac/np/images/9/92/Spino_Torso_NH_Icon.png",
+        "fossil_group": "스피노사우루스",
+        "interactable": false,
+        "sell": 3000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스테고사우루스의 머리",
+        "url": "https://nookipedia.com/wiki/Stegosaurus",
+        "image_url": "https://dodo.ac/np/images/c/c0/Stego_Skull_NH_Icon.png",
+        "fossil_group": "스테고사우루스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스테고사우루스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Stegosaurus",
+        "image_url": "https://dodo.ac/np/images/d/df/Stego_Tail_NH_Icon.png",
+        "fossil_group": "스테고사우루스",
+        "interactable": false,
+        "sell": 4000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "스테고사우루스의 몸통",
+        "url": "https://nookipedia.com/wiki/Stegosaurus",
+        "image_url": "https://dodo.ac/np/images/7/7f/Stego_Torso_NH_Icon.png",
+        "fossil_group": "스테고사우루스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "티렉스의 머리",
+        "url": "https://nookipedia.com/wiki/T.%20Rex",
+        "image_url": "https://dodo.ac/np/images/9/96/T._Rex_Skull_NH_Icon.png",
+        "fossil_group": "티렉스",
+        "interactable": true,
+        "sell": 6000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "티렉스의 꼬리",
+        "url": "https://nookipedia.com/wiki/T.%20Rex",
+        "image_url": "https://dodo.ac/np/images/d/d5/T._Rex_Tail_NH_Icon.png",
+        "fossil_group": "티렉스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "티렉스의 몸통",
+        "url": "https://nookipedia.com/wiki/T.%20Rex",
+        "image_url": "https://dodo.ac/np/images/e/ee/T._Rex_Torso_NH_Icon.png",
+        "fossil_group": "티렉스",
+        "interactable": false,
+        "sell": 5500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "트리케라톱스의 머리",
+        "url": "https://nookipedia.com/wiki/Triceratops",
+        "image_url": "https://dodo.ac/np/images/9/9f/Tricera_Skull_NH_Icon.png",
+        "fossil_group": "트리케라톱스",
+        "interactable": true,
+        "sell": 5500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "트리케라톱스의 꼬리",
+        "url": "https://nookipedia.com/wiki/Triceratops",
+        "image_url": "https://dodo.ac/np/images/8/8b/Tricera_Tail_NH_Icon.png",
+        "fossil_group": "트리케라톱스",
+        "interactable": false,
+        "sell": 4500,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "트리케라톱스의 몸통",
+        "url": "https://nookipedia.com/wiki/Triceratops",
+        "image_url": "https://dodo.ac/np/images/7/7b/Tricera_Torso_NH_Icon.png",
+        "fossil_group": "트리케라톱스",
+        "interactable": false,
+        "sell": 5000,
+        "hha_base": 87,
+        "width": 2.0,
+        "length": 2.0,
+        "colors": [
+            "브라운"
+        ]
+    },
+    {
+        "name": "삼엽충",
+        "url": "https://nookipedia.com/wiki/Trilobite",
+        "image_url": "https://dodo.ac/np/images/a/ac/Trilobite_NH_Icon.png",
+        "fossil_group": "",
+        "interactable": false,
+        "sell": 1300,
+        "hha_base": 87,
+        "width": 1.0,
+        "length": 1.0,
+        "colors": [
+            "브라운",
+            "베이지"
+        ]
+    }
+]

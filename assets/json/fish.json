@@ -1,0 +1,6515 @@
+[
+    {
+        "name": "안쵸비",
+        "url": "https://nookipedia.com/wiki/Anchovy%20%28fish%29",
+        "number": "56",
+        "image_url": "https://dodo.ac/np/images/7/7f/Anchovy_%28Fish%29_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/19/Anchovy_%28Fish%29_NH.png",
+        "catchphrase": "I caught an anchovy! Stay away from my pizza!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_cj": "300",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 4시 – 오후 9시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught an anchovy! Stay away from my pizza!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 4시 – 오후 9시",
+            "2": "오전 4시 – 오후 9시",
+            "3": "오전 4시 – 오후 9시",
+            "4": "오전 4시 – 오후 9시",
+            "5": "오전 4시 – 오후 9시",
+            "6": "오전 4시 – 오후 9시",
+            "7": "오전 4시 – 오후 9시",
+            "8": "오전 4시 – 오후 9시",
+            "9": "오전 4시 – 오후 9시",
+            "10": "오전 4시 – 오후 9시",
+            "11": "오전 4시 – 오후 9시",
+            "12": "오전 4시 – 오후 9시"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 9시",
+            "2": "오전 4시 – 오후 9시",
+            "3": "오전 4시 – 오후 9시",
+            "4": "오전 4시 – 오후 9시",
+            "5": "오전 4시 – 오후 9시",
+            "6": "오전 4시 – 오후 9시",
+            "7": "오전 4시 – 오후 9시",
+            "8": "오전 4시 – 오후 9시",
+            "9": "오전 4시 – 오후 9시",
+            "10": "오전 4시 – 오후 9시",
+            "11": "오전 4시 – 오후 9시",
+            "12": "오전 4시 – 오후 9시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "천사어",
+        "url": "https://nookipedia.com/wiki/Angelfish",
+        "number": "36",
+        "image_url": "https://dodo.ac/np/images/c/cd/Angelfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/69/Angelfish_NH.png",
+        "catchphrase": "I caught an angelfish! That other fish told me to do it!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "3000",
+        "sell_cj": "4500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught an angelfish! That other fish told me to do it!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "피라루쿠",
+        "url": "https://nookipedia.com/wiki/Arapaima",
+        "number": "44",
+        "image_url": "https://dodo.ac/np/images/b/b1/Arapaima_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/89/Arapaima_NH.png",
+        "catchphrase": "I caught an arapaima! How did it get here? Arapaiknow!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "10000",
+        "sell_cj": "15000",
+        "tank_width": "3",
+        "tank_length": "2",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught an arapaima! How did it get here? Arapaiknow!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "아로와나",
+        "url": "https://nookipedia.com/wiki/Arowana",
+        "number": "41",
+        "image_url": "https://dodo.ac/np/images/6/67/Arowana_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/9a/Arowana_NH.png",
+        "catchphrase": "I caught an arowana! I'd make a joke but I don't 'wana.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "큼",
+        "rarity": "보통",
+        "total_catch": "50",
+        "sell_nook": "10000",
+        "sell_cj": "15000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught an arowana! I'd make a joke but I don't 'wana."
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "돌돔",
+        "url": "https://nookipedia.com/wiki/Barred%20knifejaw",
+        "number": "58",
+        "image_url": "https://dodo.ac/np/images/d/d5/Barred_Knifejaw_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/17/Barred_Knifejaw_NH.png",
+        "catchphrase": "I caught a barred knifejaw! They must have a hard time eating!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "중간",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "5000",
+        "sell_cj": "7500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "3월 – 11월",
+        "s_availability": "9월 – 5월",
+        "catchphrases": [
+            "I caught a barred knifejaw! They must have a hard time eating!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "데메니기스",
+        "url": "https://nookipedia.com/wiki/Barreleye",
+        "number": "79",
+        "image_url": "https://dodo.ac/np/images/e/e0/Barreleye_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/40/Barreleye_NH.png",
+        "catchphrase": "I caught a barreleye! Like eyeing fish in a barrel!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "작음",
+        "rarity": "희귀",
+        "total_catch": "100",
+        "sell_nook": "15000",
+        "sell_cj": "22500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 9시 – 오전 4시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a barreleye! Like eyeing fish in a barrel!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 9시 – 오전 4시",
+            "2": "오후 9시 – 오전 4시",
+            "3": "오후 9시 – 오전 4시",
+            "4": "오후 9시 – 오전 4시",
+            "5": "오후 9시 – 오전 4시",
+            "6": "오후 9시 – 오전 4시",
+            "7": "오후 9시 – 오전 4시",
+            "8": "오후 9시 – 오전 4시",
+            "9": "오후 9시 – 오전 4시",
+            "10": "오후 9시 – 오전 4시",
+            "11": "오후 9시 – 오전 4시",
+            "12": "오후 9시 – 오전 4시"
+        },
+        "times_by_month_south": {
+            "1": "오후 9시 – 오전 4시",
+            "2": "오후 9시 – 오전 4시",
+            "3": "오후 9시 – 오전 4시",
+            "4": "오후 9시 – 오전 4시",
+            "5": "오후 9시 – 오전 4시",
+            "6": "오후 9시 – 오전 4시",
+            "7": "오후 9시 – 오전 4시",
+            "8": "오후 9시 – 오전 4시",
+            "9": "오후 9시 – 오전 4시",
+            "10": "오후 9시 – 오전 4시",
+            "11": "오후 9시 – 오전 4시",
+            "12": "오후 9시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "베타",
+        "url": "https://nookipedia.com/wiki/Betta",
+        "number": "37",
+        "image_url": "https://dodo.ac/np/images/0/0b/Betta_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/7f/Betta_NH.png",
+        "catchphrase": "I caught a betta! I betta not drop it!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "2500",
+        "sell_cj": "3750",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught a betta! I betta not drop it!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "납줄개",
+        "url": "https://nookipedia.com/wiki/Bitterling",
+        "number": "1",
+        "image_url": "https://dodo.ac/np/images/4/4d/Bitterling_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/86/Bitterling_NH.png",
+        "catchphrase": "I caught a bitterling! It's mad at me, but only a little.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "아주 작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "900",
+        "sell_cj": "1350",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "11월 – 3월",
+        "s_availability": "5월 – 9월",
+        "catchphrases": [
+            "I caught a bitterling! It's mad at me, but only a little."
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ]
+    },
+    {
+        "name": "큰입배스",
+        "url": "https://nookipedia.com/wiki/Black%20bass",
+        "number": "22",
+        "image_url": "https://dodo.ac/np/images/0/00/Black_Bass_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/4b/Black_Bass_NH.png",
+        "catchphrase": "I caught a black bass! The most metal of all fish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_cj": "600",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a black bass! The most metal of all fish!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "복어",
+        "url": "https://nookipedia.com/wiki/Blowfish",
+        "number": "54",
+        "image_url": "https://dodo.ac/np/images/9/95/Blowfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/29/Blowfish_NH.png",
+        "catchphrase": "I caught a blowfish! I'm blown away!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "중간",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "5000",
+        "sell_cj": "7500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 9시 – 오전 4시",
+        "n_availability": "11월 – 2월",
+        "s_availability": "5월 – 8월",
+        "catchphrases": [
+            "I caught a blowfish! I'm blown away!"
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 2월",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 8월",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 9시 – 오전 4시",
+            "2": "오후 9시 – 오전 4시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오후 9시 – 오전 4시",
+            "12": "오후 9시 – 오전 4시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오후 9시 – 오전 4시",
+            "6": "오후 9시 – 오전 4시",
+            "7": "오후 9시 – 오전 4시",
+            "8": "오후 9시 – 오전 4시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8"
+        ]
+    },
+    {
+        "name": "청새치",
+        "url": "https://nookipedia.com/wiki/Blue%20marlin",
+        "number": "67",
+        "image_url": "https://dodo.ac/np/images/2/2a/Blue_Marlin_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/0e/Blue_Marlin_NH.png",
+        "catchphrase": "I caught a blue marlin! Listen to this fish. It's got a point.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "부둣가",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "10000",
+        "sell_cj": "15000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "11월 – 4월; 7월 – 9월",
+        "s_availability": "1월 – 3월; 5월 – 10월",
+        "catchphrases": [
+            "I caught a blue marlin! Listen to this fish. It's got a point."
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 4월; 7월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월; 5월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "7",
+            "8",
+            "9",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ]
+    },
+    {
+        "name": "블루길",
+        "url": "https://nookipedia.com/wiki/Bluegill",
+        "number": "20",
+        "image_url": "https://dodo.ac/np/images/0/0c/Bluegill_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/05/Bluegill_NH.png",
+        "catchphrase": "I caught a bluegill! Do you think it calls me \"pinklung\"?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "180",
+        "sell_cj": "270",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a bluegill! Do you think it calls me \"pinklung\"?"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "나비고기",
+        "url": "https://nookipedia.com/wiki/Butterfly%20fish",
+        "number": "51",
+        "image_url": "https://dodo.ac/np/images/4/47/Butterfly_Fish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/ef/Butterfly_Fish_NH.png",
+        "catchphrase": "I caught a butterfly fish! Did it change from a caterpillar fish?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_cj": "1500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught a butterfly fish! Did it change from a caterpillar fish?"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "잉어",
+        "url": "https://nookipedia.com/wiki/Carp",
+        "number": "5",
+        "image_url": "https://dodo.ac/np/images/5/5d/Carp_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/39/Carp_NH.png",
+        "catchphrase": "I caught a carp! If I catch another, they can carpool!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_cj": "450",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a carp! If I catch another, they can carpool!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "메기",
+        "url": "https://nookipedia.com/wiki/Catfish",
+        "number": "18",
+        "image_url": "https://dodo.ac/np/images/0/0d/Catfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/32/Catfish_NH.png",
+        "catchphrase": "I caught a catfish! I'm more of a dogfish person...",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "800",
+        "sell_cj": "1200",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught a catfish! I'm more of a dogfish person..."
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "열목어",
+        "url": "https://nookipedia.com/wiki/Char",
+        "number": "28",
+        "image_url": "https://dodo.ac/np/images/8/80/Char_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/0/0f/Char_NH.png",
+        "catchphrase": "I caught a char! Now I'm gonna sit on it!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "절벽 위 강",
+        "shadow_size": "중간",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "3800",
+        "sell_cj": "5700",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "3월 – 6월; 9월 – 11월",
+        "s_availability": "3월 – 5월; 9월 – 12월",
+        "catchphrases": [
+            "I caught a char! Now I'm gonna sit on it!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 6월",
+                "time": "오후 4시 – 오전 9시"
+            },
+            {
+                "months": "9월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 12월",
+                "time": "오후 4시 – 오전 9시"
+            },
+            {
+                "months": "3월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "3",
+            "4",
+            "5",
+            "6",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3",
+            "4",
+            "5",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "산천어",
+        "url": "https://nookipedia.com/wiki/Cherry%20salmon",
+        "number": "27",
+        "image_url": "https://dodo.ac/np/images/d/db/Cherry_Salmon_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c0/Cherry_Salmon_NH.png",
+        "catchphrase": "I caught a cherry salmon! It's the perfect topper for a marlin sundae!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "절벽 위 강",
+        "shadow_size": "중간",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_cj": "1500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "3월 – 6월; 9월 – 11월",
+        "s_availability": "3월 – 5월; 9월 – 12월",
+        "catchphrases": [
+            "I caught a cherry salmon! It's the perfect topper for a marlin sundae!"
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 6월",
+                "time": "오후 4시 – 오전 9시"
+            },
+            {
+                "months": "9월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 12월",
+                "time": "오후 4시 – 오전 9시"
+            },
+            {
+                "months": "3월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "3",
+            "4",
+            "5",
+            "6",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3",
+            "4",
+            "5",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "흰동가리",
+        "url": "https://nookipedia.com/wiki/Clown%20fish",
+        "number": "49",
+        "image_url": "https://dodo.ac/np/images/4/4f/Clown_Fish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/94/Clown_Fish_NH.png",
+        "catchphrase": "I caught a clown fish! How many can fit in a carfish?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "아주 작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "650",
+        "sell_cj": "975",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught a clown fish! How many can fit in a carfish?"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "실러캔스",
+        "url": "https://nookipedia.com/wiki/Coelacanth",
+        "number": "80",
+        "image_url": "https://dodo.ac/np/images/4/45/Coelacanth_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/b5/Coelacanth_NH.png",
+        "catchphrase": "Blast from the past! I caught a coelacanth! Think positive! Be a coela-CAN!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다(비 오는 날)",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "100",
+        "sell_nook": "15000",
+        "sell_cj": "22500",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "Blast from the past! I caught a coelacanth! Think positive! Be a coela-CAN!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "가재",
+        "url": "https://nookipedia.com/wiki/Crawfish",
+        "number": "11",
+        "image_url": "https://dodo.ac/np/images/9/96/Crawfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/b6/Crawfish_NH.png",
+        "catchphrase": "I caught a crawfish! Or else it's a lobster, and I'm a giant!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_cj": "300",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught a crawfish! Or else it's a lobster, and I'm a giant!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "붕어",
+        "url": "https://nookipedia.com/wiki/Crucian%20carp",
+        "number": "3",
+        "image_url": "https://dodo.ac/np/images/f/f2/Crucian_Carp_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/5c/Crucian_Carp_NH.png",
+        "catchphrase": "I caught a crucian carp! My skills are sharp!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "160",
+        "sell_cj": "240",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a crucian carp! My skills are sharp!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "가자미",
+        "url": "https://nookipedia.com/wiki/Dab",
+        "number": "61",
+        "image_url": "https://dodo.ac/np/images/1/1f/Dab_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/e0/Dab_NH.png",
+        "catchphrase": "I caught a dab! Not bad!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_cj": "450",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "10월 – 4월",
+        "s_availability": "4월 – 10월",
+        "catchphrases": [
+            "I caught a dab! Not bad!"
+        ],
+        "availability_north": [
+            {
+                "months": "10월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "4월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ]
+    },
+    {
+        "name": "황어",
+        "url": "https://nookipedia.com/wiki/Dace",
+        "number": "4",
+        "image_url": "https://dodo.ac/np/images/d/db/Dace_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/34/Dace_NH.png",
+        "catchphrase": "I caught a dace! Hope I have some space!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "240",
+        "sell_cj": "360",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a dace! Hope I have some space!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "도라도",
+        "url": "https://nookipedia.com/wiki/Dorado",
+        "number": "42",
+        "image_url": "https://dodo.ac/np/images/f/fe/Dorado_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/2f/Dorado_NH.png",
+        "catchphrase": "I caught a dorado! ♪I say \"Dorado\", you say \"Doraydo.\"♪",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "매우 큼",
+        "rarity": "희귀",
+        "total_catch": "100",
+        "sell_nook": "15000",
+        "sell_cj": "22500",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오전 4시 – 오후 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a dorado! ♪I say \"Dorado\", you say \"Doraydo.\"♪"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오전 4시 – 오후 9시",
+            "7": "오전 4시 – 오후 9시",
+            "8": "오전 4시 – 오후 9시",
+            "9": "오전 4시 – 오후 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 9시",
+            "2": "오전 4시 – 오후 9시",
+            "3": "오전 4시 – 오후 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오전 4시 – 오후 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "초롱아귀",
+        "url": "https://nookipedia.com/wiki/Football%20fish",
+        "number": "77",
+        "image_url": "https://dodo.ac/np/images/3/34/Football_Fish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/ef/Football_Fish_NH.png",
+        "catchphrase": "I caught a football fish! Some countries call it a soccer fish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "큼",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "2500",
+        "sell_cj": "3750",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "11월 – 3월",
+        "s_availability": "5월 – 9월",
+        "catchphrases": [
+            "I caught a football fish! Some countries call it a soccer fish!"
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ]
+    },
+    {
+        "name": "동사리",
+        "url": "https://nookipedia.com/wiki/Freshwater%20goby",
+        "number": "16",
+        "image_url": "https://dodo.ac/np/images/e/ec/Freshwater_Goby_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/5/5a/Freshwater_Goby_NH.png",
+        "catchphrase": "I caught a freshwater goby! Time to go bye-bye!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_cj": "600",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a freshwater goby! Time to go bye-bye!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "개구리",
+        "url": "https://nookipedia.com/wiki/Frog%20%28fish%29",
+        "number": "15",
+        "image_url": "https://dodo.ac/np/images/2/2f/Frog_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/b7/Frog_NH.png",
+        "catchphrase": "I caught a frog! Or it's a new neighbor... and I have some apologizing to do.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "120",
+        "sell_cj": "180",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "5월 – 8월",
+        "s_availability": "11월 – 2월",
+        "catchphrases": [
+            "I caught a frog! Or it's a new neighbor... and I have some apologizing to do."
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "가아",
+        "url": "https://nookipedia.com/wiki/Gar",
+        "number": "43",
+        "image_url": "https://dodo.ac/np/images/a/a2/Gar_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c8/Gar_NH.png",
+        "catchphrase": "I caught a gar! Yar! It's a gar! Har Har!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "매우 큼",
+        "rarity": "보통",
+        "total_catch": "50",
+        "sell_nook": "6000",
+        "sell_cj": "9000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a gar! Yar! It's a gar! Har Har!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "가물치",
+        "url": "https://nookipedia.com/wiki/Giant%20snakehead",
+        "number": "19",
+        "image_url": "https://dodo.ac/np/images/5/50/Giant_Snakehead_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/29/Giant_Snakehead_NH.png",
+        "catchphrase": "I caught a giant snakehead! Um...but I asked for a medium?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "큼",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "5500",
+        "sell_cj": "8250",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "6월 – 8월",
+        "s_availability": "12월 – 2월",
+        "catchphrases": [
+            "I caught a giant snakehead! Um...but I asked for a medium?"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 8월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 2월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "12"
+        ]
+    },
+    {
+        "name": "무명갈전갱이",
+        "url": "https://nookipedia.com/wiki/Giant%20trevally",
+        "number": "68",
+        "image_url": "https://dodo.ac/np/images/1/17/Giant_Trevally_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1a/Giant_Trevally_NH.png",
+        "catchphrase": "I caught a giant trevally! Yeah, I'm pretty well-trevalled.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "부둣가",
+        "shadow_size": "매우 큼",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "4500",
+        "sell_cj": "6750",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught a giant trevally! Yeah, I'm pretty well-trevalled."
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "금송어",
+        "url": "https://nookipedia.com/wiki/Golden%20trout",
+        "number": "29",
+        "image_url": "https://dodo.ac/np/images/f/fc/Golden_Trout_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/a/af/Golden_Trout_NH.png",
+        "catchphrase": "I caught a golden trout! But the real treasure? Friendship.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "절벽 위 강",
+        "shadow_size": "중간",
+        "rarity": "희귀",
+        "total_catch": "100",
+        "sell_nook": "15000",
+        "sell_cj": "22500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "3월 – 5월; 9월 – 11월",
+        "s_availability": "3월 – 5월; 9월 – 11월",
+        "catchphrases": [
+            "I caught a golden trout! But the real treasure? Friendship."
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 5월; 9월 – 11월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 5월; 9월 – 11월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "3",
+            "4",
+            "5",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3",
+            "4",
+            "5",
+            "9",
+            "10",
+            "11"
+        ]
+    },
+    {
+        "name": "금붕어",
+        "url": "https://nookipedia.com/wiki/Goldfish",
+        "number": "7",
+        "image_url": "https://dodo.ac/np/images/7/71/Goldfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/e7/Goldfish_NH.png",
+        "catchphrase": "I caught a goldfish! It's worth its weight in fish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "아주 작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "1300",
+        "sell_cj": "1950",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a goldfish! It's worth its weight in fish!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "상어",
+        "url": "https://nookipedia.com/wiki/Great%20white%20shark",
+        "number": "74",
+        "image_url": "https://dodo.ac/np/images/2/20/Great_White_Shark_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/41/Great_White_Shark_NH.png",
+        "catchphrase": "I caught a great white shark! Watch out for its jaws!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼(지느러미)",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "15000",
+        "sell_cj": "22500",
+        "tank_width": "3",
+        "tank_length": "2",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a great white shark! Watch out for its jaws!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "구피",
+        "url": "https://nookipedia.com/wiki/Guppy",
+        "number": "34",
+        "image_url": "https://dodo.ac/np/images/3/38/Guppy_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/d7/Guppy_NH.png",
+        "catchphrase": "I caught a guppy! Welcome to the team, newbie!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "아주 작음",
+        "rarity": "희귀",
+        "total_catch": "0",
+        "sell_nook": "1300",
+        "sell_cj": "1950",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "4월 – 11월",
+        "s_availability": "10월 – 5월",
+        "catchphrases": [
+            "I caught a guppy! Welcome to the team, newbie!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 11월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 5월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "귀상어",
+        "url": "https://nookipedia.com/wiki/Hammerhead%20shark",
+        "number": "73",
+        "image_url": "https://dodo.ac/np/images/e/ec/Hammerhead_Shark_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/45/Hammerhead_Shark_NH.png",
+        "catchphrase": "I caught a hammerhead shark! I hit the nail on the head!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼(지느러미)",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "8000",
+        "sell_cj": "12000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a hammerhead shark! I hit the nail on the head!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "전갱이",
+        "url": "https://nookipedia.com/wiki/Horse%20mackerel",
+        "number": "57",
+        "image_url": "https://dodo.ac/np/images/a/a3/Horse_Mackerel_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/77/Horse_Mackerel_NH.png",
+        "catchphrase": "I caught a horse mackerel! Of course, mack...er...el.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "150",
+        "sell_cj": "225",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a horse mackerel! Of course, mack...er...el."
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "송사리",
+        "url": "https://nookipedia.com/wiki/Killifish",
+        "number": "10",
+        "image_url": "https://dodo.ac/np/images/e/ea/Killifish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c2/Killifish_NH.png",
+        "catchphrase": "I caught a killifish! The streams are safe again.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "아주 작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_cj": "450",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 8월",
+        "s_availability": "10월 – 2월",
+        "catchphrases": [
+            "I caught a killifish! The streams are safe again."
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "왕연어",
+        "url": "https://nookipedia.com/wiki/King%20salmon",
+        "number": "32",
+        "image_url": "https://dodo.ac/np/images/e/e1/King_Salmon_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/d8/King_Salmon_NH.png",
+        "catchphrase": "WOO-HOO! I caught a king salmon! Checkmate!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강 하구",
+        "shadow_size": "매우 큼",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "1800",
+        "sell_cj": "2700",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "9월",
+        "s_availability": "3월",
+        "catchphrases": [
+            "WOO-HOO! I caught a king salmon! Checkmate!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9"
+        ],
+        "s_availability_array": [
+            "3"
+        ]
+    },
+    {
+        "name": "비단잉어",
+        "url": "https://nookipedia.com/wiki/Koi",
+        "number": "6",
+        "image_url": "https://dodo.ac/np/images/2/2d/Koi_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/2/24/Koi_NH.png",
+        "catchphrase": "I caught a koi! I don't know why it's so shy... or such a bad speller...",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "큼",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "4000",
+        "sell_cj": "6000",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a koi! I don't know why it's so shy... or such a bad speller..."
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "미꾸라지",
+        "url": "https://nookipedia.com/wiki/Loach",
+        "number": "17",
+        "image_url": "https://dodo.ac/np/images/a/a5/Loach_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/4f/Loach_NH.png",
+        "catchphrase": "I caught a loach! It's...looking at me with reproach.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_cj": "600",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "3월 – 5월",
+        "s_availability": "9월 – 11월",
+        "catchphrases": [
+            "I caught a loach! It's...looking at me with reproach."
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "3",
+            "4",
+            "5"
+        ],
+        "s_availability_array": [
+            "9",
+            "10",
+            "11"
+        ]
+    },
+    {
+        "name": "만새기",
+        "url": "https://nookipedia.com/wiki/Mahi-mahi",
+        "number": "69",
+        "image_url": "https://dodo.ac/np/images/d/d6/Mahi-Mahi_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/ce/Mahi-Mahi_NH.png",
+        "catchphrase": "I caught a mahi-mahi! It's all mahine-mahine.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "부둣가",
+        "shadow_size": "매우 큼",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "6000",
+        "sell_cj": "9000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught a mahi-mahi! It's all mahine-mahine."
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "참게",
+        "url": "https://nookipedia.com/wiki/Mitten%20crab",
+        "number": "33",
+        "image_url": "https://dodo.ac/np/images/9/9d/Mitten_Crab_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/40/Mitten_Crab_NH.png",
+        "catchphrase": "I caught a mitten crab! One more and I'm ready for winter!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "2000",
+        "sell_cj": "3000",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "9월 – 11월",
+        "s_availability": "3월 – 5월",
+        "catchphrases": [
+            "I caught a mitten crab! One more and I'm ready for winter!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 11월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 5월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "오후 4시 – 오전 9시",
+            "10": "오후 4시 – 오전 9시",
+            "11": "오후 4시 – 오전 9시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "오후 4시 – 오전 9시",
+            "4": "오후 4시 – 오전 9시",
+            "5": "오후 4시 – 오전 9시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "3",
+            "4",
+            "5"
+        ]
+    },
+    {
+        "name": "곰치",
+        "url": "https://nookipedia.com/wiki/Moray%20eel",
+        "number": "64",
+        "image_url": "https://dodo.ac/np/images/3/3e/Moray_Eel_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/74/Moray_Eel_NH.png",
+        "catchphrase": "I caught a moray eel! When you're in love, that's a moray!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "길쭉함",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "2000",
+        "sell_cj": "3000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "8월 – 10월",
+        "s_availability": "2월 – 4월",
+        "catchphrases": [
+            "I caught a moray eel! When you're in love, that's a moray!"
+        ],
+        "availability_north": [
+            {
+                "months": "8월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "2월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "2",
+            "3",
+            "4"
+        ]
+    },
+    {
+        "name": "나폴레옹피시",
+        "url": "https://nookipedia.com/wiki/Napoleonfish",
+        "number": "52",
+        "image_url": "https://dodo.ac/np/images/3/30/Napoleonfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/62/Napoleonfish_NH.png",
+        "catchphrase": "I caught a Napoleonfish! It's not as big as it thinks!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "10000",
+        "sell_cj": "15000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오전 4시 – 오후 9시",
+        "n_availability": "7월 – 8월",
+        "s_availability": "1월 – 2월",
+        "catchphrases": [
+            "I caught a Napoleonfish! It's not as big as it thinks!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 8월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 2월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 4시 – 오후 9시",
+            "8": "오전 4시 – 오후 9시",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 9시",
+            "2": "오전 4시 – 오후 9시",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7",
+            "8"
+        ],
+        "s_availability_array": [
+            "1",
+            "2"
+        ]
+    },
+    {
+        "name": "네온테트라",
+        "url": "https://nookipedia.com/wiki/Neon%20tetra",
+        "number": "38",
+        "image_url": "https://dodo.ac/np/images/4/42/Neon_Tetra_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/e8/Neon_Tetra_NH.png",
+        "catchphrase": "I caught a neon tetra! Wasn't hard to track.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "아주 작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "500",
+        "sell_cj": "750",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "4월 – 11월",
+        "s_availability": "10월 – 5월",
+        "catchphrases": [
+            "I caught a neon tetra! Wasn't hard to track."
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 11월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 5월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "닥터피시",
+        "url": "https://nookipedia.com/wiki/Nibble%20fish",
+        "number": "35",
+        "image_url": "https://dodo.ac/np/images/0/0b/Nibble_Fish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/96/Nibble_Fish_NH.png",
+        "catchphrase": "I caught a nibble fish! Come to think of it, I could use a bite!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "아주 작음",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "1500",
+        "sell_cj": "2250",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "5월 – 9월",
+        "s_availability": "11월 – 3월",
+        "catchphrases": [
+            "I caught a nibble fish! Come to think of it, I could use a bite!"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 9월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 3월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "산갈치",
+        "url": "https://nookipedia.com/wiki/Oarfish",
+        "number": "78",
+        "image_url": "https://dodo.ac/np/images/5/50/Oarfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/a/ae/Oarfish_NH.png",
+        "catchphrase": "I caught an oarfish! I hope I catch morefish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "9000",
+        "sell_cj": "13500",
+        "tank_width": "3",
+        "tank_length": "2",
+        "time": "종일",
+        "n_availability": "12월 – 5월",
+        "s_availability": "6월 – 11월",
+        "catchphrases": [
+            "I caught an oarfish! I hope I catch morefish!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "12"
+        ],
+        "s_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        ]
+    },
+    {
+        "name": "개복치",
+        "url": "https://nookipedia.com/wiki/Ocean%20sunfish",
+        "number": "70",
+        "image_url": "https://dodo.ac/np/images/e/eb/Ocean_Sunfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c6/Ocean_Sunfish_NH.png",
+        "catchphrase": "I caught an ocean sunfish! Good thing I'm wearing ocean sunscreen!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼(지느러미)",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "4000",
+        "sell_cj": "6000",
+        "tank_width": "2",
+        "tank_length": "2",
+        "time": "오전 4시 – 오후 9시",
+        "n_availability": "7월 – 9월",
+        "s_availability": "1월 – 3월",
+        "catchphrases": [
+            "I caught an ocean sunfish! Good thing I'm wearing ocean sunscreen!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 9월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "오전 4시 – 오후 9시",
+            "8": "오전 4시 – 오후 9시",
+            "9": "오전 4시 – 오후 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 4시 – 오후 9시",
+            "2": "오전 4시 – 오후 9시",
+            "3": "오전 4시 – 오후 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "넙치",
+        "url": "https://nookipedia.com/wiki/Olive%20flounder",
+        "number": "62",
+        "image_url": "https://dodo.ac/np/images/b/b3/Olive_Flounder_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/e/ed/Olive_Flounder_NH.png",
+        "catchphrase": "I caught an olive flounder! That's not the pits!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "800",
+        "sell_cj": "1200",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught an olive flounder! That's not the pits!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "피라미",
+        "url": "https://nookipedia.com/wiki/Pale%20chub",
+        "number": "2",
+        "image_url": "https://dodo.ac/np/images/e/e2/Pale_Chub_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8a/Pale_Chub_NH.png",
+        "catchphrase": "I caught a pale chub! That name seems a bit judgy...",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "아주 작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "200",
+        "sell_cj": "300",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a pale chub! That name seems a bit judgy..."
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "강꼬치고기",
+        "url": "https://nookipedia.com/wiki/Pike",
+        "number": "24",
+        "image_url": "https://dodo.ac/np/images/9/9f/Pike_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/89/Pike_NH.png",
+        "catchphrase": "I caught a pike! Think a swordfish would be up for a duel?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "매우 큼",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "1800",
+        "sell_cj": "2700",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "9월 – 12월",
+        "s_availability": "3월 – 6월",
+        "catchphrases": [
+            "I caught a pike! Think a swordfish would be up for a duel?"
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 12월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 6월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "name": "피라니아",
+        "url": "https://nookipedia.com/wiki/Piranha",
+        "number": "40",
+        "image_url": "https://dodo.ac/np/images/c/c6/Piranha_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/fa/Piranha_NH.png",
+        "catchphrase": "I caught a piranha! Sure hope it was the only one!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "2500",
+        "sell_cj": "3750",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a piranha! Sure hope it was the only one!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "7": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "8": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "9": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "2": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "3": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오전 9시 – 오후 4시 & 오후 9시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "빙어",
+        "url": "https://nookipedia.com/wiki/Pond%20smelt",
+        "number": "25",
+        "image_url": "https://dodo.ac/np/images/0/0f/Pond_Smelt_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/fc/Pond_Smelt_NH.png",
+        "catchphrase": "I caught a pond smelt! Whoever smelt it dealt it!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_cj": "600",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "12월 – 2월",
+        "s_availability": "6월 – 8월",
+        "catchphrases": [
+            "I caught a pond smelt! Whoever smelt it dealt it!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "12"
+        ],
+        "s_availability_array": [
+            "6",
+            "7",
+            "8"
+        ]
+    },
+    {
+        "name": "툭눈금붕어",
+        "url": "https://nookipedia.com/wiki/Pop-eyed%20goldfish",
+        "number": "8",
+        "image_url": "https://dodo.ac/np/images/0/0d/Pop-Eyed_Goldfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8a/Pop-Eyed_Goldfish_NH.png",
+        "catchphrase": "I caught a pop-eyed goldfish! It looks so...surprised!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "아주 작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "1300",
+        "sell_cj": "1950",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a pop-eyed goldfish! It looks so...surprised!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "가시복",
+        "url": "https://nookipedia.com/wiki/Puffer%20fish",
+        "number": "55",
+        "image_url": "https://dodo.ac/np/images/e/ee/Puffer_Fish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/11/Puffer_Fish_NH.png",
+        "catchphrase": "I caught a puffer fish! I thought you would be tougher, fish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "중간",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "250",
+        "sell_cj": "375",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "7월 – 9월",
+        "s_availability": "1월 – 3월",
+        "catchphrases": [
+            "I caught a puffer fish! I thought you would be tougher, fish!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "레인보우피시",
+        "url": "https://nookipedia.com/wiki/Rainbowfish",
+        "number": "39",
+        "image_url": "https://dodo.ac/np/images/e/e7/Rainbowfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/36/Rainbowfish_NH.png",
+        "catchphrase": "I caught a rainbowfish! Where's my pot of goldfish?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "아주 작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "800",
+        "sell_cj": "1200",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "5월 – 10월",
+        "s_availability": "11월 – 4월",
+        "catchphrases": [
+            "I caught a rainbowfish! Where's my pot of goldfish?"
+        ],
+        "availability_north": [
+            {
+                "months": "5월 – 10월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "11월 – 4월",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "난주",
+        "url": "https://nookipedia.com/wiki/Ranchu%20goldfish",
+        "number": "9",
+        "image_url": "https://dodo.ac/np/images/3/35/Ranchu_Goldfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/41/Ranchu_Goldfish_NH.png",
+        "catchphrase": "I caught a ranchu goldfish! But I prefer balsamicu goldfish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "4500",
+        "sell_cj": "6750",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오전 9시 – 오후 4시",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a ranchu goldfish! But I prefer balsamicu goldfish!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "오전 9시 – 오후 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "times_by_month_south": {
+            "1": "오전 9시 – 오후 4시",
+            "2": "오전 9시 – 오후 4시",
+            "3": "오전 9시 – 오후 4시",
+            "4": "오전 9시 – 오후 4시",
+            "5": "오전 9시 – 오후 4시",
+            "6": "오전 9시 – 오후 4시",
+            "7": "오전 9시 – 오후 4시",
+            "8": "오전 9시 – 오후 4시",
+            "9": "오전 9시 – 오후 4시",
+            "10": "오전 9시 – 오후 4시",
+            "11": "오전 9시 – 오후 4시",
+            "12": "오전 9시 – 오후 4시"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "가오리",
+        "url": "https://nookipedia.com/wiki/Ray",
+        "number": "71",
+        "image_url": "https://dodo.ac/np/images/9/9b/Ray_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/66/Ray_NH.png",
+        "catchphrase": "I caught a ray! A few more and I'll have a tan!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "3000",
+        "sell_cj": "4500",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오전 4시 – 오후 9시",
+        "n_availability": "8월 – 11월",
+        "s_availability": "2월 – 5월",
+        "catchphrases": [
+            "I caught a ray! A few more and I'll have a tan!"
+        ],
+        "availability_north": [
+            {
+                "months": "8월 – 11월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "2월 – 5월",
+                "time": "오전 4시 – 오후 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "오전 4시 – 오후 9시",
+            "9": "오전 4시 – 오후 9시",
+            "10": "오전 4시 – 오후 9시",
+            "11": "오전 4시 – 오후 9시",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "오전 4시 – 오후 9시",
+            "3": "오전 4시 – 오후 9시",
+            "4": "오전 4시 – 오후 9시",
+            "5": "오전 4시 – 오후 9시",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "8",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "2",
+            "3",
+            "4",
+            "5"
+        ]
+    },
+    {
+        "name": "도미",
+        "url": "https://nookipedia.com/wiki/Red%20snapper",
+        "number": "60",
+        "image_url": "https://dodo.ac/np/images/c/c1/Red_Snapper_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/13/Red_Snapper_NH.png",
+        "catchphrase": "I caught a red snapper! It looks pretty dapper!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "큼",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "3000",
+        "sell_cj": "4500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a red snapper! It looks pretty dapper!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "리본장어",
+        "url": "https://nookipedia.com/wiki/Ribbon%20eel",
+        "number": "65",
+        "image_url": "https://dodo.ac/np/images/2/26/Ribbon_Eel_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/9f/Ribbon_Eel_NH.png",
+        "catchphrase": "I caught a ribbon eel! Can it tie itself into a bow?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "길쭉함",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "600",
+        "sell_cj": "900",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "6월 – 10월",
+        "s_availability": "12월 – 4월",
+        "catchphrases": [
+            "I caught a ribbon eel! Can it tie itself into a bow?"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "12"
+        ]
+    },
+    {
+        "name": "엔드리케리",
+        "url": "https://nookipedia.com/wiki/Saddled%20bichir",
+        "number": "45",
+        "image_url": "https://dodo.ac/np/images/4/46/Saddled_Bichir_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/c6/Saddled_Bichir_NH.png",
+        "catchphrase": "Wow! A saddled bichir! And me without my tiny riding crop...",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "큼",
+        "rarity": "보통",
+        "total_catch": "20",
+        "sell_nook": "4000",
+        "sell_cj": "6000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 9시 – 오전 4시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "Wow! A saddled bichir! And me without my tiny riding crop..."
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 9시 – 오전 4시",
+            "7": "오후 9시 – 오전 4시",
+            "8": "오후 9시 – 오전 4시",
+            "9": "오후 9시 – 오전 4시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 9시 – 오전 4시",
+            "2": "오후 9시 – 오전 4시",
+            "3": "오후 9시 – 오전 4시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 9시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "연어",
+        "url": "https://nookipedia.com/wiki/Salmon",
+        "number": "31",
+        "image_url": "https://dodo.ac/np/images/c/ca/Salmon_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/85/Salmon_NH.png",
+        "catchphrase": "I caught a salmon! It's all upstream from here!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강 하구",
+        "shadow_size": "큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "700",
+        "sell_cj": "1050",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "9월",
+        "s_availability": "3월",
+        "catchphrases": [
+            "I caught a salmon! It's all upstream from here!"
+        ],
+        "availability_north": [
+            {
+                "months": "9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "9"
+        ],
+        "s_availability_array": [
+            "3"
+        ]
+    },
+    {
+        "name": "톱상어",
+        "url": "https://nookipedia.com/wiki/Saw%20shark",
+        "number": "72",
+        "image_url": "https://dodo.ac/np/images/4/45/Saw_Shark_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/4/44/Saw_Shark_NH.png",
+        "catchphrase": "I caught a saw shark! You could call it a sea saw!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼(지느러미)",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "12000",
+        "sell_cj": "18000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a saw shark! You could call it a sea saw!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "농어",
+        "url": "https://nookipedia.com/wiki/Sea%20bass",
+        "number": "59",
+        "image_url": "https://dodo.ac/np/images/7/7f/Sea_Bass_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/d/d6/Sea_Bass_NH.png",
+        "catchphrase": "I caught a sea bass! No, wait—it's at least a C+!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "400",
+        "sell_cj": "600",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "연중",
+        "s_availability": "연중",
+        "catchphrases": [
+            "I caught a sea bass! No, wait—it's at least a C+!"
+        ],
+        "availability_north": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "연중",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "클리오네",
+        "url": "https://nookipedia.com/wiki/Sea%20butterfly",
+        "number": "47",
+        "image_url": "https://dodo.ac/np/images/f/f7/Sea_Butterfly_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/f/f9/Sea_Butterfly_NH.png",
+        "catchphrase": "I caught a sea butterfly! Try not to confuse it for a sea moth!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "아주 작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_cj": "1500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "12월 – 3월",
+        "s_availability": "6월 – 9월",
+        "catchphrases": [
+            "I caught a sea butterfly! Try not to confuse it for a sea moth!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ],
+        "s_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ]
+    },
+    {
+        "name": "해마",
+        "url": "https://nookipedia.com/wiki/Sea%20horse",
+        "number": "48",
+        "image_url": "https://dodo.ac/np/images/d/dc/Sea_Horse_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/7f/Sea_Horse_NH.png",
+        "catchphrase": "I caught a sea horse! But... where's its sea jockey?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "아주 작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "1100",
+        "sell_cj": "1650",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 11월",
+        "s_availability": "10월 – 5월",
+        "catchphrases": [
+            "I caught a sea horse! But... where's its sea jockey?"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "늑대거북",
+        "url": "https://nookipedia.com/wiki/Snapping%20turtle",
+        "number": "13",
+        "image_url": "https://dodo.ac/np/images/b/b1/Snapping_Turtle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/90/Snapping_Turtle_NH.png",
+        "catchphrase": "I caught a snapping turtle! How can it snap without fingers?",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "큼",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "5000",
+        "sell_cj": "7500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 9시 – 오전 4시",
+        "n_availability": "4월 – 10월",
+        "s_availability": "10월 – 4월",
+        "catchphrases": [
+            "I caught a snapping turtle! How can it snap without fingers?"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 10월",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 4월",
+                "time": "오후 9시 – 오전 4시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "오후 9시 – 오전 4시",
+            "5": "오후 9시 – 오전 4시",
+            "6": "오후 9시 – 오전 4시",
+            "7": "오후 9시 – 오전 4시",
+            "8": "오후 9시 – 오전 4시",
+            "9": "오후 9시 – 오전 4시",
+            "10": "오후 9시 – 오전 4시",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "오후 9시 – 오전 4시",
+            "2": "오후 9시 – 오전 4시",
+            "3": "오후 9시 – 오전 4시",
+            "4": "오후 9시 – 오전 4시",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "오후 9시 – 오전 4시",
+            "11": "오후 9시 – 오전 4시",
+            "12": "오후 9시 – 오전 4시"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "자라",
+        "url": "https://nookipedia.com/wiki/Soft-shelled%20turtle",
+        "number": "12",
+        "image_url": "https://dodo.ac/np/images/e/eb/Soft-Shelled_Turtle_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/98/Soft-Shelled_Turtle_NH.png",
+        "catchphrase": "I caught a soft-shelled turtle! I should take a shellfie!",
+        "catchphrase2": "I caught a soft-shelled turtle! It's more sensitive than other turtles.",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "큼",
+        "rarity": "흔함",
+        "total_catch": "20",
+        "sell_nook": "3750",
+        "sell_cj": "5625",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "8월 – 9월",
+        "s_availability": "2월 – 3월",
+        "catchphrases": [
+            "I caught a soft-shelled turtle! I should take a shellfie!",
+            "I caught a soft-shelled turtle! It's more sensitive than other turtles."
+        ],
+        "availability_north": [
+            {
+                "months": "8월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "2월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "오징어",
+        "url": "https://nookipedia.com/wiki/Squid",
+        "number": "63",
+        "image_url": "https://dodo.ac/np/images/b/bf/Squid_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/3b/Squid_NH.png",
+        "catchphrase": "I caught a squid! Do they...not actually \"bloop\"?",
+        "catchphrase2": "I caught a squid! It's off the hook!",
+        "catchphrase3": "I caught a squid! I had an inkling I might!",
+        "location": "바다",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "500",
+        "sell_cj": "750",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "12월 – 8월",
+        "s_availability": "6월 – 2월",
+        "catchphrases": [
+            "I caught a squid! Do they...not actually \"bloop\"?",
+            "I caught a squid! It's off the hook!",
+            "I caught a squid! I had an inkling I might!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 8월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 2월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "12"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "일본연어",
+        "url": "https://nookipedia.com/wiki/Stringfish",
+        "number": "30",
+        "image_url": "https://dodo.ac/np/images/e/eb/Stringfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/bf/Stringfish_NH.png",
+        "catchphrase": "OH MY GOSH! I caught a stringfish! Five more and I'll have a guitarfish!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "절벽 위 강",
+        "shadow_size": "매우 큼",
+        "rarity": "희귀",
+        "total_catch": "100",
+        "sell_nook": "15000",
+        "sell_cj": "22500",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "오후 4시 – 오전 9시",
+        "n_availability": "12월 – 3월",
+        "s_availability": "6월 – 9월",
+        "catchphrases": [
+            "OH MY GOSH! I caught a stringfish! Five more and I'll have a guitarfish!"
+        ],
+        "availability_north": [
+            {
+                "months": "12월 – 3월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "6월 – 9월",
+                "time": "오후 4시 – 오전 9시"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "오후 4시 – 오전 9시",
+            "2": "오후 4시 – 오전 9시",
+            "3": "오후 4시 – 오전 9시",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "오후 4시 – 오전 9시"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "오후 4시 – 오전 9시",
+            "7": "오후 4시 – 오전 9시",
+            "8": "오후 4시 – 오전 9시",
+            "9": "오후 4시 – 오전 9시",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ],
+        "s_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ]
+    },
+    {
+        "name": "철갑상어",
+        "url": "https://nookipedia.com/wiki/Sturgeon",
+        "number": "46",
+        "image_url": "https://dodo.ac/np/images/9/91/Sturgeon_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/1/1c/Sturgeon_NH.png",
+        "catchphrase": "I caught a sturgeon! Wonder if it can perform sturgery...",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강 하구",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "10000",
+        "sell_cj": "15000",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "9월 – 3월",
+        "s_availability": "3월 – 9월",
+        "catchphrases": [
+            "I caught a sturgeon! Wonder if it can perform sturgery..."
+        ],
+        "availability_north": [
+            {
+                "months": "9월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "3월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ]
+    },
+    {
+        "name": "빨판상어",
+        "url": "https://nookipedia.com/wiki/Suckerfish",
+        "number": "76",
+        "image_url": "https://dodo.ac/np/images/d/de/Suckerfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/3/3a/Suckerfish_NH.png",
+        "catchphrase": "I caught a suckerfish! I thought it was a shark! Oh, wait——now I get it. \"Sucker\"...",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼(지느러미)",
+        "rarity": "희귀",
+        "total_catch": "20",
+        "sell_nook": "1500",
+        "sell_cj": "2250",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "I caught a suckerfish! I thought it was a shark! Oh, wait——now I get it. \"Sucker\"..."
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "블루탱",
+        "url": "https://nookipedia.com/wiki/Surgeonfish",
+        "number": "50",
+        "image_url": "https://dodo.ac/np/images/c/cb/Surgeonfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/6a/Surgeonfish_NH.png",
+        "catchphrase": "I caught a surgeonfish! Scalpel! Forceps! Fish hook!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "작음",
+        "rarity": "보통",
+        "total_catch": "0",
+        "sell_nook": "1000",
+        "sell_cj": "1500",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 9월",
+        "s_availability": "10월 – 3월",
+        "catchphrases": [
+            "I caught a surgeonfish! Scalpel! Forceps! Fish hook!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "은어",
+        "url": "https://nookipedia.com/wiki/Sweetfish",
+        "number": "26",
+        "image_url": "https://dodo.ac/np/images/6/6a/Sweetfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/93/Sweetfish_NH.png",
+        "catchphrase": "I caught a sweetfish! Hope it's not artificially sweet!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "900",
+        "sell_cj": "1350",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "7월 – 9월",
+        "s_availability": "1월 – 3월",
+        "catchphrases": [
+            "I caught a sweetfish! Hope it's not artificially sweet!"
+        ],
+        "availability_north": [
+            {
+                "months": "7월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "1월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3"
+        ]
+    },
+    {
+        "name": "올챙이",
+        "url": "https://nookipedia.com/wiki/Tadpole",
+        "number": "14",
+        "image_url": "https://dodo.ac/np/images/b/bb/Tadpole_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/9/9f/Tadpole_NH.png",
+        "catchphrase": "I caught a tadpole... It's just a tad small.",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "연못",
+        "shadow_size": "아주 작음",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "100",
+        "sell_cj": "150",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "3월 – 7월",
+        "s_availability": "9월 – 1월",
+        "catchphrases": [
+            "I caught a tadpole... It's just a tad small."
+        ],
+        "availability_north": [
+            {
+                "months": "3월 – 7월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "9월 – 1월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+        ],
+        "s_availability_array": [
+            "1",
+            "9",
+            "10",
+            "11",
+            "12"
+        ]
+    },
+    {
+        "name": "틸라피아",
+        "url": "https://nookipedia.com/wiki/Tilapia",
+        "number": "23",
+        "image_url": "https://dodo.ac/np/images/e/ef/Tilapia_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/7/71/Tilapia_NH.png",
+        "catchphrase": "I caught a tilapia! It makes me happy-a!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "800",
+        "sell_cj": "1200",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "6월 – 10월",
+        "s_availability": "12월 – 4월",
+        "catchphrases": [
+            "I caught a tilapia! It makes me happy-a!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 10월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "12"
+        ]
+    },
+    {
+        "name": "다랑어",
+        "url": "https://nookipedia.com/wiki/Tuna",
+        "number": "66",
+        "image_url": "https://dodo.ac/np/images/4/4b/Tuna_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/6/60/Tuna_NH.png",
+        "catchphrase": "I caught a tuna! It's a little off-key!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "부둣가",
+        "shadow_size": "거대함",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "7000",
+        "sell_cj": "10500",
+        "tank_width": "2",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "11월 – 4월",
+        "s_availability": "5월 – 11월",
+        "catchphrases": [
+            "I caught a tuna! It's a little off-key!"
+        ],
+        "availability_north": [
+            {
+                "months": "11월 – 4월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "5월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+        ]
+    },
+    {
+        "name": "고래상어",
+        "url": "https://nookipedia.com/wiki/Whale%20shark",
+        "number": "75",
+        "image_url": "https://dodo.ac/np/images/4/4f/Whale_Shark_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/b/ba/Whale_Shark_NH.png",
+        "catchphrase": "Thar she blows! I caught a whale shark! I'm tellin' ya, it was thiiiiiiiiiiiiiiiiiiiis big!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "매우 큼(지느러미)",
+        "rarity": "희귀",
+        "total_catch": "50",
+        "sell_nook": "13000",
+        "sell_cj": "19500",
+        "tank_width": "3",
+        "tank_length": "2",
+        "time": "종일",
+        "n_availability": "6월 – 9월",
+        "s_availability": "12월 – 3월",
+        "catchphrases": [
+            "Thar she blows! I caught a whale shark! I'm tellin' ya, it was thiiiiiiiiiiiiiiiiiiiis big!"
+        ],
+        "availability_north": [
+            {
+                "months": "6월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "12월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "없음",
+            "5": "없음",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "없음",
+            "11": "없음",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "6",
+            "7",
+            "8",
+            "9"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "12"
+        ]
+    },
+    {
+        "name": "옐로우퍼치",
+        "url": "https://nookipedia.com/wiki/Yellow%20perch",
+        "number": "21",
+        "image_url": "https://dodo.ac/np/images/6/67/Yellow_Perch_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/c/cf/Yellow_Perch_NH.png",
+        "catchphrase": "I caught a yellow perch! Those yellow birds have to sit somewhere!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "강",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "300",
+        "sell_cj": "450",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "10월 – 3월",
+        "s_availability": "4월 – 9월",
+        "catchphrases": [
+            "I caught a yellow perch! Those yellow birds have to sit somewhere!"
+        ],
+        "availability_north": [
+            {
+                "months": "10월 – 3월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "4월 – 9월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "없음",
+            "5": "없음",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "times_by_month_south": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "없음",
+            "11": "없음",
+            "12": "없음"
+        },
+        "n_availability_array": [
+            "1",
+            "2",
+            "3",
+            "10",
+            "11",
+            "12"
+        ],
+        "s_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+        ]
+    },
+    {
+        "name": "쏠배감펭",
+        "url": "https://nookipedia.com/wiki/Zebra%20turkeyfish",
+        "number": "53",
+        "image_url": "https://dodo.ac/np/images/8/85/Zebra_Turkeyfish_NH_Icon.png",
+        "render_url": "https://dodo.ac/np/images/8/8d/Zebra_Turkeyfish_NH.png",
+        "catchphrase": "I caught a zebra turkeyfish! Land, air, water—make up your mind!",
+        "catchphrase2": "",
+        "catchphrase3": "",
+        "location": "바다",
+        "shadow_size": "중간",
+        "rarity": "흔함",
+        "total_catch": "0",
+        "sell_nook": "500",
+        "sell_cj": "750",
+        "tank_width": "1",
+        "tank_length": "1",
+        "time": "종일",
+        "n_availability": "4월 – 11월",
+        "s_availability": "10월 – 5월",
+        "catchphrases": [
+            "I caught a zebra turkeyfish! Land, air, water—make up your mind!"
+        ],
+        "availability_north": [
+            {
+                "months": "4월 – 11월",
+                "time": "종일"
+            }
+        ],
+        "availability_south": [
+            {
+                "months": "10월 – 5월",
+                "time": "종일"
+            }
+        ],
+        "times_by_month_north": {
+            "1": "없음",
+            "2": "없음",
+            "3": "없음",
+            "4": "종일",
+            "5": "종일",
+            "6": "종일",
+            "7": "종일",
+            "8": "종일",
+            "9": "종일",
+            "10": "종일",
+            "11": "종일",
+            "12": "없음"
+        },
+        "times_by_month_south": {
+            "1": "종일",
+            "2": "종일",
+            "3": "종일",
+            "4": "종일",
+            "5": "종일",
+            "6": "없음",
+            "7": "없음",
+            "8": "없음",
+            "9": "없음",
+            "10": "종일",
+            "11": "종일",
+            "12": "종일"
+        },
+        "n_availability_array": [
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11"
+        ],
+        "s_availability_array": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "10",
+            "11",
+            "12"
+        ]
+    }
+]
