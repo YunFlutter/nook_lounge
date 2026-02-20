@@ -10,6 +10,7 @@ sealed class SessionViewState with _$SessionViewState {
   const factory SessionViewState({
     @Default(true) bool isLoading,
     SessionState? session,
+    String? errorTitle,
     String? errorMessage,
   }) = _SessionViewState;
 }

@@ -43,9 +43,13 @@ class AppTheme {
           ),
         ),
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.accentDeepOrange,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.white,
+        hintStyle: const TextStyle(color: AppColors.textHint),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
@@ -61,9 +65,46 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(
-            color: AppColors.borderFocus,
+            color: AppColors.accentDeepOrange,
+            width: 1.8,
+          ),
+        ),
+        errorStyle: const TextStyle(color: AppColors.accentDeepOrange),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: AppColors.accentDeepOrange,
             width: 1.5,
           ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: AppColors.accentDeepOrange,
+            width: 1.8,
+          ),
+        ),
+      ),
+      searchBarTheme: SearchBarThemeData(
+        backgroundColor: const WidgetStatePropertyAll(AppColors.white),
+        elevation: const WidgetStatePropertyAll(0),
+        side: WidgetStateProperty.resolveWith((states) {
+          final isFocused = states.contains(WidgetState.focused);
+          return BorderSide(
+            color: isFocused
+                ? AppColors.accentDeepOrange
+                : AppColors.borderDefault,
+            width: isFocused ? 1.8 : 1,
+          );
+        }),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        hintStyle: const WidgetStatePropertyAll(
+          TextStyle(color: AppColors.textHint),
+        ),
+        textStyle: const WidgetStatePropertyAll(
+          TextStyle(color: AppColors.textPrimary),
         ),
       ),
     );

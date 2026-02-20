@@ -12,6 +12,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   String? get currentUserId => _dataSource.currentUserId;
+  @override
+  bool get isAnonymous => _dataSource.isAnonymous;
 
   @override
   Future<void> signInWithGoogle() => _dataSource.signInWithGoogle();

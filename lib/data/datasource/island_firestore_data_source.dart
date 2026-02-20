@@ -8,16 +8,27 @@ class IslandFirestoreDataSource {
 
   final FirebaseFirestore _firestore;
 
-  Future<bool> hasPrimaryIsland(String uid) async {
+  Future<bool> hasPrimaryIslandFromCache(String uid) async {
     final userRef = _firestore.doc(FirestorePaths.user(uid));
 
-    final cachedDoc = await userRef.get(const GetOptions(source: Source.cache));
-    final cachedPrimaryIslandId =
-        cachedDoc.data()?['primaryIslandId'] as String?;
+    try {
+      final cachedDoc = await userRef.get(
+        const GetOptions(source: Source.cache),
+      );
+      final cachedPrimaryIslandId =
+          cachedDoc.data()?['primaryIslandId'] as String?;
 
-    if (cachedPrimaryIslandId != null && cachedPrimaryIslandId.isNotEmpty) {
-      return true;
+      return cachedPrimaryIslandId != null && cachedPrimaryIslandId.isNotEmpty;
+    } on FirebaseException {
+      // 유지보수 포인트:
+      // 캐시 조회 실패는 네트워크/로컬 상태 이슈일 수 있으므로
+      // 앱 시작을 막지 않고 "섬 미보유"로 안전 fallback 합니다.
+      return false;
     }
+  }
+
+  Future<bool> hasPrimaryIslandFromServer(String uid) async {
+    final userRef = _firestore.doc(FirestorePaths.user(uid));
 
     final serverDoc = await userRef.get(
       const GetOptions(source: Source.server),

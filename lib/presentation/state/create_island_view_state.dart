@@ -9,6 +9,7 @@ sealed class CreateIslandViewState with _$CreateIslandViewState {
   const factory CreateIslandViewState({
     @Default(false) bool isSubmitting,
     @Default(false) bool submitSuccess,
+    String? selectedImagePath,
     String? errorMessage,
   }) = _CreateIslandViewState;
 }

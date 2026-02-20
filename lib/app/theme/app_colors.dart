@@ -9,6 +9,7 @@ class AppColors {
   /// Accent(682:1478), Border(682:1482), Nav(682:1485)
 
   // Base
+  static const Color black = Color(0xFF000000);
   static const Color white = Color(0xFFFFFFFF);
 
   // BG
@@ -21,6 +22,7 @@ class AppColors {
   static const Color textPrimary = Color(0xFF5F4F24);
   static const Color textSecondary = Color(0xFF6B6B6B);
   static const Color textMuted = Color(0xFF9AA0A6);
+  static const Color textHint = Color(0xFFB7BEC6);
   static const Color textInverse = Color(0xFFFFFFFF);
   static const Color textAccent = Color(0xFF91ACEC);
 

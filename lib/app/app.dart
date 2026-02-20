@@ -13,6 +13,7 @@ class NookLoungeApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Nook Lounge',
       debugShowCheckedModeBanner: false,
+      showSemanticsDebugger: false,
       theme: AppTheme.light(),
       routerConfig: router,
     );

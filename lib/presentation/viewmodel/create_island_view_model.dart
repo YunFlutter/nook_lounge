@@ -10,6 +10,10 @@ class CreateIslandViewModel extends StateNotifier<CreateIslandViewState> {
 
   final IslandRepository _islandRepository;
 
+  void setSelectedImagePath(String? imagePath) {
+    state = state.copyWith(selectedImagePath: imagePath);
+  }
+
   Future<void> createIsland({
     required String uid,
     required CreateIslandDraft draft,
@@ -21,7 +25,11 @@ class CreateIslandViewModel extends StateNotifier<CreateIslandViewState> {
     );
 
     try {
-      await _islandRepository.createPrimaryIsland(uid: uid, draft: draft);
+      await _islandRepository.createPrimaryIsland(
+        uid: uid,
+        draft: draft,
+        passportImagePath: state.selectedImagePath,
+      );
       state = state.copyWith(isSubmitting: false, submitSuccess: true);
     } catch (error) {
       state = state.copyWith(

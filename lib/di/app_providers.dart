@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_firestore_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/catalog_repository_impl.dart';
@@ -34,9 +36,14 @@ final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
 });
 
+final firebaseStorageProvider = Provider<FirebaseStorage>((ref) {
+  return FirebaseStorage.instance;
+});
+
 final firebaseAuthDataSourceProvider = Provider<FirebaseAuthDataSource>((ref) {
   return FirebaseAuthDataSource(
     firebaseAuth: ref.watch(firebaseAuthProvider),
+    firestore: ref.watch(firestoreProvider),
     googleSignIn: ref.watch(googleSignInProvider),
   );
 });
@@ -45,6 +52,12 @@ final islandFirestoreDataSourceProvider = Provider<IslandFirestoreDataSource>((
   ref,
 ) {
   return IslandFirestoreDataSource(firestore: ref.watch(firestoreProvider));
+});
+
+final islandStorageDataSourceProvider = Provider<IslandStorageDataSource>((
+  ref,
+) {
+  return IslandStorageDataSource(storage: ref.watch(firebaseStorageProvider));
 });
 
 final localCatalogDataSourceProvider = Provider<LocalCatalogDataSource>((ref) {
@@ -59,7 +72,8 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 
 final islandRepositoryProvider = Provider<IslandRepository>((ref) {
   return IslandRepositoryImpl(
-    dataSource: ref.watch(islandFirestoreDataSourceProvider),
+    firestoreDataSource: ref.watch(islandFirestoreDataSourceProvider),
+    storageDataSource: ref.watch(islandStorageDataSourceProvider),
   );
 });
 

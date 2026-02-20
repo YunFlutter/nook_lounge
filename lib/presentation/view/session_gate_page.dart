@@ -7,29 +7,48 @@ import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/error_retry_view.dart';
 import 'package:nook_lounge_app/presentation/view/home_shell_page.dart';
 import 'package:nook_lounge_app/presentation/view/sign_in_page.dart';
+import 'package:nook_lounge_app/presentation/view/splash_loading_page.dart';
 
-class SessionGatePage extends ConsumerWidget {
+class SessionGatePage extends ConsumerStatefulWidget {
   const SessionGatePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SessionGatePage> createState() => _SessionGatePageState();
+}
+
+class _SessionGatePageState extends ConsumerState<SessionGatePage> {
+  bool _splashCompleted = false;
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(sessionViewModelProvider);
 
-    if (state.isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (!_splashCompleted) {
+      return SplashLoadingPage(
+        waitingForSession: state.isLoading,
+        onCompleted: () {
+          if (!mounted || _splashCompleted) {
+            return;
+          }
+          setState(() {
+            _splashCompleted = true;
+          });
+        },
+      );
     }
 
     if (state.errorMessage != null) {
       return ErrorRetryView(
-        message: AppStrings.loadErrorMessage,
+        title: state.errorTitle ?? '데이터를 불러오지 못했어요',
+        message: state.errorMessage ?? AppStrings.loadErrorMessage,
         onRetry: () => ref.read(sessionViewModelProvider.notifier).refresh(),
       );
     }
 
     final session = state.session;
 
-    if (session == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (state.isLoading || session == null) {
+      return const SignInPage();
     }
 
     return session.when(
