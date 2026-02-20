@@ -1,0 +1,120 @@
+# ================================
+# OS / Editor
+# ================================
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+*.tmp
+*.class
+*.pyc
+
+.atom/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+#.vscode/
+
+# ================================
+# Dart / Flutter
+# ================================
+
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+
+/build/
+/coverage/
+
+**/doc/api/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# ================================
+# Android
+# ================================
+
+android/.gradle/
+android/local.properties
+android/key.properties
+
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# 🔐 Firebase Android 설정 파일 (절대 업로드 금지)
+android/app/google-services.json
+**/google-services.json
+
+# ================================
+# iOS
+# ================================
+
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/.last_build_id
+ios/Runner/GeneratedPluginRegistrant.*
+
+# 🔐 Firebase iOS 설정 파일 (절대 업로드 금지)
+ios/Runner/GoogleService-Info.plist
+**/GoogleService-Info.plist
+
+# ================================
+# Firebase CLI / Functions
+# ================================
+
+.firebase/
+.firebaserc
+firebase-debug.log
+ui-debug.log
+
+functions/node_modules/
+functions/.env*
+functions/lib/
+
+# 🔐 Service Account Key (절대 업로드 금지)
+*service-account*.json
+*firebase-adminsdk*.json
+
+# ================================
+# Secret / Env
+# ================================
+
+.env
+.env.*
+*.env
+
+# ================================
+# Symbolication / Obfuscation
+# ================================
+
+app.*.symbols
+app.*.map.json
+
+# ================================
+# Swift / Xcode
+# ================================
+
+.swiftpm/
+DerivedData/
+*.xcworkspace
+*.xcuserdata/
+
+# ================================
+# 기타
+# ================================
+
+.history
+.svn/
+migrate_working_dir/
