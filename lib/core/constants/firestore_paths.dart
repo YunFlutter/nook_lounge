@@ -19,4 +19,6 @@ class FirestorePaths {
 
   static String catalogState(String uid, String itemId) =>
       '${catalogStates(uid)}/$itemId';
+
+  static String turnipState(String uid) => 'users/$uid/turnip/state';
 }

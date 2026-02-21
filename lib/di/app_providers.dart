@@ -8,24 +8,30 @@ import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/catalog_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/island_repository_impl.dart';
+import 'package:nook_lounge_app/data/repository/turnip_repository_impl.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
 import 'package:nook_lounge_app/domain/repository/island_repository.dart';
+import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/presentation/state/catalog_search_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/home_shell_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
+import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/catalog_search_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/catalog_binding_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/create_island_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/home_shell_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/session_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/sign_in_view_model.dart';
+import 'package:nook_lounge_app/presentation/viewmodel/turnip_view_model.dart';
 
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
   return FirebaseAuth.instance;
@@ -74,6 +80,16 @@ final catalogStateFirestoreDataSourceProvider =
       );
     });
 
+final turnipApiDataSourceProvider = Provider<TurnipApiDataSource>((ref) {
+  return TurnipApiDataSource();
+});
+
+final turnipFirestoreDataSourceProvider = Provider<TurnipFirestoreDataSource>((
+  ref,
+) {
+  return TurnipFirestoreDataSource(firestore: ref.watch(firestoreProvider));
+});
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
@@ -91,6 +107,13 @@ final catalogRepositoryProvider = Provider<CatalogRepository>((ref) {
   return CatalogRepositoryImpl(
     dataSource: ref.watch(localCatalogDataSourceProvider),
     stateDataSource: ref.watch(catalogStateFirestoreDataSourceProvider),
+  );
+});
+
+final turnipRepositoryProvider = Provider<TurnipRepository>((ref) {
+  return TurnipRepositoryImpl(
+    apiDataSource: ref.watch(turnipApiDataSourceProvider),
+    firestoreDataSource: ref.watch(turnipFirestoreDataSourceProvider),
   );
 });
 
@@ -138,6 +161,17 @@ final catalogBindingViewModelProvider =
     >((ref, uid) {
       return CatalogBindingViewModel(
         catalogRepository: ref.watch(catalogRepositoryProvider),
+        uid: uid,
+      );
+    });
+
+final turnipViewModelProvider =
+    StateNotifierProvider.family<TurnipViewModel, TurnipViewState, String>((
+      ref,
+      uid,
+    ) {
+      return TurnipViewModel(
+        repository: ref.watch(turnipRepositoryProvider),
         uid: uid,
       );
     });

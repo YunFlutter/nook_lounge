@@ -65,6 +65,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     '희귀도',
     '획득처',
     '재료',
+    '색상옵션',
     '리폼',
     '스타일',
     '그룹',
@@ -72,6 +73,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   late bool _isFavorite;
   late bool _isCompleted;
+  String? _selectedDetailImageUrl;
 
   @override
   void initState() {
@@ -85,6 +87,11 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     final sheetHeight = MediaQuery.sizeOf(context).height * 0.85;
     final detailRows = _buildDetailRows();
     final detailImages = _buildDetailImages();
+    final optionDrivenImageUrl =
+        _selectedDetailImageUrl ??
+        ((_isOptionCategory && detailImages.isNotEmpty)
+            ? detailImages.first.url
+            : widget.item.imageUrl);
 
     return SizedBox(
       width: double.infinity,
@@ -121,10 +128,13 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      _buildTopImage(),
+                      _buildTopImage(optionDrivenImageUrl),
                       if (detailImages.isNotEmpty) ...<Widget>[
                         const SizedBox(height: AppSpacing.s10),
-                        _buildDetailImageGallery(detailImages),
+                        _buildDetailImageGallery(
+                          images: detailImages,
+                          selectedImageUrl: optionDrivenImageUrl,
+                        ),
                       ],
                       const SizedBox(height: AppSpacing.s10 * 2),
                       Row(
@@ -307,7 +317,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     return values.join(' / ');
   }
 
-  Widget _buildTopImage() {
+  Widget _buildTopImage(String imageUrl) {
     final fallback = Image.asset(
       'assets/images/no_data_image.png',
       width: double.infinity,
@@ -319,10 +329,10 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
       borderRadius: BorderRadius.circular(24),
       child: Container(
         color: AppColors.bgSecondary,
-        child: widget.item.imageUrl.isEmpty
+        child: imageUrl.isEmpty
             ? fallback
             : Image.network(
-                widget.item.imageUrl,
+                imageUrl,
                 width: double.infinity,
                 height: 240,
                 fit: BoxFit.contain,
@@ -372,25 +382,29 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     return images;
   }
 
-  Widget _buildDetailImageGallery(List<_DetailImage> images) {
+  Widget _buildDetailImageGallery({
+    required List<_DetailImage> images,
+    required String selectedImageUrl,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          widget.item.category == '패션' ? '색상 옵션' : '참고 이미지',
+          _isOptionCategory ? '색상 옵션' : '참고 이미지',
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 126,
+          height: 138,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: images.length,
             separatorBuilder: (_, unused) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final image = images[index];
+              final selected = image.url == selectedImageUrl;
               return SizedBox(
                 width: 150,
                 child: Column(
@@ -407,21 +421,42 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                     ),
                     const SizedBox(height: 6),
                     Expanded(
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () => _openImagePreview(image),
-                        child: ClipRRect(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        curve: Curves.easeOutCubic,
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            image.url,
-                            width: double.infinity,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/no_data_image.png',
-                                fit: BoxFit.contain,
+                          border: Border.all(
+                            color: selected
+                                ? AppColors.primaryDefault
+                                : AppColors.borderDefault,
+                            width: selected ? 2 : 1,
+                          ),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            if (_isOptionCategory && !selected) {
+                              setState(
+                                () => _selectedDetailImageUrl = image.url,
                               );
-                            },
+                              return;
+                            }
+                            _openImagePreview(image);
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(11),
+                            child: Image.network(
+                              image.url,
+                              width: double.infinity,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/no_data_image.png',
+                                  fit: BoxFit.contain,
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -531,6 +566,9 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
       },
     );
   }
+
+  bool get _isOptionCategory =>
+      widget.item.category == '패션' || widget.item.category == '가구';
 
   bool get _isVillager => widget.item.category == '주민';
 

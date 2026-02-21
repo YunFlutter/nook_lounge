@@ -139,7 +139,7 @@ class LocalCatalogDataSource {
         _addPrefixedTag(tags, prefix: '리폼', value: _extractCustomizable(row));
         _addVillagerPrefixedTags(tags: tags, category: entry.key, row: row);
         _addArtImageTags(tags: tags, category: entry.key, row: row);
-        _addFashionVariationTags(tags: tags, category: entry.key, row: row);
+        _addVariationImageTags(tags: tags, category: entry.key, row: row);
 
         if (row['has_fake'] is bool) {
           tags.add((row['has_fake'] as bool) ? '가품:있음' : '가품:없음');
@@ -476,12 +476,12 @@ class LocalCatalogDataSource {
     _addPrefixedTag(tags, prefix: '이전 말버릇', value: _extractPrevPhrases(row));
   }
 
-  void _addFashionVariationTags({
+  void _addVariationImageTags({
     required Set<String> tags,
     required String category,
     required Map<String, dynamic> row,
   }) {
-    if (category != '패션') {
+    if (category != '패션' && category != '가구') {
       return;
     }
 
@@ -673,14 +673,15 @@ class LocalCatalogDataSource {
       }
     }
 
-    for (final item in items) {
-      if (item.category != '패션') {
+    for (final category in <String>{'패션', '가구'}) {
+      final categoryItems = items.where((item) => item.category == category);
+      if (categoryItems.isEmpty) {
         continue;
       }
-      final hasVariationImage = item.tags.any(
-        (tag) => tag.startsWith('옵션이미지URL:'),
+      final hasAnyVariationImage = categoryItems.any(
+        (item) => item.tags.any((tag) => tag.startsWith('옵션이미지URL:')),
       );
-      if (!hasVariationImage) {
+      if (!hasAnyVariationImage) {
         return true;
       }
     }

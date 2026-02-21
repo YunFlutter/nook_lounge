@@ -1085,6 +1085,12 @@ class _CategoryViewConfig {
               prefix: '스타일',
               width: 120,
             ),
+            _DropdownFilterDefinition.prefixed(
+              key: 'variation',
+              label: '색상옵션',
+              prefix: '색상옵션',
+              width: 130,
+            ),
           ],
           donationMode: false,
         );
@@ -1102,6 +1108,12 @@ class _CategoryViewConfig {
               label: '스타일',
               prefix: '스타일',
               width: 120,
+            ),
+            _DropdownFilterDefinition.prefixed(
+              key: 'variation',
+              label: '색상옵션',
+              prefix: '색상옵션',
+              width: 130,
             ),
             _DropdownFilterDefinition.prefixed(
               key: 'remodel',

@@ -45,17 +45,25 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
   @override
   void initState() {
     super.initState();
+    final createIslandViewModel = ref.read(
+      createIslandViewModelProvider.notifier,
+    );
+    final sessionViewModel = ref.read(sessionViewModelProvider.notifier);
 
     _createSubscription = ref.listenManual<CreateIslandViewState>(
       createIslandViewModelProvider,
       (previous, next) async {
+        if (!mounted) {
+          return;
+        }
+
         if (next.errorMessage != null &&
             next.errorMessage != previous?.errorMessage) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(next.errorMessage!)));
 
-          ref.read(createIslandViewModelProvider.notifier).clearError();
+          createIslandViewModel.clearError();
           return;
         }
 
@@ -65,8 +73,8 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
           }
 
           final submittedDraft = _lastSubmittedDraft;
-          if (submittedDraft == null || !mounted) {
-            ref.read(createIslandViewModelProvider.notifier).resetSubmitState();
+          if (submittedDraft == null) {
+            createIslandViewModel.resetSubmitState();
             return;
           }
 
@@ -78,14 +86,17 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 draft: submittedDraft,
                 imagePath: next.selectedImagePath,
                 onEnterIsland: () async {
-                  await ref.read(sessionViewModelProvider.notifier).refresh();
+                  await sessionViewModel.refresh();
                 },
               ),
             ),
           );
 
+          if (!mounted) {
+            return;
+          }
           _openingIssuedPage = false;
-          ref.read(createIslandViewModelProvider.notifier).resetSubmitState();
+          createIslandViewModel.resetSubmitState();
         }
       },
     );

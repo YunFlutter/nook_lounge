@@ -4,6 +4,7 @@ import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_dashboard_tab.dart';
+import 'package:nook_lounge_app/presentation/view/turnip/turnip_page.dart';
 
 class HomeShellPage extends ConsumerWidget {
   const HomeShellPage({required this.uid, super.key});
@@ -50,6 +51,30 @@ class HomeShellPage extends ConsumerWidget {
             icon: const Icon(Icons.notifications),
             tooltip: '알림',
           ),
+        ],
+      );
+    }
+
+    if (tabIndex == 4) {
+      return AppBar(
+        centerTitle: false,
+        title: const Text('무 주식 계산기'),
+        actions: <Widget>[
+          TextButton.icon(
+            onPressed: () {
+              ref.read(turnipViewModelProvider(uid).notifier).reset();
+            },
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('초기화'),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.textSecondary,
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
         ],
       );
     }
@@ -158,26 +183,6 @@ class HomeShellPage extends ConsumerWidget {
   }
 
   Widget _buildTurnipTab() {
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: const <Widget>[
-        AnimatedFadeSlide(
-          child: Text(
-            '무주식 계산기',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-          ),
-        ),
-        SizedBox(height: 12),
-        AnimatedFadeSlide(
-          delay: Duration(milliseconds: 40),
-          child: Card(
-            child: ListTile(
-              title: Text('일일 무 가격 입력'),
-              subtitle: Text('예측 로직은 로컬 계산 후 결과만 저장해 읽기 비용을 줄입니다.'),
-            ),
-          ),
-        ),
-      ],
-    );
+    return TurnipPage(uid: uid);
   }
 }
