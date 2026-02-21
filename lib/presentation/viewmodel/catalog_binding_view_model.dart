@@ -9,16 +9,24 @@ class CatalogBindingViewModel
   CatalogBindingViewModel({
     required CatalogRepository catalogRepository,
     required String uid,
+    required String islandId,
   }) : _catalogRepository = catalogRepository,
        _uid = uid,
+       _islandId = islandId,
        super(const <String, CatalogUserState>{}) {
-    _subscription = _catalogRepository.watchUserStates(uid).listen((states) {
-      state = states;
-    });
+    if (islandId.isEmpty) {
+      return;
+    }
+    _subscription = _catalogRepository
+        .watchUserStates(uid: uid, islandId: islandId)
+        .listen((states) {
+          state = states;
+        });
   }
 
   final CatalogRepository _catalogRepository;
   final String _uid;
+  final String _islandId;
   StreamSubscription<Map<String, CatalogUserState>>? _subscription;
 
   Future<void> setCompleted({
@@ -27,6 +35,9 @@ class CatalogBindingViewModel
     required bool donationMode,
     required bool completed,
   }) async {
+    if (_islandId.isEmpty) {
+      return;
+    }
     final current = state[itemId];
     final optimistic =
         (current ??
@@ -36,6 +47,7 @@ class CatalogBindingViewModel
                   donated: false,
                   favorite: false,
                   category: category,
+                  memo: '',
                 ))
             .copyWith(
               category: category,
@@ -48,6 +60,7 @@ class CatalogBindingViewModel
     if (donationMode) {
       await _catalogRepository.setDonatedStatus(
         uid: _uid,
+        islandId: _islandId,
         itemId: itemId,
         category: category,
         donated: completed,
@@ -57,6 +70,7 @@ class CatalogBindingViewModel
 
     await _catalogRepository.setOwnedStatus(
       uid: _uid,
+      islandId: _islandId,
       itemId: itemId,
       category: category,
       owned: completed,
@@ -68,6 +82,9 @@ class CatalogBindingViewModel
     required String category,
     required bool favorite,
   }) async {
+    if (_islandId.isEmpty) {
+      return;
+    }
     final current = state[itemId];
     final optimistic =
         (current ??
@@ -77,6 +94,7 @@ class CatalogBindingViewModel
                   donated: false,
                   favorite: false,
                   category: category,
+                  memo: '',
                 ))
             .copyWith(category: category, favorite: favorite);
 
@@ -84,9 +102,42 @@ class CatalogBindingViewModel
 
     await _catalogRepository.setFavoriteStatus(
       uid: _uid,
+      islandId: _islandId,
       itemId: itemId,
       category: category,
       favorite: favorite,
+    );
+  }
+
+  Future<void> setVillagerMemo({
+    required String itemId,
+    required String category,
+    required String memo,
+  }) async {
+    if (_islandId.isEmpty) {
+      return;
+    }
+    final current = state[itemId];
+    final optimistic =
+        (current ??
+                CatalogUserState(
+                  itemId: itemId,
+                  owned: false,
+                  donated: false,
+                  favorite: false,
+                  category: category,
+                  memo: '',
+                ))
+            .copyWith(category: category, memo: memo);
+
+    state = <String, CatalogUserState>{...state, itemId: optimistic};
+
+    await _catalogRepository.setVillagerMemo(
+      uid: _uid,
+      islandId: _islandId,
+      itemId: itemId,
+      category: category,
+      memo: memo,
     );
   }
 

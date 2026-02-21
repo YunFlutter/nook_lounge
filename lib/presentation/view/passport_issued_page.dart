@@ -132,7 +132,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                     if (!context.mounted) {
                       return;
                     }
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(true);
                   },
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(58),

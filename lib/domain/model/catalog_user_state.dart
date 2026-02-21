@@ -5,6 +5,7 @@ class CatalogUserState {
     required this.donated,
     required this.favorite,
     required this.category,
+    required this.memo,
   });
 
   final String itemId;
@@ -12,6 +13,7 @@ class CatalogUserState {
   final bool donated;
   final bool favorite;
   final String category;
+  final String memo;
 
   factory CatalogUserState.fromMap({
     required String itemId,
@@ -23,6 +25,7 @@ class CatalogUserState {
       donated: (data['donated'] as bool?) ?? false,
       favorite: (data['favorite'] as bool?) ?? false,
       category: (data['category'] as String?) ?? '',
+      memo: (data['memo'] as String?) ?? '',
     );
   }
 
@@ -31,6 +34,7 @@ class CatalogUserState {
     bool? donated,
     bool? favorite,
     String? category,
+    String? memo,
   }) {
     return CatalogUserState(
       itemId: itemId,
@@ -38,6 +42,7 @@ class CatalogUserState {
       donated: donated ?? this.donated,
       favorite: favorite ?? this.favorite,
       category: category ?? this.category,
+      memo: memo ?? this.memo,
     );
   }
 }

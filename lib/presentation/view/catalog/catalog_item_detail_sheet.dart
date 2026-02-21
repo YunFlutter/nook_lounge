@@ -11,6 +11,8 @@ class CatalogItemDetailSheet extends StatefulWidget {
     required this.isDonationMode,
     required this.onCompletedChanged,
     required this.onFavoriteChanged,
+    this.initialMemo = '',
+    this.onMemoSaved,
     super.key,
   });
 
@@ -20,6 +22,8 @@ class CatalogItemDetailSheet extends StatefulWidget {
   final bool isDonationMode;
   final Future<void> Function(bool) onCompletedChanged;
   final Future<void> Function(bool) onFavoriteChanged;
+  final String initialMemo;
+  final Future<void> Function(String memo)? onMemoSaved;
 
   @override
   State<CatalogItemDetailSheet> createState() => _CatalogItemDetailSheetState();
@@ -73,6 +77,8 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   late bool _isFavorite;
   late bool _isCompleted;
+  late TextEditingController _memoController;
+  bool _isMemoSaving = false;
   String? _selectedDetailImageUrl;
 
   @override
@@ -80,6 +86,13 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     super.initState();
     _isFavorite = widget.isFavorite;
     _isCompleted = widget.isCompleted;
+    _memoController = TextEditingController(text: widget.initialMemo);
+  }
+
+  @override
+  void dispose() {
+    _memoController.dispose();
+    super.dispose();
   }
 
   @override
@@ -195,6 +208,11 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                         ..._buildVillagerStateToggles()
                       else
                         ..._buildDefaultStateToggle(),
+                      if (_isVillager &&
+                          widget.onMemoSaved != null) ...<Widget>[
+                        const SizedBox(height: AppSpacing.s10 * 2),
+                        _buildVillagerMemoSection(),
+                      ],
                     ],
                   ),
                 ),
@@ -657,6 +675,76 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         },
       ),
     ];
+  }
+
+  Widget _buildVillagerMemoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          '주민 메모',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _memoController,
+          minLines: 3,
+          maxLines: 5,
+          maxLength: 300,
+          textInputAction: TextInputAction.newline,
+          decoration: const InputDecoration(hintText: '이 주민에 대한 메모를 남겨주세요.'),
+        ),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: _isMemoSaving ? null : _saveMemo,
+            icon: _isMemoSaving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.save_rounded),
+            label: Text(_isMemoSaving ? '저장 중...' : '메모 저장'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _saveMemo() async {
+    final callback = widget.onMemoSaved;
+    if (callback == null) {
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    final memo = _memoController.text.trim();
+
+    setState(() => _isMemoSaving = true);
+    try {
+      await callback(memo);
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('메모를 저장했어요.')));
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('메모 저장에 실패했어요. 다시 시도해주세요.')));
+    } finally {
+      if (mounted) {
+        setState(() => _isMemoSaving = false);
+      }
+    }
   }
 
   Map<String, List<String>> _groupPrefixedTags() {

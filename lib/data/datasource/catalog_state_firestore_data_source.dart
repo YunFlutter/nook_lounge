@@ -8,9 +8,12 @@ class CatalogStateFirestoreDataSource {
 
   final FirebaseFirestore _firestore;
 
-  Stream<Map<String, CatalogUserState>> watchCatalogStates(String uid) {
+  Stream<Map<String, CatalogUserState>> watchCatalogStates({
+    required String uid,
+    required String islandId,
+  }) {
     return _firestore
-        .collection(FirestorePaths.catalogStates(uid))
+        .collection(FirestorePaths.islandCatalogStates(uid, islandId))
         .snapshots()
         .map((snapshot) {
           final map = <String, CatalogUserState>{};
@@ -24,11 +27,13 @@ class CatalogStateFirestoreDataSource {
 
   Future<void> setCatalogState({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool? owned,
     required bool? donated,
     required bool? favorite,
+    String? memo,
   }) async {
     final payload = <String, dynamic>{
       'category': category,
@@ -44,9 +49,12 @@ class CatalogStateFirestoreDataSource {
     if (favorite != null) {
       payload['favorite'] = favorite;
     }
+    if (memo != null) {
+      payload['memo'] = memo;
+    }
 
     await _firestore
-        .doc(FirestorePaths.catalogState(uid, itemId))
+        .doc(FirestorePaths.islandCatalogState(uid, islandId, itemId))
         .set(payload, SetOptions(merge: true));
   }
 }

@@ -21,12 +21,26 @@ class TurnipRepositoryImpl implements TurnipRepository {
   }
 
   @override
-  Stream<TurnipSavedData?> watchSavedState({required String uid}) {
-    return _firestoreDataSource.watchTurnipState(uid);
+  Stream<TurnipSavedData?> watchSavedState({
+    required String uid,
+    required String islandId,
+  }) {
+    return _firestoreDataSource.watchTurnipState(
+      uid: uid,
+      islandId: islandId,
+    );
   }
 
   @override
-  Future<void> saveState({required String uid, required TurnipSavedData data}) {
-    return _firestoreDataSource.saveTurnipState(uid: uid, data: data);
+  Future<void> saveState({
+    required String uid,
+    required String islandId,
+    required TurnipSavedData data,
+  }) {
+    return _firestoreDataSource.saveTurnipState(
+      uid: uid,
+      islandId: islandId,
+      data: data,
+    );
   }
 }

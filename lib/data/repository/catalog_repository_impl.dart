@@ -31,19 +31,24 @@ class CatalogRepositoryImpl implements CatalogRepository {
   }
 
   @override
-  Stream<Map<String, CatalogUserState>> watchUserStates(String uid) {
-    return _stateDataSource.watchCatalogStates(uid);
+  Stream<Map<String, CatalogUserState>> watchUserStates({
+    required String uid,
+    required String islandId,
+  }) {
+    return _stateDataSource.watchCatalogStates(uid: uid, islandId: islandId);
   }
 
   @override
   Future<void> setOwnedStatus({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool owned,
   }) {
     return _stateDataSource.setCatalogState(
       uid: uid,
+      islandId: islandId,
       itemId: itemId,
       category: category,
       owned: owned,
@@ -55,12 +60,14 @@ class CatalogRepositoryImpl implements CatalogRepository {
   @override
   Future<void> setDonatedStatus({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool donated,
   }) {
     return _stateDataSource.setCatalogState(
       uid: uid,
+      islandId: islandId,
       itemId: itemId,
       category: category,
       owned: null,
@@ -72,17 +79,39 @@ class CatalogRepositoryImpl implements CatalogRepository {
   @override
   Future<void> setFavoriteStatus({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool favorite,
   }) {
     return _stateDataSource.setCatalogState(
       uid: uid,
+      islandId: islandId,
       itemId: itemId,
       category: category,
       owned: null,
       donated: null,
       favorite: favorite,
+    );
+  }
+
+  @override
+  Future<void> setVillagerMemo({
+    required String uid,
+    required String islandId,
+    required String itemId,
+    required String category,
+    required String memo,
+  }) {
+    return _stateDataSource.setCatalogState(
+      uid: uid,
+      islandId: islandId,
+      itemId: itemId,
+      category: category,
+      owned: null,
+      donated: null,
+      favorite: null,
+      memo: memo,
     );
   }
 }

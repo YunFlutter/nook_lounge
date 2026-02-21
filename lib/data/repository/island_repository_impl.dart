@@ -36,7 +36,7 @@ class IslandRepositoryImpl implements IslandRepository {
   }
 
   @override
-  Future<void> createPrimaryIsland({
+  Future<String> createPrimaryIsland({
     required String uid,
     required CreateIslandDraft draft,
     String? passportImagePath,
@@ -63,6 +63,25 @@ class IslandRepositoryImpl implements IslandRepository {
     );
 
     await _firestoreDataSource.createPrimaryIsland(uid: uid, profile: profile);
+    return islandId;
+  }
+
+  @override
+  Stream<String?> watchPrimaryIslandId(String uid) {
+    return _firestoreDataSource.watchPrimaryIslandId(uid);
+  }
+
+  @override
+  Stream<List<IslandProfile>> watchIslands(String uid) {
+    return _firestoreDataSource.watchIslands(uid);
+  }
+
+  @override
+  Future<void> setPrimaryIsland({
+    required String uid,
+    required String islandId,
+  }) {
+    return _firestoreDataSource.setPrimaryIsland(uid: uid, islandId: islandId);
   }
 
   bool _isTransientNetworkError(String code) {

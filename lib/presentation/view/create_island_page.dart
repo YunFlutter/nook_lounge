@@ -12,9 +12,16 @@ import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/passport_issued_page.dart';
 
 class CreateIslandPage extends ConsumerStatefulWidget {
-  const CreateIslandPage({required this.uid, super.key});
+  const CreateIslandPage({
+    required this.uid,
+    super.key,
+    this.onIslandEntered,
+    this.popToDashboardOnEnter = false,
+  });
 
   final String uid;
+  final Future<void> Function(String islandId)? onIslandEntered;
+  final bool popToDashboardOnEnter;
 
   @override
   ConsumerState<CreateIslandPage> createState() => _CreateIslandPageState();
@@ -38,6 +45,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
   String _hemisphere = '북반구';
   String _nativeFruit = '복숭아';
   CreateIslandDraft? _lastSubmittedDraft;
+  String? _lastCreatedIslandId;
   bool _openingIssuedPage = false;
 
   ProviderSubscription<CreateIslandViewState>? _createSubscription;
@@ -80,13 +88,17 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
 
           _openingIssuedPage = true;
 
-          await Navigator.of(context).push(
-            MaterialPageRoute<void>(
+          final entered = await Navigator.of(context).push<bool>(
+            MaterialPageRoute<bool>(
               builder: (_) => PassportIssuedPage(
                 draft: submittedDraft,
                 imagePath: next.selectedImagePath,
                 onEnterIsland: () async {
                   await sessionViewModel.refresh();
+                  final islandId = _lastCreatedIslandId;
+                  if (islandId != null && widget.onIslandEntered != null) {
+                    await widget.onIslandEntered!(islandId);
+                  }
                 },
               ),
             ),
@@ -97,6 +109,9 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
           }
           _openingIssuedPage = false;
           createIslandViewModel.resetSubmitState();
+          if (entered == true && widget.popToDashboardOnEnter && mounted) {
+            Navigator.of(context).pop();
+          }
         }
       },
     );
@@ -318,7 +333,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                         );
 
                         _lastSubmittedDraft = draft;
-                        await viewModel.createIsland(
+                        _lastCreatedIslandId = await viewModel.createIsland(
                           uid: widget.uid,
                           draft: draft,
                         );

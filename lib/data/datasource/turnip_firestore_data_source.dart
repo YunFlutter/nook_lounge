@@ -10,10 +10,14 @@ class TurnipFirestoreDataSource {
 
   final FirebaseFirestore _firestore;
 
-  Stream<TurnipSavedData?> watchTurnipState(String uid) {
-    return _firestore.doc(FirestorePaths.turnipState(uid)).snapshots().map((
-      doc,
-    ) {
+  Stream<TurnipSavedData?> watchTurnipState({
+    required String uid,
+    required String islandId,
+  }) {
+    return _firestore
+        .doc(FirestorePaths.turnipState(uid, islandId: islandId))
+        .snapshots()
+        .map((doc) {
       if (!doc.exists) {
         return null;
       }
@@ -37,6 +41,7 @@ class TurnipFirestoreDataSource {
 
   Future<void> saveTurnipState({
     required String uid,
+    required String islandId,
     required TurnipSavedData data,
   }) async {
     final payload = data.toMap();
@@ -50,7 +55,7 @@ class TurnipFirestoreDataSource {
     payload['updatedAt'] = FieldValue.serverTimestamp();
 
     await _firestore
-        .doc(FirestorePaths.turnipState(uid))
+        .doc(FirestorePaths.turnipState(uid, islandId: islandId))
         .set(payload, SetOptions(merge: true));
   }
 }

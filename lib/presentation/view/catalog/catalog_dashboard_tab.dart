@@ -14,9 +14,14 @@ import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_res
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
 
 class CatalogDashboardTab extends ConsumerStatefulWidget {
-  const CatalogDashboardTab({required this.uid, super.key});
+  const CatalogDashboardTab({
+    required this.uid,
+    required this.islandId,
+    super.key,
+  });
 
   final String uid;
+  final String islandId;
 
   @override
   ConsumerState<CatalogDashboardTab> createState() =>
@@ -62,7 +67,12 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
 
   @override
   Widget build(BuildContext context) {
-    final overrides = ref.watch(catalogBindingViewModelProvider(widget.uid));
+    final overrides = ref.watch(
+      catalogBindingViewModelProvider((
+        uid: widget.uid,
+        islandId: widget.islandId,
+      )),
+    );
 
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -318,6 +328,7 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
             opacity: curved,
             child: CatalogCollectionPage(
               uid: widget.uid,
+              islandId: widget.islandId,
               title: title,
               category: category,
               allItems: allItems,
@@ -342,9 +353,29 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
           isCompleted: _isResident(item, userStates),
           isFavorite: _isFavorite(item, userStates),
           isDonationMode: false,
+          initialMemo: userStates[item.id]?.memo ?? '',
+          onMemoSaved: (memo) async {
+            await ref
+                .read(
+                  catalogBindingViewModelProvider((
+                    uid: widget.uid,
+                    islandId: widget.islandId,
+                  )).notifier,
+                )
+                .setVillagerMemo(
+                  itemId: item.id,
+                  category: item.category,
+                  memo: memo,
+                );
+          },
           onCompletedChanged: (value) async {
             await ref
-                .read(catalogBindingViewModelProvider(widget.uid).notifier)
+                .read(
+                  catalogBindingViewModelProvider((
+                    uid: widget.uid,
+                    islandId: widget.islandId,
+                  )).notifier,
+                )
                 .setCompleted(
                   itemId: item.id,
                   category: item.category,
@@ -354,7 +385,12 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
           },
           onFavoriteChanged: (value) async {
             await ref
-                .read(catalogBindingViewModelProvider(widget.uid).notifier)
+                .read(
+                  catalogBindingViewModelProvider((
+                    uid: widget.uid,
+                    islandId: widget.islandId,
+                  )).notifier,
+                )
                 .setFavorite(
                   itemId: item.id,
                   category: item.category,

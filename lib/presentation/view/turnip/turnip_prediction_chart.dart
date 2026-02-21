@@ -235,7 +235,7 @@ class _PeakBubble extends StatelessWidget {
             '최대',
             style: TextStyle(
               color: AppColors.black,
-              fontSize: 26,
+              fontSize: 16,
               fontWeight: FontWeight.w800,
               height: 1,
             ),
@@ -244,7 +244,7 @@ class _PeakBubble extends StatelessWidget {
             '$value',
             style: const TextStyle(
               color: AppColors.black,
-              fontSize: 28,
+              fontSize: 18,
               fontWeight: FontWeight.w800,
               height: 1,
             ),

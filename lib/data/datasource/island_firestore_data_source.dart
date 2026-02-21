@@ -79,4 +79,43 @@ class IslandFirestoreDataSource {
 
     await batch.commit();
   }
+
+  Stream<String?> watchPrimaryIslandId(String uid) {
+    return _firestore.doc(FirestorePaths.user(uid)).snapshots().map((doc) {
+      final data = doc.data();
+      if (data == null) {
+        return null;
+      }
+      final islandId = (data['primaryIslandId'] as String?)?.trim();
+      if (islandId == null || islandId.isEmpty) {
+        return null;
+      }
+      return islandId;
+    });
+  }
+
+  Stream<List<IslandProfile>> watchIslands(String uid) {
+    return _firestore
+        .collection(FirestorePaths.islands(uid))
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          final islands = <IslandProfile>[];
+          for (final doc in snapshot.docs) {
+            final data = doc.data();
+            islands.add(IslandProfile.fromMap(data, id: doc.id));
+          }
+          return islands;
+        });
+  }
+
+  Future<void> setPrimaryIsland({
+    required String uid,
+    required String islandId,
+  }) async {
+    await _firestore.doc(FirestorePaths.user(uid)).set(<String, dynamic>{
+      'primaryIslandId': islandId,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 }

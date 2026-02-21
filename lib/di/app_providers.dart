@@ -157,21 +157,27 @@ final catalogBindingViewModelProvider =
     StateNotifierProvider.family<
       CatalogBindingViewModel,
       Map<String, CatalogUserState>,
-      String
-    >((ref, uid) {
+      ({String uid, String islandId})
+    >((ref, args) {
       return CatalogBindingViewModel(
         catalogRepository: ref.watch(catalogRepositoryProvider),
-        uid: uid,
+        uid: args.uid,
+        islandId: args.islandId,
       );
     });
 
 final turnipViewModelProvider =
-    StateNotifierProvider.family<TurnipViewModel, TurnipViewState, String>((
+    StateNotifierProvider.family<
+      TurnipViewModel,
+      TurnipViewState,
+      ({String uid, String islandId})
+    >((
       ref,
-      uid,
+      args,
     ) {
       return TurnipViewModel(
         repository: ref.watch(turnipRepositoryProvider),
-        uid: uid,
+        uid: args.uid,
+        islandId: args.islandId,
       );
     });

@@ -14,16 +14,20 @@ import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sh
 class CatalogCollectionPage extends ConsumerStatefulWidget {
   const CatalogCollectionPage({
     required this.uid,
+    required this.islandId,
     required this.title,
     required this.category,
     required this.allItems,
+    this.startWithResidentFilter = false,
     super.key,
   });
 
   final String uid;
+  final String islandId;
   final String title;
   final String category;
   final List<CatalogItem> allItems;
+  final bool startWithResidentFilter;
 
   @override
   ConsumerState<CatalogCollectionPage> createState() =>
@@ -41,6 +45,14 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   Timer? _toastTimer;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.category == '주민' && widget.startWithResidentFilter) {
+      _villagerResidentFilter = _VillagerResidentFilter.resident;
+    }
+  }
+
+  @override
   void dispose() {
     _toastTimer?.cancel();
     _searchController.dispose();
@@ -50,7 +62,10 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   @override
   Widget build(BuildContext context) {
     final completedOverrides = ref.watch(
-      catalogBindingViewModelProvider(widget.uid),
+      catalogBindingViewModelProvider((
+        uid: widget.uid,
+        islandId: widget.islandId,
+      )),
     );
     final config = _CategoryViewConfig.from(widget.category);
     final categoryItems = widget.allItems
@@ -511,20 +526,42 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
+        final currentStates = ref.read(
+          catalogBindingViewModelProvider((
+            uid: widget.uid,
+            islandId: widget.islandId,
+          )),
+        );
         return CatalogItemDetailSheet(
           item: item,
-          isCompleted: _isCompleted(
-            item,
-            ref.read(catalogBindingViewModelProvider(widget.uid)),
-          ),
-          isFavorite: _isFavorite(
-            item,
-            ref.read(catalogBindingViewModelProvider(widget.uid)),
-          ),
+          isCompleted: _isCompleted(item, currentStates),
+          isFavorite: _isFavorite(item, currentStates),
           isDonationMode: donationMode,
+          initialMemo: currentStates[item.id]?.memo ?? '',
+          onMemoSaved: item.category == '주민'
+              ? (memo) async {
+                  await ref
+                      .read(
+                        catalogBindingViewModelProvider((
+                          uid: widget.uid,
+                          islandId: widget.islandId,
+                        )).notifier,
+                      )
+                      .setVillagerMemo(
+                        itemId: item.id,
+                        category: item.category,
+                        memo: memo,
+                      );
+                }
+              : null,
           onCompletedChanged: (value) async {
             await ref
-                .read(catalogBindingViewModelProvider(widget.uid).notifier)
+                .read(
+                  catalogBindingViewModelProvider((
+                    uid: widget.uid,
+                    islandId: widget.islandId,
+                  )).notifier,
+                )
                 .setCompleted(
                   itemId: item.id,
                   category: item.category,
@@ -546,7 +583,12 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
           },
           onFavoriteChanged: (value) async {
             await ref
-                .read(catalogBindingViewModelProvider(widget.uid).notifier)
+                .read(
+                  catalogBindingViewModelProvider((
+                    uid: widget.uid,
+                    islandId: widget.islandId,
+                  )).notifier,
+                )
                 .setFavorite(
                   itemId: item.id,
                   category: item.category,
@@ -568,7 +610,12 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   }) async {
     final next = !current;
     await ref
-        .read(catalogBindingViewModelProvider(widget.uid).notifier)
+        .read(
+          catalogBindingViewModelProvider((
+            uid: widget.uid,
+            islandId: widget.islandId,
+          )).notifier,
+        )
         .setCompleted(
           itemId: item.id,
           category: item.category,
@@ -587,7 +634,12 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   }) async {
     final next = !current;
     await ref
-        .read(catalogBindingViewModelProvider(widget.uid).notifier)
+        .read(
+          catalogBindingViewModelProvider((
+            uid: widget.uid,
+            islandId: widget.islandId,
+          )).notifier,
+        )
         .setFavorite(itemId: item.id, category: item.category, favorite: next);
     if (!mounted) {
       return;

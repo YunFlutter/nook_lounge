@@ -8,15 +8,24 @@ import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
 
 class TurnipViewModel extends StateNotifier<TurnipViewState> {
-  TurnipViewModel({required TurnipRepository repository, required String uid})
+  TurnipViewModel({
+    required TurnipRepository repository,
+    required String uid,
+    required String islandId,
+  })
     : _repository = repository,
       _uid = uid,
+      _islandId = islandId,
       super(const TurnipViewState()) {
+    if (islandId.isEmpty) {
+      return;
+    }
     unawaited(_loadSavedStateOnce());
   }
 
   final TurnipRepository _repository;
   final String _uid;
+  final String _islandId;
 
   void reset() {
     state = const TurnipViewState();
@@ -154,7 +163,7 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
       // 유지보수 포인트:
       // 무주식 계산은 로컬 입력값 기준으로 동작해야 하므로, Firestore는 앱 진입 시 1회 로드에만 사용합니다.
       final saved = await _repository
-          .watchSavedState(uid: _uid)
+          .watchSavedState(uid: _uid, islandId: _islandId)
           .first
           .timeout(const Duration(seconds: 5));
       if (!mounted) {

@@ -10,10 +10,14 @@ abstract class CatalogRepository {
     int limit,
   });
 
-  Stream<Map<String, CatalogUserState>> watchUserStates(String uid);
+  Stream<Map<String, CatalogUserState>> watchUserStates({
+    required String uid,
+    required String islandId,
+  });
 
   Future<void> setOwnedStatus({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool owned,
@@ -21,6 +25,7 @@ abstract class CatalogRepository {
 
   Future<void> setDonatedStatus({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool donated,
@@ -28,8 +33,17 @@ abstract class CatalogRepository {
 
   Future<void> setFavoriteStatus({
     required String uid,
+    required String islandId,
     required String itemId,
     required String category,
     required bool favorite,
+  });
+
+  Future<void> setVillagerMemo({
+    required String uid,
+    required String islandId,
+    required String itemId,
+    required String category,
+    required String memo,
   });
 }

@@ -1,4 +1,5 @@
 import 'package:nook_lounge_app/domain/model/create_island_draft.dart';
+import 'package:nook_lounge_app/domain/model/island_profile.dart';
 
 abstract class IslandRepository {
   /// 앱 시작 시 캐시만 사용해 즉시 분기합니다.
@@ -9,9 +10,18 @@ abstract class IslandRepository {
   /// - null: 네트워크 일시 장애로 판별 불가(무시)
   Future<bool?> revalidatePrimaryIsland(String uid);
 
-  Future<void> createPrimaryIsland({
+  Future<String> createPrimaryIsland({
     required String uid,
     required CreateIslandDraft draft,
     String? passportImagePath,
+  });
+
+  Stream<String?> watchPrimaryIslandId(String uid);
+
+  Stream<List<IslandProfile>> watchIslands(String uid);
+
+  Future<void> setPrimaryIsland({
+    required String uid,
+    required String islandId,
   });
 }

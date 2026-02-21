@@ -14,9 +14,10 @@ import 'package:nook_lounge_app/presentation/view/turnip/turnip_price_input_fiel
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_step_circle_button.dart';
 
 class TurnipPage extends ConsumerWidget {
-  const TurnipPage({required this.uid, super.key});
+  const TurnipPage({required this.uid, required this.islandId, super.key});
 
   final String uid;
+  final String islandId;
 
   static const List<String> _dayLabels = <String>[
     '월요일',
@@ -29,8 +30,12 @@ class TurnipPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(turnipViewModelProvider(uid));
-    final viewModel = ref.read(turnipViewModelProvider(uid).notifier);
+    final state = ref.watch(
+      turnipViewModelProvider((uid: uid, islandId: islandId)),
+    );
+    final viewModel = ref.read(
+      turnipViewModelProvider((uid: uid, islandId: islandId)).notifier,
+    );
     final prediction = state.prediction;
 
     final minValues = _buildDailySeries(
