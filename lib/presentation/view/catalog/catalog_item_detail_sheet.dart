@@ -11,6 +11,7 @@ class CatalogItemDetailSheet extends StatefulWidget {
     required this.isDonationMode,
     required this.onCompletedChanged,
     required this.onFavoriteChanged,
+    this.readOnly = false,
     this.initialMemo = '',
     this.onMemoSaved,
     super.key,
@@ -20,6 +21,7 @@ class CatalogItemDetailSheet extends StatefulWidget {
   final bool isCompleted;
   final bool isFavorite;
   final bool isDonationMode;
+  final bool readOnly;
   final Future<void> Function(bool) onCompletedChanged;
   final Future<void> Function(bool) onFavoriteChanged;
   final String initialMemo;
@@ -160,18 +162,20 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () async {
-                              final next = !_isFavorite;
-                              setState(() => _isFavorite = next);
-                              try {
-                                await widget.onFavoriteChanged(next);
-                              } catch (_) {
-                                if (!mounted) {
-                                  return;
-                                }
-                                setState(() => _isFavorite = !next);
-                              }
-                            },
+                            onPressed: widget.readOnly
+                                ? null
+                                : () async {
+                                    final next = !_isFavorite;
+                                    setState(() => _isFavorite = next);
+                                    try {
+                                      await widget.onFavoriteChanged(next);
+                                    } catch (_) {
+                                      if (!mounted) {
+                                        return;
+                                      }
+                                      setState(() => _isFavorite = !next);
+                                    }
+                                  },
                             icon: Icon(
                               _isFavorite
                                   ? Icons.favorite
@@ -204,11 +208,14 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.s10 * 2),
-                      if (_isVillager)
+                      if (widget.readOnly)
+                        ..._buildReadOnlyStateNotice()
+                      else if (_isVillager)
                         ..._buildVillagerStateToggles()
                       else
                         ..._buildDefaultStateToggle(),
                       if (_isVillager &&
+                          !widget.readOnly &&
                           widget.onMemoSaved != null) ...<Widget>[
                         const SizedBox(height: AppSpacing.s10 * 2),
                         _buildVillagerMemoSection(),
@@ -590,6 +597,36 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   bool get _isVillager => widget.item.category == '주민';
 
+  List<Widget> _buildReadOnlyStateNotice() {
+    return <Widget>[
+      Text(
+        '상태',
+        style: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+      ),
+      const SizedBox(height: AppSpacing.s10),
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.catalogChipBg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: const Text(
+          '비회원 둘러보기 모드에서는 보유/기증/선호 상태를 저장할 수 없어요.',
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            height: 1.4,
+          ),
+        ),
+      ),
+    ];
+  }
+
   List<Widget> _buildDefaultStateToggle() {
     final title = widget.isDonationMode ? '박물관 기증' : '보유 상태';
     final offLabel = widget.isDonationMode ? '미기증' : '미보유';
@@ -617,8 +654,17 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
             ? AppColors.catalogProgressAccent
             : AppColors.catalogSuccessText,
         onChanged: (value) async {
+          final previous = _isCompleted;
           setState(() => _isCompleted = value);
-          await widget.onCompletedChanged(value);
+          try {
+            await widget.onCompletedChanged(value);
+          } catch (error) {
+            if (!mounted) {
+              return;
+            }
+            setState(() => _isCompleted = previous);
+            _showActionError(error);
+          }
         },
       ),
     ];
@@ -649,8 +695,17 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         onIcon: Icons.home_rounded,
         onSelectedColor: AppColors.catalogSuccessText,
         onChanged: (value) async {
+          final previous = _isCompleted;
           setState(() => _isCompleted = value);
-          await widget.onCompletedChanged(value);
+          try {
+            await widget.onCompletedChanged(value);
+          } catch (error) {
+            if (!mounted) {
+              return;
+            }
+            setState(() => _isCompleted = previous);
+            _showActionError(error);
+          }
         },
       ),
       const SizedBox(height: AppSpacing.s10),
@@ -670,8 +725,17 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         onIcon: Icons.favorite_rounded,
         onSelectedColor: AppColors.badgePurpleText,
         onChanged: (value) async {
+          final previous = _isFavorite;
           setState(() => _isFavorite = value);
-          await widget.onFavoriteChanged(value);
+          try {
+            await widget.onFavoriteChanged(value);
+          } catch (error) {
+            if (!mounted) {
+              return;
+            }
+            setState(() => _isFavorite = previous);
+            _showActionError(error);
+          }
         },
       ),
     ];
@@ -745,6 +809,16 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         setState(() => _isMemoSaving = false);
       }
     }
+  }
+
+  void _showActionError(Object error) {
+    final raw = error.toString();
+    final message = raw.isEmpty || raw == 'Exception'
+        ? '처리 중 오류가 발생했어요. 다시 시도해주세요.'
+        : raw;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Map<String, List<String>> _groupPrefixedTags() {

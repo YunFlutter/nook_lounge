@@ -35,14 +35,41 @@ class HomeShellPage extends ConsumerWidget {
       ),
       bottomNavigationBar: NavigationBar(
         backgroundColor: AppColors.navBackground,
+
         selectedIndex: currentTab,
         onDestinationSelected: tabController.changeTab,
         destinations: const <NavigationDestination>[
-          NavigationDestination(icon: Icon(Icons.flight), label: '비행장'),
-          NavigationDestination(icon: Icon(Icons.storefront), label: '마켓'),
-          NavigationDestination(icon: Icon(Icons.home), label: '홈'),
-          NavigationDestination(icon: Icon(Icons.menu_book), label: '도감'),
-          NavigationDestination(icon: Icon(Icons.insert_chart), label: '무주식'),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
+            selectedIcon: _NavPngIcon(
+              assetPath: 'assets/icon/boarding_pass_act.png',
+            ),
+            label: '비행장',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
+            selectedIcon: _NavPngIcon(assetPath: 'assets/icon/shop_act.png'),
+            label: '마켓',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
+            selectedIcon: _NavPngIcon(assetPath: 'assets/icon/house_act.png'),
+            label: '홈',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
+            selectedIcon: _NavPngIcon(
+              assetPath: 'assets/icon/book_stack_act.png',
+            ),
+            label: '도감',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
+            selectedIcon: _NavPngIcon(
+              assetPath: 'assets/icon/combo_chart_act.png',
+            ),
+            label: '무주식',
+          ),
         ],
       ),
     );
@@ -301,5 +328,16 @@ class HomeShellPage extends ConsumerWidget {
         );
       },
     );
+  }
+}
+
+class _NavPngIcon extends StatelessWidget {
+  const _NavPngIcon({required this.assetPath});
+
+  final String assetPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(assetPath, width: 30, height: 30, fit: BoxFit.contain);
   }
 }

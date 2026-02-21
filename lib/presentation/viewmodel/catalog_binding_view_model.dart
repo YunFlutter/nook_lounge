@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/core/error/resident_limit_exceeded_exception.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
 
 class CatalogBindingViewModel
     extends StateNotifier<Map<String, CatalogUserState>> {
+  static const int _maxResidentCount = 10;
+
   CatalogBindingViewModel({
     required CatalogRepository catalogRepository,
     required String uid,
@@ -38,6 +41,23 @@ class CatalogBindingViewModel
     if (_islandId.isEmpty) {
       return;
     }
+
+    final isResidentCategory = category == '주민' && !donationMode;
+    if (isResidentCategory && completed) {
+      final currentState = state[itemId];
+      final isAlreadyResident = currentState?.owned ?? false;
+      if (!isAlreadyResident) {
+        final residentCount = state.values
+            .where((value) => value.category == '주민' && value.owned)
+            .length;
+        if (residentCount >= _maxResidentCount) {
+          throw const ResidentLimitExceededException(
+            maxCount: _maxResidentCount,
+          );
+        }
+      }
+    }
+
     final current = state[itemId];
     final optimistic =
         (current ??

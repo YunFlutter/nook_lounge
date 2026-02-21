@@ -187,7 +187,11 @@ class _SignInPageState extends ConsumerState<SignInPage>
               AnimatedFadeSlide(
                 delay: const Duration(milliseconds: 200),
                 child: TextButton(
-                  onPressed: loading ? null : viewModel.signInAsGuest,
+                  onPressed: loading
+                      ? null
+                      : () => ref
+                            .read(sessionViewModelProvider.notifier)
+                            .enterGuestBrowseMode(),
                   child: const Text(
                     AppStrings.guestLogin,
                     style: TextStyle(

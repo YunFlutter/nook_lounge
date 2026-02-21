@@ -5,9 +5,11 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/session_state.dart';
 import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/error_retry_view.dart';
+import 'package:nook_lounge_app/presentation/view/guest_browse_page.dart';
 import 'package:nook_lounge_app/presentation/view/home_shell_page.dart';
 import 'package:nook_lounge_app/presentation/view/sign_in_page.dart';
 import 'package:nook_lounge_app/presentation/view/splash_loading_page.dart';
+import 'package:nook_lounge_app/presentation/viewmodel/session_view_model.dart';
 
 class SessionGatePage extends ConsumerStatefulWidget {
   const SessionGatePage({super.key});
@@ -22,6 +24,7 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(sessionViewModelProvider);
+    final isAnonymous = ref.watch(authRepositoryProvider).isAnonymous;
 
     if (!_splashCompleted) {
       return SplashLoadingPage(
@@ -54,7 +57,9 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
     return session.when(
       signedOut: SignInPage.new,
       needsIslandSetup: (uid) => CreateIslandPage(uid: uid),
-      ready: (uid) => HomeShellPage(uid: uid),
+      ready: (uid) => uid == SessionViewModel.guestUid || isAnonymous
+          ? GuestBrowsePage(uid: uid)
+          : HomeShellPage(uid: uid),
     );
   }
 }

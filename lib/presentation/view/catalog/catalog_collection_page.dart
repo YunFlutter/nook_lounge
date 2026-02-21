@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/core/error/resident_limit_exceeded_exception.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
@@ -19,6 +20,7 @@ class CatalogCollectionPage extends ConsumerStatefulWidget {
     required this.category,
     required this.allItems,
     this.startWithResidentFilter = false,
+    this.readOnly = false,
     super.key,
   });
 
@@ -28,6 +30,7 @@ class CatalogCollectionPage extends ConsumerStatefulWidget {
   final String category;
   final List<CatalogItem> allItems;
   final bool startWithResidentFilter;
+  final bool readOnly;
 
   @override
   ConsumerState<CatalogCollectionPage> createState() =>
@@ -61,12 +64,14 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final completedOverrides = ref.watch(
-      catalogBindingViewModelProvider((
-        uid: widget.uid,
-        islandId: widget.islandId,
-      )),
-    );
+    final completedOverrides = widget.readOnly
+        ? const <String, CatalogUserState>{}
+        : ref.watch(
+            catalogBindingViewModelProvider((
+              uid: widget.uid,
+              islandId: widget.islandId,
+            )),
+          );
     final config = _CategoryViewConfig.from(widget.category);
     final categoryItems = widget.allItems
         .where((item) => item.category == widget.category)
@@ -89,10 +94,11 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
             child: Column(
               children: <Widget>[
                 const SizedBox(height: AppSpacing.s10),
-                if (widget.category == '주민')
-                  _buildVillagerResidentSegment()
-                else
-                  _buildCompletionSegment(donationMode: config.donationMode),
+                if (!widget.readOnly)
+                  if (widget.category == '주민')
+                    _buildVillagerResidentSegment()
+                  else
+                    _buildCompletionSegment(donationMode: config.donationMode),
                 const SizedBox(height: AppSpacing.s10),
                 TextField(
                   controller: _searchController,
@@ -137,23 +143,50 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                                   item: item,
                                   donationMode: config.donationMode,
                                 ),
-                                onToggleResident: widget.category == '주민'
-                                    ? () => _setVillagerResident(
+                                onToggleResident:
+                                    widget.readOnly || widget.category != '주민'
+                                    ? null
+                                    : () => _setVillagerResident(
                                         item: item,
                                         current: completed,
-                                      )
-                                    : null,
-                                onToggleFavorite: widget.category == '주민'
-                                    ? () => _setVillagerFavorite(
+                                      ),
+                                onToggleFavorite:
+                                    widget.readOnly || widget.category != '주민'
+                                    ? null
+                                    : () => _setVillagerFavorite(
                                         item: item,
                                         current: favorite,
-                                      )
-                                    : null,
+                                      ),
+                                showVillagerActions:
+                                    !widget.readOnly && widget.category == '주민',
                               ),
                             );
                           },
                         ),
                 ),
+                if (widget.readOnly) ...<Widget>[
+                  const SizedBox(height: AppSpacing.s10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.catalogChipBg,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.borderDefault),
+                    ),
+                    child: const Text(
+                      '비회원 둘러보기 모드에서는 상태 저장이 비활성화됩니다.',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -440,7 +473,10 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
       return false;
     }
 
-    if (widget.category == '주민') {
+    if (widget.readOnly) {
+      // 유지보수 포인트:
+      // 비회원 모드에서는 저장 상태가 없으므로 상태 기반 필터를 건너뜁니다.
+    } else if (widget.category == '주민') {
       final isResident = _isCompleted(item, completedOverrides);
       final isFavorite = _isFavorite(item, completedOverrides);
       if (_villagerResidentFilter == _VillagerResidentFilter.resident &&
@@ -526,19 +562,24 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
-        final currentStates = ref.read(
-          catalogBindingViewModelProvider((
-            uid: widget.uid,
-            islandId: widget.islandId,
-          )),
-        );
+        final currentStates = widget.readOnly
+            ? const <String, CatalogUserState>{}
+            : ref.read(
+                catalogBindingViewModelProvider((
+                  uid: widget.uid,
+                  islandId: widget.islandId,
+                )),
+              );
         return CatalogItemDetailSheet(
           item: item,
           isCompleted: _isCompleted(item, currentStates),
           isFavorite: _isFavorite(item, currentStates),
           isDonationMode: donationMode,
+          readOnly: widget.readOnly,
           initialMemo: currentStates[item.id]?.memo ?? '',
-          onMemoSaved: item.category == '주민'
+          onMemoSaved: widget.readOnly
+              ? null
+              : item.category == '주민'
               ? (memo) async {
                   await ref
                       .read(
@@ -555,33 +596,46 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                 }
               : null,
           onCompletedChanged: (value) async {
-            await ref
-                .read(
-                  catalogBindingViewModelProvider((
-                    uid: widget.uid,
-                    islandId: widget.islandId,
-                  )).notifier,
-                )
-                .setCompleted(
-                  itemId: item.id,
-                  category: item.category,
-                  donationMode: donationMode,
-                  completed: value,
-                );
-            if (!mounted) {
+            if (widget.readOnly) {
               return;
             }
-            _showToast(
-              widget.category == '주민'
-                  ? (value ? '거주 주민으로 설정했어요.' : '거주 주민 해제했어요.')
-                  : value
-                  ? (donationMode ? '박물관 기증 완료!' : '아이템 보유 처리 완료!')
-                  : (donationMode
-                        ? '기증 상태를 미기증으로 변경했어요.'
-                        : '보유 상태를 미보유로 변경했어요.'),
-            );
+            try {
+              await ref
+                  .read(
+                    catalogBindingViewModelProvider((
+                      uid: widget.uid,
+                      islandId: widget.islandId,
+                    )).notifier,
+                  )
+                  .setCompleted(
+                    itemId: item.id,
+                    category: item.category,
+                    donationMode: donationMode,
+                    completed: value,
+                  );
+              if (!mounted) {
+                return;
+              }
+              _showToast(
+                widget.category == '주민'
+                    ? (value ? '거주 주민으로 설정했어요.' : '거주 주민 해제했어요.')
+                    : value
+                    ? (donationMode ? '박물관 기증 완료!' : '아이템 보유 처리 완료!')
+                    : (donationMode
+                          ? '기증 상태를 미기증으로 변경했어요.'
+                          : '보유 상태를 미보유로 변경했어요.'),
+              );
+            } catch (error) {
+              if (mounted) {
+                _showToast(_actionErrorMessage(error));
+              }
+              rethrow;
+            }
           },
           onFavoriteChanged: (value) async {
+            if (widget.readOnly) {
+              return;
+            }
             await ref
                 .read(
                   catalogBindingViewModelProvider((
@@ -609,19 +663,26 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
     required bool current,
   }) async {
     final next = !current;
-    await ref
-        .read(
-          catalogBindingViewModelProvider((
-            uid: widget.uid,
-            islandId: widget.islandId,
-          )).notifier,
-        )
-        .setCompleted(
-          itemId: item.id,
-          category: item.category,
-          donationMode: false,
-          completed: next,
-        );
+    try {
+      await ref
+          .read(
+            catalogBindingViewModelProvider((
+              uid: widget.uid,
+              islandId: widget.islandId,
+            )).notifier,
+          )
+          .setCompleted(
+            itemId: item.id,
+            category: item.category,
+            donationMode: false,
+            completed: next,
+          );
+    } catch (error) {
+      if (mounted) {
+        _showToast(_actionErrorMessage(error));
+      }
+      return;
+    }
     if (!mounted) {
       return;
     }
@@ -657,6 +718,13 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
       setState(() => _toastMessage = null);
     });
   }
+
+  String _actionErrorMessage(Object error) {
+    if (error is ResidentLimitExceededException) {
+      return error.message;
+    }
+    return '처리 중 오류가 발생했어요. 다시 시도해주세요.';
+  }
 }
 
 class _CatalogItemCard extends StatelessWidget {
@@ -668,6 +736,7 @@ class _CatalogItemCard extends StatelessWidget {
     required this.onTap,
     required this.onToggleResident,
     required this.onToggleFavorite,
+    required this.showVillagerActions,
   });
 
   final CatalogItem item;
@@ -677,6 +746,7 @@ class _CatalogItemCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onToggleResident;
   final VoidCallback? onToggleFavorite;
+  final bool showVillagerActions;
 
   @override
   Widget build(BuildContext context) {
@@ -751,7 +821,7 @@ class _CatalogItemCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (isVillager) ...<Widget>[
+            if (isVillager && showVillagerActions) ...<Widget>[
               const SizedBox(width: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,

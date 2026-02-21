@@ -13,6 +13,7 @@ import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_collection_page.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/home/wish_list_page.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_legend_dot.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_prediction_chart.dart';
 
@@ -143,6 +144,19 @@ class HomeDashboardTab extends ConsumerWidget {
               hasError: catalogAsync.hasError,
             ),
           ),
+          const SizedBox(height: AppSpacing.s10 * 2),
+          AnimatedFadeSlide(
+            delay: const Duration(milliseconds: 160),
+            child: _buildWishListSection(
+              context: context,
+              ref: ref,
+              currentIslandId: currentIslandId,
+              items: items,
+              userStates: userStates,
+              loading: catalogAsync.isLoading,
+              hasError: catalogAsync.hasError,
+            ),
+          ),
         ],
       ),
     );
@@ -217,57 +231,71 @@ class HomeDashboardTab extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        ClipOval(
-          child: Container(
-            width: 78,
-            height: 78,
-            color: AppColors.bgSecondary,
-            child: _buildNetworkImage(island.imageUrl),
+        AnimatedFadeSlide(
+          delay: const Duration(milliseconds: 20),
+          offset: const Offset(-0.08, 0),
+          child: ClipOval(
+            child: Container(
+              width: 78,
+              height: 78,
+              color: AppColors.bgSecondary,
+              child: _buildNetworkImage(island.imageUrl),
+            ),
           ),
         ),
         const SizedBox(width: 14),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Flexible(
-                    child: Text(
-                      island.islandName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 40 / 2, // 20
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
+          child: AnimatedFadeSlide(
+            delay: const Duration(milliseconds: 55),
+            offset: const Offset(0.08, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: Text(
+                        island.islandName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 40 / 2, // 20
+                          fontWeight: FontWeight.w800,
+                          height: 1.1,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    fruitEmoji,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                    const SizedBox(width: 6),
+                    Text(
+                      fruitEmoji,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  _buildHemisphereBadge(island.hemisphere),
-                  const SizedBox(width: 10),
-                  _buildGatePillToggle(
-                    gateOpen: gateOpen,
-                    onTap: () => gateNotifier.state = !gateOpen,
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: <Widget>[
+                    AnimatedFadeSlide(
+                      delay: const Duration(milliseconds: 75),
+                      child: _buildHemisphereBadge(island.hemisphere),
+                    ),
+                    const SizedBox(width: 10),
+                    AnimatedFadeSlide(
+                      delay: const Duration(milliseconds: 95),
+                      child: _buildGatePillToggle(
+                        gateOpen: gateOpen,
+                        onTap: () => gateNotifier.state = !gateOpen,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -463,41 +491,45 @@ class HomeDashboardTab extends ConsumerWidget {
               separatorBuilder: (_, index) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 final item = residents[index];
-                return InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => _openResidentDetailSheet(
-                    context: context,
-                    ref: ref,
-                    islandId: currentIslandId,
-                    item: item,
-                    userStates: userStates,
-                  ),
-                  child: SizedBox(
-                    width: 84,
-                    child: Column(
-                      children: <Widget>[
-                        ClipOval(
-                          child: Container(
-                            width: 70,
-                            height: 70,
-                            color: AppColors.bgSecondary,
-                            child: _buildNetworkImage(
-                              _resolveResidentThumbUrl(item),
+                return AnimatedFadeSlide(
+                  delay: Duration(milliseconds: 30 + (index * 24)),
+                  offset: const Offset(0.06, 0),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => _openResidentDetailSheet(
+                      context: context,
+                      ref: ref,
+                      islandId: currentIslandId,
+                      item: item,
+                      userStates: userStates,
+                    ),
+                    child: SizedBox(
+                      width: 84,
+                      child: Column(
+                        children: <Widget>[
+                          ClipOval(
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              color: AppColors.bgSecondary,
+                              child: _buildNetworkImage(
+                                _resolveResidentThumbUrl(item),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          item.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                          const SizedBox(height: 6),
+                          Text(
+                            item.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -570,48 +602,57 @@ class HomeDashboardTab extends ConsumerWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        '예측 결과',
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
+                  AnimatedFadeSlide(
+                    delay: const Duration(milliseconds: 30),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          '예측 결과',
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          TurnipLegendDot(
-                            color: AppColors.badgeYellowText,
-                            label: '최소',
-                          ),
-                          SizedBox(width: 8),
-                          TurnipLegendDot(
-                            color: AppColors.primaryDefault,
-                            label: '최대',
-                          ),
-                        ],
-                      ),
-                    ],
+                        Row(
+                          children: <Widget>[
+                            TurnipLegendDot(
+                              color: AppColors.badgeYellowText,
+                              label: '최소',
+                            ),
+                            SizedBox(width: 8),
+                            TurnipLegendDot(
+                              color: AppColors.primaryDefault,
+                              label: '최대',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    '입력된 정보를 기반으로 한 결과입니다.',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                  AnimatedFadeSlide(
+                    delay: const Duration(milliseconds: 45),
+                    child: const Text(
+                      '입력된 정보를 기반으로 한 결과입니다.',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TurnipPredictionChart(
-                    minValues: minValues,
-                    maxValues: maxValues,
-                    peakDayIndex: (prediction.peakIndex / 2).floor(),
-                    peakLabel: _slotLabel(prediction.peakIndex),
-                    peakValue: prediction.peakMaxValue,
+                  AnimatedFadeSlide(
+                    delay: const Duration(milliseconds: 60),
+                    child: TurnipPredictionChart(
+                      minValues: minValues,
+                      maxValues: maxValues,
+                      peakDayIndex: (prediction.peakIndex / 2).floor(),
+                      peakLabel: _slotLabel(prediction.peakIndex),
+                      peakValue: prediction.peakMaxValue,
+                    ),
                   ),
                 ],
               );
@@ -673,6 +714,7 @@ class HomeDashboardTab extends ConsumerWidget {
                 iconAssetPath: 'assets/images/icon_ladybug_with_shell.png',
                 completed: _completedCount('곤충', items, userStates),
                 total: _countByCategory('곤충', items),
+                delay: const Duration(milliseconds: 20),
               ),
               _buildProgressDonutCard(
                 context: context,
@@ -683,6 +725,7 @@ class HomeDashboardTab extends ConsumerWidget {
                 iconAssetPath: 'assets/images/icon_blue_fish.png',
                 completed: _completedCount('물고기', items, userStates),
                 total: _countByCategory('물고기', items),
+                delay: const Duration(milliseconds: 45),
               ),
               _buildProgressDonutCard(
                 context: context,
@@ -693,6 +736,7 @@ class HomeDashboardTab extends ConsumerWidget {
                 iconAssetPath: 'assets/images/icon_shell_with_seaweed.png',
                 completed: _completedCount('해산물', items, userStates),
                 total: _countByCategory('해산물', items),
+                delay: const Duration(milliseconds: 70),
               ),
               _buildProgressDonutCard(
                 context: context,
@@ -704,9 +748,169 @@ class HomeDashboardTab extends ConsumerWidget {
                     'assets/images/icon_landscape_painting_frame.png',
                 completed: _completedCount('미술품', items, userStates),
                 total: _countByCategory('미술품', items),
+                delay: const Duration(milliseconds: 95),
               ),
             ],
           ),
+      ],
+    );
+  }
+
+  Widget _buildWishListSection({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String currentIslandId,
+    required List<CatalogItem> items,
+    required Map<String, CatalogUserState> userStates,
+    required bool loading,
+    required bool hasError,
+  }) {
+    final favorites = items
+        .where((item) => userStates[item.id]?.favorite ?? false)
+        .toList(growable: false);
+    final grouped = <String, List<CatalogItem>>{};
+    for (final item in favorites) {
+      grouped.putIfAbsent(item.category, () => <CatalogItem>[]).add(item);
+    }
+    final categoryOrder = <String>[
+      '가구',
+      '패션',
+      '레시피',
+      '주민',
+      '물고기',
+      '곤충',
+      '해산물',
+      '화석',
+      '미술품',
+      '아이템',
+    ];
+    final orderedKeys = categoryOrder
+        .where((key) => (grouped[key]?.isNotEmpty ?? false))
+        .toList(growable: false);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _buildSectionHeader(
+          context: context,
+          title: '위시 리스트',
+          onTap: () => _openWishListPage(
+            context: context,
+            uid: uid,
+            islandId: currentIslandId,
+            initialCategory: '전체',
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (loading)
+          const SizedBox(
+            height: 84,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          )
+        else if (hasError)
+          const Text(
+            '위시 리스트를 불러오지 못했어요.',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          )
+        else if (favorites.isEmpty)
+          AnimatedFadeSlide(
+            delay: const Duration(milliseconds: 24),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: AppColors.catalogCardBg,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: AppColors.borderDefault),
+              ),
+              child: const Text(
+                '아직 위시 아이템이 없어요.\n도감 상세에서 하트를 눌러 위시 리스트를 채워보세요.',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          )
+        else ...<Widget>[
+          SizedBox(
+            height: 104,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: orderedKeys.length,
+              separatorBuilder: (_, unused) => const SizedBox(width: 10),
+              itemBuilder: (context, index) {
+                final key = orderedKeys[index];
+                final bucket = grouped[key] ?? const <CatalogItem>[];
+                final preview = bucket.first;
+                return AnimatedFadeSlide(
+                  delay: Duration(milliseconds: 25 + (index * 20)),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => _openWishListPage(
+                        context: context,
+                        uid: uid,
+                        islandId: currentIslandId,
+                        initialCategory: key,
+                      ),
+                      child: Container(
+                        width: 132,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.catalogCardBg,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.borderDefault),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: 42,
+                                height: 42,
+                                color: AppColors.bgSecondary,
+                                child: _buildNetworkImage(preview.imageUrl),
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              _wishCategoryLabel(key),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              '${bucket.length}개',
+                              style: const TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -720,119 +924,124 @@ class HomeDashboardTab extends ConsumerWidget {
     required String iconAssetPath,
     required int completed,
     required int total,
+    Duration delay = Duration.zero,
   }) {
     final progress = _safeProgress(completed, total);
     final percentage = (progress * 100).round();
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => CatalogCollectionPage(
-                uid: uid,
-                islandId: islandId,
-                title: '$title 도감',
-                category: title,
-                allItems: items,
-              ),
-            ),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.catalogCardBg,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.borderDefault),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.catalogChipBg,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      '$completed/$total',
-                      style: const TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Center(
-                child: SizedBox(
-                  width: 112,
-                  height: 112,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 112,
-                        height: 112,
-                        child: CircularProgressIndicator(
-                          value: 1,
-                          strokeWidth: 11,
-                          color: AppColors.catalogProgressTrack,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 112,
-                        height: 112,
-                        child: CircularProgressIndicator(
-                          value: progress,
-                          strokeWidth: 11,
-                          color: AppColors.catalogProgressAccent,
-                        ),
-                      ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Image.asset(
-                            iconAssetPath,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.contain,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            '$percentage%',
-                            style: const TextStyle(
-                              color: AppColors.textMuted,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+    return AnimatedFadeSlide(
+      delay: delay,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => CatalogCollectionPage(
+                  uid: uid,
+                  islandId: islandId,
+                  title: '$title 도감',
+                  category: title,
+                  allItems: items,
                 ),
               ),
-            ],
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.catalogCardBg,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.borderDefault),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.catalogChipBg,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        '$completed/$total',
+                        style: const TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Center(
+                  child: SizedBox(
+                    width: 112,
+                    height: 112,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          width: 112,
+                          height: 112,
+                          child: CircularProgressIndicator(
+                            value: 1,
+                            strokeWidth: 11,
+                            color: AppColors.catalogProgressTrack,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 112,
+                          height: 112,
+                          child: CircularProgressIndicator(
+                            value: progress,
+                            strokeWidth: 11,
+                            color: AppColors.catalogProgressAccent,
+                          ),
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Image.asset(
+                              iconAssetPath,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.contain,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '$percentage%',
+                              style: const TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -870,6 +1079,30 @@ class HomeDashboardTab extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _openWishListPage({
+    required BuildContext context,
+    required String uid,
+    required String islandId,
+    required String initialCategory,
+  }) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => WishListPage(
+          uid: uid,
+          islandId: islandId,
+          initialCategory: initialCategory,
+        ),
+      ),
+    );
+  }
+
+  String _wishCategoryLabel(String category) {
+    if (category == '아이템') {
+      return '벽지 등';
+    }
+    return category;
   }
 
   Future<void> _openResidentDetailSheet({

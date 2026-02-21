@@ -9,6 +9,8 @@ import 'package:nook_lounge_app/domain/repository/island_repository.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 
 class SessionViewModel extends StateNotifier<SessionViewState> {
+  static const String guestUid = '__guest_local__';
+
   SessionViewModel({
     required AuthRepository authRepository,
     required IslandRepository islandRepository,
@@ -22,12 +24,26 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
   final IslandRepository _islandRepository;
 
   late final StreamSubscription<String?> _subscription;
+  bool _isGuestBrowsing = false;
 
   Future<void> _onUserChanged(String? uid) async {
     // 유지보수 포인트:
     // 앱 시작 분기(로그인/섬생성/홈)는 캐시 기반으로 즉시 처리하고,
     // 서버 재검증은 백그라운드에서만 수행합니다.
+    if (uid != null) {
+      _isGuestBrowsing = false;
+    }
+
     if (uid == null) {
+      if (_isGuestBrowsing) {
+        state = state.copyWith(
+          isLoading: false,
+          session: const SessionState.ready(uid: guestUid),
+          errorTitle: null,
+          errorMessage: null,
+        );
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         session: const SessionState.signedOut(),
@@ -119,7 +135,36 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
   }
 
   Future<void> refresh() async {
+    if (_isGuestBrowsing) {
+      state = state.copyWith(
+        isLoading: false,
+        session: const SessionState.ready(uid: guestUid),
+        errorTitle: null,
+        errorMessage: null,
+      );
+      return;
+    }
     await _onUserChanged(_authRepository.currentUserId);
+  }
+
+  void enterGuestBrowseMode() {
+    _isGuestBrowsing = true;
+    state = state.copyWith(
+      isLoading: false,
+      session: const SessionState.ready(uid: guestUid),
+      errorTitle: null,
+      errorMessage: null,
+    );
+  }
+
+  void exitGuestBrowseMode() {
+    _isGuestBrowsing = false;
+    state = state.copyWith(
+      isLoading: false,
+      session: const SessionState.signedOut(),
+      errorTitle: null,
+      errorMessage: null,
+    );
   }
 
   @override
