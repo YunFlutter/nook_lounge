@@ -14,6 +14,7 @@ class LocalCatalogDataSource {
     '레시피': 'assets/json/recipes.json',
     '가구': 'assets/json/furniture.json',
     '패션': 'assets/json/clothing.json',
+    '벽지': 'assets/json/interior.json',
     '아이템': 'assets/json/items.json',
   };
 
@@ -59,6 +60,8 @@ class LocalCatalogDataSource {
           _stringOrFallback(row['location'], fallback: ''),
           _stringOrFallback(row['material_type'], fallback: ''),
           _stringOrFallback(row['rarity'], fallback: ''),
+          _stringOrFallback(row['category'], fallback: ''),
+          _stringOrFallback(row['tag'], fallback: ''),
         }..removeWhere((value) => value.isEmpty);
 
         _addPrefixedTag(
@@ -107,6 +110,26 @@ class LocalCatalogDataSource {
         );
         _addPrefixedTag(
           tags,
+          prefix: '유형',
+          value: _stringOrFallback(row['category'], fallback: ''),
+        );
+        _addPrefixedTag(
+          tags,
+          prefix: '태그',
+          value: _stringOrFallback(row['tag'], fallback: ''),
+        );
+        _addPrefixedTag(
+          tags,
+          prefix: '테마',
+          value: _extractSimpleList(row['themes']),
+        );
+        _addPrefixedTag(
+          tags,
+          prefix: '색상',
+          value: _extractSimpleList(row['colors']),
+        );
+        _addPrefixedTag(
+          tags,
           prefix: '희귀도',
           value: _stringOrFallback(row['rarity'], fallback: ''),
         );
@@ -135,6 +158,7 @@ class LocalCatalogDataSource {
           prefix: '획득처',
           value: _extractAvailabilityFromRow(row),
         );
+        _addPrefixedTag(tags, prefix: '크기', value: _extractSizeFromRow(row));
         _addPrefixedTag(tags, prefix: '재료', value: _extractMaterials(row));
         _addPrefixedTag(tags, prefix: '리폼', value: _extractCustomizable(row));
         _addVillagerPrefixedTags(tags: tags, category: entry.key, row: row);
@@ -350,6 +374,78 @@ class LocalCatalogDataSource {
     return '';
   }
 
+  String _extractSizeFromRow(Map<String, dynamic> row) {
+    final width = _toNumberString(row['width']);
+    final length = _toNumberString(row['length']);
+    final height = _toNumberString(row['height']);
+
+    if (width.isNotEmpty || length.isNotEmpty || height.isNotEmpty) {
+      final parts = <String>[];
+      if (width.isNotEmpty) {
+        parts.add('W $width');
+      }
+      if (length.isNotEmpty) {
+        parts.add('L $length');
+      }
+      if (height.isNotEmpty) {
+        parts.add('H $height');
+      }
+      return parts.join(' · ');
+    }
+
+    final gridWidth = _toNumberString(row['grid_width']);
+    final gridLength = _toNumberString(row['grid_length']);
+    if (gridWidth.isNotEmpty || gridLength.isNotEmpty || height.isNotEmpty) {
+      final parts = <String>[];
+      if (gridWidth.isNotEmpty) {
+        parts.add('W $gridWidth');
+      }
+      if (gridLength.isNotEmpty) {
+        parts.add('L $gridLength');
+      }
+      if (height.isNotEmpty) {
+        parts.add('H $height');
+      }
+      return parts.join(' · ');
+    }
+
+    final tankWidth = _toNumberString(row['tank_width']);
+    final tankLength = _toNumberString(row['tank_length']);
+    if (tankWidth.isNotEmpty || tankLength.isNotEmpty) {
+      final parts = <String>[];
+      if (tankWidth.isNotEmpty) {
+        parts.add('W $tankWidth');
+      }
+      if (tankLength.isNotEmpty) {
+        parts.add('L $tankLength');
+      }
+      return parts.join(' · ');
+    }
+
+    return '';
+  }
+
+  String _toNumberString(Object? value) {
+    if (value == null) {
+      return '';
+    }
+
+    final parsed = switch (value) {
+      num number => number.toDouble(),
+      String text => double.tryParse(text.trim()),
+      _ => null,
+    };
+
+    if (parsed == null) {
+      return '';
+    }
+
+    if (parsed == parsed.roundToDouble()) {
+      return parsed.toInt().toString();
+    }
+    return parsed.toStringAsFixed(1);
+  }
+
   String _extractStyle(Map<String, dynamic> row) {
     final style1 = _stringOrFallback(row['style_1'], fallback: '');
     if (style1.isNotEmpty) {
@@ -361,6 +457,21 @@ class LocalCatalogDataSource {
       return _stringOrFallback(styles.first, fallback: '');
     }
     return '';
+  }
+
+  String _extractSimpleList(Object? value) {
+    if (value is! List) {
+      return '';
+    }
+
+    final result = <String>[];
+    for (final entry in value) {
+      final text = _stringOrFallback(entry, fallback: '');
+      if (text.isNotEmpty) {
+        result.add(text);
+      }
+    }
+    return result.take(3).join(', ');
   }
 
   void _addVillagerPrefixedTags({

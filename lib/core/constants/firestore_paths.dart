@@ -15,6 +15,8 @@ class FirestorePaths {
 
   static String marketPost(String postId) => 'marketPosts/$postId';
 
+  static String marketPosts() => 'marketPosts';
+
   static String report(String reportId) => 'reports/$reportId';
 
   static String catalogStates(String uid) => 'users/$uid/catalogStates';
@@ -25,8 +27,11 @@ class FirestorePaths {
   static String islandCatalogStates(String uid, String islandId) =>
       '${island(uid, islandId)}/catalogStates';
 
-  static String islandCatalogState(String uid, String islandId, String itemId) =>
-      '${islandCatalogStates(uid, islandId)}/$itemId';
+  static String islandCatalogState(
+    String uid,
+    String islandId,
+    String itemId,
+  ) => '${islandCatalogStates(uid, islandId)}/$itemId';
 
   static String turnipState(String uid, {String? islandId}) {
     if (islandId == null || islandId.isEmpty) {

@@ -97,4 +97,11 @@ class AppColors {
   static const Color confettiYellow = Color(0xFFFFD95C);
   static const Color confettiBlue = Color(0xFFAED9FF);
   static const Color confettiOrange = Color(0xFFFFB57D);
+
+  // Market
+  static const Color marketTouchFurniture = Color(0xFF9A6E42);
+  static const Color marketTouchWallpaper = Color(0xFFF0B400);
+  static const Color marketTouchFlooring = Color(0xFF3D7BE2);
+  static const Color marketTouchMusic = Color(0xFF8F50E2);
+  static const Color marketTouchFashion = Color(0xFFF2649A);
 }

@@ -8,20 +8,24 @@ import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/catalog_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/island_repository_impl.dart';
+import 'package:nook_lounge_app/data/repository/market_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/turnip_repository_impl.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
 import 'package:nook_lounge_app/domain/repository/island_repository.dart';
+import 'package:nook_lounge_app/domain/repository/market_repository.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/presentation/state/catalog_search_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/home_shell_view_state.dart';
+import 'package:nook_lounge_app/presentation/state/market_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
@@ -29,6 +33,7 @@ import 'package:nook_lounge_app/presentation/viewmodel/catalog_search_view_model
 import 'package:nook_lounge_app/presentation/viewmodel/catalog_binding_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/create_island_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/home_shell_view_model.dart';
+import 'package:nook_lounge_app/presentation/viewmodel/market_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/session_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/sign_in_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/turnip_view_model.dart';
@@ -90,6 +95,12 @@ final turnipFirestoreDataSourceProvider = Provider<TurnipFirestoreDataSource>((
   return TurnipFirestoreDataSource(firestore: ref.watch(firestoreProvider));
 });
 
+final marketFirestoreDataSourceProvider = Provider<MarketFirestoreDataSource>((
+  ref,
+) {
+  return MarketFirestoreDataSource(firestore: ref.watch(firestoreProvider));
+});
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
@@ -114,6 +125,12 @@ final turnipRepositoryProvider = Provider<TurnipRepository>((ref) {
   return TurnipRepositoryImpl(
     apiDataSource: ref.watch(turnipApiDataSourceProvider),
     firestoreDataSource: ref.watch(turnipFirestoreDataSourceProvider),
+  );
+});
+
+final marketRepositoryProvider = Provider<MarketRepository>((ref) {
+  return MarketRepositoryImpl(
+    firestoreDataSource: ref.watch(marketFirestoreDataSourceProvider),
   );
 });
 
@@ -171,13 +188,18 @@ final turnipViewModelProvider =
       TurnipViewModel,
       TurnipViewState,
       ({String uid, String islandId})
-    >((
-      ref,
-      args,
-    ) {
+    >((ref, args) {
       return TurnipViewModel(
         repository: ref.watch(turnipRepositoryProvider),
         uid: args.uid,
         islandId: args.islandId,
+      );
+    });
+
+final marketViewModelProvider =
+    StateNotifierProvider<MarketViewModel, MarketViewState>((ref) {
+      return MarketViewModel(
+        repository: ref.watch(marketRepositoryProvider),
+        authRepository: ref.watch(authRepositoryProvider),
       );
     });

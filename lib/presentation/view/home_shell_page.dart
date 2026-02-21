@@ -9,6 +9,7 @@ import 'package:nook_lounge_app/presentation/view/catalog/catalog_dashboard_tab.
 import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/home/island_switch_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_tab_page.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_page.dart';
 
 class HomeShellPage extends ConsumerWidget {
@@ -162,6 +163,25 @@ class HomeShellPage extends ConsumerWidget {
       );
     }
 
+    if (tabIndex == 1) {
+      return AppBar(
+        centerTitle: false,
+        titleSpacing: AppSpacing.pageHorizontal,
+        title: const Text('너굴 마켓'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => MarketTabPage.openMyTradesPage(context),
+            icon: const Icon(
+              Icons.delete_rounded,
+              color: AppColors.textPrimary,
+            ),
+            tooltip: '내 거래관리',
+          ),
+          const SizedBox(width: 10),
+        ],
+      );
+    }
+
     if (tabIndex == 4) {
       return AppBar(
         centerTitle: false,
@@ -249,27 +269,7 @@ class HomeShellPage extends ConsumerWidget {
   }
 
   Widget _buildMarketTab() {
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: const <Widget>[
-        AnimatedFadeSlide(
-          child: Text(
-            '너굴 마켓',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-          ),
-        ),
-        SizedBox(height: 12),
-        AnimatedFadeSlide(
-          delay: Duration(milliseconds: 40),
-          child: Card(
-            child: ListTile(
-              title: Text('거래 제안 목록'),
-              subtitle: Text('실시간 상태는 거래 카드만 선택적으로 구독합니다.'),
-            ),
-          ),
-        ),
-      ],
-    );
+    return MarketTabPage(uid: uid);
   }
 
   Widget _buildHomeTab() {
