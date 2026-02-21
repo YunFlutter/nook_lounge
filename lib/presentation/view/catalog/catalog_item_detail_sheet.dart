@@ -31,6 +31,9 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     '아이콘URL',
     '집내부URL',
     '집외부URL',
+    '진품텍스처URL',
+    '가품아이콘URL',
+    '가품텍스처URL',
     '옵션이미지URL',
   };
 
@@ -79,7 +82,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final sheetHeight = MediaQuery.sizeOf(context).height * 0.70;
+    final sheetHeight = MediaQuery.sizeOf(context).height * 0.85;
     final detailRows = _buildDetailRows();
     final detailImages = _buildDetailImages();
 
@@ -445,6 +448,12 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         return '집 외부';
       case '옵션이미지URL':
         return '색상 옵션';
+      case '진품텍스처URL':
+        return '진품 텍스처';
+      case '가품아이콘URL':
+        return '가품 아이콘';
+      case '가품텍스처URL':
+        return '가품 텍스처';
       default:
         return '이미지';
     }

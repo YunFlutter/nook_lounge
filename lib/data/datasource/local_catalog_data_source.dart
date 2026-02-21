@@ -138,6 +138,7 @@ class LocalCatalogDataSource {
         _addPrefixedTag(tags, prefix: '재료', value: _extractMaterials(row));
         _addPrefixedTag(tags, prefix: '리폼', value: _extractCustomizable(row));
         _addVillagerPrefixedTags(tags: tags, category: entry.key, row: row);
+        _addArtImageTags(tags: tags, category: entry.key, row: row);
         _addFashionVariationTags(tags: tags, category: entry.key, row: row);
 
         if (row['has_fake'] is bool) {
@@ -511,6 +512,32 @@ class LocalCatalogDataSource {
     }
   }
 
+  void _addArtImageTags({
+    required Set<String> tags,
+    required String category,
+    required Map<String, dynamic> row,
+  }) {
+    if (category != '미술품') {
+      return;
+    }
+
+    _addPrefixedTag(
+      tags,
+      prefix: '진품텍스처URL',
+      value: _stringOrFallback(row['texture_url'], fallback: ''),
+    );
+    _addPrefixedTag(
+      tags,
+      prefix: '가품아이콘URL',
+      value: _stringOrFallback(row['fake_image_url'], fallback: ''),
+    );
+    _addPrefixedTag(
+      tags,
+      prefix: '가품텍스처URL',
+      value: _stringOrFallback(row['fake_texture_url'], fallback: ''),
+    );
+  }
+
   String _extractBirthday(Map<String, dynamic> row) {
     final monthRaw = _stringOrFallback(row['birthday_month'], fallback: '');
     final dayRaw = _stringOrFallback(row['birthday_day'], fallback: '');
@@ -654,6 +681,21 @@ class LocalCatalogDataSource {
         (tag) => tag.startsWith('옵션이미지URL:'),
       );
       if (!hasVariationImage) {
+        return true;
+      }
+    }
+
+    for (final item in items) {
+      if (item.category != '미술품') {
+        continue;
+      }
+      final hasAnyArtImage = item.tags.any(
+        (tag) =>
+            tag.startsWith('진품텍스처URL:') ||
+            tag.startsWith('가품아이콘URL:') ||
+            tag.startsWith('가품텍스처URL:'),
+      );
+      if (!hasAnyArtImage) {
         return true;
       }
     }
