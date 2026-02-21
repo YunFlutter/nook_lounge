@@ -14,4 +14,9 @@ class FirestorePaths {
   static String marketPost(String postId) => 'marketPosts/$postId';
 
   static String report(String reportId) => 'reports/$reportId';
+
+  static String catalogStates(String uid) => 'users/$uid/catalogStates';
+
+  static String catalogState(String uid, String itemId) =>
+      '${catalogStates(uid)}/$itemId';
 }

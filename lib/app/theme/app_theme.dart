@@ -20,8 +20,12 @@ class AppTheme {
       dividerColor: AppColors.borderDefault,
       appBarTheme: const AppBarTheme(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.bgPrimary,
         foregroundColor: textColor,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
       ),
       textTheme: TextTheme(
         displaySmall: AppTypography.headingH1.copyWith(color: textColor),

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nook_lounge_app/data/datasource/catalog_state_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart';
@@ -13,12 +14,14 @@ import 'package:nook_lounge_app/data/repository/island_repository_impl.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
 import 'package:nook_lounge_app/domain/repository/island_repository.dart';
+import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/presentation/state/catalog_search_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/home_shell_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/catalog_search_view_model.dart';
+import 'package:nook_lounge_app/presentation/viewmodel/catalog_binding_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/create_island_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/home_shell_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/session_view_model.dart';
@@ -64,6 +67,13 @@ final localCatalogDataSourceProvider = Provider<LocalCatalogDataSource>((ref) {
   return LocalCatalogDataSource();
 });
 
+final catalogStateFirestoreDataSourceProvider =
+    Provider<CatalogStateFirestoreDataSource>((ref) {
+      return CatalogStateFirestoreDataSource(
+        firestore: ref.watch(firestoreProvider),
+      );
+    });
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
@@ -80,6 +90,7 @@ final islandRepositoryProvider = Provider<IslandRepository>((ref) {
 final catalogRepositoryProvider = Provider<CatalogRepository>((ref) {
   return CatalogRepositoryImpl(
     dataSource: ref.watch(localCatalogDataSourceProvider),
+    stateDataSource: ref.watch(catalogStateFirestoreDataSourceProvider),
   );
 });
 
@@ -116,5 +127,17 @@ final catalogSearchViewModelProvider =
     ) {
       return CatalogSearchViewModel(
         catalogRepository: ref.watch(catalogRepositoryProvider),
+      );
+    });
+
+final catalogBindingViewModelProvider =
+    StateNotifierProvider.family<
+      CatalogBindingViewModel,
+      Map<String, CatalogUserState>,
+      String
+    >((ref, uid) {
+      return CatalogBindingViewModel(
+        catalogRepository: ref.watch(catalogRepositoryProvider),
+        uid: uid,
       );
     });

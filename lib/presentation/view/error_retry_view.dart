@@ -31,7 +31,7 @@ class ErrorRetryView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: const <BoxShadow>[
                   BoxShadow(
-                    color: Color(0x14000000),
+                    color: AppColors.shadowSoft,
                     blurRadius: 20,
                     offset: Offset(0, 8),
                   ),

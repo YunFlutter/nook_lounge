@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
-import 'package:nook_lounge_app/domain/model/catalog_item.dart';
-import 'package:nook_lounge_app/presentation/state/catalog_search_view_state.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
+import 'package:nook_lounge_app/presentation/view/catalog/catalog_dashboard_tab.dart';
 
 class HomeShellPage extends ConsumerWidget {
   const HomeShellPage({required this.uid, super.key});
@@ -17,27 +17,7 @@ class HomeShellPage extends ConsumerWidget {
     final currentTab = homeState.selectedTabIndex;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nook Lounge'),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () async {
-              await ref
-                  .read(catalogSearchViewModelProvider.notifier)
-                  .loadInitial();
-            },
-            icon: const Icon(Icons.refresh),
-            tooltip: '도감 새로고침',
-          ),
-          IconButton(
-            onPressed: () async {
-              await ref.read(authRepositoryProvider).signOut();
-            },
-            icon: const Icon(Icons.logout),
-            tooltip: '로그아웃',
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(currentTab, ref),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 260),
         child: KeyedSubtree(
@@ -46,6 +26,7 @@ class HomeShellPage extends ConsumerWidget {
         ),
       ),
       bottomNavigationBar: NavigationBar(
+        backgroundColor: AppColors.navBackground,
         selectedIndex: currentTab,
         onDestinationSelected: tabController.changeTab,
         destinations: const <NavigationDestination>[
@@ -59,6 +40,34 @@ class HomeShellPage extends ConsumerWidget {
     );
   }
 
+  PreferredSizeWidget _buildAppBar(int tabIndex, WidgetRef ref) {
+    if (tabIndex == 3) {
+      return AppBar(
+        title: const Text('도감 관리'),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications),
+            tooltip: '알림',
+          ),
+        ],
+      );
+    }
+
+    return AppBar(
+      title: const Text('Nook Lounge'),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () async {
+            await ref.read(authRepositoryProvider).signOut();
+          },
+          icon: const Icon(Icons.logout),
+          tooltip: '로그아웃',
+        ),
+      ],
+    );
+  }
+
   Widget _buildTabBody(int tabIndex, WidgetRef ref) {
     switch (tabIndex) {
       case 0:
@@ -68,7 +77,7 @@ class HomeShellPage extends ConsumerWidget {
       case 2:
         return _buildHomeTab();
       case 3:
-        return _buildCatalogTab(ref);
+        return CatalogDashboardTab(uid: uid);
       case 4:
         return _buildTurnipTab();
       default:
@@ -145,77 +154,6 @@ class HomeShellPage extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildCatalogTab(WidgetRef ref) {
-    final state = ref.watch(catalogSearchViewModelProvider);
-
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: <Widget>[
-        const AnimatedFadeSlide(
-          child: Text(
-            '도감 / 주민 / 아이템',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-          ),
-        ),
-        const SizedBox(height: 12),
-        AnimatedFadeSlide(
-          delay: const Duration(milliseconds: 40),
-          child: SearchBar(
-            hintText: '이름이나 종으로 검색',
-            leading: const Icon(Icons.search),
-            onChanged: (keyword) {
-              ref
-                  .read(catalogSearchViewModelProvider.notifier)
-                  .search(keyword: keyword);
-            },
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildCatalogBody(state),
-      ],
-    );
-  }
-
-  Widget _buildCatalogBody(CatalogSearchViewState state) {
-    if (state.isLoading && state.items.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (state.errorMessage != null && state.items.isEmpty) {
-      return Text(state.errorMessage!);
-    }
-
-    if (state.items.isEmpty) {
-      return const Text('아직 데이터가 없어요.');
-    }
-
-    final visibleItems = state.items.take(20).toList(growable: false);
-
-    return Column(
-      children: visibleItems
-          .map((item) => _buildCatalogItemCard(item))
-          .toList(growable: false),
-    );
-  }
-
-  Widget _buildCatalogItemCard(CatalogItem item) {
-    return AnimatedFadeSlide(
-      delay: const Duration(milliseconds: 60),
-      child: Card(
-        child: ListTile(
-          title: Text(item.name),
-          subtitle: Text(item.category),
-          trailing: item.imageUrl.isEmpty
-              ? null
-              : CircleAvatar(backgroundImage: NetworkImage(item.imageUrl)),
-        ),
-      ),
     );
   }
 

@@ -38,6 +38,7 @@ class AppColors {
   // Border
   static const Color borderDefault = Color(0xFFDADADA);
   static const Color borderFocus = Color(0xFF129B76);
+  static const Color borderStrong = Color(0xFF9AA0A6);
 
   // Navigation
   static const Color navBackground = Color(0xFFFFFFFF);
@@ -45,4 +46,55 @@ class AppColors {
   static const Color navActiveBg = Color(0xFFFFF1E6);
   static const Color navInactive = Color(0xFF9A8F85);
   static const Color navBorder = Color(0xFFEEEAE4);
+
+  // Overlay / Shadow
+  static const Color shadowSoft = Color(0x14000000);
+  static const Color shadowMedium = Color(0x24000000);
+  static const Color shadowStrong = Color(0x26000000);
+
+  // Catalog Surface
+  static const Color catalogSegmentBg = Color(0xFFF0EDEA);
+  static const Color catalogChipBg = Color(0xFFEFEDE8);
+  static const Color catalogChipSelectedBg = Color(0xFFFFE2A6);
+  static const Color catalogCardBg = Color(0xFFFFFFFF);
+  static const Color catalogProgressTrack = Color(0xFFF3F3F3);
+  static const Color catalogProgressAccent = Color(0xFFE76F51);
+  static const Color catalogSuccessBg = Color(0xFFD7F3E8);
+  static const Color catalogSuccessText = Color(0xFF10956A);
+
+  // Catalog Badge
+  static const Color badgeBlueBg = Color(0xFFD8EAFF);
+  static const Color badgeBlueText = Color(0xFF4F88D9);
+  static const Color badgeMintBg = Color(0xFFD8F3EA);
+  static const Color badgeMintText = Color(0xFF169E75);
+  static const Color badgeRedBg = Color(0xFFFFD8D9);
+  static const Color badgeRedText = Color(0xFFE4585D);
+  static const Color badgeBeigeBg = Color(0xFFF0E4D8);
+  static const Color badgeBeigeText = Color(0xFF7A684E);
+  static const Color badgeYellowBg = Color(0xFFFFF0C8);
+  static const Color badgeYellowText = Color(0xFF88733C);
+  static const Color badgePurpleBg = Color(0xFFE7DBFF);
+  static const Color badgePurpleText = Color(0xFF7B59C9);
+
+  // Passport
+  static const Color passportPageBg = Color(0xFFFBFBFA);
+  static const Color passportTitleBlue = Color(0xFF5B7DE8);
+  static const Color passportWelcomePurple = Color(0xFFA983E9);
+  static const Color passportCardBg = Color(0xFFD8C29B);
+  static const Color passportCardHeaderBg = Color(0xFFB59E7B);
+  static const Color passportCardBorder = Color(0xFFEEE0CC);
+  static const Color passportLine = Color(0xFF75613E);
+  static const Color passportTextMain = Color(0xFF5D4E35);
+  static const Color passportTextSub = Color(0xFF766854);
+  static const Color passportTextTitle = Color(0xFF6F5A38);
+  static const Color passportPhotoBg = Color(0xFFF5F5F5);
+  static const Color passportPhotoBorder = Color(0xFFD0D0D0);
+  static const Color passportSpotGlow = Color(0xFFFFF7D7);
+  static const Color passportSpotRay = Color(0xFFF7D879);
+  static const Color passportBurstGlow = Color(0xFFFFF3C4);
+  static const Color confettiPurple = Color(0xFFEFA5FF);
+  static const Color confettiMint = Color(0xFF88E2CE);
+  static const Color confettiYellow = Color(0xFFFFD95C);
+  static const Color confettiBlue = Color(0xFFAED9FF);
+  static const Color confettiOrange = Color(0xFFFFB57D);
 }
