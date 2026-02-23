@@ -65,6 +65,7 @@ class _MarketTradeRegisterPageState
   MarketMoveType _moveType = MarketMoveType.visitor;
   CatalogItem? _offeredItem;
   CatalogItem? _wantedItem;
+  List<CatalogItem> _touchingItems = <CatalogItem>[];
   int _offerQuantity = 1;
   int _wantQuantity = 1;
   bool _useOfferCurrency = false;
@@ -97,6 +98,7 @@ class _MarketTradeRegisterPageState
     _titleController.text = initialOffer.title;
     _memoController.text = initialOffer.description;
     _proofImagePath = initialOffer.coverImageUrl;
+    _touchingItems = _buildTouchingItemsFromTags(initialOffer.touchingTags);
 
     _useOfferCurrency = _isCurrencySelection(
       typeLabel: initialOffer.offerItemCategory,
@@ -440,6 +442,10 @@ class _MarketTradeRegisterPageState
   }
 
   Widget _buildStepThree() {
+    if (_tradeType == MarketTradeType.touching) {
+      return _buildTouchingStepThree();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -500,6 +506,126 @@ class _MarketTradeRegisterPageState
             controller: _titleController,
           ),
         ],
+      ],
+    );
+  }
+
+  Widget _buildTouchingStepThree() {
+    final hasItems = _touchingItems.isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('만지작할 아이템을 선택해주세요.', style: AppTextStyles.bodyPrimaryHeavy),
+        const SizedBox(height: 10),
+        Text('아이템을 여러 개 선택할 수 있어요.', style: AppTextStyles.bodyHintStrong),
+        const SizedBox(height: 14),
+        InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: _openTouchingItemPicker,
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(minHeight: 120),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.bgCard,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.borderDefault),
+            ),
+            child: hasItems
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '선택된 아이템',
+                            style: AppTextStyles.bodyPrimaryHeavy,
+                          ),
+                          const Spacer(),
+                          TextButton.icon(
+                            onPressed: _openTouchingItemPicker,
+                            icon: const Icon(
+                              Icons.add_rounded,
+                              size: 18,
+                              color: AppColors.accentDeepOrange,
+                            ),
+                            label: Text(
+                              '추가',
+                              style: AppTextStyles.captionWithColor(
+                                AppColors.accentDeepOrange,
+                                weight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _touchingItems
+                            .map(
+                              (item) => Container(
+                                constraints: const BoxConstraints(
+                                  minHeight: 32,
+                                  maxWidth: 220,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.catalogChipBg,
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: AppColors.borderDefault,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      item.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppTextStyles.captionPrimaryHeavy,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () => _removeTouchingItem(item.id),
+                                      child: const Icon(
+                                        Icons.close_rounded,
+                                        size: 15,
+                                        color: AppColors.textMuted,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(growable: false),
+                      ),
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const CircleAvatar(
+                        radius: 24,
+                        backgroundColor: AppColors.catalogChipBg,
+                        child: Icon(
+                          Icons.touch_app_rounded,
+                          color: AppColors.textHint,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text('만지작 아이템 선택하기', style: AppTextStyles.bodyHintStrong),
+                    ],
+                  ),
+          ),
+        ),
       ],
     );
   }
@@ -662,7 +788,17 @@ class _MarketTradeRegisterPageState
     final selected = _tradeType == type;
     return InkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: () => setState(() => _tradeType = type),
+      onTap: () => setState(() {
+        _tradeType = type;
+        // 유지보수 포인트:
+        // 만지작 선택 직후 바로 다중 선택이 가능하도록 현재 등록 아이템을
+        // 기본 선택 목록에 자동으로 한 번만 추가합니다.
+        if (type == MarketTradeType.touching &&
+            _offeredItem != null &&
+            !_touchingItems.any((item) => item.id == _offeredItem!.id)) {
+          _touchingItems = <CatalogItem>[..._touchingItems, _offeredItem!];
+        }
+      }),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.all(14),
@@ -1525,6 +1661,9 @@ class _MarketTradeRegisterPageState
   bool _canMoveFromStepThree() {
     if (_tradeType == MarketTradeType.sharing ||
         _tradeType == MarketTradeType.touching) {
+      if (_tradeType == MarketTradeType.touching) {
+        return _touchingItems.isNotEmpty;
+      }
       return true;
     }
     if (_useCurrency) {
@@ -1567,6 +1706,46 @@ class _MarketTradeRegisterPageState
         _offerQuantity = 1;
         _offerStyle = '기본';
       }
+      if (_tradeType == MarketTradeType.touching &&
+          !_touchingItems.any((item) => item.id == selected.id)) {
+        _touchingItems = <CatalogItem>[..._touchingItems, selected];
+      }
+    });
+  }
+
+  Future<void> _openTouchingItemPicker() async {
+    final selected = await showModalBottomSheet<CatalogItem>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: AppColors.bgCard,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => const FractionallySizedBox(
+        heightFactor: 0.88,
+        child: MarketItemPickerSheet(
+          title: '만지작 아이템 검색',
+          touchingOnlyCategories: true,
+        ),
+      ),
+    );
+    if (selected == null || !mounted) {
+      return;
+    }
+    setState(() {
+      final exists = _touchingItems.any((item) => item.id == selected.id);
+      if (!exists) {
+        _touchingItems = <CatalogItem>[..._touchingItems, selected];
+      }
+    });
+  }
+
+  void _removeTouchingItem(String itemId) {
+    setState(() {
+      _touchingItems = _touchingItems
+          .where((item) => item.id != itemId)
+          .toList(growable: false);
     });
   }
 
@@ -1877,7 +2056,7 @@ class _MarketTradeRegisterPageState
         wantItemCategory: wantedTypeLabel,
         wantItemVariant: _wantStyle,
         touchingTags: _tradeType == MarketTradeType.touching
-            ? <String>['가구', '벽지/천장']
+            ? _buildTouchingTagsForSave()
             : const <String>[],
         entryFeeText: '무료',
         isMine: true,
@@ -1911,7 +2090,7 @@ class _MarketTradeRegisterPageState
         wantItemCategory: wantedTypeLabel,
         wantItemVariant: _wantStyle,
         touchingTags: _tradeType == MarketTradeType.touching
-            ? <String>['가구', '벽지/천장']
+            ? _buildTouchingTagsForSave()
             : const <String>[],
         entryFeeText: '무료',
         isMine: true,
@@ -2016,17 +2195,10 @@ class _MarketTradeRegisterPageState
     final isRecipeCategory =
         normalizedCategory.contains('레시피') ||
         normalizedCategory.contains('DIY');
-    final isTouchingCategory =
-        normalizedCategory.contains('가구') ||
-        normalizedCategory.contains('아이템') ||
-        normalizedCategory.contains('패션') ||
-        normalizedCategory.contains('벽지') ||
-        normalizedCategory.contains('의상');
-
     // 유지보수 포인트:
     // 주민/레시피(문자열 변형 포함)에서는 만지작을 숨기고,
-    // 레시피에서만 제작 중을 노출합니다.
-    if (isTouchingCategory && !isVillagerCategory && !isRecipeCategory) {
+    // 나머지(아이템/벽지/패션/재화 등)에서는 만지작을 노출합니다.
+    if (!isVillagerCategory && !isRecipeCategory) {
       types.add(MarketTradeType.touching);
     }
 
@@ -2114,5 +2286,79 @@ class _MarketTradeRegisterPageState
         );
       },
     );
+  }
+
+  List<CatalogItem> _buildTouchingItemsFromTags(List<String> tags) {
+    final items = <CatalogItem>[];
+    for (final tag in tags) {
+      final normalized = tag.trim();
+      if (normalized.isEmpty) {
+        continue;
+      }
+      items.add(
+        CatalogItem(
+          id: 'touching_${normalized.hashCode}',
+          category: _touchingCategoryFromTag(normalized),
+          name: normalized,
+          imageUrl: '',
+          tags: const <String>[],
+        ),
+      );
+    }
+    return items;
+  }
+
+  String _touchingCategoryFromTag(String tag) {
+    if (tag.contains('가구')) {
+      return '가구';
+    }
+    if (tag.contains('벽지') || tag.contains('천장')) {
+      return '벽지';
+    }
+    if (tag.contains('바닥') || tag.contains('러그')) {
+      return '바닥/러그';
+    }
+    if (tag.contains('음악')) {
+      return '음악/음향';
+    }
+    if (tag.contains('패션') || tag.contains('의류')) {
+      return '패션';
+    }
+    return '아이템';
+  }
+
+  List<String> _buildTouchingTagsForSave() {
+    final tags = <String>{};
+    for (final item in _touchingItems) {
+      final normalizedCategory = item.category.replaceAll(' ', '');
+      if (normalizedCategory.contains('가구')) {
+        tags.add('가구');
+        continue;
+      }
+      if (normalizedCategory.contains('벽지') ||
+          normalizedCategory.contains('천장')) {
+        tags.add('벽지/천장');
+        continue;
+      }
+      if (normalizedCategory.contains('바닥') ||
+          normalizedCategory.contains('러그')) {
+        tags.add('바닥/러그');
+        continue;
+      }
+      if (normalizedCategory.contains('음악')) {
+        tags.add('음악/음향');
+        continue;
+      }
+      if (normalizedCategory.contains('패션') ||
+          normalizedCategory.contains('의상')) {
+        tags.add('패션/의류');
+        continue;
+      }
+      final fallback = item.name.trim();
+      if (fallback.isNotEmpty) {
+        tags.add(fallback);
+      }
+    }
+    return tags.toList(growable: false);
   }
 }

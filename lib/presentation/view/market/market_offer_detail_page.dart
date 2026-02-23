@@ -5,8 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
 
 class MarketOfferDetailPage extends ConsumerWidget {
   const MarketOfferDetailPage({required this.offer, super.key});
@@ -33,15 +38,29 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return '거래 상세';
   }
 
+  String get _offerOwnerName {
+    final value = offer.ownerName.trim();
+    if (value.isEmpty) {
+      return '거래자';
+    }
+    return value;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.read(marketViewModelProvider.notifier);
+    final currentUid = viewModel.currentUserId;
+    final isMine =
+        offer.isMine ||
+        (currentUid.isNotEmpty && offer.ownerUid.trim() == currentUid);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(_appBarTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: <Widget>[
           IconButton(
-            onPressed: () => _showSimpleMenu(context, ref),
+            onPressed: () => _showSimpleMenu(context, ref, isMine: isMine),
             icon: const Icon(Icons.more_vert_rounded),
           ),
         ],
@@ -67,6 +86,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
           Text('교환 제안', style: AppTextStyles.bodyPrimaryHeavy),
           const SizedBox(height: 12),
           _buildTradeSummaryCard(),
+          const SizedBox(height: 20),
+          isMine
+              ? _buildOwnerProposalQueueSection(context, ref)
+              : _buildMyProposalStatusSection(ref, currentUid),
           const SizedBox(height: 20),
           Text('거래 이동 방식', style: AppTextStyles.bodyPrimaryHeavy),
           const SizedBox(height: 8),
@@ -133,29 +156,94 @@ class MarketOfferDetailPage extends ConsumerWidget {
             AppSpacing.pageHorizontal,
             10,
           ),
-          child: offer.isMine
+          child: isMine
               ? _buildOwnerBottomActions(context, ref)
-              : _buildVisitorBottomActions(context),
+              : _buildVisitorBottomActions(
+                  context,
+                  ref,
+                  currentUid: currentUid,
+                ),
         ),
       ),
     );
   }
 
-  Widget _buildVisitorBottomActions(BuildContext context) {
+  Widget _buildVisitorBottomActions(
+    BuildContext context,
+    WidgetRef ref, {
+    required String currentUid,
+  }) {
+    final AsyncValue<MarketTradeProposal?> myProposalAsync = currentUid.isEmpty
+        ? const AsyncValue.data(null)
+        : ref.watch(
+            marketMyTradeProposalProvider((
+              offerId: offer.id,
+              proposerUid: currentUid,
+            )),
+          );
+
+    var primaryLabel = '거래 할래요';
+    var primaryBackground = AppColors.accentDeepOrange;
+    VoidCallback? primaryOnPressed = () => _onTapTradeProposal(context, ref);
+    var secondaryLabel = '닫기';
+    VoidCallback? secondaryOnPressed = () => Navigator.of(context).pop();
+
+    if (myProposalAsync.isLoading) {
+      primaryLabel = '제안 상태 확인 중...';
+      primaryBackground = AppColors.catalogChipBg;
+      primaryOnPressed = null;
+      secondaryLabel = '확인 중...';
+      secondaryOnPressed = null;
+    } else {
+      final proposal = myProposalAsync.valueOrNull;
+      switch (proposal?.status) {
+        case MarketTradeProposalStatus.pending:
+          primaryLabel = '제안 대기중';
+          primaryBackground = AppColors.catalogChipBg;
+          primaryOnPressed = null;
+          secondaryLabel = '거래 취소';
+          secondaryOnPressed = () => _cancelTradeAsParticipant(
+            context,
+            ref,
+            hasAcceptedProposal: false,
+          );
+        case MarketTradeProposalStatus.accepted:
+          primaryLabel = '코드 확인하기';
+          primaryOnPressed = () => _openTradeCodePage(context, ref);
+          secondaryLabel = '거래 취소';
+          secondaryOnPressed = () => _cancelTradeAsParticipant(
+            context,
+            ref,
+            hasAcceptedProposal: true,
+          );
+        case MarketTradeProposalStatus.rejected:
+        case MarketTradeProposalStatus.cancelled:
+          primaryLabel = '다시 제안하기';
+          primaryOnPressed = () => _onTapTradeProposal(context, ref);
+          secondaryLabel = '닫기';
+          secondaryOnPressed = () => Navigator.of(context).pop();
+        case null:
+          primaryLabel = '거래 할래요';
+          primaryOnPressed = () => _onTapTradeProposal(context, ref);
+          secondaryLabel = '닫기';
+          secondaryOnPressed = () => Navigator.of(context).pop();
+      }
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         FilledButton(
-          onPressed: () => _showProposalFlow(context),
+          onPressed: primaryOnPressed,
           style: FilledButton.styleFrom(
-            backgroundColor: AppColors.accentDeepOrange,
+            backgroundColor: primaryBackground,
             minimumSize: const Size.fromHeight(58),
           ),
-          child: Text('거래를 제안할게요!', style: AppTextStyles.buttonPrimary),
+          child: Text(primaryLabel, style: AppTextStyles.buttonPrimary),
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: secondaryOnPressed,
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(56),
             side: const BorderSide(color: AppColors.borderDefault, width: 2),
@@ -163,27 +251,33 @@ class MarketOfferDetailPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(18),
             ),
           ),
-          child: Text('거래 취소', style: AppTextStyles.buttonSecondary),
+          child: Text(secondaryLabel, style: AppTextStyles.buttonSecondary),
         ),
       ],
     );
   }
 
   Widget _buildOwnerBottomActions(BuildContext context, WidgetRef ref) {
+    final bool canCancelTrade = offer.lifecycle == MarketLifecycleTab.ongoing;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         FilledButton(
-          onPressed: () => _completeMyOffer(context, ref),
+          onPressed: canCancelTrade
+              ? () => _completeMyOffer(context, ref)
+              : null,
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.accentDeepOrange,
+            disabledBackgroundColor: AppColors.catalogChipBg,
             minimumSize: const Size.fromHeight(58),
           ),
           child: Text('거래 완료할게요!', style: AppTextStyles.buttonPrimary),
         ),
         const SizedBox(height: 10),
         OutlinedButton(
-          onPressed: () => _deleteMyOffer(context, ref),
+          onPressed: canCancelTrade
+              ? () => _cancelTradeAsOwner(context, ref)
+              : () => _deleteMyOffer(context, ref),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(56),
             side: const BorderSide(color: AppColors.borderDefault, width: 2),
@@ -191,9 +285,299 @@ class MarketOfferDetailPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(18),
             ),
           ),
-          child: Text('거래 삭제', style: AppTextStyles.buttonSecondary),
+          child: Text(
+            canCancelTrade ? '거래 취소' : '거래 삭제',
+            style: AppTextStyles.buttonSecondary,
+          ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMyProposalStatusSection(WidgetRef ref, String currentUid) {
+    if (currentUid.trim().isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: Text(
+          '로그인 후 거래 제안을 보낼 수 있어요.',
+          style: AppTextStyles.captionMuted,
+        ),
+      );
+    }
+
+    final myProposalAsync = ref.watch(
+      marketMyTradeProposalProvider((
+        offerId: offer.id,
+        proposerUid: currentUid,
+      )),
+    );
+    return myProposalAsync.when(
+      loading: () => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: Row(
+          children: <Widget>[
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 8),
+            Text('내 제안 상태를 확인하는 중...', style: AppTextStyles.captionMuted),
+          ],
+        ),
+      ),
+      error: (error, stackTrace) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: Text('제안 상태를 불러오지 못했어요.', style: AppTextStyles.captionHint),
+      ),
+      data: (proposal) {
+        if (proposal == null) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.bgCard,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.borderDefault),
+            ),
+            child: Text(
+              '아직 이 거래에 보낸 제안이 없어요.',
+              style: AppTextStyles.captionMuted,
+            ),
+          );
+        }
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.bgCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderDefault),
+          ),
+          child: Row(
+            children: <Widget>[
+              _buildProposalStatusBadge(proposal.status),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '업데이트: ${formatRelativeTime(proposal.updatedAt)}',
+                  style: AppTextStyles.captionMuted,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildOwnerProposalQueueSection(BuildContext context, WidgetRef ref) {
+    final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
+    return proposalsAsync.when(
+      loading: () => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: Row(
+          children: <Widget>[
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            const SizedBox(width: 8),
+            Text('거래 제안 목록을 불러오는 중...', style: AppTextStyles.captionMuted),
+          ],
+        ),
+      ),
+      error: (error, stackTrace) => Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.borderDefault),
+        ),
+        child: Text('제안 목록을 불러오지 못했어요.', style: AppTextStyles.captionHint),
+      ),
+      data: (proposals) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.bgCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.borderDefault),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '대기열 제안 ${proposals.length}건',
+                style: AppTextStyles.bodySecondaryStrong,
+              ),
+              const SizedBox(height: 10),
+              if (proposals.isEmpty)
+                Text('아직 받은 거래 제안이 없어요.', style: AppTextStyles.captionMuted)
+              else
+                ...proposals.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final proposal = entry.value;
+                  final canAccept =
+                      proposal.status == MarketTradeProposalStatus.pending;
+                  final canOpenCode =
+                      proposal.status == MarketTradeProposalStatus.accepted;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index == proposals.length - 1 ? 0 : 8,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.bgSecondary,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.borderDefault),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          ClipOval(
+                            child: SizedBox(
+                              width: 34,
+                              height: 34,
+                              child: _buildImage(proposal.proposerAvatarUrl),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  proposal.proposerName.trim().isEmpty
+                                      ? '이름 없는 유저'
+                                      : proposal.proposerName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyles.bodyPrimaryHeavy,
+                                ),
+                                const SizedBox(height: 3),
+                                Row(
+                                  children: <Widget>[
+                                    _buildProposalStatusBadge(proposal.status),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      formatRelativeTime(proposal.updatedAt),
+                                      style: AppTextStyles.captionMuted,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (canAccept)
+                            FilledButton(
+                              onPressed: () =>
+                                  _acceptProposal(context, ref, proposal),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppColors.accentDeepOrange,
+                                minimumSize: const Size(72, 38),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                              ),
+                              child: Text(
+                                '승낙',
+                                style: AppTextStyles.captionWithColor(
+                                  AppColors.white,
+                                  weight: FontWeight.w800,
+                                ),
+                              ),
+                            )
+                          else if (canOpenCode)
+                            OutlinedButton(
+                              onPressed: () => _openTradeCodePage(context, ref),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size(84, 38),
+                                side: const BorderSide(
+                                  color: AppColors.borderStrong,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                              ),
+                              child: Text(
+                                '코드',
+                                style: AppTextStyles.captionWithColor(
+                                  AppColors.textPrimary,
+                                  weight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProposalStatusBadge(MarketTradeProposalStatus status) {
+    Color bgColor = AppColors.catalogChipBg;
+    Color textColor = AppColors.textMuted;
+    switch (status) {
+      case MarketTradeProposalStatus.pending:
+        bgColor = AppColors.badgeYellowBg;
+        textColor = AppColors.badgeYellowText;
+      case MarketTradeProposalStatus.accepted:
+        bgColor = AppColors.catalogSuccessBg;
+        textColor = AppColors.catalogSuccessText;
+      case MarketTradeProposalStatus.rejected:
+        bgColor = AppColors.badgeRedBg;
+        textColor = AppColors.badgeRedText;
+      case MarketTradeProposalStatus.cancelled:
+        bgColor = AppColors.catalogChipBg;
+        textColor = AppColors.textMuted;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        status.label,
+        style: AppTextStyles.captionWithColor(
+          textColor,
+          weight: FontWeight.w800,
+        ),
+      ),
     );
   }
 
@@ -444,129 +828,172 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showProposalFlow(BuildContext context) async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (dialogContext) {
-        return Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.catalogChipBg,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    '거래 진행중',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.captionMuted,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text('거래 제안서', style: AppTextStyles.headingH2),
-                const SizedBox(height: 8),
-                Text('구매자', style: AppTextStyles.captionMuted),
-                Text('OOO', style: AppTextStyles.bodySecondaryStrong),
-                const SizedBox(height: 16),
-                _buildTradeSummaryCard(),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: () async {
-                    Navigator.of(dialogContext).pop();
-                    await _showResultDialog(context, accepted: false);
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.badgeBlueText,
-                    minimumSize: const Size.fromHeight(56),
-                  ),
-                  child: Text('거래를 제안할게요!', style: AppTextStyles.buttonPrimary),
-                ),
-                const SizedBox(height: 10),
-                OutlinedButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(54),
-                    side: const BorderSide(
-                      color: AppColors.borderDefault,
-                      width: 2,
-                    ),
-                  ),
-                  child: Text('거래 취소', style: AppTextStyles.buttonSecondary),
-                ),
-              ],
-            ),
+  Future<void> _onTapTradeProposal(BuildContext context, WidgetRef ref) async {
+    final shouldProceed = await _showProposalConfirmDialog(context);
+    if (shouldProceed != true || !context.mounted) {
+      return;
+    }
+
+    try {
+      await ref
+          .read(marketViewModelProvider.notifier)
+          .sendTradeProposal(offer: offer);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('거래 진행을 시작하지 못했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
           ),
         );
-      },
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('거래 제안을 보냈어요. 작성자 승낙을 기다려 주세요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _acceptProposal(
+    BuildContext context,
+    WidgetRef ref,
+    MarketTradeProposal proposal,
+  ) async {
+    final shouldAccept = await _showAcceptProposalDialog(context, proposal);
+    if (shouldAccept != true || !context.mounted) {
+      return;
+    }
+
+    late final MarketTradeCodeSession session;
+    late final bool shouldSendCode;
+    try {
+      final result = await ref
+          .read(marketViewModelProvider.notifier)
+          .acceptTradeProposalAsOwner(
+            offer: offer,
+            proposerUid: proposal.proposerUid,
+          );
+      session = result.session;
+      shouldSendCode = result.shouldSendCode;
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('제안 승낙에 실패했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('선택한 제안을 승낙했어요. 거래 코드를 준비해 주세요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+    if (shouldSendCode) {
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) =>
+              MarketTradeCodeSendPage(offer: offer, session: session),
+        ),
+      );
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => MarketTradeCodeViewPage(offer: offer),
+      ),
     );
   }
 
-  Future<void> _showResultDialog(
-    BuildContext context, {
-    required bool accepted,
-  }) async {
-    await showDialog<void>(
+  Future<bool?> _showProposalConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
       context: context,
-      barrierDismissible: true,
       builder: (dialogContext) {
         return Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 30),
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(26),
           ),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 18),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(28),
-            ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                if (accepted)
-                  Text('OOO님이 거래를 수락했어요!', style: AppTextStyles.captionMuted),
+                Text('거래 제안 보내기', style: AppTextStyles.dialogTitleCompact),
+                const SizedBox(height: 10),
                 Text(
-                  'OOO님에게 초대장과\n도도 코드를 보냈습니다!',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.labelWithColor(
-                    AppColors.textSecondary,
-                    weight: FontWeight.w800,
-                    height: 1.3,
-                  ),
+                  '$_offerOwnerName님에게 거래 제안을 보낼까요?',
+                  style: AppTextStyles.dialogBodyCompact,
                 ),
-                const SizedBox(height: 8),
-                Text('비행장에서 기다려 주세요.', style: AppTextStyles.captionMuted),
-                const SizedBox(height: 10),
-                const Icon(
-                  Icons.navigation_rounded,
-                  color: AppColors.navActive,
-                  size: 26,
-                ),
-                const SizedBox(height: 14),
-                FilledButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.badgeBlueText,
-                    minimumSize: const Size.fromHeight(56),
-                  ),
-                  child: Text('확인', style: AppTextStyles.buttonPrimary),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '보내기',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -576,8 +1003,91 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showSimpleMenu(BuildContext context, WidgetRef ref) async {
-    if (offer.isMine) {
+  Future<bool?> _showAcceptProposalDialog(
+    BuildContext context,
+    MarketTradeProposal proposal,
+  ) {
+    const dialogButtonHeight = 54.0;
+    final proposerName = proposal.proposerName.trim().isEmpty
+        ? '선택한 유저'
+        : proposal.proposerName.trim();
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('제안 승낙', style: AppTextStyles.dialogTitleCompact),
+                const SizedBox(height: 10),
+                Text(
+                  '$proposerName님의 제안을 승낙할까요?',
+                  style: AppTextStyles.dialogBodyCompact,
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '승낙',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showSimpleMenu(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool isMine,
+  }) async {
+    if (isMine) {
       await showModalBottomSheet<void>(
         context: context,
         backgroundColor: AppColors.bgCard,
@@ -589,6 +1099,14 @@ class MarketOfferDetailPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.pin_outlined),
+                  title: const Text('코드 확인'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    await _openTradeCodePage(context, ref);
+                  },
+                ),
                 ListTile(
                   leading: const Icon(Icons.delete_outline_rounded),
                   title: const Text('삭제하기'),
@@ -618,18 +1136,352 @@ class MarketOfferDetailPage extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
+                leading: const Icon(Icons.pin_outlined),
+                title: const Text('코드 확인'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  await _openTradeCodePage(context, ref);
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.visibility_off_outlined),
                 title: const Text('숨기기'),
-                onTap: () => Navigator.of(context).pop(),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  await _hideOffer(context, ref);
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.flag_outlined),
                 title: const Text('신고하기'),
-                onTap: () => Navigator.of(context).pop(),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  await _reportOffer(context, ref);
+                },
               ),
               const SizedBox(height: 6),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openTradeCodePage(BuildContext context, WidgetRef ref) async {
+    final viewModel = ref.read(marketViewModelProvider.notifier);
+    final session = await viewModel.fetchTradeCodeSession(offer.id);
+    if (!context.mounted) {
+      return;
+    }
+    if (session == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('아직 거래 코드가 생성되지 않았어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+    final currentUid = viewModel.currentUserId;
+    final shouldSendCode = session.isCodeSender(currentUid) && !session.hasCode;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => shouldSendCode
+            ? MarketTradeCodeSendPage(offer: offer, session: session)
+            : MarketTradeCodeViewPage(offer: offer),
+      ),
+    );
+  }
+
+  Future<void> _reportOffer(BuildContext context, WidgetRef ref) async {
+    final result = await _showReportDialog(context);
+    if (result == null || !context.mounted) {
+      return;
+    }
+    final (reason, detail) = result;
+    try {
+      await ref
+          .read(marketViewModelProvider.notifier)
+          .reportOffer(offer: offer, reason: reason, detail: detail);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('신고 접수에 실패했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('신고가 접수되었어요. 검토 후 처리할게요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _hideOffer(BuildContext context, WidgetRef ref) async {
+    final shouldHide = await _showHideConfirmDialog(context);
+    if (shouldHide != true || !context.mounted) {
+      return;
+    }
+
+    try {
+      await ref.read(marketViewModelProvider.notifier).hideOffer(offer: offer);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('거래 글 숨기기에 실패했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('거래 글을 숨겼어요. 목록에서 제외됩니다.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    Navigator.of(context).pop();
+  }
+
+  Future<bool?> _showHideConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('거래 글 숨기기', style: AppTextStyles.dialogTitleCompact),
+                const SizedBox(height: 10),
+                Text(
+                  '이 거래 글을 목록에서 숨길까요?',
+                  style: AppTextStyles.dialogBodyCompact,
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '숨기기',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<(String, String)?> _showReportDialog(BuildContext context) {
+    const reasons = <String>['사기/허위 내용', '욕설/비매너', '거래 제안 또는 수락 후 연락두절', '기타'];
+    const dialogButtonHeight = 54.0;
+
+    String selectedReason = reasons.first;
+    String detail = '';
+    return showDialog<(String, String)>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: AppColors.white,
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(26),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('신고하기', style: AppTextStyles.dialogTitleCompact),
+                    const SizedBox(height: 10),
+                    Text(
+                      '신고 사유를 선택해 주세요.',
+                      style: AppTextStyles.dialogBodyCompact,
+                    ),
+                    const SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedReason,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        filled: true,
+                        fillColor: AppColors.bgSecondary,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.borderDefault,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: AppColors.borderDefault,
+                          ),
+                        ),
+                      ),
+                      items: reasons
+                          .map(
+                            (reason) => DropdownMenuItem<String>(
+                              value: reason,
+                              child: Text(
+                                reason,
+                                style: AppTextStyles.bodySecondaryStrong,
+                              ),
+                            ),
+                          )
+                          .toList(growable: false),
+                      onChanged: (value) {
+                        if (value == null) {
+                          return;
+                        }
+                        setState(() {
+                          selectedReason = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      minLines: 2,
+                      maxLines: 4,
+                      maxLength: 300,
+                      style: AppTextStyles.bodySecondaryStrong,
+                      decoration: const InputDecoration(
+                        hintText: '상세 사유(선택)',
+                        counterText: '',
+                      ),
+                      onChanged: (value) {
+                        detail = value;
+                      },
+                    ),
+                    const SizedBox(height: 18),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(
+                                dialogButtonHeight,
+                              ),
+                              side: const BorderSide(
+                                color: AppColors.borderStrong,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              '취소',
+                              style: AppTextStyles.dialogButtonOutline,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: () {
+                              Navigator.of(
+                                dialogContext,
+                              ).pop((selectedReason, detail.trim()));
+                            },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.accentDeepOrange,
+                              minimumSize: const Size.fromHeight(
+                                dialogButtonHeight,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              '접수',
+                              style: AppTextStyles.dialogButtonPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -642,11 +1494,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     }
     await ref
         .read(marketViewModelProvider.notifier)
-        .setOfferLifecycle(
-          offerId: offer.id,
-          lifecycle: MarketLifecycleTab.completed,
-          status: MarketOfferStatus.closed,
-        );
+        .completeTrade(offer: offer);
     if (!context.mounted) {
       return;
     }
@@ -658,6 +1506,173 @@ class MarketOfferDetailPage extends ConsumerWidget {
           behavior: SnackBarBehavior.floating,
         ),
       );
+  }
+
+  Future<void> _cancelTradeAsParticipant(
+    BuildContext context,
+    WidgetRef ref, {
+    required bool hasAcceptedProposal,
+  }) async {
+    final shouldCancel = await _showTradeCancelConfirmDialog(
+      context,
+      hasAcceptedProposal: hasAcceptedProposal,
+      isOwner: false,
+    );
+    if (shouldCancel != true || !context.mounted) {
+      return;
+    }
+    try {
+      await ref
+          .read(marketViewModelProvider.notifier)
+          .cancelTrade(offer: offer);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('거래 취소에 실패했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            hasAcceptedProposal
+                ? '거래를 취소했어요. 게시글이 다시 대기 상태로 돌아갔어요.'
+                : '보낸 거래 제안을 취소했어요.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<void> _cancelTradeAsOwner(BuildContext context, WidgetRef ref) async {
+    final shouldCancel = await _showTradeCancelConfirmDialog(
+      context,
+      hasAcceptedProposal: true,
+      isOwner: true,
+    );
+    if (shouldCancel != true || !context.mounted) {
+      return;
+    }
+    try {
+      await ref
+          .read(marketViewModelProvider.notifier)
+          .cancelTrade(offer: offer);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('거래 취소에 실패했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('진행 중인 거래를 취소했어요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<bool?> _showTradeCancelConfirmDialog(
+    BuildContext context, {
+    required bool hasAcceptedProposal,
+    required bool isOwner,
+  }) {
+    const dialogButtonHeight = 54.0;
+    final String message = hasAcceptedProposal
+        ? (isOwner
+              ? '현재 승낙된 거래를 취소하고 게시글을 다시 열까요?'
+              : '진행 중인 거래를 취소하고 대기 상태로 돌릴까요?')
+        : '보낸 거래 제안을 취소할까요?';
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('거래 취소', style: AppTextStyles.dialogTitleCompact),
+                const SizedBox(height: 10),
+                Text(message, style: AppTextStyles.dialogBodyCompact),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '유지',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소하기',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<bool?> _showCompleteConfirmDialog(BuildContext context) {
@@ -677,11 +1692,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('거래 완료 처리', style: AppTextStyles.dialogTitleWithSize(30)),
+                Text('거래 완료 처리', style: AppTextStyles.dialogTitleCompact),
                 const SizedBox(height: 10),
                 Text(
                   '이 거래를 완료 상태로 변경할까요?',
-                  style: AppTextStyles.dialogBodyWithSize(18),
+                  style: AppTextStyles.dialogBodyCompact,
                 ),
                 const SizedBox(height: 18),
                 Row(
@@ -698,7 +1713,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -714,7 +1732,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('완료', style: AppTextStyles.buttonPrimary),
+                        child: Text(
+                          '완료',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
                       ),
                     ),
                   ],
@@ -764,11 +1785,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('거래 글 삭제', style: AppTextStyles.dialogTitleWithSize(30)),
+                Text('거래 글 삭제', style: AppTextStyles.dialogTitleCompact),
                 const SizedBox(height: 10),
                 Text(
                   '정말 이 거래 글을 삭제할까요?',
-                  style: AppTextStyles.dialogBodyWithSize(18),
+                  style: AppTextStyles.dialogBodyCompact,
                 ),
                 const SizedBox(height: 6),
                 Text('삭제 후에는 복구할 수 없어요.', style: AppTextStyles.dialogDanger),
@@ -787,7 +1808,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -803,7 +1827,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('삭제', style: AppTextStyles.buttonPrimary),
+                        child: Text(
+                          '삭제',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
                       ),
                     ),
                   ],

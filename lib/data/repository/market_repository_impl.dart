@@ -1,6 +1,9 @@
 import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
 import 'package:nook_lounge_app/domain/repository/market_repository.dart';
 
 class MarketRepositoryImpl implements MarketRepository {
@@ -16,6 +19,11 @@ class MarketRepositoryImpl implements MarketRepository {
   @override
   Stream<List<MarketOffer>> watchOffers() {
     return _firestoreDataSource.watchOffers();
+  }
+
+  @override
+  Future<MarketOffer?> fetchOfferById(String offerId) {
+    return _firestoreDataSource.fetchOfferById(offerId);
   }
 
   @override
@@ -74,6 +82,19 @@ class MarketRepositoryImpl implements MarketRepository {
   }
 
   @override
+  Future<void> completeTrade({
+    required String offerId,
+    required String requesterUid,
+    required String offerTitle,
+  }) {
+    return _firestoreDataSource.completeTrade(
+      offerId: offerId,
+      requesterUid: requesterUid,
+      offerTitle: offerTitle,
+    );
+  }
+
+  @override
   Future<void> updateOfferBasicInfo({
     required String offerId,
     required String title,
@@ -89,6 +110,172 @@ class MarketRepositoryImpl implements MarketRepository {
   @override
   Future<void> deleteOffer(String offerId) {
     return _firestoreDataSource.deleteOffer(offerId);
+  }
+
+  @override
+  Future<void> sendTradeProposalNotification({
+    required String offerId,
+    required String ownerUid,
+    required String proposerUid,
+    required String offerTitle,
+  }) {
+    return _firestoreDataSource.sendTradeProposalNotification(
+      offerId: offerId,
+      ownerUid: ownerUid,
+      proposerUid: proposerUid,
+      offerTitle: offerTitle,
+    );
+  }
+
+  @override
+  Stream<List<MarketTradeProposal>> watchTradeProposals(String offerId) {
+    return _firestoreDataSource.watchTradeProposals(offerId);
+  }
+
+  @override
+  Stream<MarketTradeProposal?> watchMyTradeProposal({
+    required String offerId,
+    required String proposerUid,
+  }) {
+    return _firestoreDataSource.watchMyTradeProposal(
+      offerId: offerId,
+      proposerUid: proposerUid,
+    );
+  }
+
+  @override
+  Future<MarketTradeCodeSession> acceptTradeProposal({
+    required String offerId,
+    required String ownerUid,
+    required String proposerUid,
+    required MarketMoveType moveType,
+    required String offerTitle,
+  }) {
+    return _firestoreDataSource.acceptTradeProposal(
+      offerId: offerId,
+      ownerUid: ownerUid,
+      proposerUid: proposerUid,
+      moveType: moveType,
+      offerTitle: offerTitle,
+    );
+  }
+
+  @override
+  Future<MarketTradeCodeSession> prepareTradeCodeSession({
+    required String offerId,
+    required String ownerUid,
+    required String proposerUid,
+    required MarketMoveType moveType,
+  }) {
+    return _firestoreDataSource.prepareTradeCodeSession(
+      offerId: offerId,
+      ownerUid: ownerUid,
+      proposerUid: proposerUid,
+      moveType: moveType,
+    );
+  }
+
+  @override
+  Stream<MarketTradeCodeSession?> watchTradeCodeSession(String offerId) {
+    return _firestoreDataSource.watchTradeCodeSession(offerId);
+  }
+
+  @override
+  Future<MarketTradeCodeSession?> fetchTradeCodeSession(String offerId) {
+    return _firestoreDataSource.fetchTradeCodeSession(offerId);
+  }
+
+  @override
+  Future<void> sendTradeAcceptNotification({
+    required String offerId,
+    required String ownerUid,
+    required String proposerUid,
+    required String offerTitle,
+  }) {
+    return _firestoreDataSource.sendTradeAcceptNotification(
+      offerId: offerId,
+      ownerUid: ownerUid,
+      proposerUid: proposerUid,
+      offerTitle: offerTitle,
+    );
+  }
+
+  @override
+  Future<void> sendTradeCode({
+    required String offerId,
+    required String senderUid,
+    required String receiverUid,
+    required String code,
+    required String offerTitle,
+  }) {
+    return _firestoreDataSource.sendTradeCode(
+      offerId: offerId,
+      senderUid: senderUid,
+      receiverUid: receiverUid,
+      code: code,
+      offerTitle: offerTitle,
+    );
+  }
+
+  @override
+  Future<void> cancelTrade({
+    required String offerId,
+    required String ownerUid,
+    required String requesterUid,
+    required String offerTitle,
+  }) {
+    return _firestoreDataSource.cancelTrade(
+      offerId: offerId,
+      ownerUid: ownerUid,
+      requesterUid: requesterUid,
+      offerTitle: offerTitle,
+    );
+  }
+
+  @override
+  Future<void> reportTradeOffer({
+    required String offerId,
+    required String ownerUid,
+    required String reporterUid,
+    required String reason,
+    required String detail,
+  }) {
+    return _firestoreDataSource.reportTradeOffer(
+      offerId: offerId,
+      ownerUid: ownerUid,
+      reporterUid: reporterUid,
+      reason: reason,
+      detail: detail,
+    );
+  }
+
+  @override
+  Stream<Set<String>> watchHiddenOfferIds(String uid) {
+    return _firestoreDataSource.watchHiddenOfferIds(uid);
+  }
+
+  @override
+  Future<void> hideOfferForUser({
+    required String uid,
+    required String offerId,
+  }) {
+    return _firestoreDataSource.hideOfferForUser(uid: uid, offerId: offerId);
+  }
+
+  @override
+  Stream<List<MarketUserNotification>> watchUserNotifications(String uid) {
+    return _firestoreDataSource.watchUserNotifications(uid);
+  }
+
+  @override
+  Future<void> markUserNotificationRead({
+    required String uid,
+    required String notificationId,
+  }) {
+    return _firestoreDataSource.markUserNotificationRead(
+      uid: uid,
+      notificationId: notificationId,
+    );
   }
 
   String? _resolveLocalPath(String source) {

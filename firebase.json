@@ -1,1 +1,37 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"nookloungeapp","appId":"1:390339232656:android:b2ebd9413f30f25b8ea915","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"nookloungeapp","appId":"1:390339232656:ios:b684eec06c3bc47a8ea915","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"nookloungeapp","configurations":{"android":"1:390339232656:android:b2ebd9413f30f25b8ea915","ios":"1:390339232656:ios:b684eec06c3bc47a8ea915"}}}}}}
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "nodejs20"
+    }
+  ],
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "nookloungeapp",
+          "appId": "1:390339232656:android:b2ebd9413f30f25b8ea915",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "nookloungeapp",
+          "appId": "1:390339232656:ios:b684eec06c3bc47a8ea915",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "nookloungeapp",
+          "configurations": {
+            "android": "1:390339232656:android:b2ebd9413f30f25b8ea915",
+            "ios": "1:390339232656:ios:b684eec06c3bc47a8ea915"
+          }
+        }
+      }
+    }
+  }
+}

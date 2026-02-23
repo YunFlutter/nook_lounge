@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,6 +11,7 @@ import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart'
 import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
+import 'package:nook_lounge_app/data/service/push_message_service.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
@@ -23,10 +25,14 @@ import 'package:nook_lounge_app/domain/repository/island_repository.dart';
 import 'package:nook_lounge_app/domain/repository/market_repository.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
 import 'package:nook_lounge_app/presentation/state/catalog_search_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/home_shell_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/market_view_state.dart';
+import 'package:nook_lounge_app/presentation/state/push_offer_intent_notifier.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
@@ -53,6 +59,26 @@ final firestoreProvider = Provider<FirebaseFirestore>((ref) {
 
 final firebaseStorageProvider = Provider<FirebaseStorage>((ref) {
   return FirebaseStorage.instance;
+});
+
+final firebaseMessagingProvider = Provider<FirebaseMessaging>((ref) {
+  return FirebaseMessaging.instance;
+});
+
+final pushOfferIntentNotifierProvider =
+    StateNotifierProvider<PushOfferIntentNotifier, String?>((ref) {
+      return PushOfferIntentNotifier();
+    });
+
+final pushMessageServiceProvider = Provider<PushMessageService>((ref) {
+  final service = PushMessageService(
+    messaging: ref.watch(firebaseMessagingProvider),
+    auth: ref.watch(firebaseAuthProvider),
+    firestore: ref.watch(firestoreProvider),
+    offerIntentNotifier: ref.watch(pushOfferIntentNotifierProvider.notifier),
+  );
+  ref.onDispose(service.dispose);
+  return service;
 });
 
 final firebaseAuthDataSourceProvider = Provider<FirebaseAuthDataSource>((ref) {
@@ -210,4 +236,32 @@ final marketViewModelProvider =
         repository: ref.watch(marketRepositoryProvider),
         authRepository: ref.watch(authRepositoryProvider),
       );
+    });
+
+final marketTradeCodeSessionProvider =
+    StreamProvider.family<MarketTradeCodeSession?, String>((ref, offerId) {
+      return ref.watch(marketRepositoryProvider).watchTradeCodeSession(offerId);
+    });
+
+final marketTradeProposalsProvider =
+    StreamProvider.family<List<MarketTradeProposal>, String>((ref, offerId) {
+      return ref.watch(marketRepositoryProvider).watchTradeProposals(offerId);
+    });
+
+final marketMyTradeProposalProvider =
+    StreamProvider.family<
+      MarketTradeProposal?,
+      ({String offerId, String proposerUid})
+    >((ref, args) {
+      return ref
+          .watch(marketRepositoryProvider)
+          .watchMyTradeProposal(
+            offerId: args.offerId,
+            proposerUid: args.proposerUid,
+          );
+    });
+
+final marketUserNotificationsProvider =
+    StreamProvider.family<List<MarketUserNotification>, String>((ref, uid) {
+      return ref.watch(marketRepositoryProvider).watchUserNotifications(uid);
     });

@@ -17,6 +17,16 @@ class FirestorePaths {
 
   static String marketPosts() => 'marketPosts';
 
+  static String marketTradeCode(String offerId) => 'marketTradeCodes/$offerId';
+
+  static String marketTradeCodes() => 'marketTradeCodes';
+
+  static String marketTradeProposals(String offerId) =>
+      '${marketPost(offerId)}/proposals';
+
+  static String marketTradeProposal(String offerId, String proposerUid) =>
+      '${marketTradeProposals(offerId)}/$proposerUid';
+
   static String report(String reportId) => 'reports/$reportId';
 
   static String catalogStates(String uid) => 'users/$uid/catalogStates';
@@ -39,4 +49,12 @@ class FirestorePaths {
     }
     return '${island(uid, islandId)}/turnip/state';
   }
+
+  static String userNotifications(String uid) => 'users/$uid/notifications';
+
+  static String hiddenMarketOffers(String uid) =>
+      'users/$uid/hiddenMarketOffers';
+
+  static String hiddenMarketOffer(String uid, String offerId) =>
+      '${hiddenMarketOffers(uid)}/$offerId';
 }

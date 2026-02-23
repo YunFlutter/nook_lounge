@@ -401,9 +401,12 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('거래 글 삭제', style: AppTextStyles.dialogTitle),
+                Text('거래 글 삭제', style: AppTextStyles.dialogTitleCompact),
                 const SizedBox(height: 10),
-                Text('정말 이 거래 글을 삭제할까요?', style: AppTextStyles.dialogBody),
+                Text(
+                  '정말 이 거래 글을 삭제할까요?',
+                  style: AppTextStyles.dialogBodyCompact,
+                ),
                 const SizedBox(height: 6),
                 Text('삭제 후에는 복구할 수 없어요.', style: AppTextStyles.dialogDanger),
                 const SizedBox(height: 18),
@@ -421,7 +424,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -437,7 +443,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('삭제', style: AppTextStyles.buttonPrimary),
+                        child: Text(
+                          '삭제',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
                       ),
                     ),
                   ],
@@ -459,11 +468,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
     if (shouldComplete != true || !mounted) {
       return;
     }
-    await viewModel.setOfferLifecycle(
-      offerId: offer.id,
-      lifecycle: MarketLifecycleTab.completed,
-      status: MarketOfferStatus.closed,
-    );
+    await viewModel.completeTrade(offer: offer);
     if (!mounted) {
       return;
     }
@@ -487,9 +492,12 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('거래 완료 처리', style: AppTextStyles.dialogTitle),
+                Text('거래 완료 처리', style: AppTextStyles.dialogTitleCompact),
                 const SizedBox(height: 10),
-                Text('이 거래를 완료 상태로 변경할까요?', style: AppTextStyles.dialogBody),
+                Text(
+                  '이 거래를 완료 상태로 변경할까요?',
+                  style: AppTextStyles.dialogBodyCompact,
+                ),
                 const SizedBox(height: 18),
                 Row(
                   children: <Widget>[
@@ -505,7 +513,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -521,7 +532,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        child: Text('완료', style: AppTextStyles.buttonPrimary),
+                        child: Text(
+                          '완료',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
                       ),
                     ),
                   ],

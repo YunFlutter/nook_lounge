@@ -29,6 +29,23 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     height: 1.35,
   );
+  static final TextStyle dialogTitleCompact = AppTypography.headingH2.copyWith(
+    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w800,
+  );
+  static final TextStyle dialogBodyCompact = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w700,
+    height: 1.35,
+  );
+  static final TextStyle dialogButtonPrimary = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textInverse,
+    fontWeight: FontWeight.w800,
+  );
+  static final TextStyle dialogButtonOutline = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w800,
+  );
   static final TextStyle dialogDanger = AppTypography.bodyMedium.copyWith(
     color: AppColors.badgeRedText,
     fontWeight: FontWeight.w800,
@@ -152,12 +169,14 @@ class AppTextStyles {
     required Color color,
     FontWeight weight = FontWeight.w700,
     double? height,
+    double? letterSpacing,
   }) {
     return AppTypography.bodyLarge.copyWith(
       color: color,
       fontSize: fontSize,
       fontWeight: weight,
       height: height,
+      letterSpacing: letterSpacing,
     );
   }
 }

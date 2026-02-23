@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
@@ -11,6 +13,8 @@ import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/home/island_switch_sheet.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_tab_page.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_realtime_listener.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_page.dart';
 
 class HomeShellPage extends ConsumerWidget {
@@ -20,59 +24,76 @@ class HomeShellPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<String?>(pushOfferIntentNotifierProvider, (previous, next) {
+      if (next == null || next == previous) {
+        return;
+      }
+      unawaited(_openOfferDetailFromPush(context, ref, next));
+    });
+
+    final pendingOfferId = ref.watch(pushOfferIntentNotifierProvider);
+    if (pendingOfferId != null && pendingOfferId.trim().isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(_openOfferDetailFromPush(context, ref, pendingOfferId));
+      });
+    }
+
     final homeState = ref.watch(homeShellViewModelProvider);
     final tabController = ref.read(homeShellViewModelProvider.notifier);
     final currentTab = homeState.selectedTabIndex;
     final selectedIslandId =
         ref.watch(homeDashboardPrimaryIslandIdProvider(uid)).valueOrNull ?? '';
 
-    return Scaffold(
-      appBar: _buildAppBar(context, currentTab, ref, selectedIslandId),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 260),
-        child: KeyedSubtree(
-          key: ValueKey<int>(currentTab),
-          child: _buildTabBody(currentTab, ref, selectedIslandId),
+    return MarketRealtimeListener(
+      uid: uid,
+      child: Scaffold(
+        appBar: _buildAppBar(context, currentTab, ref, selectedIslandId),
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 260),
+          child: KeyedSubtree(
+            key: ValueKey<int>(currentTab),
+            child: _buildTabBody(currentTab, ref, selectedIslandId),
+          ),
         ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: AppColors.navBackground,
+        bottomNavigationBar: NavigationBar(
+          backgroundColor: AppColors.navBackground,
 
-        selectedIndex: currentTab,
-        onDestinationSelected: tabController.changeTab,
-        destinations: const <NavigationDestination>[
-          NavigationDestination(
-            icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
-            selectedIcon: _NavPngIcon(
-              assetPath: 'assets/icon/boarding_pass_act.png',
+          selectedIndex: currentTab,
+          onDestinationSelected: tabController.changeTab,
+          destinations: const <NavigationDestination>[
+            NavigationDestination(
+              icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
+              selectedIcon: _NavPngIcon(
+                assetPath: 'assets/icon/boarding_pass_act.png',
+              ),
+              label: '비행장',
             ),
-            label: '비행장',
-          ),
-          NavigationDestination(
-            icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
-            selectedIcon: _NavPngIcon(assetPath: 'assets/icon/shop_act.png'),
-            label: '마켓',
-          ),
-          NavigationDestination(
-            icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
-            selectedIcon: _NavPngIcon(assetPath: 'assets/icon/house_act.png'),
-            label: '홈',
-          ),
-          NavigationDestination(
-            icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
-            selectedIcon: _NavPngIcon(
-              assetPath: 'assets/icon/book_stack_act.png',
+            NavigationDestination(
+              icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
+              selectedIcon: _NavPngIcon(assetPath: 'assets/icon/shop_act.png'),
+              label: '마켓',
             ),
-            label: '도감',
-          ),
-          NavigationDestination(
-            icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
-            selectedIcon: _NavPngIcon(
-              assetPath: 'assets/icon/combo_chart_act.png',
+            NavigationDestination(
+              icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
+              selectedIcon: _NavPngIcon(assetPath: 'assets/icon/house_act.png'),
+              label: '홈',
             ),
-            label: '무주식',
-          ),
-        ],
+            NavigationDestination(
+              icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
+              selectedIcon: _NavPngIcon(
+                assetPath: 'assets/icon/book_stack_act.png',
+              ),
+              label: '도감',
+            ),
+            NavigationDestination(
+              icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
+              selectedIcon: _NavPngIcon(
+                assetPath: 'assets/icon/combo_chart_act.png',
+              ),
+              label: '무주식',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -326,6 +347,46 @@ class HomeShellPage extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+
+  Future<void> _openOfferDetailFromPush(
+    BuildContext context,
+    WidgetRef ref,
+    String offerId,
+  ) async {
+    ref.read(pushOfferIntentNotifierProvider.notifier).clear();
+
+    final normalizedId = offerId.trim();
+    if (normalizedId.isEmpty) {
+      return;
+    }
+
+    final offer = await ref
+        .read(marketRepositoryProvider)
+        .fetchOfferById(normalizedId);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (offer == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('거래 정보를 찾지 못했어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    ref.read(homeShellViewModelProvider.notifier).changeTab(1);
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => MarketOfferDetailPage(offer: offer),
+      ),
     );
   }
 }

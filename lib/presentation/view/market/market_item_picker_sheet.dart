@@ -11,12 +11,14 @@ class MarketItemPickerSheet extends ConsumerStatefulWidget {
     required this.title,
     this.initialKeyword = '',
     this.initialCategoryKey = _allCategoryKey,
+    this.touchingOnlyCategories = false,
     super.key,
   });
 
   final String title;
   final String initialKeyword;
   final String initialCategoryKey;
+  final bool touchingOnlyCategories;
 
   static const String _allCategoryKey = 'all';
   static const String _furnitureCategoryKey = 'furniture';
@@ -72,6 +74,14 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
   CatalogItem? _selectedItem;
   String _expandedItemId = '';
 
+  List<String> get _visibleCategoryKeys => widget.touchingOnlyCategories
+      ? const <String>[
+          MarketItemPickerSheet._furnitureCategoryKey,
+          MarketItemPickerSheet._wallpaperCategoryKey,
+          MarketItemPickerSheet._fashionCategoryKey,
+        ]
+      : MarketItemPickerSheet._categoryKeys;
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +90,9 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
     _searchFocusNode = FocusNode();
     _searchFocusNode.addListener(_onSearchFocusChanged);
     _selectedCategoryKey = widget.initialCategoryKey;
+    if (!_visibleCategoryKeys.contains(_selectedCategoryKey)) {
+      _selectedCategoryKey = _visibleCategoryKeys.first;
+    }
   }
 
   @override
@@ -249,10 +262,10 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
       height: 36,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: MarketItemPickerSheet._categoryKeys.length,
+        itemCount: _visibleCategoryKeys.length,
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final categoryKey = MarketItemPickerSheet._categoryKeys[index];
+          final categoryKey = _visibleCategoryKeys[index];
           final selected = categoryKey == _selectedCategoryKey;
           return InkWell(
             borderRadius: BorderRadius.circular(999),

@@ -22,29 +22,65 @@ class MarketOfferCard extends StatelessWidget {
   final VoidCallback? onDeleteTap;
   final VoidCallback? onCompleteTap;
 
+  static const List<double> _grayscaleMatrix = <double>[
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: offer.dimmed ? 0.42 : 1,
-      child: Material(
-        color: AppColors.bgCard,
+    final isCompletedStyle = _isCompletedOffer;
+    final card = Material(
+      color: AppColors.bgCard,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
         borderRadius: BorderRadius.circular(22),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(22),
-          onTap: onTap,
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
-            child: offer.boardType == MarketBoardType.touching
-                ? _buildTouchingBody(context)
-                : _buildExchangeBody(context),
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.bgCard,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppColors.borderDefault),
           ),
+          child: offer.boardType == MarketBoardType.touching
+              ? _buildTouchingBody(context)
+              : _buildExchangeBody(context),
         ),
       ),
     );
+
+    return Opacity(
+      opacity: offer.dimmed ? 0.42 : (isCompletedStyle ? 0.74 : 1),
+      child: isCompletedStyle
+          ? ColorFiltered(
+              colorFilter: const ColorFilter.matrix(_grayscaleMatrix),
+              child: card,
+            )
+          : card,
+    );
+  }
+
+  bool get _isCompletedOffer {
+    return offer.lifecycle == MarketLifecycleTab.completed ||
+        offer.status == MarketOfferStatus.closed;
   }
 
   Widget _buildExchangeBody(BuildContext context) {

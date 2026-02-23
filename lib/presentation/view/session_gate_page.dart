@@ -22,6 +22,16 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
   bool _splashCompleted = false;
 
   @override
+  void initState() {
+    super.initState();
+    // 유지보수 포인트:
+    // 푸시 딥링크(알림 탭)를 앱 세션 시작 시 1회만 등록합니다.
+    Future<void>.microtask(() async {
+      await ref.read(pushMessageServiceProvider).initialize();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(sessionViewModelProvider);
     final isAnonymous = ref.watch(authRepositoryProvider).isAnonymous;
