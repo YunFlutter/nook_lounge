@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/animation/app_motion.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
@@ -85,10 +86,7 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
-                _errorMessage!,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              Text(_errorMessage!, style: AppTextStyles.bodyPrimary),
               const SizedBox(height: AppSpacing.s10),
               FilledButton(onPressed: _loadCatalog, child: const Text('다시 시도')),
             ],
@@ -421,12 +419,7 @@ class _SectionTitleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-        ),
+        Text(title, style: AppTextStyles.headingH3),
         const Spacer(),
         TextButton(
           onPressed: onTap,
@@ -466,12 +459,7 @@ class _ProgressSection extends StatelessWidget {
           children: <Widget>[
             Icon(icon, color: AppColors.textPrimary),
             const SizedBox(width: 6),
-            Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-            ),
+            Text(title, style: AppTextStyles.headingH3),
             const Spacer(),
             TextButton(
               onPressed: onViewAll,
@@ -532,8 +520,10 @@ class _ProgressCircleCard extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     data.label,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
+                    style: AppTextStyles.bodyWithSize(
+                      16,
+                      color: AppColors.textPrimary,
+                      weight: FontWeight.w800,
                     ),
                   ),
                   const Spacer(),
@@ -548,9 +538,9 @@ class _ProgressCircleCard extends StatelessWidget {
                     ),
                     child: Text(
                       '${data.completed}/${data.total}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textMuted,
-                        fontWeight: FontWeight.w700,
+                      style: AppTextStyles.captionWithColor(
+                        AppColors.textMuted,
+                        weight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -623,9 +613,11 @@ class _VillagerAvatarItem extends StatelessWidget {
               item.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+              style: AppTextStyles.bodyWithSize(
+                14,
+                color: AppColors.textPrimary,
+                weight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -677,9 +669,10 @@ class _DonutImageChart extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 percentLabel,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                style: AppTextStyles.bodyWithSize(
+                  16,
                   color: AppColors.textMuted,
-                  fontWeight: FontWeight.w800,
+                  weight: FontWeight.w800,
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
@@ -81,12 +82,12 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
             onPressed: () async {
               ref.read(sessionViewModelProvider.notifier).exitGuestBrowseMode();
             },
-            child: const Text(
+            child: Text(
               '로그인하기',
-              style: TextStyle(
+              style: AppTextStyles.bodyWithSize(
+                14,
                 color: AppColors.textPrimary,
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
+                weight: FontWeight.w800,
               ),
             ),
           ),
@@ -113,11 +114,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
             else if (_errorMessage != null)
               Text(
                 _errorMessage!,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: AppTextStyles.bodySecondaryStrong,
               )
             else ...<Widget>[
               AnimatedFadeSlide(
@@ -151,10 +148,10 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
       children: <Widget>[
         Text(
           title,
-          style: const TextStyle(
+          style: AppTextStyles.bodyWithSize(
+            22,
             color: AppColors.textPrimary,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+            weight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: AppSpacing.s10),
@@ -194,11 +191,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                       Expanded(
                         child: Text(
                           _labelByCategory(category),
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
+                          style: AppTextStyles.bodyPrimaryHeavy,
                         ),
                       ),
                       Container(
@@ -212,11 +205,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                         ),
                         child: Text(
                           '$count개',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: AppTextStyles.captionSecondary,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -298,12 +287,12 @@ class _GuestIntroCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.borderDefault),
       ),
-      child: const Text(
+      child: Text(
         '비회원 둘러보기 모드입니다.\n도감 리스트/상세 조회만 가능하며 상태 저장은 지원하지 않아요.',
-        style: TextStyle(
+        style: AppTextStyles.bodyWithSize(
+          13,
           color: AppColors.textSecondary,
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
+          weight: FontWeight.w700,
           height: 1.4,
         ),
       ),

@@ -71,8 +71,8 @@ class CatalogBindingViewModel
                 ))
             .copyWith(
               category: category,
-              owned: donationMode ? current?.owned : completed,
-              donated: donationMode ? completed : current?.donated,
+              owned: donationMode ? (current?.owned ?? false) : completed,
+              donated: donationMode ? completed : (current?.donated ?? false),
             );
 
     state = <String, CatalogUserState>{...state, itemId: optimistic};

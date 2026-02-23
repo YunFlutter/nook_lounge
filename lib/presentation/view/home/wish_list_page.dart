@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
@@ -167,23 +168,20 @@ class _WishListPageState extends ConsumerState<WishListPage> {
                 children: <Widget>[
                   Text(
                     _categoryLabels[key] ?? key,
-                    style: TextStyle(
+                    style: AppTextStyles.bodyWithSize(
+                      14,
                       color: selected
                           ? AppColors.textPrimary
                           : AppColors.textMuted,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                      weight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '$count',
-                    style: TextStyle(
-                      color: selected
-                          ? AppColors.textPrimary
-                          : AppColors.textMuted,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.captionWithColor(
+                      selected ? AppColors.textPrimary : AppColors.textMuted,
+                      weight: FontWeight.w700,
                     ),
                   ),
                 ],
@@ -251,9 +249,10 @@ class _WishListPageState extends ConsumerState<WishListPage> {
                       item.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      style: AppTextStyles.bodyWithSize(
+                        16,
                         color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w800,
+                        weight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -268,10 +267,9 @@ class _WishListPageState extends ConsumerState<WishListPage> {
                       ),
                       child: Text(
                         displayCategory,
-                        style: const TextStyle(
-                          color: AppColors.badgeBlueText,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
+                        style: AppTextStyles.captionWithColor(
+                          AppColors.badgeBlueText,
+                          weight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -281,9 +279,9 @@ class _WishListPageState extends ConsumerState<WishListPage> {
                         details,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w700,
+                        style: AppTextStyles.captionWithColor(
+                          AppColors.textSecondary,
+                          weight: FontWeight.w700,
                         ),
                       ),
                     ],
@@ -320,10 +318,10 @@ class _WishListPageState extends ConsumerState<WishListPage> {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: const TextStyle(
+        style: AppTextStyles.bodyWithSize(
+          14,
           color: AppColors.textSecondary,
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
+          weight: FontWeight.w700,
           height: 1.4,
         ),
       ),

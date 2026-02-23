@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/app/theme/app_typography.dart';
 
 class AppTheme {
@@ -53,7 +54,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.white,
-        hintStyle: const TextStyle(color: AppColors.textHint),
+        hintStyle: AppTextStyles.bodyHintStrong,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
@@ -73,7 +74,10 @@ class AppTheme {
             width: 1.8,
           ),
         ),
-        errorStyle: const TextStyle(color: AppColors.accentDeepOrange),
+        errorStyle: AppTextStyles.captionWithColor(
+          AppColors.accentDeepOrange,
+          weight: FontWeight.w800,
+        ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(
@@ -104,12 +108,8 @@ class AppTheme {
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        hintStyle: const WidgetStatePropertyAll(
-          TextStyle(color: AppColors.textHint),
-        ),
-        textStyle: const WidgetStatePropertyAll(
-          TextStyle(color: AppColors.textPrimary),
-        ),
+        hintStyle: WidgetStatePropertyAll(AppTextStyles.bodyHintStrong),
+        textStyle: WidgetStatePropertyAll(AppTextStyles.bodyPrimaryStrong),
       ),
     );
   }

@@ -1,15 +1,17 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:nook_lounge_app/domain/model/turnip_prediction.dart';
 
-class TurnipSavedData {
-  const TurnipSavedData({
-    required this.sundayBuyPrice,
-    required this.weekSlots,
-    required this.prediction,
-  });
+part 'turnip_saved_data.freezed.dart';
 
-  final int sundayBuyPrice;
-  final List<int?> weekSlots;
-  final TurnipPrediction? prediction;
+@freezed
+sealed class TurnipSavedData with _$TurnipSavedData {
+  const TurnipSavedData._();
+
+  const factory TurnipSavedData({
+    required int sundayBuyPrice,
+    required List<int?> weekSlots,
+    TurnipPrediction? prediction,
+  }) = _TurnipSavedData;
 
   factory TurnipSavedData.fromMap(Map<String, dynamic> data) {
     final sundayBuyPrice = _parseInt(data['sundayBuyPrice']) ?? 102;
@@ -24,9 +26,11 @@ class TurnipSavedData {
 
     TurnipPrediction? prediction;
     final rawPrediction = data['prediction'];
-    if (rawPrediction is Map<String, dynamic>) {
+    if (rawPrediction is Map) {
       try {
-        prediction = TurnipPrediction.fromApiJson(rawPrediction);
+        prediction = TurnipPrediction.fromApiJson(
+          Map<String, dynamic>.from(rawPrediction),
+        );
       } catch (_) {
         prediction = null;
       }
@@ -53,17 +57,17 @@ class TurnipSavedData {
         },
     };
   }
+}
 
-  static int? _parseInt(Object? value) {
-    if (value == null) {
-      return null;
-    }
-    if (value is int) {
-      return value;
-    }
-    if (value is num) {
-      return value.toInt();
-    }
-    return int.tryParse(value.toString());
+int? _parseInt(Object? value) {
+  if (value == null) {
+    return null;
   }
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  return int.tryParse(value.toString());
 }

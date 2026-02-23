@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
@@ -56,14 +57,10 @@ class TurnipPage extends ConsumerWidget {
         AppSpacing.pageHorizontal,
       ),
       children: <Widget>[
-        const AnimatedFadeSlide(
+        AnimatedFadeSlide(
           child: Text(
             '예측을 위해 무 가격을 입력해주세요.',
-            style: TextStyle(
-              color: AppColors.textMuted,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.bodyMutedStrong,
           ),
         ),
         const SizedBox(height: AppSpacing.s10),
@@ -78,27 +75,20 @@ class TurnipPage extends ConsumerWidget {
             ),
             child: Row(
               children: <Widget>[
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
                         '일요일 매수 가격',
-                        style: TextStyle(
+                        style: AppTextStyles.bodyWithSize(
+                          18,
                           color: AppColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          weight: FontWeight.w800,
                         ),
                       ),
                       SizedBox(height: 4),
-                      Text(
-                        '무파니에게 구매한 가격',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      Text('무파니에게 구매한 가격', style: AppTextStyles.captionMuted),
                     ],
                   ),
                 ),
@@ -119,10 +109,10 @@ class TurnipPage extends ConsumerWidget {
                         child: Text(
                           '${state.sundayBuyPrice}',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: AppTextStyles.bodyWithSize(
+                            16,
                             color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w800,
+                            weight: FontWeight.w800,
                           ),
                         ),
                       ),
@@ -144,14 +134,7 @@ class TurnipPage extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              const Text(
-                '일일 추적기',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+              Text('일일 추적기', style: AppTextStyles.headingH2),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
@@ -161,12 +144,12 @@ class TurnipPage extends ConsumerWidget {
                   color: AppColors.catalogChipBg,
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: const Text(
+                child: Text(
                   '월-토',
-                  style: TextStyle(
+                  style: AppTextStyles.bodyWithSize(
+                    14,
                     color: AppColors.textSecondary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
+                    weight: FontWeight.w800,
                   ),
                 ),
               ),
@@ -219,34 +202,33 @@ class TurnipPage extends ConsumerWidget {
                                 : hasDayInput
                                 ? '입력됨'
                                 : '예정',
-                            style: TextStyle(
-                              color: isActive
+                            style: AppTextStyles.captionWithColor(
+                              isActive
                                   ? AppColors.primaryDefault
                                   : AppColors.textHint,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
+                              weight: FontWeight.w800,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             _dayLabels[dayIndex],
-                            style: TextStyle(
+                            style: AppTextStyles.bodyWithSize(
+                              20,
                               color: isActive
                                   ? AppColors.textPrimary
                                   : AppColors.textHint,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
+                              weight: FontWeight.w800,
                             ),
                           ),
                           const SizedBox(height: 12),
                           Text(
                             '오전가격',
-                            style: TextStyle(
+                            style: AppTextStyles.bodyWithSize(
+                              13,
                               color: isActive
                                   ? AppColors.textSecondary
                                   : AppColors.textHint,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
+                              weight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -268,12 +250,12 @@ class TurnipPage extends ConsumerWidget {
                           const SizedBox(height: 8),
                           Text(
                             '오후가격',
-                            style: TextStyle(
+                            style: AppTextStyles.bodyWithSize(
+                              13,
                               color: isActive
                                   ? AppColors.textSecondary
                                   : AppColors.textHint,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
+                              weight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -323,7 +305,7 @@ class TurnipPage extends ConsumerWidget {
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 180),
                 child: state.isLoading
-                    ? const Row(
+                    ? Row(
                         key: ValueKey<String>('loading'),
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -338,21 +320,21 @@ class TurnipPage extends ConsumerWidget {
                           SizedBox(width: 8),
                           Text(
                             '계산중..',
-                            style: TextStyle(
+                            style: AppTextStyles.bodyWithSize(
+                              16,
                               color: AppColors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
+                              weight: FontWeight.w800,
                             ),
                           ),
                         ],
                       )
-                    : const Text(
+                    : Text(
                         key: ValueKey<String>('idle'),
                         '계산하기',
-                        style: TextStyle(
+                        style: AppTextStyles.bodyWithSize(
+                          16,
                           color: AppColors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
+                          weight: FontWeight.w800,
                         ),
                       ),
               ),
@@ -363,10 +345,10 @@ class TurnipPage extends ConsumerWidget {
           const SizedBox(height: 10),
           Text(
             state.errorMessage!,
-            style: const TextStyle(
+            style: AppTextStyles.bodyWithSize(
+              13,
               color: AppColors.accentDeepOrange,
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
+              weight: FontWeight.w700,
             ),
           ),
         ],
@@ -387,18 +369,11 @@ class TurnipPage extends ConsumerWidget {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            '예측 결과',
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          Row(
+                          Text('예측 결과', style: AppTextStyles.headingH2),
+                          const Row(
                             children: <Widget>[
                               TurnipLegendDot(
                                 color: AppColors.badgeYellowText,
@@ -414,13 +389,9 @@ class TurnipPage extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         '입력된 정보를 기반으로 한 결과입니다.',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.captionMuted,
                       ),
                       const SizedBox(height: 12),
                       TurnipPredictionChart(

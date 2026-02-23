@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
@@ -132,10 +133,10 @@ class HomeShellPage extends ConsumerWidget {
               children: <Widget>[
                 Text(
                   islandTitle,
-                  style: const TextStyle(
+                  style: AppTextStyles.bodyWithSize(
+                    16,
                     color: AppColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                    weight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -202,9 +203,10 @@ class HomeShellPage extends ConsumerWidget {
             label: const Text('초기화'),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.textSecondary,
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+              textStyle: AppTextStyles.bodyWithSize(
+                16,
+                color: AppColors.textSecondary,
+                weight: FontWeight.w700,
               ),
             ),
           ),
@@ -247,20 +249,17 @@ class HomeShellPage extends ConsumerWidget {
   Widget _buildAirportTab() {
     return ListView(
       padding: const EdgeInsets.all(24),
-      children: const <Widget>[
+      children: <Widget>[
         AnimatedFadeSlide(
-          child: Text(
-            '비행장 관리',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-          ),
+          child: Text('비행장 관리', style: AppTextStyles.dialogTitleWithSize(28)),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         AnimatedFadeSlide(
-          delay: Duration(milliseconds: 40),
+          delay: const Duration(milliseconds: 40),
           child: Card(
             child: ListTile(
-              title: Text('게이트 상태'),
-              subtitle: Text('방문객에게 열림 / 도도코드 관리'),
+              title: const Text('게이트 상태'),
+              subtitle: const Text('방문객에게 열림 / 도도코드 관리'),
             ),
           ),
         ),

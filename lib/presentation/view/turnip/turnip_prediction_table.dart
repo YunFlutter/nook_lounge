@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 
 class TurnipPredictionTable extends StatelessWidget {
   const TurnipPredictionTable({
@@ -48,14 +49,14 @@ class TurnipPredictionTable extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          const SizedBox(
+          SizedBox(
             width: 46,
             child: Text(
               '구분',
-              style: TextStyle(
+              style: AppTextStyles.bodyWithSize(
+                13,
                 color: AppColors.textSecondary,
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
+                weight: FontWeight.w800,
               ),
             ),
           ),
@@ -64,10 +65,10 @@ class TurnipPredictionTable extends StatelessWidget {
               child: Text(
                 day,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: AppTextStyles.bodyWithSize(
+                  13,
                   color: AppColors.textSecondary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
+                  weight: FontWeight.w800,
                 ),
               ),
             ),
@@ -97,10 +98,10 @@ class TurnipPredictionTable extends StatelessWidget {
             width: 46,
             child: Text(
               label,
-              style: const TextStyle(
+              style: AppTextStyles.bodyWithSize(
+                14,
                 color: AppColors.textPrimary,
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
+                weight: FontWeight.w800,
               ),
             ),
           ),
@@ -109,10 +110,10 @@ class TurnipPredictionTable extends StatelessWidget {
               child: Text(
                 '$value',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: AppTextStyles.bodyWithSize(
+                  14,
                   color: AppColors.textPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  weight: FontWeight.w700,
                 ),
               ),
             ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/error/resident_limit_exceeded_exception.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
@@ -177,13 +178,9 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColors.borderDefault),
                     ),
-                    child: const Text(
+                    child: Text(
                       '비회원 둘러보기 모드에서는 상태 저장이 비활성화됩니다.',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTextStyles.captionSecondary,
                     ),
                   ),
                 ],
@@ -239,8 +236,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                             Expanded(
                               child: Text(
                                 _toastMessage!,
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(fontWeight: FontWeight.w700),
+                                style: AppTextStyles.bodyPrimaryStrong,
                               ),
                             ),
                             const Icon(
@@ -294,12 +290,9 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                     child: Text(
                       label,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: selected
-                            ? AppColors.textPrimary
-                            : AppColors.textMuted,
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: selected
+                          ? AppTextStyles.bodyPrimaryHeavy
+                          : AppTextStyles.bodyMutedStrong,
                     ),
                   ),
                 ),
@@ -345,12 +338,9 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                     child: Text(
                       filter.label,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: selected
-                            ? AppColors.textPrimary
-                            : AppColors.textMuted,
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: selected
+                          ? AppTextStyles.bodyPrimaryHeavy
+                          : AppTextStyles.bodyMutedStrong,
                     ),
                   ),
                 ),
@@ -452,12 +442,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
             fit: BoxFit.contain,
           ),
           const SizedBox(height: 8),
-          Text(
-            '아직 데이터가 없어요...',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary),
-          ),
+          Text('아직 데이터가 없어요...', style: AppTextStyles.headingH2Secondary),
         ],
       ),
     );
@@ -783,18 +768,16 @@ class _CatalogItemCard extends StatelessWidget {
                           item.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
+                          style: AppTextStyles.headingH2,
                         ),
                       ),
                       if (rare)
                         Text(
                           '희귀종',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.badgeRedText,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          style: AppTextStyles.bodyWithSize(
+                            14,
+                            color: AppColors.badgeRedText,
+                          ),
                         ),
                     ],
                   ),
@@ -937,13 +920,7 @@ class _SmallBadge extends StatelessWidget {
         color: background,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: foreground,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
+      child: Text(label, style: AppTextStyles.captionWithColor(foreground)),
     );
   }
 }
@@ -1037,11 +1014,10 @@ class _CatalogDropdownFilter extends StatelessWidget {
                         child: Text(
                           option == '전체' ? title : option,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.textMuted,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          style: AppTextStyles.bodyWithSize(
+                            14,
+                            color: AppColors.textMuted,
+                          ),
                         ),
                       ),
                     )

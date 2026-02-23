@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 
 class SplashLoadingPage extends StatefulWidget {
   const SplashLoadingPage({
@@ -88,17 +89,15 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                   Text(
                     'Nook Lounge',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: AppTextStyles.headingH1,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '섬과 섬을 잇는 라운지',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
+                    style: AppTextStyles.labelWithColor(
+                      AppColors.textSecondary,
+                      weight: FontWeight.w400,
                     ),
                   ),
                   const Spacer(flex: 2),
@@ -109,18 +108,19 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                           widget.waitingForSession
                               ? '섬 데이터를 불러오는 중...'
                               : '로그인 화면으로 이동할게요.',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.textMuted,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          style: AppTextStyles.bodyWithSize(
+                            14,
+                            color: AppColors.textMuted,
+                            weight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       Text(
                         percentText,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: AppTextStyles.bodyWithSize(
+                          14,
                           color: AppColors.textAccent,
-                          fontWeight: FontWeight.w800,
+                          weight: FontWeight.w800,
                         ),
                       ),
                     ],
@@ -141,17 +141,20 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                   Text(
                     '© 2026 Project NL',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: AppTextStyles.bodyWithSize(
+                      14,
                       color: AppColors.textMuted,
-                      fontWeight: FontWeight.w700,
+                      weight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     '본 앱은 팬 제작 비공식 서비스이며 Nintendo와 공식적인 관련이 없습니다.\nAnimal Crossing™은 Nintendo의 상표입니다.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: AppTextStyles.bodyWithSize(
+                      12,
                       color: AppColors.textMuted,
+                      weight: FontWeight.w400,
                       height: 1.45,
                     ),
                   ),

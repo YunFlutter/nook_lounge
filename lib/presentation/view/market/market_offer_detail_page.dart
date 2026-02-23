@@ -1,28 +1,47 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 
-class MarketOfferDetailPage extends StatelessWidget {
+class MarketOfferDetailPage extends ConsumerWidget {
   const MarketOfferDetailPage({required this.offer, super.key});
 
   final MarketOffer offer;
 
+  String get _appBarTitle {
+    // 유지보수 포인트:
+    // API/데이터 매핑 이슈로 특정 필드가 비어도
+    // 상세 상단 타이틀이 사라지지 않도록 우선순위 fallback을 둡니다.
+    final candidates = <String>[
+      offer.title,
+      offer.offerItemName,
+      offer.wantItemName,
+      '거래 상세',
+    ];
+
+    for (final value in candidates) {
+      final trimmed = value.trim();
+      if (trimmed.isNotEmpty) {
+        return trimmed;
+      }
+    }
+    return '거래 상세';
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          offer.offerItemName.isEmpty ? offer.title : offer.offerItemName,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: Text(_appBarTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: <Widget>[
           IconButton(
-            onPressed: () => _showSimpleMenu(context),
+            onPressed: () => _showSimpleMenu(context, ref),
             icon: const Icon(Icons.more_vert_rounded),
           ),
         ],
@@ -35,35 +54,21 @@ class MarketOfferDetailPage extends StatelessWidget {
           120,
         ),
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: SizedBox(
-              height: 230,
-              child: _buildImage(
-                offer.coverImageUrl.isEmpty
-                    ? offer.offerItemImageUrl
-                    : offer.coverImageUrl,
+          if (offer.coverImageUrl.trim().isNotEmpty) ...<Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: SizedBox(
+                height: 230,
+                child: _buildImage(offer.coverImageUrl),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            '교환 제안',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+            const SizedBox(height: 20),
+          ],
+          Text('교환 제안', style: AppTextStyles.bodyPrimaryHeavy),
           const SizedBox(height: 12),
           _buildTradeSummaryCard(),
           const SizedBox(height: 20),
-          const Text(
-            '거래 이동 방식',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+          Text('거래 이동 방식', style: AppTextStyles.bodyPrimaryHeavy),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(14),
@@ -92,23 +97,14 @@ class MarketOfferDetailPage extends StatelessWidget {
                 Expanded(
                   child: Text(
                     offer.moveType.label,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: AppTextStyles.bodyPrimaryHeavy,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            '방문객 안내 사항',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+          Text('방문객 안내 사항', style: AppTextStyles.bodyPrimaryHeavy),
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
@@ -120,9 +116,9 @@ class MarketOfferDetailPage extends StatelessWidget {
             ),
             child: Text(
               offer.description.isEmpty ? '상세 안내가 없어요.' : offer.description,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
+              style: AppTextStyles.labelWithColor(
+                AppColors.textPrimary,
+                weight: FontWeight.w700,
                 height: 1.32,
               ),
             ),
@@ -137,45 +133,67 @@ class MarketOfferDetailPage extends StatelessWidget {
             AppSpacing.pageHorizontal,
             10,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              FilledButton(
-                onPressed: () => _showProposalFlow(context),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.accentDeepOrange,
-                  minimumSize: const Size.fromHeight(58),
-                ),
-                child: Text(
-                  offer.isMine ? '거래를 수락할게요!' : '거래를 제안할게요!',
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-              ),
-              const SizedBox(height: 10),
-              OutlinedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(56),
-                  side: const BorderSide(
-                    color: AppColors.borderDefault,
-                    width: 2,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                ),
-                child: const Text(
-                  '거래 취소',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: offer.isMine
+              ? _buildOwnerBottomActions(context, ref)
+              : _buildVisitorBottomActions(context),
         ),
       ),
+    );
+  }
+
+  Widget _buildVisitorBottomActions(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        FilledButton(
+          onPressed: () => _showProposalFlow(context),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.accentDeepOrange,
+            minimumSize: const Size.fromHeight(58),
+          ),
+          child: Text('거래를 제안할게요!', style: AppTextStyles.buttonPrimary),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(56),
+            side: const BorderSide(color: AppColors.borderDefault, width: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+          ),
+          child: Text('거래 취소', style: AppTextStyles.buttonSecondary),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOwnerBottomActions(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        FilledButton(
+          onPressed: () => _completeMyOffer(context, ref),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.accentDeepOrange,
+            minimumSize: const Size.fromHeight(58),
+          ),
+          child: Text('거래 완료할게요!', style: AppTextStyles.buttonPrimary),
+        ),
+        const SizedBox(height: 10),
+        OutlinedButton(
+          onPressed: () => _deleteMyOffer(context, ref),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(56),
+            side: const BorderSide(color: AppColors.borderDefault, width: 2),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+          ),
+          child: Text('거래 삭제', style: AppTextStyles.buttonSecondary),
+        ),
+      ],
     );
   }
 
@@ -198,6 +216,7 @@ class MarketOfferDetailPage extends StatelessWidget {
                   imageUrl: offer.offerItemImageUrl,
                   title: offer.offerItemName,
                   quantity: offer.offerItemQuantity,
+                  categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
                 ),
               ),
               const Padding(
@@ -214,6 +233,7 @@ class MarketOfferDetailPage extends StatelessWidget {
                   imageUrl: offer.wantItemImageUrl,
                   title: offer.wantItemName,
                   quantity: offer.wantItemQuantity,
+                  categoryLabel: _resolveItemTypeLabel(isOfferSide: false),
                 ),
               ),
             ],
@@ -229,12 +249,18 @@ class MarketOfferDetailPage extends StatelessWidget {
     required String imageUrl,
     required String title,
     required int quantity,
+    required String categoryLabel,
   }) {
+    final displayName = _resolvedDisplayName(title, quantity);
+    final displayQuantity = _resolvedDisplayQuantity(title, quantity);
     return Column(
       children: <Widget>[
         Text(
           header.isEmpty ? '드려요' : header,
-          style: TextStyle(color: headerColor, fontWeight: FontWeight.w800),
+          style: AppTextStyles.labelWithColor(
+            headerColor,
+            weight: FontWeight.w800,
+          ),
         ),
         const SizedBox(height: 6),
         Container(
@@ -249,23 +275,141 @@ class MarketOfferDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          title,
+          displayName,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
+          textAlign: TextAlign.center,
+          style: AppTextStyles.bodyPrimaryHeavy,
         ),
-        Text(
-          'X$quantity',
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        const SizedBox(height: 4),
+        _buildItemTypeBadge(categoryLabel),
+        if (displayQuantity > 0) ...<Widget>[
+          const SizedBox(height: 4),
+          Text('X$displayQuantity', style: AppTextStyles.bodyPrimaryHeavy),
+        ],
       ],
     );
+  }
+
+  Widget _buildItemTypeBadge(String label) {
+    final String normalized = label.trim();
+    Color bgColor = AppColors.catalogChipBg;
+    Color textColor = AppColors.textMuted;
+    IconData icon = Icons.inventory_2_rounded;
+
+    switch (normalized) {
+      case '재화':
+        bgColor = AppColors.badgeBlueBg;
+        textColor = AppColors.badgeBlueText;
+        icon = Icons.paid_rounded;
+      case '레시피':
+        bgColor = AppColors.badgeYellowBg;
+        textColor = AppColors.badgeYellowText;
+        icon = Icons.description_rounded;
+      case '주민':
+        bgColor = AppColors.badgeMintBg;
+        textColor = AppColors.badgeMintText;
+        icon = Icons.person_rounded;
+      case '만지작':
+        bgColor = AppColors.badgePurpleBg;
+        textColor = AppColors.badgePurpleText;
+        icon = Icons.touch_app_rounded;
+      case '아이템':
+      default:
+        bgColor = AppColors.badgeBeigeBg;
+        textColor = AppColors.badgeBeigeText;
+        icon = Icons.inventory_2_rounded;
+    }
+
+    return Container(
+      alignment: Alignment.center,
+      constraints: const BoxConstraints(minWidth: 64),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 12, color: textColor),
+          const SizedBox(width: 3),
+          Text(
+            normalized.isEmpty ? '아이템' : normalized,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.captionWithColor(
+              textColor,
+              weight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _resolveItemTypeLabel({required bool isOfferSide}) {
+    final explicit = isOfferSide
+        ? offer.offerItemCategory
+        : offer.wantItemCategory;
+    if (explicit.isNotEmpty) {
+      return explicit;
+    }
+    final name = isOfferSide ? offer.offerItemName : offer.wantItemName;
+    final imageUrl = isOfferSide
+        ? offer.offerItemImageUrl
+        : offer.wantItemImageUrl;
+    if (_isCurrencyLike(name: name, imageUrl: imageUrl)) {
+      return '재화';
+    }
+    switch (offer.category) {
+      case MarketFilterCategory.recipe:
+        return '레시피';
+      case MarketFilterCategory.villager:
+        return '주민';
+      case MarketFilterCategory.touching:
+        return '만지작';
+      case MarketFilterCategory.item:
+      case MarketFilterCategory.all:
+        return '아이템';
+    }
+  }
+
+  bool _isCurrencyLike({required String name, required String imageUrl}) {
+    if (imageUrl.contains('icon_recipe_scroll')) {
+      return true;
+    }
+    if (imageUrl.contains('Nook_Miles_Ticket')) {
+      return true;
+    }
+    return name.contains('벨') ||
+        name.contains('마일 여행권') ||
+        name.contains('마일 이용권');
+  }
+
+  String _resolvedDisplayName(String rawName, int quantity) {
+    final trimmed = rawName.trim();
+    if (trimmed.isEmpty) {
+      return '-';
+    }
+    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
+    final starMatch = starPattern.firstMatch(trimmed);
+    if (starMatch != null && quantity <= 1) {
+      return starMatch.group(1)?.trim() ?? trimmed;
+    }
+    return trimmed;
+  }
+
+  int _resolvedDisplayQuantity(String rawName, int quantity) {
+    final safeQuantity = quantity <= 0 ? 0 : quantity;
+    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
+    final starMatch = starPattern.firstMatch(rawName.trim());
+    if (starMatch != null) {
+      final parsed = int.tryParse(starMatch.group(2) ?? '');
+      if (parsed != null && parsed > 0) {
+        return parsed;
+      }
+    }
+    return safeQuantity;
   }
 
   Widget _buildImage(String source) {
@@ -329,54 +473,30 @@ class MarketOfferDetailPage extends StatelessWidget {
                     color: AppColors.catalogChipBg,
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: const Text(
+                  child: Text(
                     '거래 진행중',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: AppTextStyles.captionMuted,
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  '거래 제안서',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+                Text('거래 제안서', style: AppTextStyles.headingH2),
                 const SizedBox(height: 8),
-                const Text(
-                  '구매자',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Text(
-                  'OOO',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+                Text('구매자', style: AppTextStyles.captionMuted),
+                Text('OOO', style: AppTextStyles.bodySecondaryStrong),
                 const SizedBox(height: 16),
                 _buildTradeSummaryCard(),
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: () async {
                     Navigator.of(dialogContext).pop();
-                    await _showResultDialog(context, accepted: offer.isMine);
+                    await _showResultDialog(context, accepted: false);
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.badgeBlueText,
                     minimumSize: const Size.fromHeight(56),
                   ),
-                  child: Text(
-                    offer.isMine ? '거래를 수락할게요!' : '거래를 제안할게요!',
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
+                  child: Text('거래를 제안할게요!', style: AppTextStyles.buttonPrimary),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton(
@@ -388,13 +508,7 @@ class MarketOfferDetailPage extends StatelessWidget {
                       width: 2,
                     ),
                   ),
-                  child: const Text(
-                    '거래 취소',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                  child: Text('거래 취소', style: AppTextStyles.buttonSecondary),
                 ),
               ],
             ),
@@ -427,30 +541,18 @@ class MarketOfferDetailPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 if (accepted)
-                  const Text(
-                    'OOO님이 거래를 수락했어요!',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text('OOO님이 거래를 수락했어요!', style: AppTextStyles.captionMuted),
                 Text(
                   'OOO님에게 초대장과\n도도 코드를 보냈습니다!',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w800,
+                  style: AppTextStyles.labelWithColor(
+                    AppColors.textSecondary,
+                    weight: FontWeight.w800,
                     height: 1.3,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  '비행장에서 기다려 주세요.',
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                Text('비행장에서 기다려 주세요.', style: AppTextStyles.captionMuted),
                 const SizedBox(height: 10),
                 const Icon(
                   Icons.navigation_rounded,
@@ -464,10 +566,7 @@ class MarketOfferDetailPage extends StatelessWidget {
                     backgroundColor: AppColors.badgeBlueText,
                     minimumSize: const Size.fromHeight(56),
                   ),
-                  child: const Text(
-                    '확인',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
+                  child: Text('확인', style: AppTextStyles.buttonPrimary),
                 ),
               ],
             ),
@@ -477,7 +576,36 @@ class MarketOfferDetailPage extends StatelessWidget {
     );
   }
 
-  Future<void> _showSimpleMenu(BuildContext context) async {
+  Future<void> _showSimpleMenu(BuildContext context, WidgetRef ref) async {
+    if (offer.isMine) {
+      await showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: AppColors.bgCard,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+        ),
+        builder: (_) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.delete_outline_rounded),
+                  title: const Text('삭제하기'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    await _deleteMyOffer(context, ref);
+                  },
+                ),
+                const SizedBox(height: 6),
+              ],
+            ),
+          );
+        },
+      );
+      return;
+    }
+
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.bgCard,
@@ -501,6 +629,187 @@ class MarketOfferDetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 6),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _completeMyOffer(BuildContext context, WidgetRef ref) async {
+    final shouldComplete = await _showCompleteConfirmDialog(context);
+    if (shouldComplete != true || !context.mounted) {
+      return;
+    }
+    await ref
+        .read(marketViewModelProvider.notifier)
+        .setOfferLifecycle(
+          offerId: offer.id,
+          lifecycle: MarketLifecycleTab.completed,
+          status: MarketOfferStatus.closed,
+        );
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('거래를 완료로 변경했어요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<bool?> _showCompleteConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('거래 완료 처리', style: AppTextStyles.dialogTitleWithSize(30)),
+                const SizedBox(height: 10),
+                Text(
+                  '이 거래를 완료 상태로 변경할까요?',
+                  style: AppTextStyles.dialogBodyWithSize(18),
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('완료', style: AppTextStyles.buttonPrimary),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteMyOffer(BuildContext context, WidgetRef ref) async {
+    final shouldDelete = await _showDeleteConfirmDialog(context);
+    if (shouldDelete != true || !context.mounted) {
+      return;
+    }
+    await ref.read(marketViewModelProvider.notifier).deleteOffer(offer.id);
+    if (!context.mounted) {
+      return;
+    }
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('거래 글을 삭제했어요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+  }
+
+  Future<bool?> _showDeleteConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('거래 글 삭제', style: AppTextStyles.dialogTitleWithSize(30)),
+                const SizedBox(height: 10),
+                Text(
+                  '정말 이 거래 글을 삭제할까요?',
+                  style: AppTextStyles.dialogBodyWithSize(18),
+                ),
+                const SizedBox(height: 6),
+                Text('삭제 후에는 복구할 수 없어요.', style: AppTextStyles.dialogDanger),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('삭제', style: AppTextStyles.buttonPrimary),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/domain/model/create_island_draft.dart';
 
@@ -69,10 +70,10 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
               Expanded(child: SizedBox()),
               Text(
                 '여권 발급 완료!',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontSize: 48,
+                style: AppTextStyles.bodyWithSize(
+                  48,
                   color: AppColors.passportTitleBlue,
-                  fontWeight: FontWeight.w800,
+                  weight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: AppSpacing.s10),
@@ -108,10 +109,10 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
               ),
               Text(
                 '환영합니다!',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontSize: 32,
+                style: AppTextStyles.bodyWithSize(
+                  32,
                   color: AppColors.passportWelcomePurple,
-                  fontWeight: FontWeight.w800,
+                  weight: FontWeight.w800,
                 ),
               ),
               Expanded(child: SizedBox()),
@@ -141,9 +142,9 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     '섬으로 입장하기',
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                    style: AppTextStyles.buttonPrimary,
                   ),
                 ),
               ),
@@ -196,7 +197,7 @@ class _PassportCard extends StatelessWidget {
               ),
               color: AppColors.passportCardHeaderBg,
             ),
-            child: const Row(
+            child: Row(
               children: <Widget>[
                 SizedBox(width: 6),
                 Expanded(
@@ -209,10 +210,10 @@ class _PassportCard extends StatelessWidget {
                 SizedBox(width: 8),
                 Text(
                   'PASSPORT',
-                  style: TextStyle(
+                  style: AppTextStyles.bodyWithSize(
+                    16,
                     color: AppColors.passportTextTitle,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.4,
+                    weight: FontWeight.w800,
                   ),
                 ),
                 SizedBox(width: 8),
@@ -242,37 +243,37 @@ class _PassportCard extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           '섬 이름:',
-                          style: TextStyle(
+                          style: AppTextStyles.bodyWithSize(
+                            12,
                             color: AppColors.passportTextSub,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
+                            weight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           draft.islandName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
+                          style: AppTextStyles.bodyWithSize(
+                            16,
                             color: AppColors.passportTextMain,
+                            weight: FontWeight.w800,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        const Text(
+                        Text(
                           '주민 이름:',
-                          style: TextStyle(
+                          style: AppTextStyles.bodyWithSize(
+                            12,
                             color: AppColors.passportTextSub,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
+                            weight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           draft.representativeName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
+                          style: AppTextStyles.bodyWithSize(
+                            16,
                             color: AppColors.passportTextMain,
+                            weight: FontWeight.w800,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -326,25 +327,32 @@ class _FruitBadge extends StatelessWidget {
 
     return Row(
       children: [
-        Text(icon, style: const TextStyle(fontSize: 30)),
+        Text(
+          icon,
+          style: AppTextStyles.bodyWithSize(
+            30,
+            color: AppColors.textPrimary,
+            weight: FontWeight.w700,
+          ),
+        ),
         const SizedBox(width: 10),
         Column(
           children: [
-            const Text(
+            Text(
               '특산물:',
-              style: TextStyle(
+              style: AppTextStyles.bodyWithSize(
+                12,
                 color: AppColors.passportTextSub,
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
+                weight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: 10),
             Text(
               fruitName,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.bodyWithSize(
+                14,
                 color: AppColors.passportTextMain,
+                weight: FontWeight.w800,
               ),
             ),
           ],

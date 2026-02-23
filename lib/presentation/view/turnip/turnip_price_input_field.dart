@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 
 class TurnipPriceInputField extends StatelessWidget {
   const TurnipPriceInputField({
@@ -49,10 +50,10 @@ class TurnipPriceInputField extends StatelessWidget {
               borderSide: const BorderSide(color: AppColors.borderDefault),
             ),
           ),
-          style: const TextStyle(
+          style: AppTextStyles.bodyWithSize(
+            14,
             color: AppColors.textPrimary,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
+            weight: FontWeight.w700,
           ),
           onChanged: (text) {
             final normalized = text.replaceAll(RegExp(r'[^0-9]'), '');

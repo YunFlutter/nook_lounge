@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 
 class TurnipPredictionChart extends StatelessWidget {
   const TurnipPredictionChart({
@@ -96,12 +97,12 @@ class TurnipPredictionChart extends StatelessWidget {
               child: Text(
                 labels[index],
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: AppTextStyles.bodyWithSize(
+                  18,
                   color: isPeak
                       ? AppColors.primaryDefault
                       : AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
+                  weight: FontWeight.w800,
                 ),
               ),
             );
@@ -183,10 +184,10 @@ class _YAxisLabels extends StatelessWidget {
             .map(
               (label) => Text(
                 label,
-                style: const TextStyle(
+                style: AppTextStyles.bodyWithSize(
+                  16,
                   color: AppColors.textHint,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  weight: FontWeight.w700,
                 ),
               ),
             )
@@ -224,28 +225,28 @@ class _PeakBubble extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: AppTextStyles.bodyWithSize(
+              14,
               color: AppColors.primaryDefault,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
+              weight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 1),
-          const Text(
+          Text(
             '최대',
-            style: TextStyle(
+            style: AppTextStyles.bodyWithSize(
+              16,
               color: AppColors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
+              weight: FontWeight.w800,
               height: 1,
             ),
           ),
           Text(
             '$value',
-            style: const TextStyle(
+            style: AppTextStyles.bodyWithSize(
+              18,
               color: AppColors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
+              weight: FontWeight.w800,
               height: 1,
             ),
           ),

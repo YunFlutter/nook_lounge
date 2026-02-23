@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/create_island_draft.dart';
@@ -160,25 +161,26 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const AnimatedFadeSlide(
+              AnimatedFadeSlide(
                 child: Text(
                   '나만의 여권을\n등록해볼까요?',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
+                  style: AppTextStyles.bodyWithSize(
+                    20,
+                    color: AppColors.textPrimary,
+                    weight: FontWeight.w800,
                     height: 1.2,
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.s10),
-              const AnimatedFadeSlide(
+              AnimatedFadeSlide(
                 delay: Duration(milliseconds: 30),
                 child: Text(
                   '당신의 섬 정보를 입력해 주세요.',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTextStyles.bodyWithSize(
+                    14,
                     color: AppColors.textMuted,
-                    fontWeight: FontWeight.w700,
+                    weight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -219,12 +221,12 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                                   ),
                           ),
                           const SizedBox(height: AppSpacing.s10),
-                          const Text(
+                          Text(
                             '사진 업로드',
-                            style: TextStyle(
-                              fontSize: 13,
+                            style: AppTextStyles.bodyWithSize(
+                              13,
                               color: AppColors.textMuted,
-                              fontWeight: FontWeight.w700,
+                              weight: FontWeight.w700,
                             ),
                           ),
                         ],
@@ -234,9 +236,9 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 ),
               ),
               const SizedBox(height: AppSpacing.s10 * 2),
-              const Text(
+              Text(
                 '섬 이름',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: AppTextStyles.bodyPrimaryStrong,
               ),
               const SizedBox(height: 6),
               TextFormField(
@@ -251,9 +253,9 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 },
               ),
               const SizedBox(height: AppSpacing.s10),
-              const Text(
+              Text(
                 '대표 주민 이름',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: AppTextStyles.bodyPrimaryStrong,
               ),
               const SizedBox(height: AppSpacing.s10),
               TextFormField(
@@ -268,9 +270,9 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 },
               ),
               const SizedBox(height: AppSpacing.s10),
-              const Text(
+              Text(
                 '반구 선택',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: AppTextStyles.bodyPrimaryStrong,
               ),
               const SizedBox(height: AppSpacing.s10),
               Row(
@@ -297,9 +299,9 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 ],
               ),
               const SizedBox(height: AppSpacing.s10 + 6),
-              const Text(
+              Text(
                 '특산물',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: AppTextStyles.bodyPrimaryStrong,
               ),
               const SizedBox(height: AppSpacing.s10),
               Wrap(
@@ -357,7 +359,11 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
     const borderRadius = BorderRadius.all(Radius.circular(14));
     return InputDecoration(
       hintText: hintText,
-      errorStyle: const TextStyle(color: AppColors.accentDeepOrange),
+      errorStyle: AppTextStyles.bodyWithSize(
+        12,
+        color: AppColors.accentDeepOrange,
+        weight: FontWeight.w700,
+      ),
       enabledBorder: const OutlineInputBorder(
         borderRadius: borderRadius,
         borderSide: BorderSide(color: AppColors.borderDefault),
@@ -416,7 +422,11 @@ class _HemisphereCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.s10),
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              style: AppTextStyles.bodyWithSize(
+                18,
+                color: AppColors.textPrimary,
+                weight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -456,7 +466,14 @@ class _FruitCircleButton extends StatelessWidget {
           ),
         ),
         alignment: Alignment.center,
-        child: Text(emoji, style: const TextStyle(fontSize: 24)),
+        child: Text(
+          emoji,
+          style: AppTextStyles.bodyWithSize(
+            24,
+            color: AppColors.textPrimary,
+            weight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }

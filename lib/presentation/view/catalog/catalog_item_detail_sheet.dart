@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
 
@@ -157,8 +158,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                           Expanded(
                             child: Text(
                               widget.item.name,
-                              style: Theme.of(context).textTheme.headlineSmall
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                              style: AppTextStyles.headingH2,
                             ),
                           ),
                           IconButton(
@@ -416,9 +416,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
       children: <Widget>[
         Text(
           _isOptionCategory ? '색상 옵션' : '참고 이미지',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+          style: AppTextStyles.bodyPrimaryHeavy,
         ),
         const SizedBox(height: 8),
         SizedBox(
@@ -439,10 +437,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                       image.label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTextStyles.captionSecondary,
                     ),
                     const SizedBox(height: 6),
                     Expanded(
@@ -578,9 +573,9 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                   child: Text(
                     image.label,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    style: AppTextStyles.bodyWithSize(
+                      16,
                       color: AppColors.white,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -599,12 +594,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   List<Widget> _buildReadOnlyStateNotice() {
     return <Widget>[
-      Text(
-        '상태',
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-      ),
+      Text('상태', style: AppTextStyles.headingH2),
       const SizedBox(height: AppSpacing.s10),
       Container(
         width: double.infinity,
@@ -614,14 +604,9 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.borderDefault),
         ),
-        child: const Text(
+        child: Text(
           '비회원 둘러보기 모드에서는 보유/기증/선호 상태를 저장할 수 없어요.',
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            height: 1.4,
-          ),
+          style: AppTextStyles.captionSecondary,
         ),
       ),
     ];
@@ -633,12 +618,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     final onLabel = widget.isDonationMode ? '기증완료' : '보유';
 
     return <Widget>[
-      Text(
-        title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-      ),
+      Text(title, style: AppTextStyles.headingH2),
       const SizedBox(height: AppSpacing.s10),
       _SegmentStatusToggle(
         value: _isCompleted,
@@ -672,19 +652,11 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   List<Widget> _buildVillagerStateToggles() {
     return <Widget>[
-      Text(
-        '주민 상태',
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-      ),
+      Text('주민 상태', style: AppTextStyles.headingH2),
       const SizedBox(height: AppSpacing.s10),
       Text(
         '거주',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.w700,
-        ),
+        style: AppTextStyles.bodyWithSize(14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 6),
       _SegmentStatusToggle(
@@ -711,10 +683,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
       const SizedBox(height: AppSpacing.s10),
       Text(
         '선호',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.w700,
-        ),
+        style: AppTextStyles.bodyWithSize(14, color: AppColors.textSecondary),
       ),
       const SizedBox(height: 6),
       _SegmentStatusToggle(
@@ -745,12 +714,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          '주민 메모',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-        ),
+        Text('주민 메모', style: AppTextStyles.headingH2),
         const SizedBox(height: 8),
         TextField(
           controller: _memoController,
@@ -887,23 +851,9 @@ class _InfoSection extends StatelessWidget {
       children: <Widget>[
         SizedBox(
           width: 96,
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          child: Text(title, style: AppTextStyles.bodySecondaryStrong),
         ),
-        Expanded(
-          child: Text(
-            value,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
+        Expanded(child: Text(value, style: AppTextStyles.bodyPrimaryStrong)),
       ],
     );
   }
@@ -922,12 +872,7 @@ class _InfoChip extends StatelessWidget {
         color: AppColors.catalogChipBg,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(
-        label,
-        style: Theme.of(
-          context,
-        ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-      ),
+      child: Text(label, style: AppTextStyles.captionPrimary),
     );
   }
 }
@@ -1042,9 +987,10 @@ class _SegmentStatusItem extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: AppTextStyles.bodyWithSize(
+                14,
                 color: selected ? selectedColor : AppColors.textMuted,
-                fontWeight: FontWeight.w800,
+                weight: FontWeight.w800,
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
 
@@ -43,18 +44,13 @@ class IslandSwitchSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.modalOuter),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.modalInner),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 '섬 선택하기',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 38,
-                  fontWeight: FontWeight.w800,
-                  height: 1.15,
-                ),
+                style: AppTextStyles.dialogTitleWithSize(38),
               ),
             ),
           ),
@@ -119,19 +115,19 @@ class IslandSwitchSheet extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 island.islandName,
-                                style: const TextStyle(
+                                style: AppTextStyles.bodyWithSize(
+                                  16,
                                   color: AppColors.textPrimary,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
+                                  weight: FontWeight.w800,
                                 ),
                               ),
                               const SizedBox(height: 3),
                               Text(
                                 '대표: ${island.representativeName}',
-                                style: const TextStyle(
+                                style: AppTextStyles.bodyWithSize(
+                                  13,
                                   color: AppColors.textMuted,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
+                                  weight: FontWeight.w700,
                                 ),
                               ),
                             ],
@@ -139,10 +135,10 @@ class IslandSwitchSheet extends StatelessWidget {
                         ),
                         Text(
                           '$fruitEmoji ${island.nativeFruit}',
-                          style: const TextStyle(
+                          style: AppTextStyles.bodyWithSize(
+                            14,
                             color: AppColors.textSecondary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            weight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -199,7 +195,7 @@ class IslandSwitchSheet extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: AppColors.borderDefault),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CircleAvatar(
@@ -214,10 +210,10 @@ class IslandSwitchSheet extends StatelessWidget {
             SizedBox(height: 10),
             Text(
               '새 섬 추가하기',
-              style: TextStyle(
+              style: AppTextStyles.bodyWithSize(
+                16,
                 color: AppColors.textMuted,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+                weight: FontWeight.w700,
               ),
             ),
           ],

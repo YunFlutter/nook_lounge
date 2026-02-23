@@ -84,33 +84,69 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       return;
     }
 
-    final createdAtMillis = DateTime.now().millisecondsSinceEpoch;
+    final createdAt = DateTime.now();
+    final createdAtKey = createdAt.microsecondsSinceEpoch;
     final next = offer.copyWith(
-      id: offer.id.isEmpty ? 'offer_$createdAtMillis' : offer.id,
+      id: offer.id.isEmpty ? 'offer_$createdAtKey' : offer.id,
       ownerUid: currentUid,
       isMine: true,
-      createdAtMillis: createdAtMillis,
-      createdAtLabel: _buildElapsedLabel(createdAtMillis),
+      createdAt: createdAt,
+      updatedAt: createdAt,
     );
 
     try {
-      await _repository.createOffer(next);
-      state = state.copyWith(clearErrorMessage: true);
-    } catch (_) {
-      state = state.copyWith(errorMessage: '거래 등록에 실패했어요.');
+      await _repository.createOffer(uid: currentUid, offer: next);
+      state = state.copyWith(errorMessage: null);
+    } catch (error) {
+      final message = error is StateError
+          ? '이미지 업로드 후 URL 저장에 실패했어요. 다시 시도해 주세요.'
+          : '거래 등록에 실패했어요.';
+      state = state.copyWith(errorMessage: message);
+    }
+  }
+
+  Future<void> updateOffer(MarketOffer offer) async {
+    final currentUid = _authRepository.currentUserId ?? '';
+    if (currentUid.isEmpty) {
+      state = state.copyWith(errorMessage: '로그인 후 거래를 수정할 수 있어요.');
+      return;
+    }
+    if (offer.id.trim().isEmpty) {
+      state = state.copyWith(errorMessage: '수정할 거래 ID를 찾지 못했어요.');
+      return;
+    }
+
+    final next = offer.copyWith(
+      ownerUid: currentUid,
+      isMine: true,
+      updatedAt: DateTime.now(),
+    );
+
+    try {
+      await _repository.updateOffer(uid: currentUid, offer: next);
+      state = state.copyWith(errorMessage: null);
+    } catch (error) {
+      final message = error is StateError
+          ? '이미지 업로드 후 URL 저장에 실패했어요. 다시 시도해 주세요.'
+          : '거래 수정에 실패했어요.';
+      state = state.copyWith(errorMessage: message);
     }
   }
 
   Future<void> setOfferLifecycle({
     required String offerId,
     required MarketLifecycleTab lifecycle,
+    MarketOfferStatus? status,
   }) async {
     final optimistic = state.offers
         .map((offer) {
           if (offer.id != offerId) {
             return offer;
           }
-          return offer.copyWith(lifecycle: lifecycle);
+          return offer.copyWith(
+            lifecycle: lifecycle,
+            status: status ?? offer.status,
+          );
         })
         .toList(growable: false);
     state = state.copyWith(offers: optimistic);
@@ -119,9 +155,44 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       await _repository.updateOfferLifecycle(
         offerId: offerId,
         lifecycle: lifecycle,
+        status: status,
       );
     } catch (_) {
       state = state.copyWith(errorMessage: '상태 변경에 실패했어요.');
+    }
+  }
+
+  Future<void> updateOfferBasicInfo({
+    required String offerId,
+    required String title,
+    required String description,
+  }) async {
+    final nextTitle = title.trim();
+    final nextDescription = description.trim();
+    if (nextTitle.isEmpty) {
+      state = state.copyWith(errorMessage: '제목을 입력해 주세요.');
+      return;
+    }
+
+    final previous = state.offers;
+    final optimistic = previous
+        .map((offer) {
+          if (offer.id != offerId) {
+            return offer;
+          }
+          return offer.copyWith(title: nextTitle, description: nextDescription);
+        })
+        .toList(growable: false);
+    state = state.copyWith(offers: optimistic, errorMessage: null);
+
+    try {
+      await _repository.updateOfferBasicInfo(
+        offerId: offerId,
+        title: nextTitle,
+        description: nextDescription,
+      );
+    } catch (_) {
+      state = state.copyWith(offers: previous, errorMessage: '거래 글 수정에 실패했어요.');
     }
   }
 
@@ -145,43 +216,15 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     final normalized = offers
         .map((offer) {
           final bool isMine = offer.ownerUid == currentUid;
-          final int millis = offer.createdAtMillis;
-          return offer.copyWith(
-            isMine: isMine,
-            createdAtLabel: _buildElapsedLabel(millis),
-          );
+          return offer.copyWith(isMine: isMine);
         })
         .toList(growable: false);
 
     state = state.copyWith(
       offers: normalized,
       isLoading: false,
-      clearErrorMessage: true,
+      errorMessage: null,
     );
-  }
-
-  String _buildElapsedLabel(int createdAtMillis) {
-    if (createdAtMillis <= 0) {
-      return '방금 전';
-    }
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final diff = now - createdAtMillis;
-    if (diff < 60 * 1000) {
-      return '방금 전';
-    }
-    final minutes = diff ~/ (60 * 1000);
-    if (minutes < 60) {
-      return '$minutes분 전';
-    }
-    final hours = diff ~/ (60 * 60 * 1000);
-    if (hours < 24) {
-      return '$hours시간 전';
-    }
-    final days = diff ~/ (24 * 60 * 60 * 1000);
-    if (days == 1) {
-      return '어제';
-    }
-    return '$days일 전';
   }
 
   @override

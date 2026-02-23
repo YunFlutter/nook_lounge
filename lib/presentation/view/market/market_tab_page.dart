@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -9,6 +12,7 @@ import 'package:nook_lounge_app/presentation/view/market/market_my_trades_page.d
 import 'package:nook_lounge_app/presentation/view/market/market_offer_card.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_register_page.dart';
+import 'package:nook_lounge_app/presentation/viewmodel/market_view_model.dart';
 
 class MarketTabPage extends ConsumerStatefulWidget {
   const MarketTabPage({required this.uid, super.key});
@@ -27,6 +31,7 @@ class MarketTabPage extends ConsumerStatefulWidget {
 
 class _MarketTabPageState extends ConsumerState<MarketTabPage> {
   late final FocusNode _searchFocusNode;
+  Timer? _relativeTimeTicker;
   bool _isSearchFocused = false;
   MarketFilterCategory _selectedCategory = MarketFilterCategory.all;
 
@@ -35,10 +40,19 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
     super.initState();
     _searchFocusNode = FocusNode();
     _searchFocusNode.addListener(_onSearchFocusChanged);
+    _relativeTimeTicker = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (!mounted) {
+        return;
+      }
+      // 유지보수 포인트:
+      // 상대시간(몇 분 전)을 실시간 갱신하기 위해 최소 주기로 리빌드합니다.
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
+    _relativeTimeTicker?.cancel();
     _searchFocusNode
       ..removeListener(_onSearchFocusChanged)
       ..dispose();
@@ -118,9 +132,8 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
                     state.errorMessage!,
-                    style: const TextStyle(
-                      color: AppColors.badgeRedText,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.captionWithColor(
+                      AppColors.badgeRedText,
                     ),
                   ),
                 ),
@@ -147,6 +160,26 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                         offer: offer,
                         onTap: () => _openOfferDetail(context, offer),
                         onActionTap: () => _openOfferDetail(context, offer),
+                        onEditTap: offer.isMine
+                            ? () => _onEditMineOffer(
+                                context: context,
+                                offer: offer,
+                              )
+                            : null,
+                        onDeleteTap: offer.isMine
+                            ? () => _onDeleteMineOffer(
+                                context: context,
+                                viewModel: viewModel,
+                                offer: offer,
+                              )
+                            : null,
+                        onCompleteTap: offer.isMine
+                            ? () => _onCompleteMineOffer(
+                                context: context,
+                                viewModel: viewModel,
+                                offer: offer,
+                              )
+                            : null,
                       ),
                     ),
                   );
@@ -221,11 +254,8 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
               focusNode: focusNode,
               onChanged: onChanged,
               cursorColor: AppColors.accentDeepOrange,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-              decoration: const InputDecoration(
+              style: AppTextStyles.bodyPrimaryStrong,
+              decoration: InputDecoration(
                 isDense: true,
                 filled: false,
                 border: InputBorder.none,
@@ -236,10 +266,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
                 hintText: '가구, 레시피, 주민 검색...',
-                hintStyle: TextStyle(
-                  color: AppColors.textHint,
-                  fontWeight: FontWeight.w700,
-                ),
+                hintStyle: AppTextStyles.bodyHintStrong,
               ),
             ),
           ),
@@ -277,11 +304,8 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
               child: Text(
                 category.label,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: isSelected
-                      ? AppColors.accentDeepOrange
-                      : AppColors.textMuted,
-                  fontWeight: FontWeight.w800,
+                style: AppTextStyles.captionWithColor(
+                  isSelected ? AppColors.accentDeepOrange : AppColors.textMuted,
                 ),
               ),
             ),
@@ -299,25 +323,17 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.borderDefault),
       ),
-      child: const Column(
+      child: Column(
         children: <Widget>[
-          Icon(Icons.storefront_outlined, size: 42, color: AppColors.textHint),
-          SizedBox(height: 8),
-          Text(
-            '등록된 거래가 없어요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
+          const Icon(
+            Icons.storefront_outlined,
+            size: 42,
+            color: AppColors.textHint,
           ),
-          SizedBox(height: 4),
-          Text(
-            '플러스 버튼으로 첫 거래를 등록해보세요.',
-            style: TextStyle(
-              color: AppColors.textHint,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          const SizedBox(height: 8),
+          Text('등록된 거래가 없어요.', style: AppTextStyles.bodySecondaryStrong),
+          const SizedBox(height: 4),
+          Text('플러스 버튼으로 첫 거래를 등록해보세요.', style: AppTextStyles.bodyHintStrong),
         ],
       ),
     );
@@ -335,5 +351,197 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );
+  }
+
+  Future<void> _onEditMineOffer({
+    required BuildContext context,
+    required MarketOffer offer,
+  }) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => MarketTradeRegisterPage(initialOffer: offer),
+      ),
+    );
+    if (updated != true || !mounted) {
+      return;
+    }
+    _showSnack('거래 글을 수정했어요.');
+  }
+
+  Future<void> _onDeleteMineOffer({
+    required BuildContext context,
+    required MarketViewModel viewModel,
+    required MarketOffer offer,
+  }) async {
+    final shouldDelete = await _showDeleteConfirmDialog(context);
+    if (shouldDelete != true || !mounted) {
+      return;
+    }
+    await viewModel.deleteOffer(offer.id);
+    if (!mounted) {
+      return;
+    }
+    _showSnack('거래 글을 삭제했어요.');
+  }
+
+  Future<bool?> _showDeleteConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('거래 글 삭제', style: AppTextStyles.dialogTitle),
+                const SizedBox(height: 10),
+                Text('정말 이 거래 글을 삭제할까요?', style: AppTextStyles.dialogBody),
+                const SizedBox(height: 6),
+                Text('삭제 후에는 복구할 수 없어요.', style: AppTextStyles.dialogDanger),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('삭제', style: AppTextStyles.buttonPrimary),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onCompleteMineOffer({
+    required BuildContext context,
+    required MarketViewModel viewModel,
+    required MarketOffer offer,
+  }) async {
+    final shouldComplete = await _showCompleteConfirmDialog(context);
+    if (shouldComplete != true || !mounted) {
+      return;
+    }
+    await viewModel.setOfferLifecycle(
+      offerId: offer.id,
+      lifecycle: MarketLifecycleTab.completed,
+      status: MarketOfferStatus.closed,
+    );
+    if (!mounted) {
+      return;
+    }
+    _showSnack('거래를 완료로 변경했어요.');
+  }
+
+  Future<bool?> _showCompleteConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('거래 완료 처리', style: AppTextStyles.dialogTitle),
+                const SizedBox(height: 10),
+                Text('이 거래를 완료 상태로 변경할까요?', style: AppTextStyles.dialogBody),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('취소', style: AppTextStyles.buttonOutline),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text('완료', style: AppTextStyles.buttonPrimary),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+      );
   }
 }

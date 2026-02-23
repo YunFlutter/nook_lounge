@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
@@ -130,13 +131,10 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     if (snapshot.hasError) {
-                      return const Center(
+                      return Center(
                         child: Text(
                           '아이템 데이터를 불러오지 못했어요.',
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: AppTextStyles.bodySecondaryStrong,
                         ),
                       );
                     }
@@ -147,13 +145,10 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
 
                   final items = _filterItems(snapshot.data!);
                   if (items.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text(
                         '검색 결과가 없어요.',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.bodySecondaryStrong,
                       ),
                     );
                   }
@@ -187,7 +182,10 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
               ),
               child: Text(
                 _selectedItem?.category == '주민' ? '주민을 선택했어요' : '아이템을 선택했어요',
-                style: const TextStyle(fontWeight: FontWeight.w800),
+                style: AppTextStyles.labelWithColor(
+                  AppColors.textInverse,
+                  weight: FontWeight.w800,
+                ),
               ),
             ),
           ],
@@ -226,7 +224,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
               controller: _searchController,
               onChanged: (_) => setState(() {}),
               cursorColor: AppColors.accentDeepOrange,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: InputBorder.none,
                 isDense: true,
                 filled: false,
@@ -236,15 +234,9 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                 focusedErrorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 hintText: '가구, 레시피, 주민 검색...',
-                hintStyle: TextStyle(
-                  color: AppColors.textHint,
-                  fontWeight: FontWeight.w700,
-                ),
+                hintStyle: AppTextStyles.bodyHintStrong,
               ),
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextStyles.bodyPrimaryStrong,
             ),
           ),
         ],
@@ -282,11 +274,9 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
               child: Text(
                 MarketItemPickerSheet._categoryLabels[categoryKey] ?? '',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: selected
-                      ? AppColors.accentDeepOrange
-                      : AppColors.textMuted,
-                  fontWeight: FontWeight.w800,
+                style: AppTextStyles.captionWithColor(
+                  selected ? AppColors.accentDeepOrange : AppColors.textMuted,
+                  weight: FontWeight.w800,
                 ),
               ),
             ),
@@ -345,18 +335,12 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                         item.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: AppTextStyles.bodyPrimaryHeavy,
                       ),
                       if (priceTag.isNotEmpty)
                         Text(
                           '판매가 $priceTag',
-                          style: const TextStyle(
-                            color: AppColors.textMuted,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: AppTextStyles.captionMuted,
                         ),
                     ],
                   ),
@@ -396,13 +380,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
         color: AppColors.catalogChipBg,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(
-        value,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
+      child: Text(value, style: AppTextStyles.bodyPrimaryStrong),
     );
   }
 
@@ -448,20 +426,14 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.textMuted,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.captionMuted,
           ),
           const SizedBox(height: 4),
           Text(
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
+            style: AppTextStyles.captionPrimaryHeavy,
           ),
         ],
       ),

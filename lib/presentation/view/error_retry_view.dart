@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 
 class ErrorRetryView extends StatelessWidget {
@@ -50,13 +51,16 @@ class ErrorRetryView extends StatelessWidget {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: AppTextStyles.headingH2,
                   ),
                   const SizedBox(height: AppSpacing.s10),
                   Text(
                     message,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: AppTextStyles.bodyWithSize(
+                      14,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.s10 * 2),
                   FilledButton(onPressed: onRetry, child: const Text('다시 시도')),

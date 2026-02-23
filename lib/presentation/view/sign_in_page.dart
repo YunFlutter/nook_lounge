@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_strings.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
@@ -84,27 +85,22 @@ class _SignInPageState extends ConsumerState<SignInPage>
                 ),
               ),
               const SizedBox(height: 22),
-              const AnimatedFadeSlide(
+              AnimatedFadeSlide(
                 delay: Duration(milliseconds: 40),
                 child: Text(
                   '즐거운 섬 생활의 시작',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.headingH2,
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 14),
-              const AnimatedFadeSlide(
+              AnimatedFadeSlide(
                 delay: Duration(milliseconds: 80),
                 child: Text(
                   '나의 섬 주민들, 도감을 관리하고,\n무 주식을 체크하며 나만의 드림 아일랜드를\n만들어보세요.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textSecondary,
+                  style: AppTextStyles.labelWithColor(
+                    AppColors.textSecondary,
+                    weight: FontWeight.w400,
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,
@@ -123,10 +119,10 @@ class _SignInPageState extends ConsumerState<SignInPage>
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Image(
+                        const Image(
                           image: AssetImage('assets/images/apple.png'),
                           width: 22,
                           height: 22,
@@ -135,10 +131,9 @@ class _SignInPageState extends ConsumerState<SignInPage>
                         SizedBox(width: 10),
                         Text(
                           AppStrings.appleLogin,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textInverse,
+                          style: AppTextStyles.labelWithColor(
+                            AppColors.textInverse,
+                            weight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -160,10 +155,10 @@ class _SignInPageState extends ConsumerState<SignInPage>
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Image(
+                        const Image(
                           image: AssetImage('assets/images/google.png'),
                           width: 22,
                           height: 22,
@@ -172,10 +167,9 @@ class _SignInPageState extends ConsumerState<SignInPage>
                         SizedBox(width: 10),
                         Text(
                           AppStrings.googleLogin,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                          style: AppTextStyles.labelWithColor(
+                            AppColors.textPrimary,
+                            weight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -192,36 +186,36 @@ class _SignInPageState extends ConsumerState<SignInPage>
                       : () => ref
                             .read(sessionViewModelProvider.notifier)
                             .enterGuestBrowseMode(),
-                  child: const Text(
+                  child: Text(
                     AppStrings.guestLogin,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.bodyWithSize(
+                      14,
                       color: AppColors.textSecondary,
+                      weight: FontWeight.w700,
                     ),
                   ),
                 ),
               ),
               const Spacer(),
-              const AnimatedFadeSlide(
+              AnimatedFadeSlide(
                 delay: Duration(milliseconds: 240),
                 child: Text.rich(
                   TextSpan(
                     text: 'By continuing, you agree to our ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.captionMuted,
                     children: <TextSpan>[
                       TextSpan(
                         text: 'Terms of Service',
-                        style: TextStyle(color: AppColors.textAccent),
+                        style: AppTextStyles.captionWithColor(
+                          AppColors.textAccent,
+                        ),
                       ),
                       TextSpan(text: ' and '),
                       TextSpan(
                         text: 'Privacy Policy',
-                        style: TextStyle(color: AppColors.textAccent),
+                        style: AppTextStyles.captionWithColor(
+                          AppColors.textAccent,
+                        ),
                       ),
                     ],
                   ),

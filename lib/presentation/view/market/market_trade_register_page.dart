@@ -5,14 +5,46 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
+import 'package:nook_lounge_app/domain/model/island_profile.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_item_picker_sheet.dart';
 
+final _marketTradeRegisterIslandsProvider = StreamProvider.autoDispose
+    .family<List<IslandProfile>, String>((ref, uid) {
+      return ref.watch(islandRepositoryProvider).watchIslands(uid);
+    });
+
+final _marketTradeRegisterPrimaryIslandIdProvider = StreamProvider.autoDispose
+    .family<String?, String>((ref, uid) {
+      return ref.watch(islandRepositoryProvider).watchPrimaryIslandId(uid);
+    });
+
+IslandProfile? _resolveSelectedIslandForMarketTrade({
+  required List<IslandProfile> islands,
+  required String? primaryIslandId,
+}) {
+  if (islands.isEmpty) {
+    return null;
+  }
+  if (primaryIslandId == null || primaryIslandId.isEmpty) {
+    return islands.first;
+  }
+  for (final island in islands) {
+    if (island.id == primaryIslandId) {
+      return island;
+    }
+  }
+  return islands.first;
+}
+
 class MarketTradeRegisterPage extends ConsumerStatefulWidget {
-  const MarketTradeRegisterPage({super.key});
+  const MarketTradeRegisterPage({this.initialOffer, super.key});
+
+  final MarketOffer? initialOffer;
 
   @override
   ConsumerState<MarketTradeRegisterPage> createState() =>
@@ -21,6 +53,9 @@ class MarketTradeRegisterPage extends ConsumerStatefulWidget {
 
 class _MarketTradeRegisterPageState
     extends ConsumerState<MarketTradeRegisterPage> {
+  static const String _nookMilesTicketImageUrl =
+      'https://dodo.ac/np/images/f/f5/Nook_Miles_Ticket_NH_Icon.png';
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
@@ -43,12 +78,113 @@ class _MarketTradeRegisterPageState
   String _wantStyle = '기본';
   String _proofImagePath = '';
 
+  bool get _isEditMode => widget.initialOffer != null;
   bool get _isVillagerOffer => _offeredItem?.category == '주민';
 
   List<MarketTradeType> get _availableTradeTypes =>
       _availableTradeTypesForCategory(
         _useOfferCurrency ? '재화' : _offeredItem?.category,
       );
+
+  void _initializeWithInitialOffer() {
+    final initialOffer = widget.initialOffer;
+    if (initialOffer == null) {
+      return;
+    }
+
+    _tradeType = initialOffer.tradeType;
+    _moveType = initialOffer.moveType;
+    _titleController.text = initialOffer.title;
+    _memoController.text = initialOffer.description;
+    _proofImagePath = initialOffer.coverImageUrl;
+
+    _useOfferCurrency = _isCurrencySelection(
+      typeLabel: initialOffer.offerItemCategory,
+      name: initialOffer.offerItemName,
+      imageUrl: initialOffer.offerItemImageUrl,
+    );
+    if (_useOfferCurrency) {
+      final parsed = _parseCurrencyDisplay(
+        source: initialOffer.offerItemName,
+        fallbackLabel: initialOffer.offerItemVariant,
+        fallbackAmount: _sanitizeCount(
+          initialOffer.offerItemQuantity,
+          min: 1,
+          max: 9999999,
+        ),
+      );
+      _offerCurrencyLabel = parsed.label;
+      _offerCurrencyAmount = parsed.amount;
+      _offeredItem = null;
+      _offerQuantity = 1;
+      _offerStyle = '기본';
+    } else {
+      _offeredItem = _buildCatalogItemFromOffer(
+        name: initialOffer.offerItemName,
+        imageUrl: initialOffer.offerItemImageUrl,
+        typeLabel: initialOffer.offerItemCategory,
+        variant: initialOffer.offerItemVariant,
+      );
+      _offerQuantity = _sanitizeCount(initialOffer.offerItemQuantity);
+      _offerStyle = _resolveInitialVariant(
+        preferred: initialOffer.offerItemVariant,
+        item: _offeredItem,
+      );
+    }
+
+    final bool oneWayOffer =
+        initialOffer.oneWayOffer ||
+        _tradeType == MarketTradeType.sharing ||
+        _tradeType == MarketTradeType.touching;
+    if (oneWayOffer) {
+      _useCurrency = false;
+      _wantedItem = null;
+      _wantQuantity = 1;
+      _wantStyle = '기본';
+      _currencyAmount = 1;
+      return;
+    }
+
+    _useCurrency = _isCurrencySelection(
+      typeLabel: initialOffer.wantItemCategory,
+      name: initialOffer.wantItemName,
+      imageUrl: initialOffer.wantItemImageUrl,
+    );
+    if (_useCurrency) {
+      final parsed = _parseCurrencyDisplay(
+        source: initialOffer.wantItemName,
+        fallbackLabel: initialOffer.wantItemVariant,
+        fallbackAmount: _sanitizeCount(
+          initialOffer.wantItemQuantity,
+          min: 1,
+          max: 9999999,
+        ),
+      );
+      _currencyLabel = parsed.label;
+      _currencyAmount = parsed.amount;
+      _wantedItem = null;
+      _wantQuantity = 1;
+      _wantStyle = '기본';
+    } else {
+      _wantedItem = _buildCatalogItemFromOffer(
+        name: initialOffer.wantItemName,
+        imageUrl: initialOffer.wantItemImageUrl,
+        typeLabel: initialOffer.wantItemCategory,
+        variant: initialOffer.wantItemVariant,
+      );
+      _wantQuantity = _sanitizeCount(initialOffer.wantItemQuantity);
+      _wantStyle = _resolveInitialVariant(
+        preferred: initialOffer.wantItemVariant,
+        item: _wantedItem,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeWithInitialOffer();
+  }
 
   @override
   void dispose() {
@@ -60,7 +196,7 @@ class _MarketTradeRegisterPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('거래를 등록하기')),
+      appBar: AppBar(title: Text(_isEditMode ? '거래 수정하기' : '거래를 등록하기')),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -102,7 +238,10 @@ class _MarketTradeRegisterPageState
     };
 
     final String primaryLabel = switch (_step) {
-      3 => _isSubmitting ? '등록중...' : '거래를 등록하기',
+      3 =>
+        _isSubmitting
+            ? (_isEditMode ? '수정중...' : '등록중...')
+            : (_isEditMode ? '거래를 수정하기' : '거래를 등록하기'),
       _ => '다음 단계로 ->',
     };
 
@@ -210,19 +349,13 @@ class _MarketTradeRegisterPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          titleText,
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text(titleText, style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 10),
         Text(
           guideText,
-          style: TextStyle(
-            color: AppColors.textHint,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.labelWithColor(
+            AppColors.textHint,
+            weight: FontWeight.w700,
             height: 1.4,
           ),
         ),
@@ -271,13 +404,7 @@ class _MarketTradeRegisterPageState
           ],
         ],
         const SizedBox(height: 18),
-        const Text(
-          '아이템 인증샷',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text('아이템 인증샷', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 8),
         _buildProofImageBox(),
       ],
@@ -290,21 +417,15 @@ class _MarketTradeRegisterPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text(
-          '거래 타입을 선택해주세요.',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text('거래 타입을 선택해주세요.', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 10),
         Text(
           showCraftingHint
               ? '레시피의 경우 제작 중 타입을 선택할 수 있어요.'
               : '거래 목적에 맞는 타입을 선택해주세요.',
-          style: const TextStyle(
-            color: AppColors.textHint,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.labelWithColor(
+            AppColors.textHint,
+            weight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 16),
@@ -322,21 +443,9 @@ class _MarketTradeRegisterPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text(
-          '무엇과 교환할까요?',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text('무엇과 교환할까요?', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 10),
-        const Text(
-          '구체적인 아이템이나 재화를 선택해주세요.',
-          style: TextStyle(
-            color: AppColors.textHint,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text('구체적인 아이템이나 재화를 선택해주세요.', style: AppTextStyles.bodyHintStrong),
         const SizedBox(height: 16),
         _buildReceiveModeToggle(),
         const SizedBox(height: 14),
@@ -397,10 +506,13 @@ class _MarketTradeRegisterPageState
 
   Widget _buildStepFour() {
     final offerName = _useOfferCurrency
-        ? '$_offerCurrencyAmount $_offerCurrencyLabel'
+        ? _formatCurrencyDisplay(
+            label: _offerCurrencyLabel,
+            amount: _offerCurrencyAmount,
+          )
         : (_offeredItem?.name ?? '');
     final offerImage = _useOfferCurrency
-        ? 'assets/images/icon_recipe_scroll.png'
+        ? _resolveCurrencyImageUrl(_offerCurrencyLabel)
         : (_offeredItem?.imageUrl ?? '');
     final offerDescription = _useOfferCurrency
         ? '재화'
@@ -409,28 +521,22 @@ class _MarketTradeRegisterPageState
         : '아이템 $_offerQuantity개';
 
     final wantName = _useCurrency
-        ? '$_currencyAmount $_currencyLabel'
+        ? _formatCurrencyDisplay(label: _currencyLabel, amount: _currencyAmount)
         : (_wantedItem?.name ?? '');
     final wantImage = _useCurrency
-        ? 'assets/images/icon_recipe_scroll.png'
+        ? _resolveCurrencyImageUrl(_currencyLabel)
         : (_wantedItem?.imageUrl ?? '');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text(
-          '마지막으로 확인해주세요.',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text('마지막으로 확인해주세요.', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           '게시하기 전에 아이템과 거래 방법을\n다시 한 번 확인하세요.',
-          style: TextStyle(
-            color: AppColors.textHint,
-            fontWeight: FontWeight.w700,
+          style: AppTextStyles.labelWithColor(
+            AppColors.textHint,
+            weight: FontWeight.w700,
             height: 1.4,
           ),
         ),
@@ -469,13 +575,7 @@ class _MarketTradeRegisterPageState
           ),
         ),
         const SizedBox(height: 18),
-        const Text(
-          '어떻게 거래할까요?',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text('어떻게 거래할까요?', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 10),
         Row(
           children: MarketMoveType.values
@@ -519,20 +619,20 @@ class _MarketTradeRegisterPageState
                             const SizedBox(height: 8),
                             Text(
                               moveType.label,
-                              style: TextStyle(
-                                color: selected
+                              style: AppTextStyles.labelWithColor(
+                                selected
                                     ? AppColors.textPrimary
                                     : AppColors.textMuted,
-                                fontWeight: FontWeight.w800,
+                                weight: FontWeight.w800,
                               ),
                             ),
                             Text(
                               moveType == MarketMoveType.visitor
                                   ? '상대방 섬으로'
                                   : '나의 섬으로',
-                              style: const TextStyle(
-                                color: AppColors.textMuted,
-                                fontWeight: FontWeight.w700,
+                              style: AppTextStyles.labelWithColor(
+                                AppColors.textMuted,
+                                weight: FontWeight.w700,
                               ),
                             ),
                           ],
@@ -545,13 +645,7 @@ class _MarketTradeRegisterPageState
               .toList(growable: false),
         ),
         const SizedBox(height: 18),
-        const Text(
-          '방문객 안내 사항(선택)',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        Text('방문객 안내 사항(선택)', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 8),
         TextField(
           controller: _memoController,
@@ -596,19 +690,10 @@ class _MarketTradeRegisterPageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    type.label,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                  Text(type.label, style: AppTextStyles.bodyPrimaryHeavy),
                   Text(
                     _tradeTypeDescription(type),
-                    style: const TextStyle(
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.bodyMutedStrong,
                   ),
                 ],
               ),
@@ -662,9 +747,9 @@ class _MarketTradeRegisterPageState
         ),
         child: Text(
           useCurrency ? '재화' : '아이템',
-          style: TextStyle(
-            color: selected ? AppColors.textPrimary : AppColors.textMuted,
-            fontWeight: FontWeight.w800,
+          style: AppTextStyles.labelWithColor(
+            selected ? AppColors.textPrimary : AppColors.textMuted,
+            weight: FontWeight.w800,
           ),
         ),
       ),
@@ -682,7 +767,7 @@ class _MarketTradeRegisterPageState
             const SizedBox(width: 14),
             Expanded(
               child: _buildOfferQuickCurrency(
-                '마일 여행권',
+                '마일 이용권',
                 Icons.airplane_ticket_rounded,
               ),
             ),
@@ -728,10 +813,7 @@ class _MarketTradeRegisterPageState
                   child: Text(
                     '$_offerCurrencyAmount',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: AppTextStyles.bodyPrimaryHeavy,
                   ),
                 ),
               ),
@@ -780,13 +862,7 @@ class _MarketTradeRegisterPageState
               child: Icon(icon, color: AppColors.textPrimary, size: 20),
             ),
             const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            Text(label, style: AppTextStyles.bodyPrimaryHeavy),
           ],
         ),
       ),
@@ -824,9 +900,9 @@ class _MarketTradeRegisterPageState
         ),
         child: Text(
           useCurrency ? '재화' : '아이템',
-          style: TextStyle(
-            color: selected ? AppColors.textPrimary : AppColors.textMuted,
-            fontWeight: FontWeight.w800,
+          style: AppTextStyles.labelWithColor(
+            selected ? AppColors.textPrimary : AppColors.textMuted,
+            weight: FontWeight.w800,
           ),
         ),
       ),
@@ -842,7 +918,7 @@ class _MarketTradeRegisterPageState
             const SizedBox(width: 14),
             Expanded(
               child: _buildQuickCurrency(
-                '마일 여행권',
+                '마일 이용권',
                 Icons.airplane_ticket_rounded,
               ),
             ),
@@ -885,10 +961,7 @@ class _MarketTradeRegisterPageState
                   child: Text(
                     '$_currencyAmount',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: AppTextStyles.bodyPrimaryHeavy,
                   ),
                 ),
               ),
@@ -934,13 +1007,7 @@ class _MarketTradeRegisterPageState
               child: Icon(icon, color: AppColors.textPrimary, size: 20),
             ),
             const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            Text(label, style: AppTextStyles.bodyPrimaryHeavy),
           ],
         ),
       ),
@@ -969,18 +1036,9 @@ class _MarketTradeRegisterPageState
           name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
+          style: AppTextStyles.bodyPrimaryHeavy,
         ),
-        Text(
-          description,
-          style: const TextStyle(
-            color: AppColors.textMuted,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text(description, style: AppTextStyles.bodyMutedStrong),
       ],
     );
   }
@@ -1037,10 +1095,7 @@ class _MarketTradeRegisterPageState
                               selectedItem.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.w800,
-                              ),
+                              style: AppTextStyles.bodyPrimaryHeavy,
                             ),
                             const SizedBox(height: 6),
                             Container(
@@ -1056,10 +1111,7 @@ class _MarketTradeRegisterPageState
                               child: Text(
                                 selectedItem.category,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                style: AppTextStyles.captionSecondary,
                               ),
                             ),
                           ],
@@ -1098,11 +1150,11 @@ class _MarketTradeRegisterPageState
                   const SizedBox(height: 8),
                   Text(
                     label,
-                    style: TextStyle(
-                      color: label.contains('검색')
+                    style: AppTextStyles.labelWithColor(
+                      label.contains('검색')
                           ? AppColors.textHint
                           : AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
+                      weight: FontWeight.w800,
                     ),
                   ),
                 ],
@@ -1119,9 +1171,9 @@ class _MarketTradeRegisterPageState
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textMuted,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.labelWithColor(
+              AppColors.textMuted,
+              weight: FontWeight.w700,
             ),
           ),
         ),
@@ -1149,19 +1201,16 @@ class _MarketTradeRegisterPageState
             width: 70,
             child: Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.labelWithColor(
+                AppColors.textSecondary,
+                weight: FontWeight.w800,
               ),
             ),
           ),
           Expanded(
             child: TextField(
               controller: controller,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextStyles.bodyPrimaryStrong,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -1171,10 +1220,7 @@ class _MarketTradeRegisterPageState
                 disabledBorder: InputBorder.none,
                 filled: false,
                 hintText: hint,
-                hintStyle: const TextStyle(
-                  color: AppColors.textHint,
-                  fontWeight: FontWeight.w700,
-                ),
+                hintStyle: AppTextStyles.bodyHintStrong,
               ),
             ),
           ),
@@ -1202,9 +1248,9 @@ class _MarketTradeRegisterPageState
         children: <Widget>[
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w800,
+            style: AppTextStyles.labelWithColor(
+              AppColors.textSecondary,
+              weight: FontWeight.w800,
             ),
           ),
           const Spacer(),
@@ -1237,10 +1283,7 @@ class _MarketTradeRegisterPageState
                     child: Text(
                       '$value',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: AppTextStyles.bodyPrimaryHeavy,
                     ),
                   ),
                 ),
@@ -1277,17 +1320,17 @@ class _MarketTradeRegisterPageState
           children: <Widget>[
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.labelWithColor(
+                AppColors.textSecondary,
+                weight: FontWeight.w800,
               ),
             ),
             const Spacer(),
             Text(
               value,
-              style: const TextStyle(
-                color: AppColors.accentDeepOrange,
-                fontWeight: FontWeight.w800,
+              style: AppTextStyles.labelWithColor(
+                AppColors.accentDeepOrange,
+                weight: FontWeight.w800,
               ),
             ),
             const SizedBox(width: 4),
@@ -1303,6 +1346,7 @@ class _MarketTradeRegisterPageState
   }
 
   Widget _buildProofImageBox() {
+    final source = _proofImagePath.trim();
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: _pickProofImage,
@@ -1317,11 +1361,11 @@ class _MarketTradeRegisterPageState
             style: BorderStyle.solid,
           ),
         ),
-        child: _proofImagePath.isEmpty
-            ? const Column(
+        child: source.isEmpty
+            ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 22,
                     backgroundColor: AppColors.catalogChipBg,
                     child: Icon(
@@ -1330,23 +1374,37 @@ class _MarketTradeRegisterPageState
                       size: 26,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    '스크린샷 추가하기',
-                    style: TextStyle(
-                      color: AppColors.textHint,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  const SizedBox(height: 8),
+                  Text('스크린샷 추가하기', style: AppTextStyles.bodyHintStrong),
                 ],
               )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(18),
-                child: Image.file(
-                  File(_proofImagePath),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
+                child:
+                    source.startsWith('http://') ||
+                        source.startsWith('https://')
+                    ? Image.network(
+                        source,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: AppColors.textHint,
+                          );
+                        },
+                      )
+                    : Image.file(
+                        File(source),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: AppColors.textHint,
+                          );
+                        },
+                      ),
               ),
       ),
     );
@@ -1579,6 +1637,99 @@ class _MarketTradeRegisterPageState
     });
   }
 
+  bool _isCurrencySelection({
+    required String typeLabel,
+    required String name,
+    required String imageUrl,
+  }) {
+    final normalizedType = typeLabel.replaceAll(' ', '');
+    if (normalizedType.contains('재화')) {
+      return true;
+    }
+    return _isCurrencyLike(name: name, imageUrl: imageUrl);
+  }
+
+  CatalogItem _buildCatalogItemFromOffer({
+    required String name,
+    required String imageUrl,
+    required String typeLabel,
+    required String variant,
+  }) {
+    final normalizedType = typeLabel.replaceAll(' ', '');
+    final category = normalizedType.contains('주민')
+        ? '주민'
+        : normalizedType.contains('레시피') || normalizedType.contains('DIY')
+        ? '레시피'
+        : '아이템';
+    final tags = <String>[
+      if (variant.trim().isNotEmpty) '스타일:${variant.trim()}',
+    ];
+    return CatalogItem(
+      id: 'prefill_${category}_${name.hashCode}_${imageUrl.hashCode}_${variant.hashCode}',
+      category: category,
+      name: name,
+      imageUrl: imageUrl,
+      tags: tags,
+    );
+  }
+
+  String _resolveInitialVariant({
+    required String preferred,
+    required CatalogItem? item,
+  }) {
+    final normalized = preferred.trim();
+    final options = _extractStyleOptions(item);
+    if (normalized.isNotEmpty) {
+      return normalized;
+    }
+    if (options.contains('기본')) {
+      return '기본';
+    }
+    return options.first;
+  }
+
+  ({String label, int amount}) _parseCurrencyDisplay({
+    required String source,
+    required String fallbackLabel,
+    required int fallbackAmount,
+  }) {
+    final normalizedSource = source.trim();
+    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
+    final starMatch = starPattern.firstMatch(normalizedSource);
+    if (starMatch != null) {
+      final label = starMatch.group(1)?.trim() ?? '';
+      final amount = int.tryParse(starMatch.group(2) ?? '');
+      if (label.isNotEmpty && amount != null && amount > 0) {
+        return (label: label, amount: amount);
+      }
+    }
+
+    final legacyPattern = RegExp(r'^(\d+)\s*(.+)$');
+    final legacyMatch = legacyPattern.firstMatch(normalizedSource);
+    if (legacyMatch != null) {
+      final amount = int.tryParse(legacyMatch.group(1) ?? '');
+      final label = legacyMatch.group(2)?.trim() ?? '';
+      if (label.isNotEmpty && amount != null && amount > 0) {
+        return (label: label, amount: amount);
+      }
+    }
+
+    final fallback = fallbackLabel.trim().isEmpty
+        ? '벨(덩)'
+        : fallbackLabel.trim();
+    return (
+      label: fallback,
+      amount: _sanitizeCount(fallbackAmount, min: 1, max: 9999999),
+    );
+  }
+
+  int _sanitizeCount(int value, {int fallback = 1, int min = 1, int max = 99}) {
+    if (value <= 0) {
+      return fallback.clamp(min, max).toInt();
+    }
+    return value.clamp(min, max).toInt();
+  }
+
   String _resolveInitialStyle(CatalogItem item) {
     final options = _extractStyleOptions(item);
     if (options.contains('기본')) {
@@ -1644,10 +1795,13 @@ class _MarketTradeRegisterPageState
         ? (_useCurrency ? '아이템' : (_wantedItem?.category ?? '아이템'))
         : _offeredItem!.category;
     final offeredName = _useOfferCurrency
-        ? '$_offerCurrencyAmount $_offerCurrencyLabel'
+        ? _formatCurrencyDisplay(
+            label: _offerCurrencyLabel,
+            amount: _offerCurrencyAmount,
+          )
         : _offeredItem!.name;
     final offeredImageUrl = _useOfferCurrency
-        ? 'assets/images/icon_recipe_scroll.png'
+        ? _resolveCurrencyImageUrl(_offerCurrencyLabel)
         : _offeredItem!.imageUrl;
     final offeredQuantity = _useOfferCurrency ? 1 : _offerQuantity;
     final offeredVariant = _useOfferCurrency
@@ -1656,6 +1810,28 @@ class _MarketTradeRegisterPageState
     final bool oneWayOffer =
         _tradeType == MarketTradeType.sharing ||
         _tradeType == MarketTradeType.touching;
+    final offeredTypeLabel = _resolveItemTypeLabel(
+      category: _useOfferCurrency ? '재화' : _offeredItem!.category,
+      imageUrl: offeredImageUrl,
+      name: offeredName,
+    );
+    final wantedName = oneWayOffer
+        ? ''
+        : _useCurrency
+        ? _formatCurrencyDisplay(label: _currencyLabel, amount: _currencyAmount)
+        : (_wantedItem?.name ?? '');
+    final wantedImageUrl = oneWayOffer
+        ? ''
+        : _useCurrency
+        ? _resolveCurrencyImageUrl(_currencyLabel)
+        : (_wantedItem?.imageUrl ?? '');
+    final wantedTypeLabel = oneWayOffer
+        ? ''
+        : _resolveItemTypeLabel(
+            category: _useCurrency ? '재화' : _wantedItem?.category,
+            imageUrl: wantedImageUrl,
+            name: wantedName,
+          );
     final boardType = _mapBoardType(
       catalogCategory: categorySource,
       tradeType: _tradeType,
@@ -1664,53 +1840,91 @@ class _MarketTradeRegisterPageState
       catalogCategory: categorySource,
       tradeType: _tradeType,
     );
-    final offer = MarketOffer(
-      id: '',
-      ownerUid: '',
-      category: category,
-      boardType: boardType,
-      lifecycle: MarketLifecycleTab.ongoing,
-      status: MarketOfferStatus.open,
-      ownerName: '내 섬',
-      ownerAvatarUrl: '',
-      createdAtLabel: '방금 전',
-      title: _titleController.text.trim().isEmpty
-          ? '$offeredName 거래'
-          : _titleController.text.trim(),
-      offerHeaderLabel: oneWayOffer ? '나눔' : '드려요',
-      offerItemName: offeredName,
-      offerItemImageUrl: offeredImageUrl,
-      offerItemQuantity: offeredQuantity,
-      offerItemVariant: offeredVariant,
-      wantHeaderLabel: oneWayOffer ? '' : '받아요',
-      wantItemName: oneWayOffer
-          ? ''
-          : _useCurrency
-          ? '$_currencyAmount $_currencyLabel'
-          : (_wantedItem?.name ?? ''),
-      wantItemImageUrl: oneWayOffer
-          ? ''
-          : _useCurrency
-          ? 'assets/images/icon_recipe_scroll.png'
-          : (_wantedItem?.imageUrl ?? ''),
-      wantItemQuantity: oneWayOffer ? 0 : (_useCurrency ? 1 : _wantQuantity),
-      wantItemVariant: _wantStyle,
-      touchingTags: _tradeType == MarketTradeType.touching
-          ? <String>['가구', '벽지/천장']
-          : const <String>[],
-      entryFeeText: '무료',
-      actionLabel: _tradeType == MarketTradeType.touching ? '줄서기' : '거래제안',
-      isMine: true,
-      dimmed: false,
-      description: _memoController.text.trim(),
-      tradeType: _tradeType,
-      moveType: _moveType,
-      oneWayOffer: oneWayOffer,
-      coverImageUrl: _proofImagePath,
-      createdAtMillis: DateTime.now().millisecondsSinceEpoch,
-    );
+    final currentUid = ref.read(authRepositoryProvider).currentUserId ?? '';
+    final selectedIsland = await _loadSelectedIslandForOwner(currentUid);
+    final ownerName = _resolveOwnerName(selectedIsland);
+    final ownerAvatarUrl = (selectedIsland?.imageUrl ?? '').trim();
+    final title = _titleController.text.trim().isEmpty
+        ? '$offeredName 거래'
+        : _titleController.text.trim();
+    final mergedCoverImage = _proofImagePath.trim().isNotEmpty
+        ? _proofImagePath.trim()
+        : (widget.initialOffer?.coverImageUrl ?? '');
+    final notifier = ref.read(marketViewModelProvider.notifier);
+    final initialOffer = widget.initialOffer;
 
-    await ref.read(marketViewModelProvider.notifier).createOffer(offer);
+    if (initialOffer == null) {
+      final offer = MarketOffer(
+        id: '',
+        ownerUid: '',
+        category: category,
+        boardType: boardType,
+        lifecycle: MarketLifecycleTab.ongoing,
+        status: MarketOfferStatus.open,
+        ownerName: ownerName,
+        ownerAvatarUrl: ownerAvatarUrl,
+        title: title,
+        offerHeaderLabel: oneWayOffer ? '나눔' : '드려요',
+        offerItemName: offeredName,
+        offerItemImageUrl: offeredImageUrl,
+        offerItemQuantity: offeredQuantity,
+        offerItemCategory: offeredTypeLabel,
+        offerItemVariant: offeredVariant,
+        wantHeaderLabel: oneWayOffer ? '' : '받아요',
+        wantItemName: wantedName,
+        wantItemImageUrl: wantedImageUrl,
+        wantItemQuantity: oneWayOffer ? 0 : (_useCurrency ? 1 : _wantQuantity),
+        wantItemCategory: wantedTypeLabel,
+        wantItemVariant: _wantStyle,
+        touchingTags: _tradeType == MarketTradeType.touching
+            ? <String>['가구', '벽지/천장']
+            : const <String>[],
+        entryFeeText: '무료',
+        isMine: true,
+        dimmed: false,
+        description: _memoController.text.trim(),
+        tradeType: _tradeType,
+        moveType: _moveType,
+        oneWayOffer: oneWayOffer,
+        coverImageUrl: mergedCoverImage,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      await notifier.createOffer(offer);
+    } else {
+      final offer = initialOffer.copyWith(
+        category: category,
+        boardType: boardType,
+        ownerName: ownerName,
+        ownerAvatarUrl: ownerAvatarUrl,
+        title: title,
+        offerHeaderLabel: oneWayOffer ? '나눔' : '드려요',
+        offerItemName: offeredName,
+        offerItemImageUrl: offeredImageUrl,
+        offerItemQuantity: offeredQuantity,
+        offerItemCategory: offeredTypeLabel,
+        offerItemVariant: offeredVariant,
+        wantHeaderLabel: oneWayOffer ? '' : '받아요',
+        wantItemName: wantedName,
+        wantItemImageUrl: wantedImageUrl,
+        wantItemQuantity: oneWayOffer ? 0 : (_useCurrency ? 1 : _wantQuantity),
+        wantItemCategory: wantedTypeLabel,
+        wantItemVariant: _wantStyle,
+        touchingTags: _tradeType == MarketTradeType.touching
+            ? <String>['가구', '벽지/천장']
+            : const <String>[],
+        entryFeeText: '무료',
+        isMine: true,
+        dimmed: false,
+        description: _memoController.text.trim(),
+        tradeType: _tradeType,
+        moveType: _moveType,
+        oneWayOffer: oneWayOffer,
+        coverImageUrl: mergedCoverImage,
+        updatedAt: DateTime.now(),
+      );
+      await notifier.updateOffer(offer);
+    }
 
     if (!mounted) {
       return;
@@ -1718,7 +1932,43 @@ class _MarketTradeRegisterPageState
     setState(() {
       _isSubmitting = false;
     });
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
+  }
+
+  Future<IslandProfile?> _loadSelectedIslandForOwner(String uid) async {
+    if (uid.isEmpty) {
+      return null;
+    }
+    try {
+      final islands = await ref.read(
+        _marketTradeRegisterIslandsProvider(uid).future,
+      );
+      final primaryIslandId = await ref.read(
+        _marketTradeRegisterPrimaryIslandIdProvider(uid).future,
+      );
+      return _resolveSelectedIslandForMarketTrade(
+        islands: islands,
+        primaryIslandId: primaryIslandId,
+      );
+    } catch (_) {
+      // 유지보수 포인트:
+      // 섬 조회 실패 시에도 거래 등록은 막지 않고 안전한 기본값으로 저장합니다.
+      return null;
+    }
+  }
+
+  String _resolveOwnerName(IslandProfile? selectedIsland) {
+    final representativeName = (selectedIsland?.representativeName ?? '')
+        .trim();
+    if (representativeName.isNotEmpty) {
+      return representativeName;
+    }
+
+    final islandName = (selectedIsland?.islandName ?? '').trim();
+    if (islandName.isNotEmpty) {
+      return islandName;
+    }
+    return '대표 주민';
   }
 
   MarketFilterCategory _mapCategory({
@@ -1784,6 +2034,52 @@ class _MarketTradeRegisterPageState
       types.add(MarketTradeType.crafting);
     }
     return types;
+  }
+
+  String _resolveItemTypeLabel({
+    required String? category,
+    required String imageUrl,
+    required String name,
+  }) {
+    if (_isCurrencyLike(name: name, imageUrl: imageUrl)) {
+      return '재화';
+    }
+    final normalized = (category ?? '').replaceAll(' ', '');
+    if (normalized.contains('주민')) {
+      return '주민';
+    }
+    if (normalized.contains('레시피') || normalized.contains('DIY')) {
+      return '레시피';
+    }
+    return '아이템';
+  }
+
+  bool _isCurrencyLike({required String name, required String imageUrl}) {
+    if (imageUrl.contains('icon_recipe_scroll')) {
+      return true;
+    }
+    if (imageUrl.contains('Nook_Miles_Ticket')) {
+      return true;
+    }
+    return name.contains('벨') ||
+        name.contains('마일 여행권') ||
+        name.contains('마일 이용권');
+  }
+
+  String _resolveCurrencyImageUrl(String label) {
+    final normalizedLabel = label.trim();
+    if (normalizedLabel == '마일 여행권' || normalizedLabel == '마일 이용권') {
+      return _nookMilesTicketImageUrl;
+    }
+    return 'assets/images/icon_recipe_scroll.png';
+  }
+
+  String _formatCurrencyDisplay({required String label, required int amount}) {
+    final normalizedLabel = label.trim();
+    if (normalizedLabel.isEmpty) {
+      return '재화 * $amount';
+    }
+    return '$normalizedLabel * $amount';
   }
 
   Widget _buildImage(String source, {required BoxFit fit}) {

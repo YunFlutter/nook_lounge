@@ -9,6 +9,7 @@ import 'package:nook_lounge_app/data/datasource/island_firestore_data_source.dar
 import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
@@ -101,6 +102,12 @@ final marketFirestoreDataSourceProvider = Provider<MarketFirestoreDataSource>((
   return MarketFirestoreDataSource(firestore: ref.watch(firestoreProvider));
 });
 
+final marketStorageDataSourceProvider = Provider<MarketStorageDataSource>((
+  ref,
+) {
+  return MarketStorageDataSource(storage: ref.watch(firebaseStorageProvider));
+});
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
@@ -131,6 +138,7 @@ final turnipRepositoryProvider = Provider<TurnipRepository>((ref) {
 final marketRepositoryProvider = Provider<MarketRepository>((ref) {
   return MarketRepositoryImpl(
     firestoreDataSource: ref.watch(marketFirestoreDataSourceProvider),
+    storageDataSource: ref.watch(marketStorageDataSourceProvider),
   );
 });
 

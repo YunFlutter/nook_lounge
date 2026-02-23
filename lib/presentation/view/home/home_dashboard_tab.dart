@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
@@ -186,21 +187,16 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         : hasError
-        ? const Text(
+        ? Text(
             '섬 정보를 불러오지 못했어요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.bodySecondaryStrong,
           )
         : selectedIsland == null
-        ? const Text(
+        ? Text(
             '등록된 섬이 없어요.\n새 섬을 추가해서 시작해보세요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.labelWithColor(
+              AppColors.textSecondary,
+              weight: FontWeight.w700,
               height: 1.4,
             ),
           )
@@ -258,10 +254,10 @@ class HomeDashboardTab extends ConsumerWidget {
                         island.islandName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: AppTextStyles.bodyWithSize(
+                          20,
                           color: AppColors.textPrimary,
-                          fontSize: 40 / 2, // 20
-                          fontWeight: FontWeight.w800,
+                          weight: FontWeight.w800,
                           height: 1.1,
                         ),
                       ),
@@ -269,10 +265,10 @@ class HomeDashboardTab extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       fruitEmoji,
-                      style: const TextStyle(
+                      style: AppTextStyles.bodyWithSize(
+                        16,
                         color: AppColors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        weight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -321,10 +317,10 @@ class HomeDashboardTab extends ConsumerWidget {
           const SizedBox(width: 6),
           Text(
             hemisphere,
-            style: const TextStyle(
+            style: AppTextStyles.bodyWithSize(
+              14,
               color: AppColors.textPrimary,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
+              weight: FontWeight.w800,
             ),
           ),
         ],
@@ -465,22 +461,14 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else if (hasError)
-          const Text(
+          Text(
             '주민 정보를 불러오지 못했어요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.bodySecondaryStrong,
           )
         else if (residents.isEmpty)
-          const Text(
+          Text(
             '아직 거주 주민이 없어요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.bodySecondaryStrong,
           )
         else
           SizedBox(
@@ -522,11 +510,7 @@ class HomeDashboardTab extends ConsumerWidget {
                             item.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: AppTextStyles.bodySecondaryStrong,
                           ),
                         ],
                       ),
@@ -581,10 +565,9 @@ class HomeDashboardTab extends ConsumerWidget {
                     '입력된 무주식 데이터가 없어요.\n무주식 탭에서 계산 후 결과를 확인해보세요.';
                 return Text(
                   message,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                  style: AppTextStyles.labelWithColor(
+                    AppColors.textSecondary,
+                    weight: FontWeight.w700,
                     height: 1.4,
                   ),
                 );
@@ -604,18 +587,14 @@ class HomeDashboardTab extends ConsumerWidget {
                 children: <Widget>[
                   AnimatedFadeSlide(
                     delay: const Duration(milliseconds: 30),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
                           '예측 결과',
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                          ),
+                          style: AppTextStyles.headingH2,
                         ),
-                        Row(
+                        const Row(
                           children: <Widget>[
                             TurnipLegendDot(
                               color: AppColors.badgeYellowText,
@@ -634,13 +613,9 @@ class HomeDashboardTab extends ConsumerWidget {
                   const SizedBox(height: 8),
                   AnimatedFadeSlide(
                     delay: const Duration(milliseconds: 45),
-                    child: const Text(
+                    child: Text(
                       '입력된 정보를 기반으로 한 결과입니다.',
-                      style: TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: AppTextStyles.captionMuted,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -688,13 +663,9 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else if (hasError)
-          const Text(
+          Text(
             '도감 진행률을 불러오지 못했어요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.bodySecondaryStrong,
           )
         else
           GridView.count(
@@ -808,13 +779,9 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else if (hasError)
-          const Text(
+          Text(
             '위시 리스트를 불러오지 못했어요.',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyles.bodySecondaryStrong,
           )
         else if (favorites.isEmpty)
           AnimatedFadeSlide(
@@ -827,12 +794,11 @@ class HomeDashboardTab extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: AppColors.borderDefault),
               ),
-              child: const Text(
+              child: Text(
                 '아직 위시 아이템이 없어요.\n도감 상세에서 하트를 눌러 위시 리스트를 채워보세요.',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                style: AppTextStyles.labelWithColor(
+                  AppColors.textSecondary,
+                  weight: FontWeight.w700,
                   height: 1.4,
                 ),
               ),
@@ -886,20 +852,12 @@ class HomeDashboardTab extends ConsumerWidget {
                               _wishCategoryLabel(key),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                              ),
+                              style: AppTextStyles.bodySecondaryStrong,
                             ),
                             const SizedBox(height: 2),
                             Text(
                               '${bucket.length}개',
-                              style: const TextStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: AppTextStyles.captionMuted,
                             ),
                           ],
                         ),
@@ -963,11 +921,7 @@ class HomeDashboardTab extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w800,
-                            ),
+                        style: AppTextStyles.bodyPrimaryHeavy,
                       ),
                     ),
                     Container(
@@ -981,11 +935,7 @@ class HomeDashboardTab extends ConsumerWidget {
                       ),
                       child: Text(
                         '$completed/$total',
-                        style: const TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.captionMuted,
                       ),
                     ),
                   ],
@@ -1028,10 +978,10 @@ class HomeDashboardTab extends ConsumerWidget {
                             const SizedBox(height: 6),
                             Text(
                               '$percentage%',
-                              style: const TextStyle(
+                              style: AppTextStyles.bodyWithSize(
+                                14,
                                 color: AppColors.textMuted,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
+                                weight: FontWeight.w800,
                               ),
                             ),
                           ],
@@ -1058,10 +1008,10 @@ class HomeDashboardTab extends ConsumerWidget {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: AppTextStyles.bodyWithSize(
+              22,
               color: AppColors.textPrimary,
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
+              weight: FontWeight.w800,
               height: 1.15,
             ),
           ),
@@ -1070,10 +1020,7 @@ class HomeDashboardTab extends ConsumerWidget {
           onPressed: onTap,
           style: TextButton.styleFrom(
             foregroundColor: AppColors.primaryDefault,
-            textStyle: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-            ),
+            textStyle: AppTextStyles.bodyPrimaryHeavy,
           ),
           child: const Text('전체보기'),
         ),

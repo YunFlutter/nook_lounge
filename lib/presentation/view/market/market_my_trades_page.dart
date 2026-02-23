@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
+import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_trade_register_page.dart';
 
 class MarketMyTradesPage extends ConsumerWidget {
   const MarketMyTradesPage({super.key});
@@ -108,11 +110,11 @@ class MarketMyTradesPage extends ConsumerWidget {
                     ),
                     child: Text(
                       '${tab.label}(${counts[tab] ?? 0})',
-                      style: TextStyle(
-                        color: selectedTab
+                      style: AppTextStyles.labelWithColor(
+                        selectedTab
                             ? AppColors.textPrimary
                             : AppColors.textMuted,
-                        fontWeight: FontWeight.w800,
+                        weight: FontWeight.w800,
                       ),
                     ),
                   ),
@@ -130,6 +132,23 @@ class MarketMyTradesPage extends ConsumerWidget {
     MarketOffer offer,
   ) {
     final viewModel = ref.read(marketViewModelProvider.notifier);
+    final offerDisplayName = _resolvedDisplayName(
+      offer.offerItemName,
+      offer.offerItemQuantity,
+    );
+    final offerDisplayQuantity = _resolvedDisplayQuantity(
+      offer.offerItemName,
+      offer.offerItemQuantity,
+    );
+    final wantDisplayName = _resolvedDisplayName(
+      offer.wantItemName,
+      offer.wantItemQuantity,
+    );
+    final wantDisplayQuantity = _resolvedDisplayQuantity(
+      offer.wantItemName,
+      offer.wantItemQuantity,
+    );
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bgCard,
@@ -145,32 +164,24 @@ class MarketMyTradesPage extends ConsumerWidget {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      const Text(
+                      Text(
                         '나',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.bodySecondaryStrong,
                       ),
                       const SizedBox(height: 8),
                       _buildSquareItemImage(offer.offerItemImageUrl),
                       const SizedBox(height: 6),
                       Text(
-                        offer.offerItemName,
+                        offerDisplayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: AppTextStyles.bodyPrimaryHeavy,
                       ),
-                      Text(
-                        'X${offer.offerItemQuantity}',
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w800,
+                      if (offerDisplayQuantity > 0)
+                        Text(
+                          'X$offerDisplayQuantity',
+                          style: AppTextStyles.bodyPrimaryHeavy,
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -192,32 +203,24 @@ class MarketMyTradesPage extends ConsumerWidget {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      const Text(
+                      Text(
                         '상대',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.bodySecondaryStrong,
                       ),
                       const SizedBox(height: 8),
                       _buildSquareItemImage(offer.wantItemImageUrl),
                       const SizedBox(height: 6),
                       Text(
-                        offer.wantItemName,
+                        wantDisplayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: AppTextStyles.bodyPrimaryHeavy,
                       ),
-                      Text(
-                        'X${offer.wantItemQuantity}',
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w800,
+                      if (wantDisplayQuantity > 0)
+                        Text(
+                          'X$wantDisplayQuantity',
+                          style: AppTextStyles.bodyPrimaryHeavy,
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -232,7 +235,7 @@ class MarketMyTradesPage extends ConsumerWidget {
                   child: _buildBottomAction(
                     icon: Icons.edit_rounded,
                     label: '수정',
-                    onTap: () => _showInfo(context, '수정 화면은 다음 단계에서 연결됩니다.'),
+                    onTap: () => _openEditForm(context, offer),
                   ),
                 ),
                 Expanded(
@@ -240,10 +243,22 @@ class MarketMyTradesPage extends ConsumerWidget {
                     icon: Icons.schedule_rounded,
                     label: '거래취소',
                     onTap: () async {
+                      final shouldCancel = await _showConfirmDialog(
+                        context: context,
+                        title: '거래 취소',
+                        message: '이 거래를 취소 상태로 변경할까요?',
+                        confirmLabel: '취소',
+                      );
+                      if (shouldCancel != true) {
+                        return;
+                      }
                       await viewModel.setOfferLifecycle(
                         offerId: offer.id,
                         lifecycle: MarketLifecycleTab.cancelled,
                       );
+                      if (context.mounted) {
+                        _showInfo(context, '거래를 취소로 변경했어요.');
+                      }
                     },
                   ),
                 ),
@@ -252,10 +267,23 @@ class MarketMyTradesPage extends ConsumerWidget {
                     icon: Icons.check_circle_rounded,
                     label: '완료',
                     onTap: () async {
+                      final shouldComplete = await _showConfirmDialog(
+                        context: context,
+                        title: '거래 완료 처리',
+                        message: '이 거래를 완료 상태로 변경할까요?',
+                        confirmLabel: '완료',
+                      );
+                      if (shouldComplete != true) {
+                        return;
+                      }
                       await viewModel.setOfferLifecycle(
                         offerId: offer.id,
                         lifecycle: MarketLifecycleTab.completed,
+                        status: MarketOfferStatus.closed,
                       );
+                      if (context.mounted) {
+                        _showInfo(context, '거래를 완료로 변경했어요.');
+                      }
                     },
                   ),
                 ),
@@ -266,7 +294,19 @@ class MarketMyTradesPage extends ConsumerWidget {
               icon: Icons.delete_outline_rounded,
               label: '삭제',
               onTap: () async {
+                final shouldDelete = await _showConfirmDialog(
+                  context: context,
+                  title: '거래 글 삭제',
+                  message: '정말 이 거래 글을 삭제할까요?',
+                  confirmLabel: '삭제',
+                );
+                if (shouldDelete != true) {
+                  return;
+                }
                 await viewModel.deleteOffer(offer.id);
+                if (context.mounted) {
+                  _showInfo(context, '거래 글을 삭제했어요.');
+                }
               },
               expand: false,
             ),
@@ -300,10 +340,7 @@ class MarketMyTradesPage extends ConsumerWidget {
             const SizedBox(height: 3),
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textMuted,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextStyles.captionMuted,
             ),
           ],
         ),
@@ -356,12 +393,9 @@ class MarketMyTradesPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.borderDefault),
       ),
-      child: const Text(
+      child: Text(
         '해당 탭의 거래가 없어요.',
-        style: TextStyle(
-          color: AppColors.textSecondary,
-          fontWeight: FontWeight.w700,
-        ),
+        style: AppTextStyles.bodySecondaryStrong,
       ),
     );
   }
@@ -372,5 +406,132 @@ class MarketMyTradesPage extends ConsumerWidget {
       ..showSnackBar(
         SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );
+  }
+
+  Future<bool?> _showConfirmDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required String confirmLabel,
+  }) {
+    const dialogButtonHeight = 54.0;
+    final isDestructive = confirmLabel == '삭제';
+
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: AppTextStyles.dialogTitleWithSize(30),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  message,
+                  style: AppTextStyles.dialogBodyWithSize(18),
+                ),
+                if (isDestructive) ...<Widget>[
+                  const SizedBox(height: 6),
+                  Text(
+                    '삭제 후에는 복구할 수 없어요.',
+                    style: AppTextStyles.dialogDanger,
+                  ),
+                ],
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.buttonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          confirmLabel,
+                          style: AppTextStyles.buttonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _resolvedDisplayName(String rawName, int quantity) {
+    final trimmed = rawName.trim();
+    if (trimmed.isEmpty) {
+      return '-';
+    }
+    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
+    final starMatch = starPattern.firstMatch(trimmed);
+    if (starMatch != null && quantity <= 1) {
+      return starMatch.group(1)?.trim() ?? trimmed;
+    }
+    return trimmed;
+  }
+
+  int _resolvedDisplayQuantity(String rawName, int quantity) {
+    final safeQuantity = quantity <= 0 ? 0 : quantity;
+    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
+    final starMatch = starPattern.firstMatch(rawName.trim());
+    if (starMatch != null) {
+      final parsed = int.tryParse(starMatch.group(2) ?? '');
+      if (parsed != null && parsed > 0) {
+        return parsed;
+      }
+    }
+    return safeQuantity;
+  }
+
+  Future<void> _openEditForm(BuildContext context, MarketOffer offer) async {
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => MarketTradeRegisterPage(initialOffer: offer),
+      ),
+    );
+    if (updated == true && context.mounted) {
+      _showInfo(context, '거래 글을 수정했어요.');
+    }
   }
 }
