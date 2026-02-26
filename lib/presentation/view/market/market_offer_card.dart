@@ -185,9 +185,9 @@ class MarketOfferCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.bodyPrimaryHeavy,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 10),
         _buildItemTypeBadge(_resolveItemTypeLabel(isOfferSide: true)),
-        const SizedBox(height: 4),
+        const SizedBox(height: 10),
         Text(
           'X${offer.offerItemQuantity}',
           style: AppTextStyles.bodyPrimaryHeavy,
@@ -268,9 +268,9 @@ class MarketOfferCard extends StatelessWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.bodyPrimaryHeavy,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 10),
         _buildItemTypeBadge(categoryLabel),
-        const SizedBox(height: 4),
+        const SizedBox(height: 10),
         Text('X$quantity', style: AppTextStyles.bodyPrimaryHeavy),
       ],
     );
@@ -308,7 +308,6 @@ class MarketOfferCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _buildStatusChip(),
             ],
           ),
           const SizedBox(height: 10),
@@ -324,27 +323,10 @@ class MarketOfferCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: offer.touchingTags
-                .map(
-                  (tag) => Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _touchingTagColor(tag),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      tag,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.captionInverseHeavy,
-                    ),
-                  ),
-                )
+            spacing: 8,
+            runSpacing: 8,
+            children: _normalizedTouchingTags
+                .map(_buildTouchingTagChip)
                 .toList(growable: false),
           ),
           const SizedBox(height: 10),
@@ -353,7 +335,6 @@ class MarketOfferCard extends StatelessWidget {
               Text('입장료', style: AppTextStyles.captionMuted),
               const SizedBox(width: 6),
               Container(
-                alignment: Alignment.center,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
@@ -371,57 +352,68 @@ class MarketOfferCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
-              _buildActionArea(),
             ],
           ),
+          const SizedBox(height: 8),
+          Align(alignment: Alignment.centerRight, child: _buildActionArea()),
         ],
       ),
     );
   }
 
-  Widget _buildStatusChip() {
-    final Color bgColor;
-    final Color textColor;
-    switch (offer.status) {
-      case MarketOfferStatus.open:
-        bgColor = AppColors.catalogSuccessBg;
-        textColor = AppColors.catalogSuccessText;
-      case MarketOfferStatus.waiting:
-        bgColor = AppColors.badgeRedBg;
-        textColor = AppColors.badgeRedText;
-      case MarketOfferStatus.closed:
-      case MarketOfferStatus.offline:
-      case MarketOfferStatus.trading:
-        bgColor = AppColors.catalogChipBg;
-        textColor = AppColors.textMuted;
+  List<String> get _normalizedTouchingTags {
+    // 유지보수 포인트:
+    // 과거 데이터에서 콤마/슬래시로 묶여 저장된 문자열이 있어도
+    // 화면에서는 칩 단위로 보이도록 정규화합니다.
+    final normalized = <String>{};
+    for (final raw in offer.touchingTags) {
+      for (final token in raw.split(',')) {
+        final value = token.trim();
+        if (value.isNotEmpty) {
+          normalized.add(value);
+        }
+      }
     }
-    return Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        offer.statusLabel,
-        textAlign: TextAlign.center,
-        style: AppTextStyles.chip(textColor),
+    return normalized.toList(growable: false);
+  }
+
+  Widget _buildTouchingTagChip(String tag) {
+    return IntrinsicWidth(
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 74, minHeight: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: _touchingTagColor(tag),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          tag,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: AppTextStyles.captionInverseHeavy,
+        ),
       ),
     );
   }
 
   Widget _buildActionArea() {
+    // 유지보수 포인트:
+    // 완료된 거래는 소유자 액션(수정/삭제/완료)을 표시하지 않습니다.
+    if (_isCompletedOffer && offer.isMine) {
+      return const SizedBox.shrink();
+    }
+
     if (!offer.isMine) {
       return _buildActionChip();
     }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
       children: <Widget>[
         _buildOwnerActionChip(label: '수정', onTap: onEditTap),
-        const SizedBox(width: 4),
         _buildOwnerActionChip(label: '삭제', onTap: onDeleteTap),
-        const SizedBox(width: 4),
         _buildOwnerActionChip(label: '완료', onTap: onCompleteTap),
       ],
     );
@@ -429,6 +421,7 @@ class MarketOfferCard extends StatelessWidget {
 
   Widget _buildActionChip() {
     final bool disabled =
+        _isCompletedOffer ||
         offer.status == MarketOfferStatus.closed ||
         offer.status == MarketOfferStatus.offline ||
         offer.status == MarketOfferStatus.trading ||
@@ -556,28 +549,33 @@ class MarketOfferCard extends StatelessWidget {
         icon = Icons.inventory_2_rounded;
     }
 
-    return Container(
-      alignment: Alignment.center,
-      constraints: const BoxConstraints(minWidth: 64),
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 12, color: textColor),
-          const SizedBox(width: 3),
-          Text(
-            normalized.isEmpty ? '아이템' : normalized,
-            textAlign: TextAlign.center,
-            style: AppTextStyles.captionWithColor(
-              textColor,
-              weight: FontWeight.w800,
+    return IntrinsicWidth(
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 74, minHeight: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, size: 12, color: textColor),
+            const SizedBox(width: 3),
+            Text(
+              normalized.isEmpty ? '아이템' : normalized,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.captionWithColor(
+                textColor,
+                weight: FontWeight.w800,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

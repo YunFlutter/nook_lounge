@@ -46,6 +46,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return value;
   }
 
+  bool get _isCompletedOffer {
+    return offer.lifecycle == MarketLifecycleTab.completed ||
+        offer.status == MarketOfferStatus.closed;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final viewModel = ref.read(marketViewModelProvider.notifier);
@@ -173,6 +178,35 @@ class MarketOfferDetailPage extends ConsumerWidget {
     WidgetRef ref, {
     required String currentUid,
   }) {
+    if (_isCompletedOffer) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          FilledButton(
+            onPressed: null,
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.catalogChipBg,
+              disabledBackgroundColor: AppColors.catalogChipBg,
+              minimumSize: const Size.fromHeight(58),
+            ),
+            child: Text('완료된 거래예요', style: AppTextStyles.buttonPrimary),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(56),
+              side: const BorderSide(color: AppColors.borderDefault, width: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+            child: Text('닫기', style: AppTextStyles.buttonSecondary),
+          ),
+        ],
+      );
+    }
+
     final AsyncValue<MarketTradeProposal?> myProposalAsync = currentUid.isEmpty
         ? const AsyncValue.data(null)
         : ref.watch(
@@ -208,14 +242,22 @@ class MarketOfferDetailPage extends ConsumerWidget {
             hasAcceptedProposal: false,
           );
         case MarketTradeProposalStatus.accepted:
-          primaryLabel = '코드 확인하기';
-          primaryOnPressed = () => _openTradeCodePage(context, ref);
-          secondaryLabel = '거래 취소';
-          secondaryOnPressed = () => _cancelTradeAsParticipant(
-            context,
-            ref,
-            hasAcceptedProposal: true,
-          );
+          if (_isCompletedOffer) {
+            primaryLabel = '거래 종료';
+            primaryBackground = AppColors.catalogChipBg;
+            primaryOnPressed = null;
+            secondaryLabel = '닫기';
+            secondaryOnPressed = () => Navigator.of(context).pop();
+          } else {
+            primaryLabel = '코드 확인하기';
+            primaryOnPressed = () => _openTradeCodePage(context, ref);
+            secondaryLabel = '거래 취소';
+            secondaryOnPressed = () => _cancelTradeAsParticipant(
+              context,
+              ref,
+              hasAcceptedProposal: true,
+            );
+          }
         case MarketTradeProposalStatus.rejected:
         case MarketTradeProposalStatus.cancelled:
           primaryLabel = '다시 제안하기';
@@ -258,6 +300,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Widget _buildOwnerBottomActions(BuildContext context, WidgetRef ref) {
+    if (_isCompletedOffer) {
+      return const SizedBox.shrink();
+    }
+
     final bool canCancelTrade = offer.lifecycle == MarketLifecycleTab.ongoing;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -374,7 +420,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
           ),
           child: Row(
             children: <Widget>[
-              _buildProposalStatusBadge(proposal.status),
+              _buildProposalStatusBadge(
+                proposal.status,
+                isOfferCompleted: _isCompletedOffer,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -446,8 +495,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   final index = entry.key;
                   final proposal = entry.value;
                   final canAccept =
+                      !_isCompletedOffer &&
                       proposal.status == MarketTradeProposalStatus.pending;
                   final canOpenCode =
+                      !_isCompletedOffer &&
                       proposal.status == MarketTradeProposalStatus.accepted;
                   return Padding(
                     padding: EdgeInsets.only(
@@ -485,7 +536,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                                 const SizedBox(height: 3),
                                 Row(
                                   children: <Widget>[
-                                    _buildProposalStatusBadge(proposal.status),
+                                    _buildProposalStatusBadge(
+                                      proposal.status,
+                                      isOfferCompleted: _isCompletedOffer,
+                                    ),
                                     const SizedBox(width: 6),
                                     Text(
                                       formatRelativeTime(proposal.updatedAt),
@@ -548,22 +602,33 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProposalStatusBadge(MarketTradeProposalStatus status) {
+  Widget _buildProposalStatusBadge(
+    MarketTradeProposalStatus status, {
+    bool isOfferCompleted = false,
+  }) {
+    final bool isCompletedTarget =
+        isOfferCompleted && status == MarketTradeProposalStatus.accepted;
+    final String label = isCompletedTarget ? '거래 종료 된 상대' : status.label;
     Color bgColor = AppColors.catalogChipBg;
     Color textColor = AppColors.textMuted;
-    switch (status) {
-      case MarketTradeProposalStatus.pending:
-        bgColor = AppColors.badgeYellowBg;
-        textColor = AppColors.badgeYellowText;
-      case MarketTradeProposalStatus.accepted:
-        bgColor = AppColors.catalogSuccessBg;
-        textColor = AppColors.catalogSuccessText;
-      case MarketTradeProposalStatus.rejected:
-        bgColor = AppColors.badgeRedBg;
-        textColor = AppColors.badgeRedText;
-      case MarketTradeProposalStatus.cancelled:
-        bgColor = AppColors.catalogChipBg;
-        textColor = AppColors.textMuted;
+    if (isCompletedTarget) {
+      bgColor = AppColors.catalogChipBg;
+      textColor = AppColors.textMuted;
+    } else {
+      switch (status) {
+        case MarketTradeProposalStatus.pending:
+          bgColor = AppColors.badgeYellowBg;
+          textColor = AppColors.badgeYellowText;
+        case MarketTradeProposalStatus.accepted:
+          bgColor = AppColors.catalogSuccessBg;
+          textColor = AppColors.catalogSuccessText;
+        case MarketTradeProposalStatus.rejected:
+          bgColor = AppColors.badgeRedBg;
+          textColor = AppColors.badgeRedText;
+        case MarketTradeProposalStatus.cancelled:
+          bgColor = AppColors.catalogChipBg;
+          textColor = AppColors.textMuted;
+      }
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -572,7 +637,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        status.label,
+        label,
         style: AppTextStyles.captionWithColor(
           textColor,
           weight: FontWeight.w800,
@@ -582,6 +647,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Widget _buildTradeSummaryCard() {
+    if (offer.tradeType == MarketTradeType.touching) {
+      return _buildTouchingTradeSummaryCard();
+    }
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -596,6 +664,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               Expanded(
                 child: _buildItemMiniCard(
                   header: offer.offerHeaderLabel,
+                  defaultHeader: '드려요',
                   headerColor: AppColors.primaryDefault,
                   imageUrl: offer.offerItemImageUrl,
                   title: offer.offerItemName,
@@ -613,6 +682,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               Expanded(
                 child: _buildItemMiniCard(
                   header: offer.wantHeaderLabel,
+                  defaultHeader: '받아요',
                   headerColor: AppColors.badgeBlueText,
                   imageUrl: offer.wantItemImageUrl,
                   title: offer.wantItemName,
@@ -627,20 +697,115 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
+  Widget _buildTouchingTradeSummaryCard() {
+    final touchingTags = _resolveTouchingTags();
+    final touchingCount = touchingTags.length;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.borderDefault),
+      ),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _buildItemMiniCard(
+                  header: '입장료',
+                  defaultHeader: '입장료',
+                  headerColor: AppColors.primaryDefault,
+                  imageUrl: offer.offerItemImageUrl,
+                  title: offer.offerItemName,
+                  quantity: offer.offerItemQuantity,
+                  categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(
+                  Icons.swap_vert_rounded,
+                  color: AppColors.textAccent,
+                ),
+              ),
+              Expanded(
+                child: _buildItemMiniCard(
+                  header: '만지작',
+                  defaultHeader: '만지작',
+                  headerColor: AppColors.badgePurpleText,
+                  imageUrl: '',
+                  title: touchingCount > 0 ? '만지작 $touchingCount개' : '만지작',
+                  quantity: 0,
+                  categoryLabel: '만지작',
+                  emptyImageIcon: Icons.touch_app_rounded,
+                ),
+              ),
+            ],
+          ),
+          if (touchingTags.isNotEmpty) ...<Widget>[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: touchingTags
+                  .map(
+                    (tag) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.badgePurpleBg,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        tag,
+                        style: AppTextStyles.captionWithColor(
+                          AppColors.badgePurpleText,
+                          weight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(growable: false),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  List<String> _resolveTouchingTags() {
+    final normalized = <String>{};
+    for (final raw in offer.touchingTags) {
+      for (final token in raw.split(',')) {
+        final value = token.trim();
+        if (value.isNotEmpty) {
+          normalized.add(value);
+        }
+      }
+    }
+    return normalized.toList(growable: false);
+  }
+
   Widget _buildItemMiniCard({
     required String header,
+    required String defaultHeader,
     required Color headerColor,
     required String imageUrl,
     required String title,
     required int quantity,
     required String categoryLabel,
+    IconData emptyImageIcon = Icons.image_not_supported_outlined,
   }) {
     final displayName = _resolvedDisplayName(title, quantity);
     final displayQuantity = _resolvedDisplayQuantity(title, quantity);
+    final headerText = header.trim().isEmpty ? defaultHeader : header;
     return Column(
       children: <Widget>[
         Text(
-          header.isEmpty ? '드려요' : header,
+          headerText,
           style: AppTextStyles.labelWithColor(
             headerColor,
             weight: FontWeight.w800,
@@ -654,8 +819,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
             color: AppColors.catalogChipBg,
             borderRadius: BorderRadius.circular(16),
           ),
+          alignment: Alignment.center,
           padding: const EdgeInsets.all(6),
-          child: _buildImage(imageUrl),
+          child: imageUrl.trim().isEmpty
+              ? Icon(emptyImageIcon, color: AppColors.textHint, size: 30)
+              : _buildImage(imageUrl),
         ),
         const SizedBox(height: 8),
         Text(
@@ -829,6 +997,21 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Future<void> _onTapTradeProposal(BuildContext context, WidgetRef ref) async {
+    if (_isCompletedOffer) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('완료된 거래에는 제안을 보낼 수 없어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
     final shouldProceed = await _showProposalConfirmDialog(context);
     if (shouldProceed != true || !context.mounted) {
       return;
@@ -1099,22 +1282,24 @@ class MarketOfferDetailPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                ListTile(
-                  leading: const Icon(Icons.pin_outlined),
-                  title: const Text('코드 확인'),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    await _openTradeCodePage(context, ref);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.delete_outline_rounded),
-                  title: const Text('삭제하기'),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    await _deleteMyOffer(context, ref);
-                  },
-                ),
+                if (!_isCompletedOffer)
+                  ListTile(
+                    leading: const Icon(Icons.pin_outlined),
+                    title: const Text('코드 확인'),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await _openTradeCodePage(context, ref);
+                    },
+                  ),
+                if (!_isCompletedOffer)
+                  ListTile(
+                    leading: const Icon(Icons.delete_outline_rounded),
+                    title: const Text('삭제하기'),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await _deleteMyOffer(context, ref);
+                    },
+                  ),
                 const SizedBox(height: 6),
               ],
             ),
@@ -1135,14 +1320,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.pin_outlined),
-                title: const Text('코드 확인'),
-                onTap: () async {
-                  Navigator.of(context).pop();
-                  await _openTradeCodePage(context, ref);
-                },
-              ),
+              if (!_isCompletedOffer)
+                ListTile(
+                  leading: const Icon(Icons.pin_outlined),
+                  title: const Text('코드 확인'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    await _openTradeCodePage(context, ref);
+                  },
+                ),
               ListTile(
                 leading: const Icon(Icons.visibility_off_outlined),
                 title: const Text('숨기기'),
@@ -1168,6 +1354,17 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Future<void> _openTradeCodePage(BuildContext context, WidgetRef ref) async {
+    if (_isCompletedOffer) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('거래가 종료되어 코드를 확인할 수 없어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
     final viewModel = ref.read(marketViewModelProvider.notifier);
     final session = await viewModel.fetchTradeCodeSession(offer.id);
     if (!context.mounted) {
@@ -1749,6 +1946,21 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Future<void> _deleteMyOffer(BuildContext context, WidgetRef ref) async {
+    if (_isCompletedOffer) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('완료된 거래는 삭제할 수 없어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
     final shouldDelete = await _showDeleteConfirmDialog(context);
     if (shouldDelete != true || !context.mounted) {
       return;

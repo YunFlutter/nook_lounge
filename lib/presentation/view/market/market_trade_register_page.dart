@@ -53,8 +53,17 @@ class MarketTradeRegisterPage extends ConsumerStatefulWidget {
 
 class _MarketTradeRegisterPageState
     extends ConsumerState<MarketTradeRegisterPage> {
+  static const String _bellImageUrl =
+      'https://dodo.ac/np/images/1/1e/99k_Bells_NH_Inv_Icon.png';
   static const String _nookMilesTicketImageUrl =
       'https://dodo.ac/np/images/f/f5/Nook_Miles_Ticket_NH_Icon.png';
+  static const List<MapEntry<String, String>> _touchingPickerCategories =
+      <MapEntry<String, String>>[
+        MapEntry<String, String>('all', '전체'),
+        MapEntry<String, String>('furniture', '가구'),
+        MapEntry<String, String>('wallpaper', '벽지'),
+        MapEntry<String, String>('fashion', '의상'),
+      ];
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
@@ -143,7 +152,9 @@ class _MarketTradeRegisterPageState
       _wantedItem = null;
       _wantQuantity = 1;
       _wantStyle = '기본';
-      _currencyAmount = 1;
+      if (!_useCurrency) {
+        _currencyAmount = 1;
+      }
       return;
     }
 
@@ -233,7 +244,12 @@ class _MarketTradeRegisterPageState
         (_useOfferCurrency || _offeredItem != null)
             ? () => setState(() => _step = 1)
             : null,
-      1 => () => setState(() => _step = 2),
+      1 => () => setState(() {
+        // 유지보수 포인트:
+        // 나눔은 "받는 항목"이 없는 단방향 거래이므로,
+        // 교환 대상 선택(step 3)을 건너뛰고 바로 최종 확인(step 4)으로 이동합니다.
+        _step = _tradeType == MarketTradeType.sharing ? 3 : 2;
+      }),
       2 => _canMoveFromStepThree() ? () => setState(() => _step = 3) : null,
       3 => _isSubmitting ? null : _submit,
       _ => null,
@@ -518,6 +534,36 @@ class _MarketTradeRegisterPageState
         Text('만지작할 아이템을 선택해주세요.', style: AppTextStyles.bodyPrimaryHeavy),
         const SizedBox(height: 10),
         Text('아이템을 여러 개 선택할 수 있어요.', style: AppTextStyles.bodyHintStrong),
+        const SizedBox(height: 12),
+        Text('카테고리로 빠르게 추가', style: AppTextStyles.captionMuted),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _touchingPickerCategories
+              .map(
+                (entry) => InkWell(
+                  borderRadius: BorderRadius.circular(999),
+                  onTap: () =>
+                      _openTouchingItemPicker(initialCategoryKey: entry.key),
+                  child: Container(
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.catalogChipBg,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: AppColors.borderDefault),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      entry.value,
+                      style: AppTextStyles.captionPrimaryHeavy,
+                    ),
+                  ),
+                ),
+              )
+              .toList(growable: false),
+        ),
         const SizedBox(height: 14),
         InkWell(
           borderRadius: BorderRadius.circular(20),
@@ -631,6 +677,7 @@ class _MarketTradeRegisterPageState
   }
 
   Widget _buildStepFour() {
+    final isTouchingSummary = _tradeType == MarketTradeType.touching;
     final offerName = _useOfferCurrency
         ? _formatCurrencyDisplay(
             label: _offerCurrencyLabel,
@@ -691,11 +738,13 @@ class _MarketTradeRegisterPageState
                 ),
               ),
               Expanded(
-                child: _buildSummaryItem(
-                  imageUrl: wantImage,
-                  name: wantName.isEmpty ? '-' : wantName,
-                  description: _useCurrency ? '재화' : '아이템',
-                ),
+                child: isTouchingSummary
+                    ? _buildTouchingSummaryItem()
+                    : _buildSummaryItem(
+                        imageUrl: wantImage,
+                        name: wantName.isEmpty ? '-' : wantName,
+                        description: _useCurrency ? '재화' : '아이템',
+                      ),
               ),
             ],
           ),
@@ -790,6 +839,15 @@ class _MarketTradeRegisterPageState
       borderRadius: BorderRadius.circular(20),
       onTap: () => setState(() {
         _tradeType = type;
+        if (type == MarketTradeType.sharing) {
+          // 유지보수 포인트:
+          // 나눔 전환 시 "받을 아이템/재화" 입력 상태를 제거해
+          // 의도치 않은 데이터가 저장되지 않도록 초기화합니다.
+          _useCurrency = false;
+          _wantedItem = null;
+          _wantQuantity = 1;
+          _wantStyle = '기본';
+        }
         // 유지보수 포인트:
         // 만지작 선택 직후 바로 다중 선택이 가능하도록 현재 등록 아이템을
         // 기본 선택 목록에 자동으로 한 번만 추가합니다.
@@ -1175,6 +1233,63 @@ class _MarketTradeRegisterPageState
           style: AppTextStyles.bodyPrimaryHeavy,
         ),
         Text(description, style: AppTextStyles.bodyMutedStrong),
+      ],
+    );
+  }
+
+  Widget _buildTouchingSummaryItem() {
+    final previewItems = _touchingItems.take(6).toList(growable: false);
+    final hasOverflow = _touchingItems.length > previewItems.length;
+
+    return Column(
+      children: <Widget>[
+        Container(
+          width: 90,
+          height: 90,
+          decoration: BoxDecoration(
+            color: AppColors.catalogChipBg,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          padding: const EdgeInsets.all(6),
+          child: previewItems.isEmpty
+              ? const Icon(
+                  Icons.image_not_supported_outlined,
+                  color: AppColors.textHint,
+                )
+              : GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: previewItems.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
+                  ),
+                  itemBuilder: (context, index) {
+                    final item = previewItems[index];
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Container(
+                        color: AppColors.bgCard,
+                        padding: const EdgeInsets.all(2),
+                        child: _buildImage(item.imageUrl, fit: BoxFit.contain),
+                      ),
+                    );
+                  },
+                ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '만지작 ${_touchingItems.length}개',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.bodyPrimaryHeavy,
+        ),
+        Text('아이템', style: AppTextStyles.bodyMutedStrong),
+        if (hasOverflow)
+          Text(
+            '+${_touchingItems.length - previewItems.length}',
+            style: AppTextStyles.captionMuted,
+          ),
       ],
     );
   }
@@ -1577,46 +1692,172 @@ class _MarketTradeRegisterPageState
     required int min,
     required int max,
   }) async {
-    var inputText = '$initialValue';
-    final result = await showDialog<int>(
+    return showDialog<int>(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: TextFormField(
-            initialValue: inputText,
-            autofocus: true,
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            onChanged: (value) => inputText = value,
-            decoration: InputDecoration(hintText: '$min ~ $max'),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('취소'),
-            ),
-            FilledButton(
-              onPressed: () {
-                final parsed = int.tryParse(inputText.trim());
-                if (parsed == null) {
-                  Navigator.of(dialogContext).pop();
-                  return;
-                }
-                Navigator.of(dialogContext).pop(parsed.clamp(min, max).toInt());
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.accentDeepOrange,
+        var focused = false;
+        String? errorText;
+        var inputValue = '$initialValue';
+
+        void submit(StateSetter setModalState) {
+          final parsed = int.tryParse(inputValue.trim());
+          if (parsed == null) {
+            setModalState(() {
+              errorText = '숫자만 입력해 주세요.';
+            });
+            return;
+          }
+          if (parsed < min || parsed > max) {
+            setModalState(() {
+              errorText = '$min ~ $max 범위로 입력해 주세요.';
+            });
+            return;
+          }
+          Navigator.of(dialogContext).pop(parsed);
+        }
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final borderColor = errorText != null
+                ? AppColors.badgeRedText
+                : focused
+                ? AppColors.accentDeepOrange
+                : AppColors.borderDefault;
+            return Dialog(
+              backgroundColor: AppColors.white,
+              surfaceTintColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.pageHorizontal + AppSpacing.modalOuter,
               ),
-              child: const Text('확인'),
-            ),
-          ],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(26),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.modalInner,
+                  AppSpacing.modalInner,
+                  AppSpacing.modalInner,
+                  18,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(title, style: AppTextStyles.dialogTitleCompact),
+                    const SizedBox(height: 8),
+                    Text(
+                      '$min ~ $max 범위로 입력해 주세요.',
+                      style: AppTextStyles.captionMuted,
+                    ),
+                    const SizedBox(height: 12),
+                    Focus(
+                      onFocusChange: (hasFocus) {
+                        setModalState(() {
+                          focused = hasFocus;
+                        });
+                      },
+                      child: Container(
+                        height: 62,
+                        decoration: BoxDecoration(
+                          color: AppColors.bgCard,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: borderColor, width: 2),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Center(
+                          child: TextFormField(
+                            initialValue: '$initialValue',
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            textInputAction: TextInputAction.done,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            style: AppTextStyles.bodyPrimaryHeavy,
+                            decoration: InputDecoration(
+                              hintText: '$initialValue',
+                              hintStyle: AppTextStyles.bodyHintStrong,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              focusedErrorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              isDense: true,
+                            ),
+                            onChanged: (value) {
+                              inputValue = value;
+                              if (errorText == null) {
+                                return;
+                              }
+                              setModalState(() {
+                                errorText = null;
+                              });
+                            },
+                            onFieldSubmitted: (_) => submit(setModalState),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (errorText != null) ...<Widget>[
+                      const SizedBox(height: 8),
+                      Text(
+                        errorText!,
+                        style: AppTextStyles.captionWithColor(
+                          AppColors.badgeRedText,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(54),
+                              side: const BorderSide(
+                                color: AppColors.borderStrong,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              '취소',
+                              style: AppTextStyles.dialogButtonOutline,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: FilledButton(
+                            onPressed: () => submit(setModalState),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AppColors.accentDeepOrange,
+                              minimumSize: const Size.fromHeight(54),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              '확인',
+                              style: AppTextStyles.dialogButtonPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
-    return result;
   }
 
   IconData _tradeTypeIcon(MarketTradeType tradeType) {
@@ -1713,8 +1954,10 @@ class _MarketTradeRegisterPageState
     });
   }
 
-  Future<void> _openTouchingItemPicker() async {
-    final selected = await showModalBottomSheet<CatalogItem>(
+  Future<void> _openTouchingItemPicker({
+    String initialCategoryKey = 'all',
+  }) async {
+    final selected = await showModalBottomSheet<List<CatalogItem>>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -1722,11 +1965,16 @@ class _MarketTradeRegisterPageState
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => const FractionallySizedBox(
+      builder: (_) => FractionallySizedBox(
         heightFactor: 0.88,
         child: MarketItemPickerSheet(
           title: '만지작 아이템 검색',
+          initialCategoryKey: initialCategoryKey,
           touchingOnlyCategories: true,
+          multiSelectEnabled: true,
+          initialSelectedItemIds: _touchingItems
+              .map((item) => item.id)
+              .toList(growable: false),
         ),
       ),
     );
@@ -1734,10 +1982,7 @@ class _MarketTradeRegisterPageState
       return;
     }
     setState(() {
-      final exists = _touchingItems.any((item) => item.id == selected.id);
-      if (!exists) {
-        _touchingItems = <CatalogItem>[..._touchingItems, selected];
-      }
+      _touchingItems = selected;
     });
   }
 
@@ -2029,6 +2274,7 @@ class _MarketTradeRegisterPageState
     final mergedCoverImage = _proofImagePath.trim().isNotEmpty
         ? _proofImagePath.trim()
         : (widget.initialOffer?.coverImageUrl ?? '');
+    final entryFeeText = _resolveEntryFeeTextForSave();
     final notifier = ref.read(marketViewModelProvider.notifier);
     final initialOffer = widget.initialOffer;
 
@@ -2058,7 +2304,7 @@ class _MarketTradeRegisterPageState
         touchingTags: _tradeType == MarketTradeType.touching
             ? _buildTouchingTagsForSave()
             : const <String>[],
-        entryFeeText: '무료',
+        entryFeeText: entryFeeText,
         isMine: true,
         dimmed: false,
         description: _memoController.text.trim(),
@@ -2092,7 +2338,7 @@ class _MarketTradeRegisterPageState
         touchingTags: _tradeType == MarketTradeType.touching
             ? _buildTouchingTagsForSave()
             : const <String>[],
-        entryFeeText: '무료',
+        entryFeeText: entryFeeText,
         isMine: true,
         dimmed: false,
         description: _memoController.text.trim(),
@@ -2243,7 +2489,7 @@ class _MarketTradeRegisterPageState
     if (normalizedLabel == '마일 여행권' || normalizedLabel == '마일 이용권') {
       return _nookMilesTicketImageUrl;
     }
-    return 'assets/images/icon_recipe_scroll.png';
+    return _bellImageUrl;
   }
 
   String _formatCurrencyDisplay({required String label, required int amount}) {
@@ -2252,6 +2498,28 @@ class _MarketTradeRegisterPageState
       return '재화 * $amount';
     }
     return '$normalizedLabel * $amount';
+  }
+
+  String _resolveEntryFeeTextForSave() {
+    if (_tradeType != MarketTradeType.touching) {
+      return '무료';
+    }
+    if (_useOfferCurrency) {
+      if (_offerCurrencyAmount <= 0) {
+        return '무료';
+      }
+      return _formatCurrencyDisplay(
+        label: _offerCurrencyLabel,
+        amount: _offerCurrencyAmount,
+      );
+    }
+    if (_offeredItem == null) {
+      return '무료';
+    }
+    final quantity = _offerQuantity <= 0 ? 1 : _offerQuantity;
+    return quantity > 1
+        ? '${_offeredItem!.name} * $quantity'
+        : _offeredItem!.name;
   }
 
   Widget _buildImage(String source, {required BoxFit fit}) {

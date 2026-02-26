@@ -237,7 +237,24 @@ class MarketFirestoreDataSource {
   }
 
   Future<void> deleteOffer(String offerId) async {
-    await _firestore.doc(FirestorePaths.marketPost(offerId)).delete();
+    final normalizedOfferId = offerId.trim();
+    if (normalizedOfferId.isEmpty) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 거래글 삭제 시 하위 대기열(proposals) 문서가 남지 않도록
+    // 선삭제 후 부모 문서를 제거합니다.
+    await _deleteCollectionInBatches(
+      FirestorePaths.marketTradeProposals(normalizedOfferId),
+    );
+
+    final batch = _firestore.batch();
+    batch.delete(
+      _firestore.doc(FirestorePaths.marketTradeCode(normalizedOfferId)),
+    );
+    batch.delete(_firestore.doc(FirestorePaths.marketPost(normalizedOfferId)));
+    await batch.commit();
   }
 
   Stream<List<MarketTradeProposal>> watchTradeProposals(String offerId) {
@@ -1156,6 +1173,29 @@ class MarketFirestoreDataSource {
       // no-op
     } catch (_) {
       // no-op
+    }
+  }
+
+  Future<void> _deleteCollectionInBatches(String collectionPath) async {
+    const pageSize = 450;
+    while (true) {
+      final snapshot = await _firestore
+          .collection(collectionPath)
+          .limit(pageSize)
+          .get();
+      if (snapshot.docs.isEmpty) {
+        return;
+      }
+
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+
+      if (snapshot.docs.length < pageSize) {
+        return;
+      }
     }
   }
 }

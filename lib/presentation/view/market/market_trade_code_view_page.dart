@@ -16,6 +16,19 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isCompleted =
+        offer.lifecycle == MarketLifecycleTab.completed ||
+        offer.status == MarketOfferStatus.closed;
+    if (isCompleted) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('거래 코드 확인')),
+        body: _buildMessage(
+          title: '거래가 종료되어 코드를 확인할 수 없어요.',
+          subtitle: '종료된 거래의 코드는 더 이상 표시되지 않습니다.',
+        ),
+      );
+    }
+
     final sessionAsync = ref.watch(marketTradeCodeSessionProvider(offer.id));
     final currentUid = ref.read(marketViewModelProvider.notifier).currentUserId;
 

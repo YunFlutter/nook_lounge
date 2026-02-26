@@ -176,7 +176,11 @@ class MarketMyTradesPage extends ConsumerWidget {
         ) ??
         false;
     final hasCodeSession = codeSessionAsync.valueOrNull != null;
-    final canOpenCode = hasCodeSession || hasAcceptedProposal;
+    final isCompletedStyle =
+        offer.lifecycle == MarketLifecycleTab.completed ||
+        offer.status == MarketOfferStatus.closed;
+    final canOpenCode =
+        !isCompletedStyle && (hasCodeSession || hasAcceptedProposal);
     final offerDisplayName = _resolvedDisplayName(
       offer.offerItemName,
       offer.offerItemQuantity,
@@ -193,10 +197,6 @@ class MarketMyTradesPage extends ConsumerWidget {
       offer.wantItemName,
       offer.wantItemQuantity,
     );
-
-    final isCompletedStyle =
-        offer.lifecycle == MarketLifecycleTab.completed ||
-        offer.status == MarketOfferStatus.closed;
 
     final card = Material(
       color: Colors.transparent,
@@ -482,6 +482,14 @@ class MarketMyTradesPage extends ConsumerWidget {
     BuildContext context,
     MarketOffer offer,
   ) async {
+    final isCompleted =
+        offer.lifecycle == MarketLifecycleTab.completed ||
+        offer.status == MarketOfferStatus.closed;
+    if (isCompleted) {
+      _showInfo(context, '거래가 종료되어 코드를 확인할 수 없어요.');
+      return;
+    }
+
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => MarketTradeCodeViewPage(offer: offer),

@@ -12,6 +12,8 @@ class MarketItemPickerSheet extends ConsumerStatefulWidget {
     this.initialKeyword = '',
     this.initialCategoryKey = _allCategoryKey,
     this.touchingOnlyCategories = false,
+    this.multiSelectEnabled = false,
+    this.initialSelectedItemIds = const <String>[],
     super.key,
   });
 
@@ -19,6 +21,8 @@ class MarketItemPickerSheet extends ConsumerStatefulWidget {
   final String initialKeyword;
   final String initialCategoryKey;
   final bool touchingOnlyCategories;
+  final bool multiSelectEnabled;
+  final List<String> initialSelectedItemIds;
 
   static const String _allCategoryKey = 'all';
   static const String _furnitureCategoryKey = 'furniture';
@@ -73,6 +77,8 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
   bool _isSearchFocused = false;
   CatalogItem? _selectedItem;
   String _expandedItemId = '';
+  final Set<String> _selectedItemIds = <String>{};
+  List<CatalogItem> _allItems = <CatalogItem>[];
 
   List<String> get _visibleCategoryKeys => widget.touchingOnlyCategories
       ? const <String>[
@@ -92,6 +98,11 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
     _selectedCategoryKey = widget.initialCategoryKey;
     if (!_visibleCategoryKeys.contains(_selectedCategoryKey)) {
       _selectedCategoryKey = _visibleCategoryKeys.first;
+    }
+    if (widget.multiSelectEnabled) {
+      _selectedItemIds
+        ..clear()
+        ..addAll(widget.initialSelectedItemIds);
     }
   }
 
@@ -157,6 +168,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                   }
 
                   final items = _filterItems(snapshot.data!);
+                  _allItems = snapshot.data!;
                   if (items.isEmpty) {
                     return Center(
                       child: Text(
@@ -166,14 +178,16 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                     );
                   }
 
-                  return ListView.separated(
+                  final listView = ListView.separated(
                     itemCount: items.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final item = items[index];
                       final expanded = item.id == _expandedItemId;
-                      final selected = _selectedItem?.id == item.id;
+                      final selected = widget.multiSelectEnabled
+                          ? _selectedItemIds.contains(item.id)
+                          : _selectedItem?.id == item.id;
                       return _buildItemTile(
                         item: item,
                         expanded: expanded,
@@ -181,30 +195,191 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                       );
                     },
                   );
+
+                  if (!widget.multiSelectEnabled) {
+                    return listView;
+                  }
+
+                  return Column(
+                    children: <Widget>[
+                      _buildCategoryBatchSelector(snapshot.data!),
+                      const SizedBox(height: 10),
+                      Expanded(child: listView),
+                    ],
+                  );
                 },
               ),
             ),
             const SizedBox(height: 12),
-            FilledButton(
-              onPressed: _selectedItem == null
-                  ? null
-                  : () => Navigator.of(context).pop(_selectedItem),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.accentDeepOrange,
-                minimumSize: const Size.fromHeight(56),
-              ),
-              child: Text(
-                _selectedItem?.category == '주민' ? '주민을 선택했어요' : '아이템을 선택했어요',
-                style: AppTextStyles.labelWithColor(
-                  AppColors.textInverse,
-                  weight: FontWeight.w800,
-                ),
-              ),
-            ),
+            _buildSubmitButton(),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSubmitButton() {
+    if (widget.multiSelectEnabled) {
+      final selectedCount = _selectedItemIds.length;
+      return FilledButton(
+        onPressed: selectedCount == 0
+            ? null
+            : () => Navigator.of(context).pop(_buildMultiSelectedItems()),
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.accentDeepOrange,
+          minimumSize: const Size.fromHeight(56),
+        ),
+        child: Text(
+          '아이템 $selectedCount개 선택 완료',
+          style: AppTextStyles.labelWithColor(
+            AppColors.textInverse,
+            weight: FontWeight.w800,
+          ),
+        ),
+      );
+    }
+
+    return FilledButton(
+      onPressed: _selectedItem == null
+          ? null
+          : () => Navigator.of(context).pop(_selectedItem),
+      style: FilledButton.styleFrom(
+        backgroundColor: AppColors.accentDeepOrange,
+        minimumSize: const Size.fromHeight(56),
+      ),
+      child: Text(
+        _selectedItem?.category == '주민' ? '주민을 선택했어요' : '아이템을 선택했어요',
+        style: AppTextStyles.labelWithColor(
+          AppColors.textInverse,
+          weight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryBatchSelector(List<CatalogItem> source) {
+    final categoryKeys = _visibleCategoryKeys
+        .where((key) => key != MarketItemPickerSheet._allCategoryKey)
+        .toList(growable: false);
+    if (categoryKeys.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final allTargets = source
+        .where((item) => _matchesCategoryKey(item, _selectedCategoryKey))
+        .toList(growable: false);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('카테고리 일괄 선택', style: AppTextStyles.captionMuted),
+        const SizedBox(height: 6),
+        SizedBox(
+          height: 34,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: categoryKeys.length + 1,
+            separatorBuilder: (context, index) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                final allSelected =
+                    allTargets.isNotEmpty &&
+                    allTargets.every(
+                      (item) => _selectedItemIds.contains(item.id),
+                    );
+                return _buildBatchChip(
+                  label: allSelected ? '현재탭 전체 해제' : '현재탭 전체 선택',
+                  selected: allSelected,
+                  onTap: () => _toggleItemsSelection(allTargets),
+                );
+              }
+
+              final key = categoryKeys[index - 1];
+              final label = MarketItemPickerSheet._categoryLabels[key] ?? '';
+              final targets = source
+                  .where((item) => _matchesCategoryKey(item, key))
+                  .toList(growable: false);
+              if (targets.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              final selectedAll = targets.every(
+                (item) => _selectedItemIds.contains(item.id),
+              );
+              return _buildBatchChip(
+                label: '$label ${selectedAll ? '해제' : '선택'}',
+                selected: selectedAll,
+                onTap: () => _toggleItemsSelection(targets),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBatchChip({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.catalogChipSelectedBg
+              : AppColors.catalogChipBg,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: selected
+                ? AppColors.accentDeepOrange
+                : AppColors.borderDefault,
+          ),
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.captionWithColor(
+            selected ? AppColors.accentDeepOrange : AppColors.textMuted,
+            weight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _toggleItemsSelection(List<CatalogItem> targets) {
+    if (targets.isEmpty) {
+      return;
+    }
+    final shouldUnselectAll = targets.every(
+      (item) => _selectedItemIds.contains(item.id),
+    );
+
+    setState(() {
+      if (shouldUnselectAll) {
+        for (final item in targets) {
+          _selectedItemIds.remove(item.id);
+        }
+      } else {
+        for (final item in targets) {
+          _selectedItemIds.add(item.id);
+        }
+      }
+    });
+  }
+
+  List<CatalogItem> _buildMultiSelectedItems() {
+    final selected = <CatalogItem>[];
+    for (final item in _allItems) {
+      if (_selectedItemIds.contains(item.id)) {
+        selected.add(item);
+      }
+    }
+    return selected;
   }
 
   Widget _buildSearchField() {
@@ -311,7 +486,15 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
       borderRadius: BorderRadius.circular(18),
       onTap: () {
         setState(() {
-          _selectedItem = item;
+          if (widget.multiSelectEnabled) {
+            if (_selectedItemIds.contains(item.id)) {
+              _selectedItemIds.remove(item.id);
+            } else {
+              _selectedItemIds.add(item.id);
+            }
+          } else {
+            _selectedItem = item;
+          }
           _expandedItemId = expanded ? '' : item.id;
         });
       },
@@ -358,20 +541,37 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                     ],
                   ),
                 ),
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: AppColors.catalogChipBg,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Icon(
-                    expanded
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
-                    color: AppColors.textSecondary,
-                    size: 26,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (widget.multiSelectEnabled) ...<Widget>[
+                      Icon(
+                        selected
+                            ? Icons.check_circle_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        size: 22,
+                        color: selected
+                            ? AppColors.accentDeepOrange
+                            : AppColors.textHint,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: AppColors.catalogChipBg,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Icon(
+                        expanded
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.textSecondary,
+                        size: 26,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -563,7 +763,11 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
   }
 
   bool _matchesSelectedCategory(CatalogItem item) {
-    switch (_selectedCategoryKey) {
+    return _matchesCategoryKey(item, _selectedCategoryKey);
+  }
+
+  bool _matchesCategoryKey(CatalogItem item, String categoryKey) {
+    switch (categoryKey) {
       case MarketItemPickerSheet._allCategoryKey:
         return true;
       case MarketItemPickerSheet._furnitureCategoryKey:
