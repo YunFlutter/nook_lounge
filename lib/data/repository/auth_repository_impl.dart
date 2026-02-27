@@ -26,4 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signOut() => _dataSource.signOut();
+
+  @override
+  Future<void> requestWithdrawal() => _dataSource.requestWithdrawal();
 }

@@ -24,4 +24,12 @@ abstract class IslandRepository {
     required String uid,
     required String islandId,
   });
+
+  Future<void> updateIslandProfile({
+    required String uid,
+    required IslandProfile profile,
+    String? passportImagePath,
+  });
+
+  Future<void> deleteIsland({required String uid, required String islandId});
 }

@@ -65,6 +65,11 @@ abstract class MarketRepository {
 
   Future<MarketTradeCodeSession?> fetchTradeCodeSession(String offerId);
 
+  Future<String?> fetchPreferredTradeDodoCode({
+    required String offerId,
+    required String senderUid,
+  });
+
   Future<void> sendTradeAcceptNotification({
     required String offerId,
     required String ownerUid,

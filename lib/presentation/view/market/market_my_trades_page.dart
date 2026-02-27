@@ -42,15 +42,19 @@ class MarketMyTradesPage extends ConsumerWidget {
     final state = ref.watch(marketViewModelProvider);
     final viewModel = ref.read(marketViewModelProvider.notifier);
     final offers = viewModel.myOffers;
+    final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
+    final bottomSpacing =
+        AppSpacing.pageHorizontal +
+        (bottomInset > 0 ? bottomInset : AppSpacing.s10);
 
     return Scaffold(
       appBar: AppBar(title: const Text('내 거래관리')),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+        padding: EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,
           AppSpacing.s10,
           AppSpacing.pageHorizontal,
-          AppSpacing.pageHorizontal,
+          bottomSpacing,
         ),
         children: <Widget>[
           AnimatedFadeSlide(
@@ -322,21 +326,36 @@ class MarketMyTradesPage extends ConsumerWidget {
                       child: _buildBottomAction(
                         icon: Icons.check_circle_rounded,
                         label: '완료',
-                        onTap: () async {
-                          final shouldComplete = await _showConfirmDialog(
-                            context: context,
-                            title: '거래 완료 처리',
-                            message: '이 거래를 완료 상태로 변경할까요?',
-                            confirmLabel: '완료',
-                          );
-                          if (shouldComplete != true) {
-                            return;
-                          }
-                          await viewModel.completeTrade(offer: offer);
-                          if (context.mounted) {
-                            _showInfo(context, '거래를 완료로 변경했어요.');
-                          }
-                        },
+                        onTap: hasAcceptedProposal
+                            ? () async {
+                                final shouldComplete = await _showConfirmDialog(
+                                  context: context,
+                                  title: '거래 완료 처리',
+                                  message: '이 거래를 완료 상태로 변경할까요?',
+                                  confirmLabel: '완료',
+                                );
+                                if (shouldComplete != true) {
+                                  return;
+                                }
+                                try {
+                                  await viewModel.completeTrade(offer: offer);
+                                } catch (_) {
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+                                  final errorMessage =
+                                      ref
+                                          .read(marketViewModelProvider)
+                                          .errorMessage ??
+                                      '거래 완료에 실패했어요. 다시 시도해 주세요.';
+                                  _showInfo(context, errorMessage);
+                                  return;
+                                }
+                                if (context.mounted) {
+                                  _showInfo(context, '거래를 완료로 변경했어요.');
+                                }
+                              }
+                            : null,
                       ),
                     ),
                   ],
@@ -438,9 +457,10 @@ class MarketMyTradesPage extends ConsumerWidget {
   Widget _buildBottomAction({
     required IconData icon,
     required String label,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
     bool expand = true,
   }) {
+    final isEnabled = onTap != null;
     final button = InkWell(
       onTap: onTap,
       child: Container(
@@ -456,9 +476,18 @@ class MarketMyTradesPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, color: AppColors.textMuted, size: 18),
+            Icon(
+              icon,
+              color: isEnabled ? AppColors.textMuted : AppColors.textHint,
+              size: 18,
+            ),
             const SizedBox(height: 3),
-            Text(label, style: AppTextStyles.captionMuted),
+            Text(
+              label,
+              style: isEnabled
+                  ? AppTextStyles.captionMuted
+                  : AppTextStyles.captionHint,
+            ),
           ],
         ),
       ),

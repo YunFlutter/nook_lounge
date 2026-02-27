@@ -112,10 +112,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                 child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               )
             else if (_errorMessage != null)
-              Text(
-                _errorMessage!,
-                style: AppTextStyles.bodySecondaryStrong,
-              )
+              Text(_errorMessage!, style: AppTextStyles.bodySecondaryStrong)
             else ...<Widget>[
               AnimatedFadeSlide(
                 delay: const Duration(milliseconds: 40),

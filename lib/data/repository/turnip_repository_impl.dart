@@ -25,10 +25,7 @@ class TurnipRepositoryImpl implements TurnipRepository {
     required String uid,
     required String islandId,
   }) {
-    return _firestoreDataSource.watchTurnipState(
-      uid: uid,
-      islandId: islandId,
-    );
+    return _firestoreDataSource.watchTurnipState(uid: uid, islandId: islandId);
   }
 
   @override

@@ -186,6 +186,17 @@ class MarketRepositoryImpl implements MarketRepository {
   }
 
   @override
+  Future<String?> fetchPreferredTradeDodoCode({
+    required String offerId,
+    required String senderUid,
+  }) {
+    return _firestoreDataSource.fetchPreferredTradeDodoCode(
+      offerId: offerId,
+      senderUid: senderUid,
+    );
+  }
+
+  @override
   Future<void> sendTradeAcceptNotification({
     required String offerId,
     required String ownerUid,

@@ -48,6 +48,24 @@ exports.sendTradeProposalPush = onCall(async (request) => {
     throw new HttpsError("permission-denied", "senderUid가 인증 사용자와 다릅니다.");
   }
 
+  const pushAllowed = await isPushEnabledForType({
+    targetUid: normalizedTargetUid,
+    type: normalizedType,
+  });
+  if (!pushAllowed) {
+    logger.info("Push skipped by user notification preference", {
+      targetUid: normalizedTargetUid,
+      offerId: normalizedOfferId,
+      type: normalizedType,
+    });
+    return {
+      ok: true,
+      sentCount: 0,
+      failCount: 0,
+      reason: "preference_disabled",
+    };
+  }
+
   const tokens = await collectUserFcmTokens(normalizedTargetUid);
   if (tokens.length === 0) {
     logger.info("No FCM tokens for target user", {
@@ -128,50 +146,104 @@ exports.sendTradeProposalPush = onCall(async (request) => {
   };
 });
 
+async function isPushEnabledForType({targetUid, type}) {
+  const preferenceField = resolveNotificationPreferenceField(type);
+  if (!preferenceField) {
+    return true;
+  }
+
+  try {
+    const prefDoc = await db
+        .collection("users")
+        .doc(targetUid)
+        .collection("settings")
+        .doc("notifications")
+        .get();
+    if (!prefDoc.exists) {
+      return true;
+    }
+
+    const data = prefDoc.data() ?? {};
+    const enabled = data[preferenceField];
+    if (typeof enabled === "boolean") {
+      return enabled;
+    }
+  } catch (error) {
+    logger.warn("Failed to read notification preference. fallback=true", {
+      targetUid,
+      type,
+      error: String(error),
+    });
+  }
+
+  return true;
+}
+
+function resolveNotificationPreferenceField(type) {
+  switch ((type ?? "").trim()) {
+    case "market_trade_proposal":
+    case "market_trade_cancel":
+    case "market_trade_complete":
+      return "tradeOfferEnabled";
+    case "market_trade_accept":
+    case "market_trade_code":
+      return "dodoCodeInviteEnabled";
+    case "airport_queue_standby":
+      return "airportQueueStandbyEnabled";
+    default:
+      return "";
+  }
+}
+
 async function collectUserFcmTokens(uid) {
   const userRef = db.collection("users").doc(uid);
 
-  const [userSnap, devicesSnap, pushTokensSnap, fcmTokensSnap] = await Promise.all([
-    userRef.get(),
-    userRef.collection("devices").get(),
-    userRef.collection("pushTokens").get(),
-    userRef.collection("fcmTokens").get(),
-  ]);
+  const fcmTokensSnap = await userRef.collection("fcmTokens").get();
 
   const tokenSet = new Set();
-
-  if (userSnap.exists) {
-    const data = userSnap.data() ?? {};
-    addToken(tokenSet, data.fcmToken);
-    addToken(tokenSet, data.pushToken);
-    addToken(tokenSet, data.deviceToken);
-
-    if (Array.isArray(data.fcmTokens)) {
-      data.fcmTokens.forEach((value) => addToken(tokenSet, value));
-    }
-    if (Array.isArray(data.pushTokens)) {
-      data.pushTokens.forEach((value) => addToken(tokenSet, value));
-    }
-  }
-
-  for (const doc of devicesSnap.docs) {
-    const data = doc.data() ?? {};
-    addToken(tokenSet, data.fcmToken);
-    addToken(tokenSet, data.token);
-    // 문서 id 자체를 토큰으로 쓰는 구조도 허용
-    addToken(tokenSet, doc.id);
-  }
-  for (const doc of pushTokensSnap.docs) {
-    const data = doc.data() ?? {};
-    addToken(tokenSet, data.fcmToken);
-    addToken(tokenSet, data.token);
-    addToken(tokenSet, doc.id);
-  }
   for (const doc of fcmTokensSnap.docs) {
     const data = doc.data() ?? {};
-    addToken(tokenSet, data.fcmToken);
     addToken(tokenSet, data.token);
     addToken(tokenSet, doc.id);
+  }
+
+  // 유지보수 포인트:
+  // 토큰 저장 구조를 users/{uid}/fcmTokens로 단일화했지만,
+  // 마이그레이션 과도기에는 레거시 필드/컬렉션을 fallback으로 허용합니다.
+  if (tokenSet.size === 0) {
+    const [userSnap, devicesSnap, pushTokensSnap] = await Promise.all([
+      userRef.get(),
+      userRef.collection("devices").get(),
+      userRef.collection("pushTokens").get(),
+    ]);
+
+    if (userSnap.exists) {
+      const data = userSnap.data() ?? {};
+      addToken(tokenSet, data.fcmtoken);
+      addToken(tokenSet, data.fcmToken);
+      addToken(tokenSet, data.pushToken);
+      addToken(tokenSet, data.deviceToken);
+
+      if (Array.isArray(data.fcmTokens)) {
+        data.fcmTokens.forEach((value) => addToken(tokenSet, value));
+      }
+      if (Array.isArray(data.pushTokens)) {
+        data.pushTokens.forEach((value) => addToken(tokenSet, value));
+      }
+    }
+
+    for (const doc of devicesSnap.docs) {
+      const data = doc.data() ?? {};
+      addToken(tokenSet, data.fcmToken);
+      addToken(tokenSet, data.token);
+      addToken(tokenSet, doc.id);
+    }
+    for (const doc of pushTokensSnap.docs) {
+      const data = doc.data() ?? {};
+      addToken(tokenSet, data.fcmToken);
+      addToken(tokenSet, data.token);
+      addToken(tokenSet, doc.id);
+    }
   }
 
   return Array.from(tokenSet);
@@ -199,8 +271,12 @@ async function cleanupInvalidTokens(uid, invalidTokens) {
   const batch = db.batch();
 
   batch.set(userRef, {
+    fcmtoken: FieldValue.delete(),
+    fcmToken: FieldValue.delete(),
     fcmTokens: FieldValue.arrayRemove(...invalidTokens),
+    pushToken: FieldValue.delete(),
     pushTokens: FieldValue.arrayRemove(...invalidTokens),
+    deviceToken: FieldValue.delete(),
   }, {merge: true});
 
   for (const token of invalidTokens) {

@@ -6,8 +6,10 @@ import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
+import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
-import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
+import 'package:nook_lounge_app/presentation/view/airport/airport_rules_edit_page.dart';
+import 'package:nook_lounge_app/presentation/view/airport/airport_tab_page.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
@@ -15,6 +17,8 @@ import 'package:nook_lounge_app/presentation/view/home/island_switch_sheet.dart'
 import 'package:nook_lounge_app/presentation/view/market/market_tab_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_realtime_listener.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_page.dart';
+import 'package:nook_lounge_app/presentation/view/settings/user_notification_page.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_page.dart';
 
 class HomeShellPage extends ConsumerWidget {
@@ -104,15 +108,59 @@ class HomeShellPage extends ConsumerWidget {
     WidgetRef ref,
     String selectedIslandId,
   ) {
+    if (tabIndex == 0) {
+      final airportArgs = (uid: uid, islandId: selectedIslandId);
+      final airportState = selectedIslandId.trim().isEmpty
+          ? null
+          : ref.watch(airportViewModelProvider(airportArgs));
+      final editableRules =
+          airportState?.session?.rules ?? AirportSession.defaultRules;
+
+      return AppBar(
+        centerTitle: false,
+        titleSpacing: AppSpacing.pageHorizontal,
+        title: _buildStaticHomeStyleTitle('비행장 관리'),
+        actions: <Widget>[
+          TextButton.icon(
+            onPressed: selectedIslandId.trim().isEmpty
+                ? null
+                : () async {
+                    final nextRules = await Navigator.of(context).push<String>(
+                      MaterialPageRoute<String>(
+                        builder: (_) =>
+                            AirportRulesEditPage(initialRules: editableRules),
+                      ),
+                    );
+                    if (nextRules == null || nextRules.trim().isEmpty) {
+                      return;
+                    }
+                    await ref
+                        .read(airportViewModelProvider(airportArgs).notifier)
+                        .updateRules(nextRules);
+                  },
+            icon: const Icon(Icons.edit_square, size: 18),
+            label: const Text('규칙편집'),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.textSecondary,
+              textStyle: AppTextStyles.captionSecondary,
+            ),
+          ),
+          _buildNotificationAction(context),
+          _buildSettingsAction(context),
+          const SizedBox(width: 6),
+        ],
+      );
+    }
+
     if (tabIndex == 3) {
       return AppBar(
-        title: const Text('도감 관리'),
+        centerTitle: false,
+        titleSpacing: AppSpacing.pageHorizontal,
+        title: _buildStaticHomeStyleTitle('도감 관리'),
         actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications),
-            tooltip: '알림',
-          ),
+          _buildNotificationAction(context),
+          _buildSettingsAction(context),
+          const SizedBox(width: 6),
         ],
       );
     }
@@ -170,13 +218,11 @@ class HomeShellPage extends ConsumerWidget {
           ),
         ),
         actions: <Widget>[
+          _buildNotificationAction(context),
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications, color: AppColors.textPrimary),
-            tooltip: '알림',
-          ),
-          IconButton(
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => SettingsPage(uid: uid)),
+            ),
             icon: const Icon(Icons.settings, color: AppColors.textPrimary),
             tooltip: '설정',
           ),
@@ -189,7 +235,7 @@ class HomeShellPage extends ConsumerWidget {
       return AppBar(
         centerTitle: false,
         titleSpacing: AppSpacing.pageHorizontal,
-        title: const Text('너굴 마켓'),
+        title: _buildStaticHomeStyleTitle('너굴 마켓'),
         actions: <Widget>[
           IconButton(
             onPressed: () => MarketTabPage.openMyTradesPage(context),
@@ -199,7 +245,9 @@ class HomeShellPage extends ConsumerWidget {
             ),
             tooltip: '내 거래관리',
           ),
-          const SizedBox(width: 10),
+          _buildNotificationAction(context),
+          _buildSettingsAction(context),
+          const SizedBox(width: 6),
         ],
       );
     }
@@ -250,10 +298,49 @@ class HomeShellPage extends ConsumerWidget {
     );
   }
 
+  Widget _buildStaticHomeStyleTitle(String title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.borderDefault),
+      ),
+      child: Text(
+        title,
+        style: AppTextStyles.bodyWithSize(
+          16,
+          color: AppColors.textPrimary,
+          weight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationAction(BuildContext context) {
+    return IconButton(
+      onPressed: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => UserNotificationPage(uid: uid)),
+      ),
+      icon: const Icon(Icons.notifications, color: AppColors.textPrimary),
+      tooltip: '알림',
+    );
+  }
+
+  Widget _buildSettingsAction(BuildContext context) {
+    return IconButton(
+      onPressed: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute<void>(builder: (_) => SettingsPage(uid: uid))),
+      icon: const Icon(Icons.settings, color: AppColors.textPrimary),
+      tooltip: '설정',
+    );
+  }
+
   Widget _buildTabBody(int tabIndex, WidgetRef ref, String selectedIslandId) {
     switch (tabIndex) {
       case 0:
-        return _buildAirportTab();
+        return _buildAirportTab(selectedIslandId);
       case 1:
         return _buildMarketTab();
       case 2:
@@ -267,25 +354,8 @@ class HomeShellPage extends ConsumerWidget {
     }
   }
 
-  Widget _buildAirportTab() {
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: <Widget>[
-        AnimatedFadeSlide(
-          child: Text('비행장 관리', style: AppTextStyles.dialogTitleWithSize(28)),
-        ),
-        const SizedBox(height: 12),
-        AnimatedFadeSlide(
-          delay: const Duration(milliseconds: 40),
-          child: Card(
-            child: ListTile(
-              title: const Text('게이트 상태'),
-              subtitle: const Text('방문객에게 열림 / 도도코드 관리'),
-            ),
-          ),
-        ),
-      ],
-    );
+  Widget _buildAirportTab(String selectedIslandId) {
+    return AirportTabPage(uid: uid, islandId: selectedIslandId);
   }
 
   Widget _buildMarketTab() {

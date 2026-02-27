@@ -104,4 +104,11 @@ class AppColors {
   static const Color marketTouchFlooring = Color(0xFF3D7BE2);
   static const Color marketTouchMusic = Color(0xFF8F50E2);
   static const Color marketTouchFashion = Color(0xFFF2649A);
+
+  // Settings
+  static const Color settingsPrimaryButton = Color(0xFF82CAE6);
+  static const Color settingsPrimaryButtonPressed = Color(0xFF68B9D7);
+  static const Color settingsOverlay = Color(0x66000000);
+  static const Color settingsSuccessIcon = Color(0xFFF2CB7C);
+  static const Color settingsWarning = Color(0xFFD66D6D);
 }

@@ -53,11 +53,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentOffer = _resolveCurrentOffer(ref);
     final viewModel = ref.read(marketViewModelProvider.notifier);
     final currentUid = viewModel.currentUserId;
     final isMine =
-        offer.isMine ||
-        (currentUid.isNotEmpty && offer.ownerUid.trim() == currentUid);
+        currentOffer.isMine ||
+        (currentUid.isNotEmpty && currentOffer.ownerUid.trim() == currentUid);
 
     return Scaffold(
       appBar: AppBar(
@@ -162,23 +163,64 @@ class MarketOfferDetailPage extends ConsumerWidget {
             10,
           ),
           child: isMine
-              ? _buildOwnerBottomActions(context, ref)
+              ? _buildOwnerBottomActions(
+                  context,
+                  ref,
+                  currentOffer: currentOffer,
+                )
               : _buildVisitorBottomActions(
                   context,
                   ref,
                   currentUid: currentUid,
+                  currentOffer: currentOffer,
                 ),
         ),
       ),
     );
   }
 
+  MarketOffer _resolveCurrentOffer(WidgetRef ref) {
+    final offers = ref.watch(
+      marketViewModelProvider.select((state) {
+        return state.offers;
+      }),
+    );
+    for (final item in offers) {
+      if (item.id == offer.id) {
+        return item;
+      }
+    }
+    return offer;
+  }
+
+  bool _isInactiveOffer(MarketOffer target) {
+    final isCompleted =
+        target.lifecycle == MarketLifecycleTab.completed ||
+        target.status == MarketOfferStatus.closed;
+    final isCancelled =
+        target.lifecycle == MarketLifecycleTab.cancelled ||
+        target.status == MarketOfferStatus.offline;
+    return isCompleted || isCancelled;
+  }
+
+  bool _isCancelledOffer(MarketOffer target) {
+    return target.lifecycle == MarketLifecycleTab.cancelled ||
+        target.status == MarketOfferStatus.offline;
+  }
+
+  bool _isCompletedOfferByStatus(MarketOffer target) {
+    return target.lifecycle == MarketLifecycleTab.completed ||
+        target.status == MarketOfferStatus.closed;
+  }
+
   Widget _buildVisitorBottomActions(
     BuildContext context,
     WidgetRef ref, {
     required String currentUid,
+    required MarketOffer currentOffer,
   }) {
-    if (_isCompletedOffer) {
+    if (_isInactiveOffer(currentOffer)) {
+      final title = _isCancelledOffer(currentOffer) ? '취소된 거래예요' : '완료된 거래예요';
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -189,7 +231,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               disabledBackgroundColor: AppColors.catalogChipBg,
               minimumSize: const Size.fromHeight(58),
             ),
-            child: Text('완료된 거래예요', style: AppTextStyles.buttonPrimary),
+            child: Text(title, style: AppTextStyles.buttonPrimary),
           ),
           const SizedBox(height: 10),
           OutlinedButton(
@@ -221,6 +263,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     VoidCallback? primaryOnPressed = () => _onTapTradeProposal(context, ref);
     var secondaryLabel = '닫기';
     VoidCallback? secondaryOnPressed = () => Navigator.of(context).pop();
+    final canCancelTrade = !_isInactiveOffer(currentOffer);
 
     if (myProposalAsync.isLoading) {
       primaryLabel = '제안 상태 확인 중...';
@@ -235,14 +278,16 @@ class MarketOfferDetailPage extends ConsumerWidget {
           primaryLabel = '제안 대기중';
           primaryBackground = AppColors.catalogChipBg;
           primaryOnPressed = null;
-          secondaryLabel = '거래 취소';
-          secondaryOnPressed = () => _cancelTradeAsParticipant(
-            context,
-            ref,
-            hasAcceptedProposal: false,
-          );
+          secondaryLabel = canCancelTrade ? '거래 취소' : '닫기';
+          secondaryOnPressed = canCancelTrade
+              ? () => _cancelTradeAsParticipant(
+                  context,
+                  ref,
+                  hasAcceptedProposal: false,
+                )
+              : () => Navigator.of(context).pop();
         case MarketTradeProposalStatus.accepted:
-          if (_isCompletedOffer) {
+          if (!canCancelTrade) {
             primaryLabel = '거래 종료';
             primaryBackground = AppColors.catalogChipBg;
             primaryOnPressed = null;
@@ -251,17 +296,25 @@ class MarketOfferDetailPage extends ConsumerWidget {
           } else {
             primaryLabel = '코드 확인하기';
             primaryOnPressed = () => _openTradeCodePage(context, ref);
-            secondaryLabel = '거래 취소';
-            secondaryOnPressed = () => _cancelTradeAsParticipant(
-              context,
-              ref,
-              hasAcceptedProposal: true,
-            );
+            secondaryLabel = canCancelTrade ? '거래 취소' : '닫기';
+            secondaryOnPressed = canCancelTrade
+                ? () => _cancelTradeAsParticipant(
+                    context,
+                    ref,
+                    hasAcceptedProposal: true,
+                  )
+                : () => Navigator.of(context).pop();
           }
         case MarketTradeProposalStatus.rejected:
+          primaryLabel = '거절된 제안';
+          primaryBackground = AppColors.catalogChipBg;
+          primaryOnPressed = null;
+          secondaryLabel = '닫기';
+          secondaryOnPressed = () => Navigator.of(context).pop();
         case MarketTradeProposalStatus.cancelled:
-          primaryLabel = '다시 제안하기';
-          primaryOnPressed = () => _onTapTradeProposal(context, ref);
+          primaryLabel = '취소된 제안';
+          primaryBackground = AppColors.catalogChipBg;
+          primaryOnPressed = null;
           secondaryLabel = '닫기';
           secondaryOnPressed = () => Navigator.of(context).pop();
         case null:
@@ -299,17 +352,30 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildOwnerBottomActions(BuildContext context, WidgetRef ref) {
-    if (_isCompletedOffer) {
+  Widget _buildOwnerBottomActions(
+    BuildContext context,
+    WidgetRef ref, {
+    required MarketOffer currentOffer,
+  }) {
+    if (_isCompletedOfferByStatus(currentOffer)) {
       return const SizedBox.shrink();
     }
 
-    final bool canCancelTrade = offer.lifecycle == MarketLifecycleTab.ongoing;
+    final bool canCancelTrade =
+        currentOffer.lifecycle == MarketLifecycleTab.ongoing &&
+        !_isCancelledOffer(currentOffer);
+    final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
+    final hasAcceptedProposal =
+        proposalsAsync.valueOrNull?.any(
+          (proposal) => proposal.status == MarketTradeProposalStatus.accepted,
+        ) ??
+        false;
+    final canCompleteTrade = canCancelTrade && hasAcceptedProposal;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         FilledButton(
-          onPressed: canCancelTrade
+          onPressed: canCompleteTrade
               ? () => _completeMyOffer(context, ref)
               : null,
           style: FilledButton.styleFrom(
@@ -1025,11 +1091,14 @@ class MarketOfferDetailPage extends ConsumerWidget {
       if (!context.mounted) {
         return;
       }
+      final errorMessage =
+          ref.read(marketViewModelProvider).errorMessage ??
+          '거래 진행을 시작하지 못했어요. 다시 시도해 주세요.';
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('거래 진행을 시작하지 못했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: Text(errorMessage),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1689,9 +1758,27 @@ class MarketOfferDetailPage extends ConsumerWidget {
     if (shouldComplete != true || !context.mounted) {
       return;
     }
-    await ref
-        .read(marketViewModelProvider.notifier)
-        .completeTrade(offer: offer);
+    try {
+      await ref
+          .read(marketViewModelProvider.notifier)
+          .completeTrade(offer: offer);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      final errorMessage =
+          ref.read(marketViewModelProvider).errorMessage ??
+          '거래 완료에 실패했어요. 다시 시도해 주세요.';
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
     if (!context.mounted) {
       return;
     }

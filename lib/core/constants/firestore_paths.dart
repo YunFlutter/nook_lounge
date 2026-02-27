@@ -11,7 +11,15 @@ class FirestorePaths {
   static String homeSummary(String uid, String islandId) =>
       'users/$uid/homeSummaries/$islandId';
 
+  static String airportQueues() => 'airportQueues';
+
   static String airportQueue(String islandId) => 'airportQueues/$islandId';
+
+  static String airportRequests(String islandId) =>
+      '${airportQueue(islandId)}/requests';
+
+  static String airportRequest(String islandId, String requestId) =>
+      '${airportRequests(islandId)}/$requestId';
 
   static String marketPost(String postId) => 'marketPosts/$postId';
 
@@ -57,4 +65,24 @@ class FirestorePaths {
 
   static String hiddenMarketOffer(String uid, String offerId) =>
       '${hiddenMarketOffers(uid)}/$offerId';
+
+  static String userSettings(String uid) => 'users/$uid/settings';
+
+  static String userSetting(String uid, String settingId) =>
+      '${userSettings(uid)}/$settingId';
+
+  static String userSupportInquiries(String uid) =>
+      'users/$uid/supportInquiries';
+
+  static String userSupportInquiry(String uid, String inquiryId) =>
+      '${userSupportInquiries(uid)}/$inquiryId';
+
+  static String appNotices() => 'appNotices';
+
+  static String appNotice(String noticeId) => '${appNotices()}/$noticeId';
+
+  static String appDocuments() => 'appDocuments';
+
+  static String appDocument(String documentId) =>
+      '${appDocuments()}/$documentId';
 }

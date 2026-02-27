@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
+import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
@@ -29,13 +31,40 @@ class MarketRealtimeListener extends ConsumerStatefulWidget {
 
 class _MarketRealtimeListenerState
     extends ConsumerState<MarketRealtimeListener> {
+  static const Duration _realtimeDuplicateWindow = Duration(minutes: 10);
+  static const Duration _realtimeLookbackWindow = Duration(hours: 6);
+
   final Queue<MarketUserNotification> _pendingQueue =
       Queue<MarketUserNotification>();
   final Set<String> _handledNotificationIds = <String>{};
+  final Map<String, DateTime> _handledEventAtByKey = <String, DateTime>{};
+  SettingsNotificationPreferences _notificationPreferences =
+      SettingsNotificationPreferences.defaults;
+  bool _notificationPrefsReady = false;
   bool _isHandlingNotification = false;
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<SettingsNotificationPreferences>>(
+      settingsNotificationPreferencesProvider(widget.uid),
+      (previous, next) {
+        next.when(
+          data: (prefs) {
+            _notificationPreferences = prefs;
+            _notificationPrefsReady = true;
+            _removeDisabledNotificationsFromQueue();
+            _handleNextNotification();
+          },
+          error: (error, stackTrace) {
+            _notificationPreferences = SettingsNotificationPreferences.defaults;
+            _notificationPrefsReady = true;
+            _removeDisabledNotificationsFromQueue();
+            _handleNextNotification();
+          },
+          loading: () {},
+        );
+      },
+    );
     ref.listen<AsyncValue<List<MarketUserNotification>>>(
       marketUserNotificationsProvider(widget.uid),
       (previous, next) {
@@ -49,7 +78,18 @@ class _MarketRealtimeListenerState
     if (!mounted) {
       return;
     }
-    for (final notification in notifications) {
+    if (!_notificationPrefsReady) {
+      return;
+    }
+    final now = DateTime.now();
+    _pruneHandledEventCache(now);
+    final queuedEventKeys = _pendingQueue.map(_notificationEventKey).toSet();
+    final duplicateIdsToAutoRead = <String>[];
+
+    final sorted = notifications.toList(growable: false)
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    for (final notification in sorted) {
       if (notification.isRead) {
         continue;
       }
@@ -62,8 +102,37 @@ class _MarketRealtimeListenerState
       if (_handledNotificationIds.contains(notification.id)) {
         continue;
       }
+      if (!_isRealtimeModalEnabled(notification)) {
+        _handledNotificationIds.add(notification.id);
+        continue;
+      }
+
+      // 유지보수 포인트:
+      // 실시간 모달은 "지금 들어온 이벤트" 중심으로만 노출해
+      // 오래된 미열람 알림이 앱 진입 시 연속 팝업되는 문제를 막습니다.
+      if (now.difference(notification.createdAt) > _realtimeLookbackWindow) {
+        _handledNotificationIds.add(notification.id);
+        continue;
+      }
+
+      final eventKey = _notificationEventKey(notification);
+      final handledAt = _handledEventAtByKey[eventKey];
+      final isDuplicatedEvent =
+          queuedEventKeys.contains(eventKey) ||
+          (handledAt != null &&
+              now.difference(handledAt) <= _realtimeDuplicateWindow);
+      if (isDuplicatedEvent) {
+        _handledNotificationIds.add(notification.id);
+        duplicateIdsToAutoRead.add(notification.id);
+        continue;
+      }
+
       _handledNotificationIds.add(notification.id);
+      queuedEventKeys.add(eventKey);
       _pendingQueue.add(notification);
+    }
+    if (duplicateIdsToAutoRead.isNotEmpty) {
+      unawaited(_markManyAsRead(duplicateIdsToAutoRead));
     }
     _handleNextNotification();
   }
@@ -77,8 +146,13 @@ class _MarketRealtimeListenerState
     try {
       while (mounted && _pendingQueue.isNotEmpty) {
         final notification = _pendingQueue.removeFirst();
+        if (!_isRealtimeModalEnabled(notification)) {
+          continue;
+        }
         await _showNotificationModal(notification);
         await _markAsRead(notification.id);
+        _handledEventAtByKey[_notificationEventKey(notification)] =
+            DateTime.now();
       }
     } finally {
       _isHandlingNotification = false;
@@ -97,6 +171,13 @@ class _MarketRealtimeListenerState
       return;
     }
 
+    if (notification.isTradeCode) {
+      // 유지보수 포인트:
+      // 요청사항에 맞춰 "도도 코드 도착" 실시간 모달은 노출하지 않습니다.
+      // 상위 큐에서 읽음 처리는 그대로 수행되어 중복 재노출을 방지합니다.
+      return;
+    }
+
     final offer = await ref
         .read(marketRepositoryProvider)
         .fetchOfferById(notification.offerId);
@@ -111,15 +192,6 @@ class _MarketRealtimeListenerState
 
     if (notification.isTradeAccept) {
       await _showAcceptNotificationDialog(
-        notification: notification,
-        offer: offer,
-        session: session,
-      );
-      return;
-    }
-
-    if (notification.isTradeCode) {
-      await _showCodeNotificationDialog(
         notification: notification,
         offer: offer,
         session: session,
@@ -282,59 +354,6 @@ class _MarketRealtimeListenerState
     );
   }
 
-  Future<void> _showCodeNotificationDialog({
-    required MarketUserNotification notification,
-    required MarketOffer? offer,
-    required MarketTradeCodeSession? session,
-  }) async {
-    final tradeCode = notification.tradeCode.trim().isNotEmpty
-        ? notification.tradeCode.trim()
-        : (session?.code.trim() ?? '');
-    final codeMessage = tradeCode.isEmpty ? '' : '\n도도 코드: $tradeCode';
-    final shouldComplete = await _showRealtimeDialog(
-      title: notification.title.isEmpty ? '도도 코드가 도착했어요' : notification.title,
-      message:
-          '${notification.body.isEmpty ? '상대가 도도 코드를 보냈어요.' : notification.body}$codeMessage',
-      confirmLabel: '거래 완료하기',
-      cancelLabel: '나중에',
-      emphasizeCode: tradeCode,
-    );
-    if (shouldComplete != true || !mounted || offer == null) {
-      return;
-    }
-
-    try {
-      await ref
-          .read(marketViewModelProvider.notifier)
-          .completeTrade(offer: offer);
-    } catch (_) {
-      if (!mounted) {
-        return;
-      }
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('거래 완료 처리에 실패했어요. 상세에서 다시 시도해 주세요.'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      return;
-    }
-
-    if (!mounted) {
-      return;
-    }
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('거래를 완료 처리했어요.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-  }
-
   Future<void> _showCancelNotificationDialog({
     required MarketUserNotification notification,
     required MarketOffer? offer,
@@ -387,6 +406,59 @@ class _MarketRealtimeListenerState
       // 유지보수 포인트:
       // 읽음 처리 실패는 UX를 막지 않고 다음 알림 처리로 진행합니다.
     }
+  }
+
+  Future<void> _markManyAsRead(List<String> notificationIds) async {
+    for (final id in notificationIds) {
+      await _markAsRead(id);
+    }
+  }
+
+  String _notificationEventKey(MarketUserNotification notification) {
+    final offerId = notification.offerId.trim();
+    final senderUid = notification.senderUid.trim();
+    if (notification.isTradeCode) {
+      final tradeCode = notification.tradeCode.trim().toUpperCase();
+      return '${notification.type}|$offerId|$senderUid|$tradeCode';
+    }
+    return '${notification.type}|$offerId|$senderUid';
+  }
+
+  void _pruneHandledEventCache(DateTime now) {
+    final expiredKeys = <String>[];
+    _handledEventAtByKey.forEach((key, handledAt) {
+      if (now.difference(handledAt) > _realtimeDuplicateWindow) {
+        expiredKeys.add(key);
+      }
+    });
+    for (final key in expiredKeys) {
+      _handledEventAtByKey.remove(key);
+    }
+  }
+
+  bool _isRealtimeModalEnabled(MarketUserNotification notification) {
+    if (notification.isTradeProposal || notification.isTradeCancel) {
+      return _notificationPreferences.tradeOfferEnabled;
+    }
+    if (notification.isTradeAccept || notification.isTradeCode) {
+      return _notificationPreferences.dodoCodeInviteEnabled;
+    }
+    return true;
+  }
+
+  void _removeDisabledNotificationsFromQueue() {
+    if (_pendingQueue.isEmpty) {
+      return;
+    }
+    final enabledNotifications = _pendingQueue
+        .where(_isRealtimeModalEnabled)
+        .toList(growable: false);
+    if (enabledNotifications.length == _pendingQueue.length) {
+      return;
+    }
+    _pendingQueue
+      ..clear()
+      ..addAll(enabledNotifications);
   }
 
   Future<bool?> _showRealtimeDialog({

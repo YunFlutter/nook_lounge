@@ -211,10 +211,18 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         requesterUid: requesterUid,
         offerTitle: normalizedTitle,
       );
-    } catch (_) {
+    } catch (error) {
+      final errorCode = _readStateErrorCode(error);
+      final errorMessage =
+          errorCode == 'trade_complete_no_active_proposal' ||
+              errorCode == 'trade_complete_unavailable'
+          ? '거래가 취소되었거나 상대가 없어 완료할 수 없어요.'
+          : errorCode == 'trade_complete_permission_denied'
+          ? '거래 당사자만 완료할 수 있어요.'
+          : '거래 완료 처리에 실패했어요.';
       state = state.copyWith(
         offers: _sortOffersForDisplay(previous),
-        errorMessage: '거래 완료 처리에 실패했어요.',
+        errorMessage: errorMessage,
       );
       rethrow;
     }
@@ -288,12 +296,23 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         ? offer.wantItemName.trim()
         : offer.title.trim();
 
-    await _repository.sendTradeProposalNotification(
-      offerId: offer.id,
-      ownerUid: offer.ownerUid,
-      proposerUid: proposerUid,
-      offerTitle: normalizedTitle,
-    );
+    try {
+      await _repository.sendTradeProposalNotification(
+        offerId: offer.id,
+        ownerUid: offer.ownerUid,
+        proposerUid: proposerUid,
+        offerTitle: normalizedTitle,
+      );
+    } catch (error) {
+      final errorCode = _readStateErrorCode(error);
+      final errorMessage = errorCode == 'trade_reproposal_not_allowed'
+          ? '해당 거래는 다시 제안할 수 없어요.'
+          : errorCode == 'trade_proposal_already_exists'
+          ? '이미 제안을 보냈어요. 응답을 기다려 주세요.'
+          : '거래 제안을 보내지 못했어요.';
+      state = state.copyWith(errorMessage: errorMessage);
+      rethrow;
+    }
 
     state = state.copyWith(errorMessage: null);
   }
@@ -349,10 +368,6 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       state = state.copyWith(errorMessage: '로그인 후 코드를 보낼 수 있어요.');
       throw StateError('unauthenticated');
     }
-    if (receiverUid.trim().isEmpty) {
-      state = state.copyWith(errorMessage: '코드 수신 대상을 찾지 못했어요.');
-      throw StateError('invalid_code_receiver');
-    }
     await _repository.sendTradeCode(
       offerId: offer.id,
       senderUid: senderUid,
@@ -365,6 +380,17 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
 
   Future<MarketTradeCodeSession?> fetchTradeCodeSession(String offerId) {
     return _repository.fetchTradeCodeSession(offerId);
+  }
+
+  Future<String?> fetchPreferredTradeDodoCode({required String offerId}) async {
+    final senderUid = currentUserId.trim();
+    if (senderUid.isEmpty) {
+      return null;
+    }
+    return _repository.fetchPreferredTradeDodoCode(
+      offerId: offerId,
+      senderUid: senderUid,
+    );
   }
 
   Future<void> cancelTrade({required MarketOffer offer}) async {
@@ -544,6 +570,13 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       return 1;
     }
     return 0;
+  }
+
+  String _readStateErrorCode(Object error) {
+    if (error is StateError) {
+      return error.message.toString();
+    }
+    return '';
   }
 
   @override

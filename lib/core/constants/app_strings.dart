@@ -6,4 +6,5 @@ class AppStrings {
   static const String guestLogin = '비회원 둘러보기';
   static const String googleLogin = '구글로 로그인하기';
   static const String appleLogin = '애플로 로그인하기';
+  static const String appVersion = '0.1.0';
 }

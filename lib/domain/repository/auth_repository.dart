@@ -11,4 +11,6 @@ abstract class AuthRepository {
   Future<void> signInAnonymously();
 
   Future<void> signOut();
+
+  Future<void> requestWithdrawal();
 }

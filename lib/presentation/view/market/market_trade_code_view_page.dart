@@ -87,7 +87,7 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
               Text('도도 코드', style: AppTextStyles.captionMuted),
               const SizedBox(height: 8),
               Text(
-                hasCode ? session.code : '------',
+                hasCode ? session.code : '-----',
                 style: AppTextStyles.bodyWithSize(
                   34,
                   color: AppColors.textPrimary,

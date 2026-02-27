@@ -12,11 +12,10 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
     required TurnipRepository repository,
     required String uid,
     required String islandId,
-  })
-    : _repository = repository,
-      _uid = uid,
-      _islandId = islandId,
-      super(const TurnipViewState()) {
+  }) : _repository = repository,
+       _uid = uid,
+       _islandId = islandId,
+       super(const TurnipViewState()) {
     if (islandId.isEmpty) {
       return;
     }

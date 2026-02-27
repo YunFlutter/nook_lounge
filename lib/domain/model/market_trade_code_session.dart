@@ -20,7 +20,15 @@ sealed class MarketTradeCodeSession with _$MarketTradeCodeSession {
     required DateTime updatedAt,
   }) = _MarketTradeCodeSession;
 
-  bool get hasCode => code.trim().length == 6;
+  bool get hasCode {
+    final normalized = code.trim().toUpperCase();
+    if (normalized.length != 5) {
+      return false;
+    }
+    final hasUpper = RegExp(r'[A-Z]').hasMatch(normalized);
+    final hasDigit = RegExp(r'\d').hasMatch(normalized);
+    return hasUpper && hasDigit;
+  }
 
   bool isCodeSender(String uid) {
     final normalized = uid.trim();

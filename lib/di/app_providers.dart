@@ -6,36 +6,48 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nook_lounge_app/data/datasource/catalog_state_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/airport_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/island_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/settings_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/service/push_message_service.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
+import 'package:nook_lounge_app/data/repository/airport_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/catalog_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/island_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/market_repository_impl.dart';
+import 'package:nook_lounge_app/data/repository/settings_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/turnip_repository_impl.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
+import 'package:nook_lounge_app/domain/repository/airport_repository.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
 import 'package:nook_lounge_app/domain/repository/island_repository.dart';
 import 'package:nook_lounge_app/domain/repository/market_repository.dart';
+import 'package:nook_lounge_app/domain/repository/settings_repository.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
+import 'package:nook_lounge_app/domain/model/settings_document.dart';
+import 'package:nook_lounge_app/domain/model/settings_notice.dart';
+import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
+import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
 import 'package:nook_lounge_app/presentation/state/catalog_search_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/home_shell_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/market_view_state.dart';
+import 'package:nook_lounge_app/presentation/state/airport_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/push_offer_intent_notifier.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
 import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
+import 'package:nook_lounge_app/presentation/viewmodel/airport_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/catalog_search_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/catalog_binding_view_model.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/create_island_view_model.dart';
@@ -134,6 +146,19 @@ final marketStorageDataSourceProvider = Provider<MarketStorageDataSource>((
   return MarketStorageDataSource(storage: ref.watch(firebaseStorageProvider));
 });
 
+final settingsFirestoreDataSourceProvider =
+    Provider<SettingsFirestoreDataSource>((ref) {
+      return SettingsFirestoreDataSource(
+        firestore: ref.watch(firestoreProvider),
+      );
+    });
+
+final airportFirestoreDataSourceProvider = Provider<AirportFirestoreDataSource>(
+  (ref) {
+    return AirportFirestoreDataSource(firestore: ref.watch(firestoreProvider));
+  },
+);
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
@@ -165,6 +190,18 @@ final marketRepositoryProvider = Provider<MarketRepository>((ref) {
   return MarketRepositoryImpl(
     firestoreDataSource: ref.watch(marketFirestoreDataSourceProvider),
     storageDataSource: ref.watch(marketStorageDataSourceProvider),
+  );
+});
+
+final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
+  return SettingsRepositoryImpl(
+    dataSource: ref.watch(settingsFirestoreDataSourceProvider),
+  );
+});
+
+final airportRepositoryProvider = Provider<AirportRepository>((ref) {
+  return AirportRepositoryImpl(
+    dataSource: ref.watch(airportFirestoreDataSourceProvider),
   );
 });
 
@@ -238,6 +275,19 @@ final marketViewModelProvider =
       );
     });
 
+final airportViewModelProvider =
+    StateNotifierProvider.family<
+      AirportViewModel,
+      AirportViewState,
+      ({String uid, String islandId})
+    >((ref, args) {
+      return AirportViewModel(
+        repository: ref.watch(airportRepositoryProvider),
+        uid: args.uid,
+        islandId: args.islandId,
+      );
+    });
+
 final marketTradeCodeSessionProvider =
     StreamProvider.family<MarketTradeCodeSession?, String>((ref, offerId) {
       return ref.watch(marketRepositoryProvider).watchTradeCodeSession(offerId);
@@ -264,4 +314,25 @@ final marketMyTradeProposalProvider =
 final marketUserNotificationsProvider =
     StreamProvider.family<List<MarketUserNotification>, String>((ref, uid) {
       return ref.watch(marketRepositoryProvider).watchUserNotifications(uid);
+    });
+
+final settingsNotificationPreferencesProvider =
+    StreamProvider.family<SettingsNotificationPreferences, String>((ref, uid) {
+      return ref
+          .watch(settingsRepositoryProvider)
+          .watchNotificationPreferences(uid: uid);
+    });
+
+final settingsNoticesProvider = StreamProvider<List<SettingsNotice>>((ref) {
+  return ref.watch(settingsRepositoryProvider).watchNotices();
+});
+
+final settingsDocumentProvider =
+    StreamProvider.family<SettingsDocument, SettingsDocumentType>((ref, type) {
+      return ref.watch(settingsRepositoryProvider).watchDocument(type);
+    });
+
+final settingsInquiriesProvider =
+    StreamProvider.family<List<SupportInquiry>, String>((ref, uid) {
+      return ref.watch(settingsRepositoryProvider).watchInquiries(uid: uid);
     });

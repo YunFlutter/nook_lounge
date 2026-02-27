@@ -15,6 +15,22 @@ class NookLoungeApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       showSemanticsDebugger: false,
       theme: AppTheme.light(),
+      builder: (context, child) {
+        final scaffoldBackground = Theme.of(context).scaffoldBackgroundColor;
+        return ColoredBox(
+          color: scaffoldBackground,
+          child: SafeArea(
+            // 안드로이드 시스템 바텀 네비게이션 영역과 겹치지 않도록
+            // 앱 전체를 한 번 감싸서 하단 인셋을 공통 적용한다.
+            top: false,
+            left: false,
+            right: false,
+            bottom: true,
+            maintainBottomViewPadding: true,
+            child: child ?? const SizedBox.shrink(),
+          ),
+        );
+      },
       routerConfig: router,
     );
   }

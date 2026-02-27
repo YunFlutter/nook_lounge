@@ -142,10 +142,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  child: Text(
-                    '섬으로 입장하기',
-                    style: AppTextStyles.buttonPrimary,
-                  ),
+                  child: Text('섬으로 입장하기', style: AppTextStyles.buttonPrimary),
                 ),
               ),
               const SizedBox(height: AppSpacing.s10 * 2),

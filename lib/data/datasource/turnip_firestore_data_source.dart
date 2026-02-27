@@ -18,25 +18,25 @@ class TurnipFirestoreDataSource {
         .doc(FirestorePaths.turnipState(uid, islandId: islandId))
         .snapshots()
         .map((doc) {
-      if (!doc.exists) {
-        return null;
-      }
-      final data = doc.data();
-      if (data == null) {
-        return null;
-      }
-      try {
-        return TurnipSavedData.fromMap(data);
-      } catch (error, stackTrace) {
-        developer.log(
-          '[TurnipFirestoreDataSource] invalid saved data. doc=${doc.reference.path}',
-          error: error,
-          stackTrace: stackTrace,
-          name: 'turnip',
-        );
-        return null;
-      }
-    });
+          if (!doc.exists) {
+            return null;
+          }
+          final data = doc.data();
+          if (data == null) {
+            return null;
+          }
+          try {
+            return TurnipSavedData.fromMap(data);
+          } catch (error, stackTrace) {
+            developer.log(
+              '[TurnipFirestoreDataSource] invalid saved data. doc=${doc.reference.path}',
+              error: error,
+              stackTrace: stackTrace,
+              name: 'turnip',
+            );
+            return null;
+          }
+        });
   }
 
   Future<void> saveTurnipState({

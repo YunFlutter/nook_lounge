@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_collection_page.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/airport/widgets/airport_gate_pill_toggle.dart';
 import 'package:nook_lounge_app/presentation/view/home/wish_list_page.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_legend_dot.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_prediction_chart.dart';
@@ -32,10 +34,6 @@ final homeDashboardPrimaryIslandIdProvider = StreamProvider.autoDispose
     .family<String?, String>((ref, uid) {
       return ref.watch(islandRepositoryProvider).watchPrimaryIslandId(uid);
     });
-
-final homeGateOpenedProvider = StateProvider.autoDispose.family<bool, String>(
-  (ref, islandId) => false,
-);
 
 IslandProfile? resolveHomeSelectedIsland({
   required List<IslandProfile> islands,
@@ -187,10 +185,7 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         : hasError
-        ? Text(
-            '섬 정보를 불러오지 못했어요.',
-            style: AppTextStyles.bodySecondaryStrong,
-          )
+        ? Text('섬 정보를 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
         : selectedIsland == null
         ? Text(
             '등록된 섬이 없어요.\n새 섬을 추가해서 시작해보세요.',
@@ -220,8 +215,9 @@ class HomeDashboardTab extends ConsumerWidget {
     required WidgetRef ref,
     required IslandProfile island,
   }) {
-    final gateOpen = ref.watch(homeGateOpenedProvider(island.id));
-    final gateNotifier = ref.read(homeGateOpenedProvider(island.id).notifier);
+    final airportArgs = (uid: uid, islandId: island.id);
+    final airportState = ref.watch(airportViewModelProvider(airportArgs));
+    final gateOpen = airportState.session?.gateOpen ?? false;
     final fruitEmoji = _fruitEmojiByName[island.nativeFruit] ?? '🍑';
 
     return Row(
@@ -283,9 +279,17 @@ class HomeDashboardTab extends ConsumerWidget {
                     const SizedBox(width: 10),
                     AnimatedFadeSlide(
                       delay: const Duration(milliseconds: 95),
-                      child: _buildGatePillToggle(
+                      child: AirportGatePillToggle(
                         gateOpen: gateOpen,
-                        onTap: () => gateNotifier.state = !gateOpen,
+                        onTap: () {
+                          unawaited(
+                            _toggleGateFromHome(
+                              ref: ref,
+                              island: island,
+                              gateOpen: gateOpen,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -328,89 +332,27 @@ class HomeDashboardTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildGatePillToggle({
+  Future<void> _toggleGateFromHome({
+    required WidgetRef ref,
+    required IslandProfile island,
     required bool gateOpen,
-    required VoidCallback onTap,
-  }) {
-    return Semantics(
-      button: true,
-      toggled: gateOpen,
-      label: '비행장 방문 개방 토글',
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          width: 112,
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          decoration: BoxDecoration(
-            color: gateOpen ? AppColors.badgeBlueBg : AppColors.borderStrong,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: AppColors.borderStrong, width: 1.5),
-          ),
-          child: Stack(
-            children: <Widget>[
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: CustomPaint(
-                    painter: _AirportToggleTrackPainter(gateOpen: gateOpen),
-                  ),
-                ),
-              ),
-              if (gateOpen)
-                const Positioned(
-                  left: 12,
-                  top: 11,
-                  child: Icon(
-                    Icons.cloud_rounded,
-                    size: 14,
-                    color: AppColors.bgCard,
-                  ),
-                ),
-              if (gateOpen)
-                const Positioned(
-                  left: 28,
-                  top: 7,
-                  child: Icon(
-                    Icons.cloud_rounded,
-                    size: 16,
-                    color: AppColors.bgCard,
-                  ),
-                ),
-              AnimatedAlign(
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutCubic,
-                alignment: gateOpen
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: AppColors.bgCard,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.borderDefault),
-                    boxShadow: const <BoxShadow>[
-                      BoxShadow(
-                        color: AppColors.shadowSoft,
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.flight_rounded,
-                    size: 20,
-                    color: AppColors.borderStrong,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  }) async {
+    final args = (uid: uid, islandId: island.id);
+    final airportState = ref.read(airportViewModelProvider(args));
+    final airportViewModel = ref.read(airportViewModelProvider(args).notifier);
+
+    if (airportState.session == null) {
+      // 유지보수 포인트:
+      // 홈에서 처음 토글하는 경우에도 비행장 탭과 동일한 세션 문서를 먼저 보장합니다.
+      await airportViewModel.ensureSession(
+        islandName: island.islandName,
+        hostName: island.representativeName,
+        hostAvatarUrl: island.imageUrl ?? '',
+        islandImageUrl: island.imageUrl ?? '',
+      );
+    }
+
+    await airportViewModel.toggleGateOpen(!gateOpen);
   }
 
   Widget _buildResidentSection({
@@ -461,15 +403,9 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else if (hasError)
-          Text(
-            '주민 정보를 불러오지 못했어요.',
-            style: AppTextStyles.bodySecondaryStrong,
-          )
+          Text('주민 정보를 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
         else if (residents.isEmpty)
-          Text(
-            '아직 거주 주민이 없어요.',
-            style: AppTextStyles.bodySecondaryStrong,
-          )
+          Text('아직 거주 주민이 없어요.', style: AppTextStyles.bodySecondaryStrong)
         else
           SizedBox(
             height: 104,
@@ -590,10 +526,7 @@ class HomeDashboardTab extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(
-                          '예측 결과',
-                          style: AppTextStyles.headingH2,
-                        ),
+                        Text('예측 결과', style: AppTextStyles.headingH2),
                         const Row(
                           children: <Widget>[
                             TurnipLegendDot(
@@ -663,10 +596,7 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else if (hasError)
-          Text(
-            '도감 진행률을 불러오지 못했어요.',
-            style: AppTextStyles.bodySecondaryStrong,
-          )
+          Text('도감 진행률을 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
         else
           GridView.count(
             crossAxisCount: 2,
@@ -779,10 +709,7 @@ class HomeDashboardTab extends ConsumerWidget {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
           )
         else if (hasError)
-          Text(
-            '위시 리스트를 불러오지 못했어요.',
-            style: AppTextStyles.bodySecondaryStrong,
-          )
+          Text('위시 리스트를 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
         else if (favorites.isEmpty)
           AnimatedFadeSlide(
             delay: const Duration(milliseconds: 24),
@@ -919,10 +846,7 @@ class HomeDashboardTab extends ConsumerWidget {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text(
-                        title,
-                        style: AppTextStyles.bodyPrimaryHeavy,
-                      ),
+                      child: Text(title, style: AppTextStyles.bodyPrimaryHeavy),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -1234,43 +1158,5 @@ class HomeDashboardTab extends ConsumerWidget {
     final dayIndex = (index / 2).floor().clamp(0, 5);
     final isAfternoon = index.isOdd;
     return '${days[dayIndex]}요일 ${isAfternoon ? '오후' : '오전'}';
-  }
-}
-
-class _AirportToggleTrackPainter extends CustomPainter {
-  const _AirportToggleTrackPainter({required this.gateOpen});
-
-  final bool gateOpen;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (gateOpen) {
-      return;
-    }
-
-    final paint = Paint()
-      ..color = AppColors.bgCard.withValues(alpha: 0.35)
-      ..strokeWidth = 1.1
-      ..strokeCap = StrokeCap.round;
-
-    // 유지보수 포인트:
-    // OFF 상태는 Figma 시안처럼 가는 가로 라인이 반복되는 패턴을 사용합니다.
-    const gap = 5.0;
-    const lineLength = 17.0;
-    var y = size.height * 0.25;
-    while (y < size.height * 0.75) {
-      var x = 8.0;
-      while (x < size.width - 8) {
-        final end = math.min(x + lineLength, size.width - 8);
-        canvas.drawLine(Offset(x, y), Offset(end, y), paint);
-        x += lineLength + gap;
-      }
-      y += 6.0;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _AirportToggleTrackPainter oldDelegate) {
-    return oldDelegate.gateOpen != gateOpen;
   }
 }

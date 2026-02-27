@@ -86,6 +86,19 @@ class FirebaseAuthDataSource {
     }
   }
 
+  Future<void> requestWithdrawal() async {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser == null) {
+      throw AppException('로그인 사용자 정보를 찾을 수 없어요.');
+    }
+
+    await _firestore.doc(FirestorePaths.user(currentUser.uid)).set({
+      'accountStatus': 'withdrawn',
+      'withdrawnAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   Future<void> _syncUserDocument(User? user) async {
     if (user == null) {
       throw AppException('로그인 사용자 정보를 찾을 수 없어요.');

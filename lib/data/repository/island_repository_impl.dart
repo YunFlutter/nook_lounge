@@ -84,6 +84,33 @@ class IslandRepositoryImpl implements IslandRepository {
     return _firestoreDataSource.setPrimaryIsland(uid: uid, islandId: islandId);
   }
 
+  @override
+  Future<void> updateIslandProfile({
+    required String uid,
+    required IslandProfile profile,
+    String? passportImagePath,
+  }) async {
+    var imageUrl = profile.imageUrl;
+    final imagePath = passportImagePath?.trim() ?? '';
+    if (imagePath.isNotEmpty) {
+      imageUrl = await _storageDataSource.uploadPassportImage(
+        uid: uid,
+        islandId: profile.id,
+        localFilePath: imagePath,
+      );
+    }
+
+    await _firestoreDataSource.updateIslandProfile(
+      uid: uid,
+      profile: profile.copyWith(imageUrl: imageUrl),
+    );
+  }
+
+  @override
+  Future<void> deleteIsland({required String uid, required String islandId}) {
+    return _firestoreDataSource.deleteIsland(uid: uid, islandId: islandId);
+  }
+
   bool _isTransientNetworkError(String code) {
     return code == 'unavailable' ||
         code == 'deadline-exceeded' ||

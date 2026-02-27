@@ -468,7 +468,18 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
     if (shouldComplete != true || !mounted) {
       return;
     }
-    await viewModel.completeTrade(offer: offer);
+    try {
+      await viewModel.completeTrade(offer: offer);
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      final errorMessage =
+          ref.read(marketViewModelProvider).errorMessage ??
+          '거래 완료에 실패했어요. 다시 시도해 주세요.';
+      _showSnack(errorMessage);
+      return;
+    }
     if (!mounted) {
       return;
     }

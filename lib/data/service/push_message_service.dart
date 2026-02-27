@@ -71,7 +71,9 @@ class PushMessageService {
       // 유지보수 포인트:
       // foreground에서도 메시지 수신 스트림을 유지해 플랫폼별 표시/처리 차이를
       // 안정적으로 수용합니다. (iOS는 위 presentation 옵션으로 시스템 배너 노출)
-      debugPrint('[PushMessageService] foreground message: ${message.messageId}');
+      debugPrint(
+        '[PushMessageService] foreground message: ${message.messageId}',
+      );
     });
 
     _tokenRefreshSubscription = _messaging.onTokenRefresh.listen((token) async {
@@ -136,34 +138,23 @@ class PushMessageService {
       return;
     }
 
+    final userRef = _firestore.doc(FirestorePaths.user(uid));
+
     // 유지보수 포인트:
-    // 같은 유저에서 토큰이 재발급되면 이전 토큰을 배열/서브컬렉션에서 제거해
-    // 만료 토큰으로 중복 푸시를 보내는 상황을 줄입니다.
+    // 같은 유저에서 토큰이 재발급되면 이전 토큰 하위 문서를 제거합니다.
+    // 토큰 저장은 users/{uid}/fcmTokens/{token} 단일 경로만 사용합니다.
     final previousUid = _lastSyncedUid;
     final previousToken = _lastSyncedToken;
     if (previousUid == uid &&
         previousToken != null &&
         previousToken.isNotEmpty &&
         previousToken != normalizedToken) {
-      final userRef = _firestore.doc(FirestorePaths.user(uid));
-      await userRef.set(<String, dynamic>{
-        'fcmTokens': FieldValue.arrayRemove(<String>[previousToken]),
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
-
-      final previousTokenRef = _firestore.doc(
-        '${FirestorePaths.user(uid)}/fcmTokens/$previousToken',
-      );
-      try {
-        await previousTokenRef.delete();
-      } catch (_) {
-        // no-op: 문서가 이미 없으면 무시합니다.
-      }
+      await _safeDeleteDoc(userRef.collection('fcmTokens').doc(previousToken));
+      await _safeDeleteDoc(userRef.collection('devices').doc(previousToken));
+      await _safeDeleteDoc(userRef.collection('pushTokens').doc(previousToken));
     }
 
-    final tokenDoc = _firestore.doc(
-      '${FirestorePaths.user(uid)}/fcmTokens/$normalizedToken',
-    );
+    final tokenDoc = userRef.collection('fcmTokens').doc(normalizedToken);
 
     final now = FieldValue.serverTimestamp();
     final platform = defaultTargetPlatform.name;
@@ -174,17 +165,30 @@ class PushMessageService {
       'createdAt': now,
     }, SetOptions(merge: true));
 
-    await _firestore.doc(FirestorePaths.user(uid)).set(<String, dynamic>{
+    await userRef.set(<String, dynamic>{
       // 유지보수 포인트:
-      // 요청사항에 맞춰 users/{uid}.fcmtoken 필드를 최신 토큰으로 유지합니다.
-      // 레거시/외부 연동 호환을 위해 fcmToken도 동일값으로 동기화합니다.
-      'fcmtoken': normalizedToken,
-      'fcmToken': normalizedToken,
-      'fcmTokens': FieldValue.arrayUnion(<String>[normalizedToken]),
+      // FCM 토큰 이중 저장을 방지하기 위해 루트 문서 토큰 필드는 정리하고
+      // 하위 컬렉션(users/{uid}/fcmTokens)만 단일 소스로 유지합니다.
+      'fcmtoken': FieldValue.delete(),
+      'fcmToken': FieldValue.delete(),
+      'fcmTokens': FieldValue.delete(),
+      'pushToken': FieldValue.delete(),
+      'pushTokens': FieldValue.delete(),
+      'deviceToken': FieldValue.delete(),
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
 
     _lastSyncedUid = uid;
     _lastSyncedToken = normalizedToken;
+  }
+
+  Future<void> _safeDeleteDoc(
+    DocumentReference<Map<String, dynamic>> ref,
+  ) async {
+    try {
+      await ref.delete();
+    } catch (_) {
+      // no-op: 문서가 이미 없으면 무시합니다.
+    }
   }
 }

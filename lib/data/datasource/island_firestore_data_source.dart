@@ -118,4 +118,65 @@ class IslandFirestoreDataSource {
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
+
+  Future<void> updateIslandProfile({
+    required String uid,
+    required IslandProfile profile,
+  }) async {
+    await _firestore.doc(FirestorePaths.island(uid, profile.id)).set(
+      <String, dynamic>{
+        ...profile.toMap(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> deleteIsland({
+    required String uid,
+    required String islandId,
+  }) async {
+    final normalizedIslandId = islandId.trim();
+    if (normalizedIslandId.isEmpty) {
+      return;
+    }
+
+    final userRef = _firestore.doc(FirestorePaths.user(uid));
+    final islandRef = _firestore.doc(
+      FirestorePaths.island(uid, normalizedIslandId),
+    );
+    final homeSummaryRef = _firestore.doc(
+      FirestorePaths.homeSummary(uid, normalizedIslandId),
+    );
+
+    final userSnapshot = await userRef.get();
+    final userData = userSnapshot.data() ?? const <String, dynamic>{};
+    final currentPrimaryIslandId =
+        (userData['primaryIslandId'] as String?)?.trim() ?? '';
+
+    final islandSnapshot = await _firestore
+        .collection(FirestorePaths.islands(uid))
+        .get();
+    String? nextPrimaryIslandId;
+    for (final doc in islandSnapshot.docs) {
+      if (doc.id == normalizedIslandId) {
+        continue;
+      }
+      nextPrimaryIslandId = doc.id;
+      break;
+    }
+
+    final batch = _firestore.batch();
+    batch.delete(islandRef);
+    batch.delete(homeSummaryRef);
+
+    if (currentPrimaryIslandId == normalizedIslandId) {
+      batch.set(userRef, <String, dynamic>{
+        'primaryIslandId': nextPrimaryIslandId ?? FieldValue.delete(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    }
+
+    await batch.commit();
+  }
 }
