@@ -730,6 +730,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                               children: <Widget>[
                                 Text(
                                   request.requesterName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: AppTextStyles.bodyPrimaryStrong,
                                 ),
                                 const SizedBox(height: 4),
@@ -901,111 +903,129 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.borderDefault),
                 ),
-                child: Row(
+                child: Column(
                   children: <Widget>[
-                    ClipOval(
-                      child: SizedBox(
-                        width: 42,
-                        height: 42,
-                        child: request.requesterAvatarUrl.trim().isEmpty
-                            ? Image.asset(
-                                'assets/images/icon_raccoon_character.png',
-                                fit: BoxFit.cover,
-                              )
-                            : Image.network(
-                                request.requesterAvatarUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Image.asset(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        ClipOval(
+                          child: SizedBox(
+                            width: 42,
+                            height: 42,
+                            child: request.requesterAvatarUrl.trim().isEmpty
+                                ? Image.asset(
                                     'assets/images/icon_raccoon_character.png',
                                     fit: BoxFit.cover,
-                                  );
-                                },
-                              ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            request.requesterName,
-                            style: AppTextStyles.bodyPrimaryStrong,
+                                  )
+                                : Image.network(
+                                    request.requesterAvatarUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/images/icon_raccoon_character.png',
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '목적: ${request.purpose.label}',
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                request.requesterName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.bodyPrimaryStrong,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '목적: ${request.purpose.label}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.captionMuted,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.bgSecondary,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            waitingLabel,
                             style: AppTextStyles.captionMuted,
                           ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: <Widget>[
+                        // 유지보수 포인트:
+                        // 액션 버튼을 별도 행으로 분리해 좁은 폭에서도
+                        // 닉네임 영역이 과도하게 줄어들지 않도록 고정합니다.
+                        if (isTradeLinked) ...<Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.badgeYellowBg,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              '거래',
+                              style: AppTextStyles.captionWithColor(
+                                AppColors.badgeYellowText,
+                                weight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
                         ],
-                      ),
-                    ),
-                    if (isTradeLinked) ...<Widget>[
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.badgeYellowBg,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          '거래',
-                          style: AppTextStyles.captionWithColor(
-                            AppColors.badgeYellowText,
-                            weight: FontWeight.w800,
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () => _onTapBlockUser(
+                            onBlockUser: onBlockUser,
+                            blockedUid: request.requesterUid,
+                            blockedUserName: request.requesterName,
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                    ],
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.bgSecondary,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        waitingLabel,
-                        style: AppTextStyles.captionMuted,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      onPressed: () => _onTapBlockUser(
-                        onBlockUser: onBlockUser,
-                        blockedUid: request.requesterUid,
-                        blockedUserName: request.requesterName,
-                      ),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.badgeRedText,
-                        textStyle: AppTextStyles.captionSecondary,
-                      ),
-                      child: const Text('차단'),
-                    ),
-                    const SizedBox(width: 4),
-                    if (canMarkArrived)
-                      OutlinedButton(
-                        onPressed: () => onMarkArrived(request.id),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppColors.borderDefault,
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppColors.badgeRedText,
+                            textStyle: AppTextStyles.captionSecondary,
                           ),
-                          foregroundColor: AppColors.textSecondary,
-                          textStyle: AppTextStyles.captionSecondary,
+                          child: const Text('차단'),
                         ),
-                        child: const Text('도착 확인'),
-                      )
-                    else
-                      Text(
-                        formatRelativeTime(request.updatedAt),
-                        style: AppTextStyles.captionMuted,
-                      ),
+                        const SizedBox(width: 4),
+                        if (canMarkArrived)
+                          OutlinedButton(
+                            onPressed: () => onMarkArrived(request.id),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                color: AppColors.borderDefault,
+                              ),
+                              foregroundColor: AppColors.textSecondary,
+                              textStyle: AppTextStyles.captionSecondary,
+                            ),
+                            child: const Text('도착 확인'),
+                          )
+                        else
+                          Text(
+                            formatRelativeTime(request.updatedAt),
+                            style: AppTextStyles.captionMuted,
+                          ),
+                      ],
+                    ),
                   ],
                 ),
               ),
