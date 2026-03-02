@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
+import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -1125,6 +1126,10 @@ class MarketFirestoreDataSource {
         normalizedReason.isEmpty) {
       throw StateError('invalid_trade_report_payload');
     }
+    if (normalizedReason == MarketReportConstants.otherReasonLabel &&
+        normalizedDetail.isEmpty) {
+      throw StateError('invalid_trade_report_payload');
+    }
     if (normalizedOwnerUid == normalizedReporterUid) {
       throw StateError('cannot_report_own_offer');
     }
@@ -1141,24 +1146,36 @@ class MarketFirestoreDataSource {
 
     final reportRef = _firestore.doc(
       FirestorePaths.report(
-        'market_${normalizedOfferId}_${normalizedReporterUid}_${DateTime.now().microsecondsSinceEpoch}',
+        'market_${normalizedOfferId}_$normalizedReporterUid',
       ),
     );
 
-    await reportRef.set(<String, dynamic>{
-      'id': reportRef.id,
-      'scope': 'market',
-      'targetType': 'offer',
-      'targetId': normalizedOfferId,
-      'offerOwnerUid': normalizedOwnerUid,
-      'reporterUid': normalizedReporterUid,
-      'reporterName': reporterName,
-      'reporterAvatarUrl': reporterAvatarUrl,
-      'reason': normalizedReason,
-      'detail': normalizedDetail,
-      'status': 'pending',
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+    await _firestore.runTransaction((transaction) async {
+      final existing = await transaction.get(reportRef);
+      if (existing.exists) {
+        throw StateError(MarketReportConstants.duplicateReportErrorCode);
+      }
+
+      // 유지보수 포인트:
+      // report 문서 ID를 offer+reporter 조합으로 고정해
+      // 클라이언트/네트워크 재시도로 인한 중복 신고 생성을 방지합니다.
+      transaction.set(reportRef, <String, dynamic>{
+        'id': reportRef.id,
+        'scope': 'market',
+        'targetType': 'offer',
+        'targetId': normalizedOfferId,
+        'offerOwnerUid': normalizedOwnerUid,
+        'reporterUid': normalizedReporterUid,
+        'reporterName': reporterName,
+        'reporterAvatarUrl': reporterAvatarUrl,
+        'reason': normalizedReason,
+        'detail': normalizedDetail,
+        'reasonCategory': normalizedReason,
+        'reasonDetail': normalizedDetail,
+        'status': 'pending',
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
     });
   }
 

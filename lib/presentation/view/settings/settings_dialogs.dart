@@ -86,21 +86,10 @@ class SettingsDialogs {
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyWithSize(
-                    36,
-                    color: AppColors.textSecondary,
-                    weight: FontWeight.w800,
-                  ),
+                  style: AppTextStyles.dialogTitle,
                 ),
                 const SizedBox(height: 14),
-                Text(
-                  accent,
-                  style: AppTextStyles.bodyWithSize(
-                    50,
-                    color: AppColors.settingsWarning,
-                    weight: FontWeight.w800,
-                  ),
-                ),
+                Text(accent, style: AppTextStyles.dialogDanger),
                 const SizedBox(height: 18),
                 Row(
                   children: <Widget>[
@@ -159,23 +148,14 @@ class SettingsDialogs {
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyWithSize(
-                    36,
-                    color: AppColors.textSecondary,
-                    weight: FontWeight.w800,
-                    height: 1.2,
-                  ),
+                  style: AppTextStyles.dialogTitle,
                 ),
                 if (subtitle != null) ...<Widget>[
                   const SizedBox(height: 10),
                   Text(
                     subtitle,
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyWithSize(
-                      28,
-                      color: AppColors.textMuted,
-                      weight: FontWeight.w700,
-                    ),
+                    style: AppTextStyles.dialogBody,
                   ),
                 ],
                 const SizedBox(height: 18),

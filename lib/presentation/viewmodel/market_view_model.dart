@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
@@ -424,10 +425,21 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     required String reason,
     String detail = '',
   }) async {
+    final normalizedReason = reason.trim();
+    final normalizedDetail = detail.trim();
     final reporterUid = currentUserId.trim();
     if (reporterUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 신고할 수 있어요.');
       throw StateError('unauthenticated');
+    }
+    if (normalizedReason.isEmpty) {
+      state = state.copyWith(errorMessage: '신고 사유를 선택해 주세요.');
+      throw StateError('invalid_trade_report_reason');
+    }
+    if (normalizedReason == MarketReportConstants.otherReasonLabel &&
+        normalizedDetail.isEmpty) {
+      state = state.copyWith(errorMessage: '기타 사유를 입력해 주세요.');
+      throw StateError('invalid_trade_report_detail');
     }
 
     final ownerUid = offer.ownerUid.trim();
@@ -444,8 +456,8 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       offerId: offer.id,
       ownerUid: ownerUid,
       reporterUid: reporterUid,
-      reason: reason,
-      detail: detail,
+      reason: normalizedReason,
+      detail: normalizedDetail,
     );
     state = state.copyWith(errorMessage: null);
   }

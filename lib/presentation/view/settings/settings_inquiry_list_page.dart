@@ -95,23 +95,9 @@ class SettingsInquiryListPage extends ConsumerWidget {
     return Expanded(
       child: Column(
         children: <Widget>[
-          Text(
-            '$count',
-            style: AppTextStyles.bodyWithSize(
-              40,
-              color: AppColors.textSecondary,
-              weight: FontWeight.w800,
-            ),
-          ),
+          Text('$count', style: AppTextStyles.headingH1),
           const SizedBox(height: 8),
-          Text(
-            label,
-            style: AppTextStyles.bodyWithSize(
-              18,
-              color: AppColors.textSecondary,
-              weight: FontWeight.w700,
-            ),
-          ),
+          Text(label, style: AppTextStyles.headingH3),
         ],
       ),
     );
@@ -175,20 +161,12 @@ class SettingsInquiryListPage extends ConsumerWidget {
                         inquiry.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodyWithSize(
-                          18,
-                          color: AppColors.textSecondary,
-                          weight: FontWeight.w800,
-                        ),
+                        style: AppTextStyles.headingH3,
                       ),
                       const SizedBox(height: 6),
                       Text(
                         _dateFormat.format(inquiry.createdAt),
-                        style: AppTextStyles.bodyWithSize(
-                          14,
-                          color: AppColors.textMuted,
-                          weight: FontWeight.w700,
-                        ),
+                        style: AppTextStyles.captionMuted,
                       ),
                     ],
                   ),

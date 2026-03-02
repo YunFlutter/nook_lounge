@@ -53,14 +53,7 @@ class _SettingsSupportCenterPageState
         children: <Widget>[
           _inquirySummaryCard(context, inquiriesAsync.valueOrNull?.length ?? 0),
           const SizedBox(height: 16),
-          Text(
-            '무엇을 도와드릴까요?',
-            style: AppTextStyles.bodyWithSize(
-              42,
-              color: AppColors.textSecondary,
-              weight: FontWeight.w800,
-            ),
-          ),
+          Text('무엇을 도와드릴까요?', style: AppTextStyles.headingH1),
           const SizedBox(height: 12),
           _categoryChips(),
           const SizedBox(height: 14),
@@ -94,23 +87,9 @@ class _SettingsSupportCenterPageState
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
                     children: <Widget>[
-                      Text(
-                        '$inquiryCount',
-                        style: AppTextStyles.bodyWithSize(
-                          48,
-                          color: AppColors.textSecondary,
-                          weight: FontWeight.w800,
-                        ),
-                      ),
+                      Text('$inquiryCount', style: AppTextStyles.headingH1),
                       const SizedBox(height: 8),
-                      Text(
-                        '나의 문의 내역',
-                        style: AppTextStyles.bodyWithSize(
-                          18,
-                          color: AppColors.textSecondary,
-                          weight: FontWeight.w700,
-                        ),
-                      ),
+                      Text('나의 문의 내역', style: AppTextStyles.headingH3),
                     ],
                   ),
                 ),
@@ -208,26 +187,11 @@ class _SettingsSupportCenterPageState
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
-                  child: Text(
-                    'Q',
-                    style: AppTextStyles.bodyWithSize(
-                      22,
-                      color: AppColors.textPrimary,
-                      weight: FontWeight.w800,
-                    ),
-                  ),
+                  child: Text('Q', style: AppTextStyles.headingH3),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    item.question,
-                    style: AppTextStyles.bodyWithSize(
-                      18,
-                      color: AppColors.textSecondary,
-                      weight: FontWeight.w800,
-                      height: 1.3,
-                    ),
-                  ),
+                  child: Text(item.question, style: AppTextStyles.headingH3),
                 ),
                 const SizedBox(width: 8),
                 Icon(
@@ -250,15 +214,7 @@ class _SettingsSupportCenterPageState
               color: AppColors.bgSecondary,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(
-              item.answer,
-              style: AppTextStyles.bodyWithSize(
-                15,
-                color: AppColors.black,
-                weight: FontWeight.w700,
-                height: 1.4,
-              ),
-            ),
+            child: Text(item.answer, style: AppTextStyles.bodyPrimaryStrong),
           ),
         const Divider(height: 1),
       ],

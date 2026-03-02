@@ -61,35 +61,16 @@ class _SettingsInquiryDetailPageState
           SettingsUiTokens.horizontalPadding,
         ),
         children: <Widget>[
-          Text(
-            inquiry.title,
-            style: AppTextStyles.bodyWithSize(
-              38,
-              color: AppColors.textSecondary,
-              weight: FontWeight.w800,
-            ),
-          ),
+          Text(inquiry.title, style: AppTextStyles.headingH1),
           const SizedBox(height: 10),
           Text(
             _dateFormat.format(inquiry.createdAt),
-            style: AppTextStyles.bodyWithSize(
-              14,
-              color: AppColors.textMuted,
-              weight: FontWeight.w700,
-            ),
+            style: AppTextStyles.captionMuted,
           ),
           const SizedBox(height: 14),
           const Divider(height: 1),
           const SizedBox(height: 14),
-          Text(
-            inquiry.body,
-            style: AppTextStyles.bodyWithSize(
-              16,
-              color: AppColors.black,
-              weight: FontWeight.w700,
-              height: 1.45,
-            ),
-          ),
+          Text(inquiry.body, style: AppTextStyles.bodyPrimaryStrong),
           const SizedBox(height: 26),
           const Divider(height: 1),
           const SizedBox(height: 16),
@@ -104,12 +85,7 @@ class _SettingsInquiryDetailPageState
             ),
             child: Text(
               _adminReplyOrFallback(inquiry),
-              style: AppTextStyles.bodyWithSize(
-                15,
-                color: AppColors.black,
-                weight: FontWeight.w700,
-                height: 1.35,
-              ),
+              style: AppTextStyles.bodyPrimaryStrong,
             ),
           ),
         ],

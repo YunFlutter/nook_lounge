@@ -5,11 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_report_reason_page.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_report_result_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
 
@@ -1462,17 +1465,23 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Future<void> _reportOffer(BuildContext context, WidgetRef ref) async {
-    final result = await _showReportDialog(context);
+    final result = await MarketReportReasonPage.show(context);
     if (result == null || !context.mounted) {
       return;
     }
-    final (reason, detail) = result;
+    final reason = result.reason;
+    final detail = result.detail;
     try {
       await ref
           .read(marketViewModelProvider.notifier)
           .reportOffer(offer: offer, reason: reason, detail: detail);
-    } catch (_) {
+    } catch (error) {
       if (!context.mounted) {
+        return;
+      }
+      final errorCode = _stateErrorCode(error);
+      if (errorCode == MarketReportConstants.duplicateReportErrorCode) {
+        await MarketReportResultDialogs.showDuplicate(context);
         return;
       }
       ScaffoldMessenger.of(context)
@@ -1488,14 +1497,20 @@ class MarketOfferDetailPage extends ConsumerWidget {
     if (!context.mounted) {
       return;
     }
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Text('신고가 접수되었어요. 검토 후 처리할게요.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+    await MarketReportResultDialogs.showSubmitted(context);
+  }
+
+  String? _stateErrorCode(Object error) {
+    if (error is StateError) {
+      return error.message;
+    }
+    final fallbackMessage = error.toString();
+    if (fallbackMessage.contains(
+      MarketReportConstants.duplicateReportErrorCode,
+    )) {
+      return MarketReportConstants.duplicateReportErrorCode;
+    }
+    return null;
   }
 
   Future<void> _hideOffer(BuildContext context, WidgetRef ref) async {
@@ -1603,151 +1618,6 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ],
             ),
           ),
-        );
-      },
-    );
-  }
-
-  Future<(String, String)?> _showReportDialog(BuildContext context) {
-    const reasons = <String>['사기/허위 내용', '욕설/비매너', '거래 제안 또는 수락 후 연락두절', '기타'];
-    const dialogButtonHeight = 54.0;
-
-    String selectedReason = reasons.first;
-    String detail = '';
-    return showDialog<(String, String)>(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Dialog(
-              backgroundColor: AppColors.white,
-              surfaceTintColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(26),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text('신고하기', style: AppTextStyles.dialogTitleCompact),
-                    const SizedBox(height: 10),
-                    Text(
-                      '신고 사유를 선택해 주세요.',
-                      style: AppTextStyles.dialogBodyCompact,
-                    ),
-                    const SizedBox(height: 10),
-                    DropdownButtonFormField<String>(
-                      initialValue: selectedReason,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        filled: true,
-                        fillColor: AppColors.bgSecondary,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.borderDefault,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.borderDefault,
-                          ),
-                        ),
-                      ),
-                      items: reasons
-                          .map(
-                            (reason) => DropdownMenuItem<String>(
-                              value: reason,
-                              child: Text(
-                                reason,
-                                style: AppTextStyles.bodySecondaryStrong,
-                              ),
-                            ),
-                          )
-                          .toList(growable: false),
-                      onChanged: (value) {
-                        if (value == null) {
-                          return;
-                        }
-                        setState(() {
-                          selectedReason = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      minLines: 2,
-                      maxLines: 4,
-                      maxLength: 300,
-                      style: AppTextStyles.bodySecondaryStrong,
-                      decoration: const InputDecoration(
-                        hintText: '상세 사유(선택)',
-                        counterText: '',
-                      ),
-                      onChanged: (value) {
-                        detail = value;
-                      },
-                    ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(),
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(
-                                dialogButtonHeight,
-                              ),
-                              side: const BorderSide(
-                                color: AppColors.borderStrong,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: Text(
-                              '취소',
-                              style: AppTextStyles.dialogButtonOutline,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: FilledButton(
-                            onPressed: () {
-                              Navigator.of(
-                                dialogContext,
-                              ).pop((selectedReason, detail.trim()));
-                            },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.accentDeepOrange,
-                              minimumSize: const Size.fromHeight(
-                                dialogButtonHeight,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: Text(
-                              '접수',
-                              style: AppTextStyles.dialogButtonPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
         );
       },
     );

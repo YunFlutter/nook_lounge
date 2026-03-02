@@ -71,11 +71,10 @@ class FirestorePaths {
   static String userSetting(String uid, String settingId) =>
       '${userSettings(uid)}/$settingId';
 
-  static String userSupportInquiries(String uid) =>
-      'users/$uid/supportInquiries';
+  static String supportInquiries() => 'supportInquiries';
 
-  static String userSupportInquiry(String uid, String inquiryId) =>
-      '${userSupportInquiries(uid)}/$inquiryId';
+  static String supportInquiry(String inquiryId) =>
+      '${supportInquiries()}/$inquiryId';
 
   static String appNotices() => 'appNotices';
 

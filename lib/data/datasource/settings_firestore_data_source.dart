@@ -140,7 +140,8 @@ class SettingsFirestoreDataSource {
     try {
       await for (final snapshot
           in _firestore
-              .collection(FirestorePaths.userSupportInquiries(normalizedUid))
+              .collection(FirestorePaths.supportInquiries())
+              .where('uid', isEqualTo: normalizedUid)
               .orderBy('createdAt', descending: true)
               .snapshots()) {
         final inquiries = <SupportInquiry>[];
@@ -165,9 +166,7 @@ class SettingsFirestoreDataSource {
       throw StateError('invalid_uid');
     }
 
-    final ref = _firestore
-        .collection(FirestorePaths.userSupportInquiries(normalizedUid))
-        .doc();
+    final ref = _firestore.collection(FirestorePaths.supportInquiries()).doc();
 
     await ref.set(<String, dynamic>{
       'uid': normalizedUid,
@@ -190,11 +189,24 @@ class SettingsFirestoreDataSource {
       return;
     }
 
-    await _firestore
-        .doc(
-          FirestorePaths.userSupportInquiry(normalizedUid, normalizedInquiryId),
-        )
-        .delete();
+    final ref = _firestore.doc(
+      FirestorePaths.supportInquiry(normalizedInquiryId),
+    );
+    final snapshot = await ref.get();
+    final data = snapshot.data();
+    if (data == null) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 문의가 최상위 컬렉션으로 이동했기 때문에
+    // uid 소유권이 일치할 때만 삭제를 진행합니다.
+    final ownerUid = (data['uid'] as String?)?.trim() ?? '';
+    if (ownerUid != normalizedUid) {
+      return;
+    }
+
+    await ref.delete();
   }
 
   Future<SupportInquiry?> fetchInquiry({
@@ -208,12 +220,14 @@ class SettingsFirestoreDataSource {
     }
 
     final doc = await _firestore
-        .doc(
-          FirestorePaths.userSupportInquiry(normalizedUid, normalizedInquiryId),
-        )
+        .doc(FirestorePaths.supportInquiry(normalizedInquiryId))
         .get();
     final data = doc.data();
     if (data == null) {
+      return null;
+    }
+    final ownerUid = (data['uid'] as String?)?.trim() ?? '';
+    if (ownerUid != normalizedUid) {
       return null;
     }
 
