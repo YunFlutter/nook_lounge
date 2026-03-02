@@ -6,14 +6,17 @@ import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 import 'package:nook_lounge_app/domain/repository/market_repository.dart';
+import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 import 'package:nook_lounge_app/presentation/state/market_view_state.dart';
 
 class MarketViewModel extends StateNotifier<MarketViewState> {
   MarketViewModel({
     required MarketRepository repository,
     required AuthRepository authRepository,
+    required UserBlockRepository userBlockRepository,
   }) : _repository = repository,
        _authRepository = authRepository,
+       _userBlockRepository = userBlockRepository,
        super(const MarketViewState()) {
     _activeUserId = (_authRepository.currentUserId ?? '').trim();
     _offersSubscription = _repository.watchOffers().listen(
@@ -29,16 +32,20 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       _onUserChanged(uid);
     });
     _bindHiddenOfferStream(_activeUserId);
+    _bindBlockedUserStream(_activeUserId);
   }
 
   final MarketRepository _repository;
   final AuthRepository _authRepository;
+  final UserBlockRepository _userBlockRepository;
   StreamSubscription<List<MarketOffer>>? _offersSubscription;
   StreamSubscription<String?>? _authSubscription;
   StreamSubscription<Set<String>>? _hiddenSubscription;
+  StreamSubscription<Set<String>>? _blockedUserSubscription;
   List<MarketOffer> _latestOffers = const <MarketOffer>[];
   Set<String> _hiddenOfferIds = const <String>{};
   Set<String> _guestHiddenOfferIds = <String>{};
+  Set<String> _blockedUserIds = const <String>{};
   String _activeUserId = '';
 
   String get currentUserId => _authRepository.currentUserId ?? '';
@@ -498,6 +505,41 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     }
   }
 
+  Future<void> blockUserForMe({required String blockedUid}) async {
+    final currentUid = currentUserId.trim();
+    if (currentUid.isEmpty) {
+      state = state.copyWith(errorMessage: '로그인 후 유저를 차단할 수 있어요.');
+      throw StateError('unauthenticated');
+    }
+
+    final normalizedBlockedUid = blockedUid.trim();
+    if (normalizedBlockedUid.isEmpty) {
+      state = state.copyWith(errorMessage: '차단할 유저 정보를 찾지 못했어요.');
+      throw StateError('invalid_blocked_uid');
+    }
+    if (normalizedBlockedUid == currentUid) {
+      state = state.copyWith(errorMessage: '본인 계정은 차단할 수 없어요.');
+      throw StateError('cannot_block_self');
+    }
+
+    final previousBlockedUserIds = _blockedUserIds;
+    _blockedUserIds = <String>{..._blockedUserIds, normalizedBlockedUid};
+    _applyOffersState();
+
+    try {
+      await _userBlockRepository.blockUser(
+        uid: currentUid,
+        blockedUid: normalizedBlockedUid,
+      );
+      state = state.copyWith(errorMessage: null);
+    } catch (_) {
+      _blockedUserIds = previousBlockedUserIds;
+      _applyOffersState();
+      state = state.copyWith(errorMessage: '유저 차단에 실패했어요.');
+      rethrow;
+    }
+  }
+
   void _onOffersChanged(List<MarketOffer> offers) {
     _latestOffers = offers;
     _applyOffersState();
@@ -513,6 +555,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     // 로그인 유저가 바뀌면 비회원 로컬 숨김 상태는 초기화합니다.
     _guestHiddenOfferIds = <String>{};
     _bindHiddenOfferStream(normalizedUid);
+    _bindBlockedUserStream(normalizedUid);
     _applyOffersState();
   }
 
@@ -535,11 +578,33 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         );
   }
 
+  void _bindBlockedUserStream(String uid) {
+    _blockedUserSubscription?.cancel();
+    if (uid.isEmpty) {
+      _blockedUserIds = const <String>{};
+      return;
+    }
+    _blockedUserSubscription = _userBlockRepository
+        .watchBlockedUserIds(uid)
+        .listen(
+          (blockedUserIds) {
+            _blockedUserIds = blockedUserIds;
+            _applyOffersState();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            state = state.copyWith(errorMessage: '차단 목록을 불러오지 못했어요.');
+          },
+        );
+  }
+
   void _applyOffersState() {
     final currentUid = _activeUserId;
     final hiddenIds = currentUid.isEmpty
         ? _guestHiddenOfferIds
         : _hiddenOfferIds;
+    final blockedUserIds = currentUid.isEmpty
+        ? const <String>{}
+        : _blockedUserIds;
     final normalized = _latestOffers
         .map((offer) {
           final bool isMine = offer.ownerUid == currentUid;
@@ -548,6 +613,9 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         .where((offer) {
           if (offer.isMine) {
             return true;
+          }
+          if (blockedUserIds.contains(offer.ownerUid.trim())) {
+            return false;
           }
           return !hiddenIds.contains(offer.id);
         })
@@ -596,6 +664,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     _offersSubscription?.cancel();
     _authSubscription?.cancel();
     _hiddenSubscription?.cancel();
+    _blockedUserSubscription?.cancel();
     super.dispose();
   }
 }

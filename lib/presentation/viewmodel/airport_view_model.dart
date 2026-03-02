@@ -5,27 +5,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 import 'package:nook_lounge_app/domain/repository/airport_repository.dart';
+import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 import 'package:nook_lounge_app/presentation/state/airport_view_state.dart';
 
 class AirportViewModel extends StateNotifier<AirportViewState> {
   AirportViewModel({
     required AirportRepository repository,
+    required UserBlockRepository userBlockRepository,
     required String uid,
     required String islandId,
   }) : _repository = repository,
+       _userBlockRepository = userBlockRepository,
        _uid = uid.trim(),
        _islandId = islandId.trim(),
        super(const AirportViewState()) {
+    _bindBlockedUsers();
     _bindStreams();
   }
 
   final AirportRepository _repository;
+  final UserBlockRepository _userBlockRepository;
   final String _uid;
   final String _islandId;
 
   StreamSubscription<AirportSession?>? _sessionSubscription;
   StreamSubscription<List<AirportVisitRequest>>? _incomingSubscription;
   StreamSubscription<List<AirportVisitRequest>>? _myRequestsSubscription;
+  StreamSubscription<Set<String>>? _blockedUsersSubscription;
+
+  List<AirportVisitRequest> _latestIncomingRequests =
+      const <AirportVisitRequest>[];
+  List<AirportVisitRequest> _latestMyRequests = const <AirportVisitRequest>[];
+  Set<String> _blockedUserIds = const <String>{};
 
   bool get hasIsland => _islandId.isNotEmpty;
 
@@ -243,6 +254,42 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
     );
   }
 
+  Future<void> blockUserForMe({required String blockedUid}) async {
+    if (_uid.isEmpty) {
+      state = state.copyWith(errorMessage: '로그인 후 유저를 차단할 수 있어요.');
+      throw StateError('unauthenticated');
+    }
+
+    final normalizedBlockedUid = blockedUid.trim();
+    if (normalizedBlockedUid.isEmpty) {
+      state = state.copyWith(errorMessage: '차단할 유저 정보를 찾지 못했어요.');
+      throw StateError('invalid_blocked_uid');
+    }
+    if (normalizedBlockedUid == _uid) {
+      state = state.copyWith(errorMessage: '본인 계정은 차단할 수 없어요.');
+      throw StateError('cannot_block_self');
+    }
+
+    final previousBlockedUserIds = _blockedUserIds;
+    _blockedUserIds = <String>{..._blockedUserIds, normalizedBlockedUid};
+    _applyIncomingRequests();
+    _applyMyRequests();
+
+    try {
+      await _userBlockRepository.blockUser(
+        uid: _uid,
+        blockedUid: normalizedBlockedUid,
+      );
+      state = state.copyWith(errorMessage: null);
+    } catch (_) {
+      _blockedUserIds = previousBlockedUserIds;
+      _applyIncomingRequests();
+      _applyMyRequests();
+      state = state.copyWith(errorMessage: '유저 차단에 실패했어요.');
+      rethrow;
+    }
+  }
+
   void consumeMessages() {
     if (state.errorMessage == null && state.infoMessage == null) {
       return;
@@ -284,7 +331,8 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
         .watchMyRequests(_uid)
         .listen(
           (requests) {
-            state = state.copyWith(myRequests: requests, isInitializing: false);
+            _latestMyRequests = requests;
+            _applyMyRequests(markInitialized: true);
           },
           onError: (Object error, StackTrace stackTrace) {
             debugPrint('$error');
@@ -318,18 +366,8 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
         .watchIncomingRequests(_islandId)
         .listen(
           (requests) {
-            final selectable = requests
-                .where((request) => request.isPending)
-                .map((request) => request.id)
-                .toSet();
-            final nextSelection = state.selectedRequestIds
-                .where(selectable.contains)
-                .toSet();
-            state = state.copyWith(
-              incomingRequests: requests,
-              selectedRequestIds: nextSelection,
-              isInitializing: false,
-            );
+            _latestIncomingRequests = requests;
+            _applyIncomingRequests(markInitialized: true);
           },
           onError: (Object error, StackTrace stackTrace) {
             state = state.copyWith(
@@ -338,6 +376,69 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
             );
           },
         );
+  }
+
+  void _bindBlockedUsers() {
+    if (_uid.isEmpty) {
+      _blockedUserIds = const <String>{};
+      return;
+    }
+    _blockedUsersSubscription = _userBlockRepository
+        .watchBlockedUserIds(_uid)
+        .listen(
+          (blockedUserIds) {
+            _blockedUserIds = blockedUserIds;
+            _applyIncomingRequests();
+            _applyMyRequests();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            state = state.copyWith(errorMessage: '차단 목록을 불러오지 못했어요.');
+          },
+        );
+  }
+
+  void _applyIncomingRequests({bool markInitialized = false}) {
+    final blocked = _blockedUserIds;
+    final filtered = _latestIncomingRequests
+        .where((request) {
+          final requesterUid = request.requesterUid.trim();
+          if (requesterUid.isEmpty || requesterUid == _uid) {
+            return true;
+          }
+          return !blocked.contains(requesterUid);
+        })
+        .toList(growable: false);
+
+    final selectable = filtered
+        .where((request) => request.isPending)
+        .map((request) => request.id)
+        .toSet();
+    final nextSelection = state.selectedRequestIds
+        .where(selectable.contains)
+        .toSet();
+
+    state = state.copyWith(
+      incomingRequests: filtered,
+      selectedRequestIds: nextSelection,
+      isInitializing: markInitialized ? false : state.isInitializing,
+    );
+  }
+
+  void _applyMyRequests({bool markInitialized = false}) {
+    final blocked = _blockedUserIds;
+    final filtered = _latestMyRequests
+        .where((request) {
+          final hostUid = request.hostUid.trim();
+          if (hostUid.isEmpty || hostUid == _uid) {
+            return true;
+          }
+          return !blocked.contains(hostUid);
+        })
+        .toList(growable: false);
+    state = state.copyWith(
+      myRequests: filtered,
+      isInitializing: markInitialized ? false : state.isInitializing,
+    );
   }
 
   String _resolveErrorMessage(Object error, String fallback) {
@@ -362,6 +463,7 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
     _sessionSubscription?.cancel();
     _incomingSubscription?.cancel();
     _myRequestsSubscription?.cancel();
+    _blockedUsersSubscription?.cancel();
     super.dispose();
   }
 }

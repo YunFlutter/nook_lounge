@@ -16,6 +16,7 @@ import 'package:nook_lounge_app/data/datasource/settings_firestore_data_source.d
 import 'package:nook_lounge_app/data/service/push_message_service.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/user_block_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/airport_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/catalog_repository_impl.dart';
@@ -23,6 +24,7 @@ import 'package:nook_lounge_app/data/repository/island_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/market_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/settings_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/turnip_repository_impl.dart';
+import 'package:nook_lounge_app/data/repository/user_block_repository_impl.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 import 'package:nook_lounge_app/domain/repository/airport_repository.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
@@ -30,6 +32,7 @@ import 'package:nook_lounge_app/domain/repository/island_repository.dart';
 import 'package:nook_lounge_app/domain/repository/market_repository.dart';
 import 'package:nook_lounge_app/domain/repository/settings_repository.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
+import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -159,6 +162,13 @@ final airportFirestoreDataSourceProvider = Provider<AirportFirestoreDataSource>(
   },
 );
 
+final userBlockFirestoreDataSourceProvider =
+    Provider<UserBlockFirestoreDataSource>((ref) {
+      return UserBlockFirestoreDataSource(
+        firestore: ref.watch(firestoreProvider),
+      );
+    });
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
@@ -202,6 +212,12 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 final airportRepositoryProvider = Provider<AirportRepository>((ref) {
   return AirportRepositoryImpl(
     dataSource: ref.watch(airportFirestoreDataSourceProvider),
+  );
+});
+
+final userBlockRepositoryProvider = Provider<UserBlockRepository>((ref) {
+  return UserBlockRepositoryImpl(
+    dataSource: ref.watch(userBlockFirestoreDataSourceProvider),
   );
 });
 
@@ -272,6 +288,7 @@ final marketViewModelProvider =
       return MarketViewModel(
         repository: ref.watch(marketRepositoryProvider),
         authRepository: ref.watch(authRepositoryProvider),
+        userBlockRepository: ref.watch(userBlockRepositoryProvider),
       );
     });
 
@@ -283,6 +300,7 @@ final airportViewModelProvider =
     >((ref, args) {
       return AirportViewModel(
         repository: ref.watch(airportRepositoryProvider),
+        userBlockRepository: ref.watch(userBlockRepositoryProvider),
         uid: args.uid,
         islandId: args.islandId,
       );

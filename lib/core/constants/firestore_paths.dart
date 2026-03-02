@@ -66,6 +66,11 @@ class FirestorePaths {
   static String hiddenMarketOffer(String uid, String offerId) =>
       '${hiddenMarketOffers(uid)}/$offerId';
 
+  static String blockedUsers(String uid) => 'users/$uid/blockedUsers';
+
+  static String blockedUser(String uid, String blockedUid) =>
+      '${blockedUsers(uid)}/$blockedUid';
+
   static String userSettings(String uid) => 'users/$uid/settings';
 
   static String userSetting(String uid, String settingId) =>

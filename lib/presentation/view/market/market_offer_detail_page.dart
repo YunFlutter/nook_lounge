@@ -1410,6 +1410,14 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.block_outlined),
+                title: const Text('이 유저 차단'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  await _blockOfferOwner(context, ref);
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.flag_outlined),
                 title: const Text('신고하기'),
                 onTap: () async {
@@ -1550,6 +1558,45 @@ class MarketOfferDetailPage extends ConsumerWidget {
     Navigator.of(context).pop();
   }
 
+  Future<void> _blockOfferOwner(BuildContext context, WidgetRef ref) async {
+    final shouldBlock = await _showBlockUserConfirmDialog(context);
+    if (shouldBlock != true || !context.mounted) {
+      return;
+    }
+
+    try {
+      await ref
+          .read(marketViewModelProvider.notifier)
+          .blockUserForMe(blockedUid: offer.ownerUid);
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('유저 차단에 실패했어요. 다시 시도해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Text('해당 유저를 차단했어요. 게시물/요청을 숨깁니다.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    Navigator.of(context).pop();
+  }
+
   Future<bool?> _showHideConfirmDialog(BuildContext context) {
     const dialogButtonHeight = 54.0;
     return showDialog<bool>(
@@ -1609,6 +1656,79 @@ class MarketOfferDetailPage extends ConsumerWidget {
                         ),
                         child: Text(
                           '숨기기',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<bool?> _showBlockUserConfirmDialog(BuildContext context) {
+    const dialogButtonHeight = 54.0;
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('유저 차단', style: AppTextStyles.dialogTitleCompact),
+                const SizedBox(height: 10),
+                Text(
+                  '해당 유저를 차단하면 게시물과 방문 요청이 보이지 않아요.',
+                  style: AppTextStyles.dialogBodyCompact,
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '차단',
                           style: AppTextStyles.dialogButtonPrimary,
                         ),
                       ),
