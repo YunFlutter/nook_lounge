@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nook_lounge_app/data/datasource/catalog_state_firestore_data_source.dart';
@@ -13,6 +14,7 @@ import 'package:nook_lounge_app/data/datasource/local_catalog_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/settings_firestore_data_source.dart';
+import 'package:nook_lounge_app/data/service/local_notification_service.dart';
 import 'package:nook_lounge_app/data/service/push_message_service.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
@@ -80,6 +82,19 @@ final firebaseMessagingProvider = Provider<FirebaseMessaging>((ref) {
   return FirebaseMessaging.instance;
 });
 
+final flutterLocalNotificationsPluginProvider =
+    Provider<FlutterLocalNotificationsPlugin>((ref) {
+      return FlutterLocalNotificationsPlugin();
+    });
+
+final localNotificationServiceProvider = Provider<LocalNotificationService>((
+  ref,
+) {
+  return LocalNotificationService(
+    plugin: ref.watch(flutterLocalNotificationsPluginProvider),
+  );
+});
+
 final pushOfferIntentNotifierProvider =
     StateNotifierProvider<PushOfferIntentNotifier, String?>((ref) {
       return PushOfferIntentNotifier();
@@ -90,6 +105,7 @@ final pushMessageServiceProvider = Provider<PushMessageService>((ref) {
     messaging: ref.watch(firebaseMessagingProvider),
     auth: ref.watch(firebaseAuthProvider),
     firestore: ref.watch(firestoreProvider),
+    localNotificationService: ref.watch(localNotificationServiceProvider),
     offerIntentNotifier: ref.watch(pushOfferIntentNotifierProvider.notifier),
   );
   ref.onDispose(service.dispose);
