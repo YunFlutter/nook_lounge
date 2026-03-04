@@ -474,7 +474,7 @@ class _MarketRealtimeListenerState
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: AppColors.white,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: AppColors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -503,12 +503,7 @@ class _MarketRealtimeListenerState
                     ),
                     child: Text(
                       emphasizeCode,
-                      style: AppTextStyles.bodyWithSize(
-                        26,
-                        color: AppColors.textPrimary,
-                        weight: FontWeight.w900,
-                        letterSpacing: 4,
-                      ),
+                      style: AppTextStyles.marketCodeEmphasis,
                     ),
                   ),
                 ],

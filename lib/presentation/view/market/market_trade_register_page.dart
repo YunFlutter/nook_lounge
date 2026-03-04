@@ -974,7 +974,7 @@ class _MarketTradeRegisterPageState
         duration: const Duration(milliseconds: 180),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? AppColors.bgCard : Colors.transparent,
+          color: selected ? AppColors.bgCard : AppColors.transparent,
           borderRadius: BorderRadius.circular(999),
         ),
         child: Text(
@@ -1127,7 +1127,7 @@ class _MarketTradeRegisterPageState
         duration: const Duration(milliseconds: 180),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: selected ? AppColors.bgCard : Colors.transparent,
+          color: selected ? AppColors.bgCard : AppColors.transparent,
           borderRadius: BorderRadius.circular(999),
         ),
         child: Text(
@@ -1763,7 +1763,7 @@ class _MarketTradeRegisterPageState
                 : AppColors.borderDefault;
             return Dialog(
               backgroundColor: AppColors.white,
-              surfaceTintColor: Colors.transparent,
+              surfaceTintColor: AppColors.transparent,
               insetPadding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.pageHorizontal + AppSpacing.modalOuter,
               ),

@@ -137,12 +137,7 @@ class _MarketTradeCodeSendPageState
                   );
                 }),
               ],
-              style: AppTextStyles.bodyWithSize(
-                28,
-                color: AppColors.textPrimary,
-                weight: FontWeight.w800,
-                letterSpacing: 6,
-              ),
+              style: AppTextStyles.marketCodeInput,
               textAlign: TextAlign.center,
               cursorColor: AppColors.accentDeepOrange,
               decoration: const InputDecoration(

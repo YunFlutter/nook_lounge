@@ -391,7 +391,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: AppColors.white,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: AppColors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
           ),
@@ -493,7 +493,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: AppColors.white,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: AppColors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
           ),

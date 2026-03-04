@@ -275,7 +275,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                     curve: Curves.easeOutCubic,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: selected ? AppColors.white : Colors.transparent,
+                      color: selected ? AppColors.white : AppColors.transparent,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: selected
                           ? const <BoxShadow>[
@@ -323,7 +323,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                     curve: Curves.easeOutCubic,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: selected ? AppColors.white : Colors.transparent,
+                      color: selected ? AppColors.white : AppColors.transparent,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: selected
                           ? const <BoxShadow>[
@@ -545,7 +545,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) {
         final currentStates = widget.readOnly
             ? const <String, CatalogUserState>{}

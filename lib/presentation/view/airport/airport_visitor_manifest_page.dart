@@ -333,7 +333,7 @@ class AirportVisitorManifestPage extends ConsumerWidget {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: AppColors.white,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: AppColors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
           ),

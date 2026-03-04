@@ -6,12 +6,19 @@ class AppTypography {
   static const String fontFamily = 'NPS';
 
   /// 유지보수 포인트:
-  /// Figma letterSpacing 값이 -5%라서 size * -0.05 로 환산합니다.
+  /// Figma 텍스트 팔레트(89:10, 89:11, 89:22)의 letterSpacing 값이 -5%라서
+  /// size * -0.05 로 환산합니다.
   static const double _letterSpacingPercent = -0.05;
 
   /// 유지보수 포인트:
-  /// Figma lineHeight 100%를 Flutter의 height 1.0으로 고정합니다.
+  /// Figma 텍스트 팔레트의 lineHeight 100%를 Flutter의 height 1.0으로 고정합니다.
   static const double _lineHeight = 1.0;
+
+  /// 유지보수 포인트:
+  /// 동적 폰트 크기에서도 Figma 타이포 규칙(-5% 자간)을 일관 적용할 때 사용합니다.
+  static double letterSpacingFor(double fontSize) {
+    return fontSize * _letterSpacingPercent;
+  }
 
   static const double _h1Size = 24;
   static const double _h2Size = 20;
@@ -78,7 +85,23 @@ class AppTypography {
   );
 
   /// 유지보수 포인트:
-  /// 13개 타이포 노드와 토큰 연결 추적용 매핑입니다.
+  /// Figma get_variable_defs 결과의 변수명과 토큰 연결 추적용 매핑입니다.
+  /// - 89:10: Body/Heading/H1, H2, H3
+  /// - 89:11: Body/Large, Medium, Small
+  /// - 89:22: Caption
+  static const Map<String, TextStyle> figmaVariableStyleMap =
+      <String, TextStyle>{
+        'Body/Heading/H1': headingH1,
+        'Body/Heading/H2': headingH2,
+        'Body/Heading/H3': headingH3,
+        'Body/Large': bodyLarge,
+        'Body/Medium': bodyMedium,
+        'Body/Small': bodySmall,
+        'Caption': caption,
+      };
+
+  /// 유지보수 포인트:
+  /// 3개 텍스트 팔레트 프레임 내부의 실제 텍스트 노드와 토큰 연결 매핑입니다.
   static const Map<String, TextStyle> figmaNodeStyleMap = <String, TextStyle>{
     '88:68': headingH1,
     '89:3': headingH2,

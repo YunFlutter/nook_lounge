@@ -155,8 +155,8 @@ class _MarketReportReasonPageState extends State<MarketReportReasonPage> {
       child: Scaffold(
         backgroundColor: AppColors.bgPrimary,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
+          surfaceTintColor: AppColors.transparent,
           elevation: 0,
           centerTitle: true,
           leading: IconButton(
@@ -350,7 +350,7 @@ class _ReportSelectableTile extends StatelessWidget {
       selected: selected,
       label: label,
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(22),
           onTap: onTap,

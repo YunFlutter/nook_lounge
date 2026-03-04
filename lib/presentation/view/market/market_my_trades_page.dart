@@ -126,7 +126,7 @@ class MarketMyTradesPage extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: selectedTab
                           ? AppColors.bgCard
-                          : Colors.transparent,
+                          : AppColors.transparent,
                       borderRadius: BorderRadius.circular(999),
                       boxShadow: selectedTab
                           ? const <BoxShadow>[
@@ -203,7 +203,7 @@ class MarketMyTradesPage extends ConsumerWidget {
     );
 
     final card = Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
         onTap: () => _openOfferDetail(context, offer),
@@ -592,7 +592,7 @@ class MarketMyTradesPage extends ConsumerWidget {
       builder: (dialogContext) {
         return Dialog(
           backgroundColor: AppColors.white,
-          surfaceTintColor: Colors.transparent,
+          surfaceTintColor: AppColors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(26),
           ),

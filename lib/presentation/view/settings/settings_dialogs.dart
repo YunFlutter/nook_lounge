@@ -70,7 +70,7 @@ class SettingsDialogs {
       builder: (context) {
         return Dialog(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           child: Container(
             width: 330,
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 22),
@@ -132,7 +132,7 @@ class SettingsDialogs {
       builder: (context) {
         return Dialog(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           child: Container(
             width: 330,
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 22),

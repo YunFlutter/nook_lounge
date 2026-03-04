@@ -116,6 +116,28 @@ class AppTextStyles {
     fontWeight: FontWeight.w800,
   );
 
+  // Market Code
+  // 유지보수 포인트:
+  // 거래 코드 관련 글자 스타일은 화면별 숫자 하드코딩 대신 공통 토큰으로 관리합니다.
+  static final TextStyle marketCodeInput = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textPrimary,
+    fontSize: 28,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 6,
+  );
+  static final TextStyle marketCodeDisplay = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textPrimary,
+    fontSize: 34,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 6,
+  );
+  static final TextStyle marketCodeEmphasis = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textPrimary,
+    fontSize: 26,
+    fontWeight: FontWeight.w900,
+    letterSpacing: 4,
+  );
+
   static TextStyle chip(Color color) {
     return AppTypography.caption.copyWith(
       color: color,
@@ -152,6 +174,7 @@ class AppTextStyles {
       color: AppColors.textPrimary,
       fontSize: fontSize,
       fontWeight: FontWeight.w800,
+      letterSpacing: AppTypography.letterSpacingFor(fontSize),
     );
   }
 
@@ -161,6 +184,7 @@ class AppTextStyles {
       fontSize: fontSize,
       fontWeight: FontWeight.w700,
       height: height,
+      letterSpacing: AppTypography.letterSpacingFor(fontSize),
     );
   }
 
@@ -176,7 +200,9 @@ class AppTextStyles {
       fontSize: fontSize,
       fontWeight: weight,
       height: height,
-      letterSpacing: letterSpacing,
+      // 유지보수 포인트:
+      // 수동 지정이 없으면 Figma 규칙(-5%)에 맞춰 자간을 자동 계산합니다.
+      letterSpacing: letterSpacing ?? AppTypography.letterSpacingFor(fontSize),
     );
   }
 }

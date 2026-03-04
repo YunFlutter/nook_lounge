@@ -8,14 +8,33 @@ class AppTheme {
 
   static ThemeData light() {
     const textColor = AppColors.textPrimary;
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primaryDefault,
+          brightness: Brightness.light,
+        ).copyWith(
+          // 유지보수 포인트:
+          // Figma 컬러 팔레트 토큰과 Material ColorScheme를 명시적으로 매핑합니다.
+          primary: AppColors.primaryDefault,
+          onPrimary: AppColors.textInverse,
+          primaryContainer: AppColors.primaryHover,
+          onPrimaryContainer: AppColors.textInverse,
+          secondary: AppColors.accentDeepOrange,
+          onSecondary: AppColors.textInverse,
+          secondaryContainer: AppColors.accentOrange,
+          onSecondaryContainer: AppColors.textPrimary,
+          tertiary: AppColors.textAccent,
+          onTertiary: AppColors.textInverse,
+          surface: AppColors.bgCard,
+          onSurface: textColor,
+          outline: AppColors.borderDefault,
+          outlineVariant: AppColors.navBorder,
+        );
 
     return ThemeData(
       useMaterial3: true,
       fontFamily: AppTypography.fontFamily,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.accentDeepOrange,
-        brightness: Brightness.light,
-      ),
+      colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.bgPrimary,
       cardColor: AppColors.bgCard,
       dividerColor: AppColors.borderDefault,
@@ -25,8 +44,8 @@ class AppTheme {
         foregroundColor: textColor,
         elevation: 0,
         scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.transparent,
+        surfaceTintColor: AppColors.transparent,
+        shadowColor: AppColors.transparent,
       ),
       textTheme: TextTheme(
         displaySmall: AppTypography.headingH1.copyWith(color: textColor),
@@ -49,7 +68,7 @@ class AppTheme {
         ),
       ),
       textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: AppColors.accentDeepOrange,
+        cursorColor: AppColors.borderFocus,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -70,7 +89,7 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(
-            color: AppColors.accentDeepOrange,
+            color: AppColors.borderFocus,
             width: 1.8,
           ),
         ),
@@ -99,9 +118,7 @@ class AppTheme {
         side: WidgetStateProperty.resolveWith((states) {
           final isFocused = states.contains(WidgetState.focused);
           return BorderSide(
-            color: isFocused
-                ? AppColors.accentDeepOrange
-                : AppColors.borderDefault,
+            color: isFocused ? AppColors.borderFocus : AppColors.borderDefault,
             width: isFocused ? 1.8 : 1,
           );
         }),

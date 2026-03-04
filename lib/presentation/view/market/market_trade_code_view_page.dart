@@ -88,12 +88,7 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 hasCode ? session.code : '-----',
-                style: AppTextStyles.bodyWithSize(
-                  34,
-                  color: AppColors.textPrimary,
-                  weight: FontWeight.w800,
-                  letterSpacing: 6,
-                ),
+                style: AppTextStyles.marketCodeDisplay,
               ),
               const SizedBox(height: 8),
               Text(

@@ -964,7 +964,7 @@ class _SegmentStatusItem extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? AppColors.white : Colors.transparent,
+          color: selected ? AppColors.white : AppColors.transparent,
           borderRadius: BorderRadius.circular(10),
           boxShadow: selected
               ? const <BoxShadow>[

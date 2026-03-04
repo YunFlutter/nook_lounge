@@ -395,7 +395,7 @@ class _HemisphereCard extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.s10),
         decoration: BoxDecoration(
-          color: selected ? AppColors.navActiveBg : Colors.transparent,
+          color: selected ? AppColors.navActiveBg : AppColors.transparent,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: selected

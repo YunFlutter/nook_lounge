@@ -205,7 +205,7 @@ class _WishListPageState extends ConsumerState<WishListPage> {
         .join(' · ');
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
         onTap: () => _openDetailSheet(item: item),
@@ -332,7 +332,7 @@ class _WishListPageState extends ConsumerState<WishListPage> {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) {
         final states = ref.read(
           catalogBindingViewModelProvider((

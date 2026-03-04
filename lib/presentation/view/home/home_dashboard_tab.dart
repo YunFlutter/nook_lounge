@@ -745,7 +745,7 @@ class HomeDashboardTab extends ConsumerWidget {
                 return AnimatedFadeSlide(
                   delay: Duration(milliseconds: 25 + (index * 20)),
                   child: Material(
-                    color: Colors.transparent,
+                    color: AppColors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
                       onTap: () => _openWishListPage(
@@ -817,7 +817,7 @@ class HomeDashboardTab extends ConsumerWidget {
     return AnimatedFadeSlide(
       delay: delay,
       child: Material(
-        color: Colors.transparent,
+        color: AppColors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () async {
@@ -986,7 +986,7 @@ class HomeDashboardTab extends ConsumerWidget {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (_) {
         return CatalogItemDetailSheet(
           item: item,

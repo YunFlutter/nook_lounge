@@ -1195,7 +1195,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     final nextCode = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       builder: (sheetContext) {
         return AnimatedPadding(
           duration: const Duration(milliseconds: 180),

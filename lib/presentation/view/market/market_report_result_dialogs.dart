@@ -20,7 +20,7 @@ class MarketReportResultDialogs {
       context: context,
       title: '중복된 신고입니다.',
       icon: Text('!', style: AppTextStyles.dialogDanger),
-      iconBackgroundColor: Colors.transparent,
+      iconBackgroundColor: AppColors.transparent,
     );
   }
 
@@ -37,7 +37,7 @@ class MarketReportResultDialogs {
       builder: (dialogContext) {
         return Dialog(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.transparent,
           child: Container(
             width: 330,
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 22),

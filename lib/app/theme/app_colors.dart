@@ -9,8 +9,9 @@ class AppColors {
   /// Accent(682:1478), Border(682:1482), Nav(682:1485)
 
   // Base
-  static const Color black = Color(0xFF000000);
+  static const Color black = textPrimary;
   static const Color white = Color(0xFFFFFFFF);
+  static const Color transparent = Color(0x00000000);
 
   // BG
   static const Color bgPrimary = Color(0xFFFBFAF7);
@@ -22,7 +23,7 @@ class AppColors {
   static const Color textPrimary = Color(0xFF5F4F24);
   static const Color textSecondary = Color(0xFF6B6B6B);
   static const Color textMuted = Color(0xFF9AA0A6);
-  static const Color textHint = Color(0xFFB7BEC6);
+  static const Color textHint = textMuted;
   static const Color textInverse = Color(0xFFFFFFFF);
   static const Color textAccent = Color(0xFF91ACEC);
 
@@ -48,67 +49,71 @@ class AppColors {
   static const Color navBorder = Color(0xFFEEEAE4);
 
   // Overlay / Shadow
-  static const Color shadowSoft = Color(0x14000000);
-  static const Color shadowMedium = Color(0x24000000);
-  static const Color shadowStrong = Color(0x26000000);
+  // 유지보수 포인트:
+  // 그림자/오버레이도 팔레트 톤 일관성을 위해 textPrimary 기반 알파를 사용합니다.
+  static const Color shadowSoft = Color(0x145F4F24);
+  static const Color shadowMedium = Color(0x245F4F24);
+  static const Color shadowStrong = Color(0x265F4F24);
 
   // Catalog Surface
-  static const Color catalogSegmentBg = Color(0xFFF0EDEA);
-  static const Color catalogChipBg = Color(0xFFEFEDE8);
-  static const Color catalogChipSelectedBg = Color(0xFFFFE2A6);
-  static const Color catalogCardBg = Color(0xFFFFFFFF);
-  static const Color catalogProgressTrack = Color(0xFFF3F3F3);
-  static const Color catalogProgressAccent = Color(0xFFE76F51);
-  static const Color catalogSuccessBg = Color(0xFFD7F3E8);
-  static const Color catalogSuccessText = Color(0xFF10956A);
+  static const Color catalogSegmentBg = bgSecondary;
+  static const Color catalogChipBg = bgSecondary;
+  static const Color catalogChipSelectedBg = navActiveBg;
+  static const Color catalogCardBg = bgCard;
+  static const Color catalogProgressTrack = navBorder;
+  static const Color catalogProgressAccent = accentDeepOrange;
+  static const Color catalogSuccessBg = bgPlane;
+  static const Color catalogSuccessText = primaryHover;
 
   // Catalog Badge
-  static const Color badgeBlueBg = Color(0xFFD8EAFF);
-  static const Color badgeBlueText = Color(0xFF4F88D9);
-  static const Color badgeMintBg = Color(0xFFD8F3EA);
-  static const Color badgeMintText = Color(0xFF169E75);
-  static const Color badgeRedBg = Color(0xFFFFD8D9);
-  static const Color badgeRedText = Color(0xFFE4585D);
-  static const Color badgeBeigeBg = Color(0xFFF0E4D8);
-  static const Color badgeBeigeText = Color(0xFF7A684E);
-  static const Color badgeYellowBg = Color(0xFFFFF0C8);
-  static const Color badgeYellowText = Color(0xFF88733C);
-  static const Color badgePurpleBg = Color(0xFFE7DBFF);
-  static const Color badgePurpleText = Color(0xFF7B59C9);
+  static const Color badgeBlueBg = bgPlane;
+  static const Color badgeBlueText = textAccent;
+  static const Color badgeMintBg = bgPlane;
+  static const Color badgeMintText = primaryDefault;
+  static const Color badgeRedBg = navActiveBg;
+  static const Color badgeRedText = accentDeepOrange;
+  static const Color badgeBeigeBg = bgSecondary;
+  static const Color badgeBeigeText = textPrimary;
+  static const Color badgeYellowBg = accentOrange;
+  static const Color badgeYellowText = textPrimary;
+  static const Color badgePurpleBg = navActiveBg;
+  static const Color badgePurpleText = textAccent;
 
   // Passport
-  static const Color passportPageBg = Color(0xFFFBFBFA);
-  static const Color passportTitleBlue = Color(0xFF5B7DE8);
-  static const Color passportWelcomePurple = Color(0xFFA983E9);
-  static const Color passportCardBg = Color(0xFFD8C29B);
-  static const Color passportCardHeaderBg = Color(0xFFB59E7B);
-  static const Color passportCardBorder = Color(0xFFEEE0CC);
-  static const Color passportLine = Color(0xFF75613E);
-  static const Color passportTextMain = Color(0xFF5D4E35);
-  static const Color passportTextSub = Color(0xFF766854);
-  static const Color passportTextTitle = Color(0xFF6F5A38);
-  static const Color passportPhotoBg = Color(0xFFF5F5F5);
-  static const Color passportPhotoBorder = Color(0xFFD0D0D0);
-  static const Color passportSpotGlow = Color(0xFFFFF7D7);
-  static const Color passportSpotRay = Color(0xFFF7D879);
-  static const Color passportBurstGlow = Color(0xFFFFF3C4);
-  static const Color confettiPurple = Color(0xFFEFA5FF);
-  static const Color confettiMint = Color(0xFF88E2CE);
-  static const Color confettiYellow = Color(0xFFFFD95C);
-  static const Color confettiBlue = Color(0xFFAED9FF);
-  static const Color confettiOrange = Color(0xFFFFB57D);
+  static const Color passportPageBg = bgPrimary;
+  static const Color passportTitleBlue = textAccent;
+  static const Color passportWelcomePurple = textAccent;
+  static const Color passportCardBg = accentOrange;
+  static const Color passportCardHeaderBg = navActive;
+  static const Color passportCardBorder = navBorder;
+  static const Color passportLine = textPrimary;
+  static const Color passportTextMain = textPrimary;
+  static const Color passportTextSub = textSecondary;
+  static const Color passportTextTitle = textPrimary;
+  static const Color passportPhotoBg = bgSecondary;
+  static const Color passportPhotoBorder = borderDefault;
+  static const Color passportSpotGlow = accentOrange;
+  static const Color passportSpotRay = navActive;
+  static const Color passportBurstGlow = navActiveBg;
+  static const Color confettiPurple = textAccent;
+  static const Color confettiMint = primaryDefault;
+  static const Color confettiYellow = accentOrange;
+  static const Color confettiBlue = bgPlane;
+  static const Color confettiOrange = navActive;
 
   // Market
-  static const Color marketTouchFurniture = Color(0xFF9A6E42);
-  static const Color marketTouchWallpaper = Color(0xFFF0B400);
-  static const Color marketTouchFlooring = Color(0xFF3D7BE2);
-  static const Color marketTouchMusic = Color(0xFF8F50E2);
-  static const Color marketTouchFashion = Color(0xFFF2649A);
+  static const Color marketTouchFurniture = textPrimary;
+  static const Color marketTouchWallpaper = accentOrange;
+  static const Color marketTouchFlooring = textAccent;
+  static const Color marketTouchMusic = navActive;
+  static const Color marketTouchFashion = accentDeepOrange;
 
   // Settings
-  static const Color settingsPrimaryButton = Color(0xFF82CAE6);
-  static const Color settingsPrimaryButtonPressed = Color(0xFF68B9D7);
-  static const Color settingsOverlay = Color(0x66000000);
-  static const Color settingsSuccessIcon = Color(0xFFF2CB7C);
-  static const Color settingsWarning = Color(0xFFD66D6D);
+  // 유지보수 포인트:
+  // 설정 화면 CTA도 공통 브랜드 Primary 토큰을 재사용합니다.
+  static const Color settingsPrimaryButton = primaryDefault;
+  static const Color settingsPrimaryButtonPressed = primaryHover;
+  static const Color settingsOverlay = Color(0x665F4F24);
+  static const Color settingsSuccessIcon = accentOrange;
+  static const Color settingsWarning = accentDeepOrange;
 }
