@@ -148,4 +148,25 @@ class AirportRepositoryImpl implements AirportRepository {
   }) {
     return _dataSource.completeVisit(islandId: islandId, requestId: requestId);
   }
+
+  @override
+  Future<void> reportVisitRequester({
+    required String islandId,
+    required String requestId,
+    required String hostUid,
+    required String requesterUid,
+    required String reporterUid,
+    String? sourceType,
+    String? sourceOfferId,
+  }) {
+    return _dataSource.reportVisitRequester(
+      islandId: islandId,
+      requestId: requestId,
+      hostUid: hostUid,
+      requesterUid: requesterUid,
+      reporterUid: reporterUid,
+      sourceType: sourceType,
+      sourceOfferId: sourceOfferId,
+    );
+  }
 }

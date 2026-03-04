@@ -6,6 +6,30 @@ import 'package:nook_lounge_app/app/theme/app_theme.dart';
 class NookLoungeApp extends ConsumerWidget {
   const NookLoungeApp({super.key});
 
+  void _dismissKeyboardOnPointerDown(PointerDownEvent event) {
+    final focusedNode = FocusManager.instance.primaryFocus;
+    if (focusedNode == null) {
+      return;
+    }
+
+    final focusedContext = focusedNode.context;
+    if (focusedContext != null) {
+      final renderObject = focusedContext.findRenderObject();
+      if (renderObject is RenderBox && renderObject.hasSize) {
+        final focusedRect =
+            renderObject.localToGlobal(Offset.zero) & renderObject.size;
+        if (focusedRect.contains(event.position)) {
+          // 유지보수 포인트:
+          // 현재 포커스된 입력 필드 내부를 다시 터치한 경우에는
+          // 키보드를 유지해 커서 이동/선택 동작을 방해하지 않습니다.
+          return;
+        }
+      }
+    }
+
+    focusedNode.unfocus();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
@@ -27,20 +51,24 @@ class NookLoungeApp extends ConsumerWidget {
         final shouldApplyGlobalBottomSafeArea =
             platform == TargetPlatform.android;
 
-        return ColoredBox(
-          color: scaffoldBackground,
-          child: shouldApplyGlobalBottomSafeArea
-              ? SafeArea(
-                  // 안드로이드 시스템 바텀 네비게이션 영역과 겹치지 않도록
-                  // 앱 전체를 한 번 감싸서 하단 인셋을 공통 적용한다.
-                  top: false,
-                  left: false,
-                  right: false,
-                  bottom: true,
-                  maintainBottomViewPadding: true,
-                  child: appChild,
-                )
-              : appChild,
+        return Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: _dismissKeyboardOnPointerDown,
+          child: ColoredBox(
+            color: scaffoldBackground,
+            child: shouldApplyGlobalBottomSafeArea
+                ? SafeArea(
+                    // 안드로이드 시스템 바텀 네비게이션 영역과 겹치지 않도록
+                    // 앱 전체를 한 번 감싸서 하단 인셋을 공통 적용한다.
+                    top: false,
+                    left: false,
+                    right: false,
+                    bottom: true,
+                    maintainBottomViewPadding: true,
+                    child: appChild,
+                  )
+                : appChild,
+          ),
         );
       },
       routerConfig: router,

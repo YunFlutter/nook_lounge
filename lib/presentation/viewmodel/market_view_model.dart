@@ -315,6 +315,10 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       final errorCode = _readStateErrorCode(error);
       final errorMessage = errorCode == 'trade_reproposal_not_allowed'
           ? '해당 거래는 다시 제안할 수 없어요.'
+          : errorCode == 'trade_offer_locked'
+          ? '이미 다른 상대와 진행 중인 거래라 새 제안을 받을 수 없어요.'
+          : errorCode == 'trade_offer_unavailable'
+          ? '현재 거래가 열려 있지 않아 제안할 수 없어요.'
           : errorCode == 'trade_proposal_already_exists'
           ? '이미 제안을 보냈어요. 응답을 기다려 주세요.'
           : '거래 제안을 보내지 못했어요.';

@@ -254,6 +254,49 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
     );
   }
 
+  Future<void> reportVisitRequester({
+    required AirportVisitRequest request,
+  }) async {
+    if (_uid.isEmpty) {
+      state = state.copyWith(errorMessage: '로그인 후 신고할 수 있어요.');
+      throw StateError('unauthenticated');
+    }
+
+    final normalizedIslandId = request.islandId.trim();
+    final normalizedRequestId = request.id.trim();
+    final normalizedHostUid = request.hostUid.trim();
+    final normalizedRequesterUid = request.requesterUid.trim();
+    if (normalizedIslandId.isEmpty ||
+        normalizedRequestId.isEmpty ||
+        normalizedHostUid.isEmpty ||
+        normalizedRequesterUid.isEmpty) {
+      state = state.copyWith(errorMessage: '신고할 손님 정보를 찾지 못했어요.');
+      throw StateError('invalid_airport_report_payload');
+    }
+    if (normalizedRequesterUid == _uid) {
+      state = state.copyWith(errorMessage: '본인 계정은 신고할 수 없어요.');
+      throw StateError('cannot_report_self');
+    }
+
+    try {
+      await _repository.reportVisitRequester(
+        islandId: normalizedIslandId,
+        requestId: normalizedRequestId,
+        hostUid: normalizedHostUid,
+        requesterUid: normalizedRequesterUid,
+        reporterUid: _uid,
+        sourceType: request.sourceType,
+        sourceOfferId: request.sourceOfferId,
+      );
+      state = state.copyWith(errorMessage: null);
+    } catch (error) {
+      state = state.copyWith(
+        errorMessage: _resolveErrorMessage(error, '손님 신고에 실패했어요.'),
+      );
+      rethrow;
+    }
+  }
+
   Future<void> blockUserForMe({required String blockedUid}) async {
     if (_uid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 유저를 차단할 수 있어요.');
@@ -453,6 +496,12 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
           return '내 섬에는 방문 신청할 수 없어요.';
         case 'invalid_dodo_code':
           return '도도코드는 영문 대문자+숫자 5자리로 입력해 주세요.';
+        case 'duplicate_airport_visit_report':
+          return '이미 신고 접수된 손님이에요.';
+        case 'invalid_airport_report_payload':
+          return '신고할 손님 정보를 찾지 못했어요.';
+        case 'cannot_report_self':
+          return '본인 계정은 신고할 수 없어요.';
       }
     }
     return fallback;

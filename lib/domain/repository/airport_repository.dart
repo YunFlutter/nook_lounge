@@ -68,4 +68,14 @@ abstract class AirportRepository {
     required String islandId,
     required String requestId,
   });
+
+  Future<void> reportVisitRequester({
+    required String islandId,
+    required String requestId,
+    required String hostUid,
+    required String requesterUid,
+    required String reporterUid,
+    String? sourceType,
+    String? sourceOfferId,
+  });
 }

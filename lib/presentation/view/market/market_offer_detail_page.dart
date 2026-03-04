@@ -69,7 +69,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
         title: Text(_appBarTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: <Widget>[
           IconButton(
-            onPressed: () => _showSimpleMenu(context, ref, isMine: isMine),
+            onPressed: () => _showSimpleMenu(
+              context,
+              ref,
+              isMine: isMine,
+              currentOffer: currentOffer,
+            ),
             icon: const Icon(Icons.more_vert_rounded),
           ),
         ],
@@ -263,10 +268,14 @@ class MarketOfferDetailPage extends ConsumerWidget {
 
     var primaryLabel = '거래 할래요';
     var primaryBackground = AppColors.accentDeepOrange;
-    VoidCallback? primaryOnPressed = () => _onTapTradeProposal(context, ref);
+    VoidCallback? primaryOnPressed = () =>
+        _onTapTradeProposal(context, ref, currentOffer: currentOffer);
     var secondaryLabel = '닫기';
     VoidCallback? secondaryOnPressed = () => Navigator.of(context).pop();
     final canCancelTrade = !_isInactiveOffer(currentOffer);
+    final isOfferLockedByAcceptedTrade =
+        currentOffer.status == MarketOfferStatus.waiting ||
+        currentOffer.status == MarketOfferStatus.trading;
 
     if (myProposalAsync.isLoading) {
       primaryLabel = '제안 상태 확인 중...';
@@ -321,8 +330,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
           secondaryLabel = '닫기';
           secondaryOnPressed = () => Navigator.of(context).pop();
         case null:
-          primaryLabel = '거래 할래요';
-          primaryOnPressed = () => _onTapTradeProposal(context, ref);
+          if (isOfferLockedByAcceptedTrade) {
+            primaryLabel = '거래 진행 중';
+            primaryBackground = AppColors.catalogChipBg;
+            primaryOnPressed = null;
+          } else {
+            primaryLabel = '거래 할래요';
+            primaryOnPressed = () =>
+                _onTapTradeProposal(context, ref, currentOffer: currentOffer);
+          }
           secondaryLabel = '닫기';
           secondaryOnPressed = () => Navigator.of(context).pop();
       }
@@ -1065,8 +1081,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _onTapTradeProposal(BuildContext context, WidgetRef ref) async {
-    if (_isCompletedOffer) {
+  Future<void> _onTapTradeProposal(
+    BuildContext context,
+    WidgetRef ref, {
+    required MarketOffer currentOffer,
+  }) async {
+    if (_isCompletedOfferByStatus(currentOffer)) {
       if (!context.mounted) {
         return;
       }
@@ -1075,6 +1095,23 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ..showSnackBar(
           const SnackBar(
             content: Text('완료된 거래에는 제안을 보낼 수 없어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+    final isOfferLockedByAcceptedTrade =
+        currentOffer.status == MarketOfferStatus.waiting ||
+        currentOffer.status == MarketOfferStatus.trading;
+    if (isOfferLockedByAcceptedTrade) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('이미 다른 상대와 진행 중인 거래예요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1341,7 +1378,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref, {
     required bool isMine,
+    required MarketOffer currentOffer,
   }) async {
+    final isCompletedByStatus = _isCompletedOfferByStatus(currentOffer);
+    final canDeleteMineOffer =
+        !isCompletedByStatus &&
+        currentOffer.status != MarketOfferStatus.waiting &&
+        currentOffer.status != MarketOfferStatus.trading;
     if (isMine) {
       await showModalBottomSheet<void>(
         context: context,
@@ -1354,7 +1397,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (!_isCompletedOffer)
+                if (!isCompletedByStatus)
                   ListTile(
                     leading: const Icon(Icons.pin_outlined),
                     title: const Text('코드 확인'),
@@ -1363,7 +1406,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       await _openTradeCodePage(context, ref);
                     },
                   ),
-                if (!_isCompletedOffer)
+                if (canDeleteMineOffer)
                   ListTile(
                     leading: const Icon(Icons.delete_outline_rounded),
                     title: const Text('삭제하기'),
@@ -1392,7 +1435,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              if (!_isCompletedOffer)
+              if (!isCompletedByStatus)
                 ListTile(
                   leading: const Icon(Icons.pin_outlined),
                   title: const Text('코드 확인'),

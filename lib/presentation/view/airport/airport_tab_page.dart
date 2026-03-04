@@ -243,8 +243,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             selectedIds: state.selectedRequestIds,
             onToggleSelect: viewModel.toggleRequestSelection,
             onCancel: viewModel.cancelVisitRequest,
-            onBlockUser: (blockedUid) =>
-                viewModel.blockUserForMe(blockedUid: blockedUid),
+            onReportUser: (request) =>
+                viewModel.reportVisitRequester(request: request),
             onOpenAll: () => _openRequestList(
               context: context,
               viewModel: viewModel,
@@ -257,8 +257,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
           _buildInvitedSection(
             requests: waitingGuests,
             onMarkArrived: (requestId) => viewModel.markArrived(requestId),
-            onBlockUser: (blockedUid) =>
-                viewModel.blockUserForMe(blockedUid: blockedUid),
+            onReportUser: (request) =>
+                viewModel.reportVisitRequester(request: request),
             onOpenAll: () => _openRequestList(
               context: context,
               viewModel: viewModel,
@@ -622,7 +622,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     required Set<String> selectedIds,
     required void Function(String requestId) onToggleSelect,
     required Future<void> Function(AirportVisitRequest request) onCancel,
-    required Future<void> Function(String blockedUid) onBlockUser,
+    required Future<void> Function(AirportVisitRequest request) onReportUser,
     required VoidCallback onOpenAll,
   }) {
     return Column(
@@ -803,16 +803,15 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                           ),
                           const Spacer(),
                           TextButton(
-                            onPressed: () => _onTapBlockUser(
-                              onBlockUser: onBlockUser,
-                              blockedUid: request.requesterUid,
-                              blockedUserName: request.requesterName,
+                            onPressed: () => _onTapReportUser(
+                              onReportUser: onReportUser,
+                              request: request,
                             ),
                             style: TextButton.styleFrom(
                               foregroundColor: AppColors.badgeRedText,
                               textStyle: AppTextStyles.captionSecondary,
                             ),
-                            child: const Text('차단'),
+                            child: const Text('신고'),
                           ),
                           const SizedBox(width: 4),
                           OutlinedButton(
@@ -841,7 +840,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
   Widget _buildInvitedSection({
     required List<AirportVisitRequest> requests,
     required Future<void> Function(String requestId) onMarkArrived,
-    required Future<void> Function(String blockedUid) onBlockUser,
+    required Future<void> Function(AirportVisitRequest request) onReportUser,
     required VoidCallback onOpenAll,
   }) {
     return Column(
@@ -995,16 +994,15 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                         ],
                         const Spacer(),
                         TextButton(
-                          onPressed: () => _onTapBlockUser(
-                            onBlockUser: onBlockUser,
-                            blockedUid: request.requesterUid,
-                            blockedUserName: request.requesterName,
+                          onPressed: () => _onTapReportUser(
+                            onReportUser: onReportUser,
+                            request: request,
                           ),
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.badgeRedText,
                             textStyle: AppTextStyles.captionSecondary,
                           ),
-                          child: const Text('차단'),
+                          child: const Text('신고'),
                         ),
                         const SizedBox(width: 4),
                         if (canMarkArrived)
@@ -1114,25 +1112,24 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     );
   }
 
-  Future<void> _onTapBlockUser({
-    required Future<void> Function(String blockedUid) onBlockUser,
-    required String blockedUid,
-    required String blockedUserName,
+  Future<void> _onTapReportUser({
+    required Future<void> Function(AirportVisitRequest request) onReportUser,
+    required AirportVisitRequest request,
   }) async {
-    final normalizedBlockedUid = blockedUid.trim();
-    if (normalizedBlockedUid.isEmpty) {
+    final requesterUid = request.requesterUid.trim();
+    if (requesterUid.isEmpty) {
       return;
     }
 
-    final shouldBlock = await _showBlockUserConfirmDialog(
-      blockedUserName: blockedUserName,
+    final shouldReport = await _showReportUserConfirmDialog(
+      targetUserName: request.requesterName,
     );
-    if (shouldBlock != true || !mounted) {
+    if (shouldReport != true || !mounted) {
       return;
     }
 
     try {
-      await onBlockUser(normalizedBlockedUid);
+      await onReportUser(request);
     } catch (_) {
       return;
     }
@@ -1144,16 +1141,16 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         const SnackBar(
-          content: Text('유저를 차단했어요. 게시물/요청 목록에서 숨겨집니다.'),
+          content: Text('신고가 접수되었어요. 운영팀이 확인할게요.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
   }
 
-  Future<bool?> _showBlockUserConfirmDialog({required String blockedUserName}) {
-    final targetName = blockedUserName.trim().isEmpty
+  Future<bool?> _showReportUserConfirmDialog({required String targetUserName}) {
+    final targetName = targetUserName.trim().isEmpty
         ? '해당 유저'
-        : blockedUserName.trim();
+        : targetUserName.trim();
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -1162,9 +1159,9 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
-          title: Text('유저 차단', style: AppTextStyles.headingH2),
+          title: Text('손님 신고', style: AppTextStyles.headingH2),
           content: Text(
-            '$targetName 님을 차단하면 게시물과 방문 요청이 보이지 않아요.',
+            '$targetName 님을 신고할까요?\n신고 내용은 운영팀 검토 후 처리됩니다.',
             style: AppTextStyles.bodySecondaryStrong,
           ),
           actions: <Widget>[
@@ -1182,7 +1179,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                 backgroundColor: AppColors.badgeRedText,
                 foregroundColor: AppColors.textInverse,
               ),
-              child: const Text('차단'),
+              child: const Text('신고'),
             ),
           ],
         );

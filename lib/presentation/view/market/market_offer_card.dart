@@ -408,12 +408,16 @@ class MarketOfferCard extends StatelessWidget {
     if (!offer.isMine) {
       return _buildActionChip();
     }
+    final canDeleteMineOffer =
+        offer.status != MarketOfferStatus.waiting &&
+        offer.status != MarketOfferStatus.trading;
     return Wrap(
       spacing: 4,
       runSpacing: 4,
       children: <Widget>[
         _buildOwnerActionChip(label: '수정', onTap: onEditTap),
-        _buildOwnerActionChip(label: '삭제', onTap: onDeleteTap),
+        if (canDeleteMineOffer)
+          _buildOwnerActionChip(label: '삭제', onTap: onDeleteTap),
         _buildOwnerActionChip(label: '완료', onTap: onCompleteTap),
       ],
     );

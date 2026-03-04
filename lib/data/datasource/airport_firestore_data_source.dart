@@ -12,6 +12,8 @@ class AirportFirestoreDataSource {
   static final RegExp _dodoCodePattern = RegExp(
     r'^(?=.*[A-Z])(?=.*\d)[A-Z\d]{5}$',
   );
+  static const String _duplicateVisitReportErrorCode =
+      'duplicate_airport_visit_report';
 
   final FirebaseFirestore _firestore;
 
@@ -318,6 +320,20 @@ class AirportFirestoreDataSource {
       'sourceOfferId': sourceOfferId?.trim(),
       'sourceMoveType': sourceMoveType?.trim(),
     });
+
+    await _writeVisitLog(
+      islandId: normalizedIslandId,
+      eventType: 'visit_request_submitted',
+      requestId: requestDoc.id,
+      hostUid: normalizedHostUid,
+      requesterUid: normalizedRequesterUid,
+      payload: <String, dynamic>{
+        'purpose': purpose.name,
+        'sourceType': sourceType?.trim() ?? '',
+        'sourceOfferId': sourceOfferId?.trim() ?? '',
+        'sourceMoveType': sourceMoveType?.trim() ?? '',
+      },
+    );
   }
 
   Future<void> cancelVisitRequest({
@@ -346,6 +362,16 @@ class AirportFirestoreDataSource {
           'cancelByUid': normalizedCancelByUid,
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
+
+    await _writeVisitLog(
+      islandId: normalizedIslandId,
+      eventType: 'visit_request_cancelled',
+      requestId: normalizedRequestId,
+      actorUid: normalizedCancelByUid,
+      payload: <String, dynamic>{
+        'status': AirportVisitRequestStatus.cancelled.name,
+      },
+    );
   }
 
   Future<void> inviteRequests({
@@ -397,6 +423,22 @@ class AirportFirestoreDataSource {
     );
 
     await batch.commit();
+
+    for (final requestId in requestIds) {
+      final normalizedRequestId = requestId.trim();
+      if (normalizedRequestId.isEmpty) {
+        continue;
+      }
+      await _writeVisitLog(
+        islandId: normalizedIslandId,
+        eventType: 'visit_request_invited',
+        requestId: normalizedRequestId,
+        payload: <String, dynamic>{
+          'inviteCode': normalizedCode,
+          'status': AirportVisitRequestStatus.invited.name,
+        },
+      );
+    }
   }
 
   Future<void> markArrived({
@@ -421,6 +463,15 @@ class AirportFirestoreDataSource {
           'arrivedAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
+
+    await _writeVisitLog(
+      islandId: normalizedIslandId,
+      eventType: 'visit_request_arrived',
+      requestId: normalizedRequestId,
+      payload: <String, dynamic>{
+        'status': AirportVisitRequestStatus.arrived.name,
+      },
+    );
   }
 
   Future<void> completeVisit({
@@ -444,6 +495,85 @@ class AirportFirestoreDataSource {
           'status': AirportVisitRequestStatus.completed.name,
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
+
+    await _writeVisitLog(
+      islandId: normalizedIslandId,
+      eventType: 'visit_request_completed',
+      requestId: normalizedRequestId,
+      payload: <String, dynamic>{
+        'status': AirportVisitRequestStatus.completed.name,
+      },
+    );
+  }
+
+  Future<void> reportVisitRequester({
+    required String islandId,
+    required String requestId,
+    required String hostUid,
+    required String requesterUid,
+    required String reporterUid,
+    String? sourceType,
+    String? sourceOfferId,
+  }) async {
+    final normalizedIslandId = islandId.trim();
+    final normalizedRequestId = requestId.trim();
+    final normalizedHostUid = hostUid.trim();
+    final normalizedRequesterUid = requesterUid.trim();
+    final normalizedReporterUid = reporterUid.trim();
+    final normalizedSourceType = sourceType?.trim() ?? '';
+    final normalizedSourceOfferId = sourceOfferId?.trim() ?? '';
+    if (normalizedIslandId.isEmpty ||
+        normalizedRequestId.isEmpty ||
+        normalizedHostUid.isEmpty ||
+        normalizedRequesterUid.isEmpty ||
+        normalizedReporterUid.isEmpty) {
+      throw StateError('invalid_airport_report_payload');
+    }
+    if (normalizedReporterUid == normalizedRequesterUid) {
+      throw StateError('cannot_report_self');
+    }
+
+    final reportRef = _firestore.doc(
+      FirestorePaths.report(
+        'airport_${normalizedIslandId}_${normalizedRequestId}_$normalizedReporterUid',
+      ),
+    );
+    await _firestore.runTransaction((transaction) async {
+      final existing = await transaction.get(reportRef);
+      if (existing.exists) {
+        throw StateError(_duplicateVisitReportErrorCode);
+      }
+      transaction.set(reportRef, <String, dynamic>{
+        'id': reportRef.id,
+        'scope': 'airport',
+        'targetType': 'visit_request',
+        'targetId': normalizedRequestId,
+        'islandId': normalizedIslandId,
+        'requestHostUid': normalizedHostUid,
+        'requestRequesterUid': normalizedRequesterUid,
+        'reporterUid': normalizedReporterUid,
+        'sourceType': normalizedSourceType,
+        'sourceOfferId': normalizedSourceOfferId,
+        'reason': 'waiting_guest_report',
+        'detail': '',
+        'status': 'pending',
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    });
+
+    await _writeVisitLog(
+      islandId: normalizedIslandId,
+      eventType: 'visit_request_reported',
+      requestId: normalizedRequestId,
+      hostUid: normalizedHostUid,
+      requesterUid: normalizedRequesterUid,
+      actorUid: normalizedReporterUid,
+      payload: <String, dynamic>{
+        'sourceType': normalizedSourceType,
+        'sourceOfferId': normalizedSourceOfferId,
+      },
+    );
   }
 
   Future<void> _cleanupStaleTradeRequests(
@@ -552,5 +682,38 @@ class AirportFirestoreDataSource {
       case AirportVisitRequestStatus.completed:
         return 4;
     }
+  }
+
+  Future<void> _writeVisitLog({
+    required String islandId,
+    required String eventType,
+    String? requestId,
+    String? hostUid,
+    String? requesterUid,
+    String? actorUid,
+    Map<String, dynamic>? payload,
+  }) async {
+    final normalizedIslandId = islandId.trim();
+    final normalizedEventType = eventType.trim();
+    if (normalizedIslandId.isEmpty || normalizedEventType.isEmpty) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 방문 신청/초대/상태변경 이력을 queue 하위 로그 컬렉션에 append-only로 남깁니다.
+    final logRef = _firestore
+        .collection(FirestorePaths.airportRequestLogs(normalizedIslandId))
+        .doc();
+    await logRef.set(<String, dynamic>{
+      'id': logRef.id,
+      'islandId': normalizedIslandId,
+      'eventType': normalizedEventType,
+      'requestId': requestId?.trim() ?? '',
+      'hostUid': hostUid?.trim() ?? '',
+      'requesterUid': requesterUid?.trim() ?? '',
+      'actorUid': actorUid?.trim() ?? '',
+      'createdAt': FieldValue.serverTimestamp(),
+      ...?payload,
+    });
   }
 }
