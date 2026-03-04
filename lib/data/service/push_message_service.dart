@@ -30,6 +30,10 @@ class PushMessageService {
   String? _lastSyncedUid;
   String? _lastSyncedToken;
   bool _initialized = false;
+  static const List<Duration> _tokenRetryDelays = <Duration>[
+    Duration(seconds: 1),
+    Duration(seconds: 3),
+  ];
 
   Future<void> initialize() async {
     if (_initialized) {
@@ -52,7 +56,7 @@ class PushMessageService {
       sound: true,
     );
 
-    await _syncCurrentToken();
+    await _safeSyncCurrentToken(reason: 'initialize');
 
     final initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
@@ -76,15 +80,24 @@ class PushMessageService {
       );
     });
 
-    _tokenRefreshSubscription = _messaging.onTokenRefresh.listen((token) async {
-      await _upsertTokenForCurrentUser(token);
-    });
+    _tokenRefreshSubscription = _messaging.onTokenRefresh.listen(
+      (token) async {
+        try {
+          await _upsertTokenForCurrentUser(token);
+        } catch (error) {
+          debugPrint('[PushMessageService] token refresh sync failed: $error');
+        }
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        debugPrint('[PushMessageService] token refresh stream error: $error');
+      },
+    );
 
     _authSubscription = _auth.authStateChanges().listen((user) async {
       if (user == null) {
         return;
       }
-      await _syncCurrentToken();
+      await _safeSyncCurrentToken(reason: 'auth_state_changed');
     });
   }
 
@@ -120,11 +133,65 @@ class PushMessageService {
   }
 
   Future<void> _syncCurrentToken() async {
-    final token = await _messaging.getToken();
+    final token = await _getTokenWithRetry();
     if (token == null || token.trim().isEmpty) {
       return;
     }
     await _upsertTokenForCurrentUser(token);
+  }
+
+  Future<void> _safeSyncCurrentToken({required String reason}) async {
+    try {
+      await _syncCurrentToken();
+    } catch (error) {
+      // 유지보수 포인트:
+      // FCM 서비스 일시 불가(예: SERVICE_NOT_AVAILABLE)는 앱 시작 실패로
+      // 이어지지 않도록 삼키고, 이후 토큰 리프레시/재시도 시점에 복구합니다.
+      if (_isServiceNotAvailableError(error)) {
+        debugPrint(
+          '[PushMessageService] token sync deferred ($reason): $error',
+        );
+        return;
+      }
+      debugPrint('[PushMessageService] token sync failed ($reason): $error');
+    }
+  }
+
+  Future<String?> _getTokenWithRetry() async {
+    for (var attempt = 0; ; attempt++) {
+      try {
+        return await _messaging.getToken();
+      } catch (error) {
+        final canRetry =
+            _isServiceNotAvailableError(error) &&
+            attempt < _tokenRetryDelays.length;
+        if (!canRetry) {
+          rethrow;
+        }
+        final delay = _tokenRetryDelays[attempt];
+        debugPrint(
+          '[PushMessageService] FCM getToken unavailable '
+          '(attempt ${attempt + 1}/${_tokenRetryDelays.length + 1}), '
+          'retry in ${delay.inSeconds}s',
+        );
+        await Future<void>.delayed(delay);
+      }
+    }
+  }
+
+  bool _isServiceNotAvailableError(Object error) {
+    if (error is FirebaseException) {
+      final message = (error.message ?? '').toUpperCase();
+      if (message.contains('SERVICE_NOT_AVAILABLE')) {
+        return true;
+      }
+      if ((error.code == 'unknown' || error.code == 'unavailable') &&
+          error.plugin == 'firebase_messaging') {
+        return true;
+      }
+    }
+    final text = error.toString().toUpperCase();
+    return text.contains('SERVICE_NOT_AVAILABLE');
   }
 
   Future<void> _upsertTokenForCurrentUser(String token) async {

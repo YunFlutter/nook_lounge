@@ -57,6 +57,7 @@ class _MarketTradeRegisterPageState
       'https://dodo.ac/np/images/1/1e/99k_Bells_NH_Inv_Icon.png';
   static const String _nookMilesTicketImageUrl =
       'https://dodo.ac/np/images/f/f5/Nook_Miles_Ticket_NH_Icon.png';
+  static const int _touchingPreviewLimit = 5;
   static const List<MapEntry<String, String>> _touchingPickerCategories =
       <MapEntry<String, String>>[
         MapEntry<String, String>('all', '전체'),
@@ -75,6 +76,7 @@ class _MarketTradeRegisterPageState
   CatalogItem? _offeredItem;
   CatalogItem? _wantedItem;
   List<CatalogItem> _touchingItems = <CatalogItem>[];
+  bool _isTouchingItemsExpanded = false;
   int _offerQuantity = 1;
   int _wantQuantity = 1;
   bool _useOfferCurrency = false;
@@ -528,6 +530,12 @@ class _MarketTradeRegisterPageState
 
   Widget _buildTouchingStepThree() {
     final hasItems = _touchingItems.isNotEmpty;
+    final canExpandTouchingItems =
+        _touchingItems.length > _touchingPreviewLimit;
+    final visibleTouchingItems =
+        (_isTouchingItemsExpanded || !canExpandTouchingItems)
+        ? _touchingItems
+        : _touchingItems.take(_touchingPreviewLimit).toList(growable: false);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -609,7 +617,7 @@ class _MarketTradeRegisterPageState
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children: _touchingItems
+                        children: visibleTouchingItems
                             .map(
                               (item) => Container(
                                 constraints: const BoxConstraints(
@@ -652,6 +660,36 @@ class _MarketTradeRegisterPageState
                             )
                             .toList(growable: false),
                       ),
+                      if (canExpandTouchingItems) ...<Widget>[
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _isTouchingItemsExpanded =
+                                    !_isTouchingItemsExpanded;
+                              });
+                            },
+                            icon: Icon(
+                              _isTouchingItemsExpanded
+                                  ? Icons.expand_less_rounded
+                                  : Icons.expand_more_rounded,
+                              size: 18,
+                              color: AppColors.accentDeepOrange,
+                            ),
+                            label: Text(
+                              _isTouchingItemsExpanded
+                                  ? '접기'
+                                  : '더보기 (+${_touchingItems.length - visibleTouchingItems.length}개)',
+                              style: AppTextStyles.captionWithColor(
+                                AppColors.accentDeepOrange,
+                                weight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   )
                 : Column(
@@ -1983,6 +2021,10 @@ class _MarketTradeRegisterPageState
     }
     setState(() {
       _touchingItems = selected;
+      // 유지보수 포인트:
+      // 선택 목록이 갱신될 때는 기본 5개 미리보기 상태로 되돌려
+      // 긴 목록에서도 화면 높이가 갑자기 커지는 것을 방지합니다.
+      _isTouchingItemsExpanded = false;
     });
   }
 
@@ -1991,6 +2033,9 @@ class _MarketTradeRegisterPageState
       _touchingItems = _touchingItems
           .where((item) => item.id != itemId)
           .toList(growable: false);
+      if (_touchingItems.length <= _touchingPreviewLimit) {
+        _isTouchingItemsExpanded = false;
+      }
     });
   }
 
@@ -2256,10 +2301,7 @@ class _MarketTradeRegisterPageState
             imageUrl: wantedImageUrl,
             name: wantedName,
           );
-    final boardType = _mapBoardType(
-      catalogCategory: categorySource,
-      tradeType: _tradeType,
-    );
+    final boardType = _mapBoardType(tradeType: _tradeType);
     final category = _mapCategory(
       catalogCategory: categorySource,
       tradeType: _tradeType,
@@ -2418,16 +2460,13 @@ class _MarketTradeRegisterPageState
     return MarketFilterCategory.all;
   }
 
-  MarketBoardType _mapBoardType({
-    required String catalogCategory,
-    required MarketTradeType tradeType,
-  }) {
+  MarketBoardType _mapBoardType({required MarketTradeType tradeType}) {
     if (tradeType == MarketTradeType.touching) {
       return MarketBoardType.touching;
     }
-    if (catalogCategory == '가구') {
-      return MarketBoardType.touching;
-    }
+    // 유지보수 포인트:
+    // 만지작 보드 여부는 아이템 카테고리(가구/벽지 등)가 아니라
+    // 사용자가 선택한 거래 타입으로만 결정해야 의도치 않은 분류를 막을 수 있습니다.
     return MarketBoardType.exchange;
   }
 

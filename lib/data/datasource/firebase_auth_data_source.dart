@@ -46,7 +46,16 @@ class FirebaseAuthDataSource {
     );
 
     final userCredential = await _firebaseAuth.signInWithCredential(credential);
-    await _syncUserDocument(userCredential.user);
+    final user = userCredential.user;
+    await _syncUserDocument(user);
+    if (user != null) {
+      await _writeAccessLog(
+        uid: user.uid,
+        eventType: 'sign_in',
+        provider: 'google',
+        isAnonymous: user.isAnonymous,
+      );
+    }
   }
 
   Future<void> signInWithApple() async {
@@ -70,15 +79,43 @@ class FirebaseAuthDataSource {
     ).credential(idToken: idToken, accessToken: authorizationCode);
 
     final userCredential = await _firebaseAuth.signInWithCredential(credential);
-    await _syncUserDocument(userCredential.user);
+    final user = userCredential.user;
+    await _syncUserDocument(user);
+    if (user != null) {
+      await _writeAccessLog(
+        uid: user.uid,
+        eventType: 'sign_in',
+        provider: 'apple',
+        isAnonymous: user.isAnonymous,
+      );
+    }
   }
 
   Future<void> signInAnonymously() async {
     final userCredential = await _firebaseAuth.signInAnonymously();
-    await _syncUserDocument(userCredential.user);
+    final user = userCredential.user;
+    await _syncUserDocument(user);
+    if (user != null) {
+      await _writeAccessLog(
+        uid: user.uid,
+        eventType: 'sign_in',
+        provider: 'anonymous',
+        isAnonymous: user.isAnonymous,
+      );
+    }
   }
 
   Future<void> signOut() async {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser != null) {
+      await _writeAccessLog(
+        uid: currentUser.uid,
+        eventType: 'sign_out',
+        provider: _resolvePrimaryProvider(currentUser),
+        isAnonymous: currentUser.isAnonymous,
+      );
+    }
+
     await _firebaseAuth.signOut();
 
     if (_googleInitialized) {
@@ -97,6 +134,13 @@ class FirebaseAuthDataSource {
       'withdrawnAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+
+    await _writeAccessLog(
+      uid: currentUser.uid,
+      eventType: 'withdrawal_requested',
+      provider: _resolvePrimaryProvider(currentUser),
+      isAnonymous: currentUser.isAnonymous,
+    );
   }
 
   Future<void> _syncUserDocument(User? user) async {
@@ -128,5 +172,51 @@ class FirebaseAuthDataSource {
           : FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  Future<void> _writeAccessLog({
+    required String uid,
+    required String eventType,
+    required String provider,
+    required bool isAnonymous,
+  }) async {
+    final normalizedUid = uid.trim();
+    final normalizedEventType = eventType.trim();
+    if (normalizedUid.isEmpty || normalizedEventType.isEmpty) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 보안/감사 기준으로 접속 이력을 별도 컬렉션에 append-only로 저장합니다.
+    final logRef = _firestore
+        .collection(FirestorePaths.userAccessLogs(normalizedUid))
+        .doc();
+    await logRef.set(<String, dynamic>{
+      'id': logRef.id,
+      'uid': normalizedUid,
+      'eventType': normalizedEventType,
+      'provider': provider.trim(),
+      'isAnonymous': isAnonymous,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  String _resolvePrimaryProvider(User user) {
+    if (user.isAnonymous) {
+      return 'anonymous';
+    }
+    for (final provider in user.providerData) {
+      final providerId = provider.providerId.trim();
+      if (providerId == 'google.com') {
+        return 'google';
+      }
+      if (providerId == 'apple.com') {
+        return 'apple';
+      }
+      if (providerId.isNotEmpty) {
+        return providerId;
+      }
+    }
+    return 'unknown';
   }
 }

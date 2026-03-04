@@ -27,7 +27,13 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
     // 유지보수 포인트:
     // 푸시 딥링크(알림 탭)를 앱 세션 시작 시 1회만 등록합니다.
     Future<void>.microtask(() async {
-      await ref.read(pushMessageServiceProvider).initialize();
+      try {
+        await ref.read(pushMessageServiceProvider).initialize();
+      } catch (error) {
+        // 유지보수 포인트:
+        // 푸시 초기화 실패는 세션 진입을 막지 않도록 방어합니다.
+        debugPrint('[SessionGatePage] push initialize failed: $error');
+      }
     });
   }
 
