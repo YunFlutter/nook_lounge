@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
@@ -66,7 +67,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(_appBarTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(
+          _appBarTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppTextStyles.headingH2Secondary,
+        ),
         actions: <Widget>[
           IconButton(
             onPressed: () => _showSimpleMenu(
@@ -958,28 +964,29 @@ class MarketOfferDetailPage extends ConsumerWidget {
         icon = Icons.inventory_2_rounded;
     }
 
-    return Container(
-      alignment: Alignment.center,
-      constraints: const BoxConstraints(minWidth: 64),
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 12, color: textColor),
-          const SizedBox(width: 3),
-          Text(
-            normalized.isEmpty ? '아이템' : normalized,
-            textAlign: TextAlign.center,
-            style: AppTextStyles.captionWithColor(
-              textColor,
-              weight: FontWeight.w800,
+    return IntrinsicWidth(
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 60, minHeight: 28),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(icon, size: 11, color: textColor),
+            const SizedBox(width: 3),
+            Text(
+              normalized.isEmpty ? '아이템' : normalized,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.captionWithColor(
+                textColor,
+                weight: FontWeight.w800,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1093,8 +1100,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('완료된 거래에는 제안을 보낼 수 없어요.'),
+          SnackBar(
+            content: _snackContent(context, '완료된 거래에는 제안을 보낼 수 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1110,8 +1117,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('이미 다른 상대와 진행 중인 거래예요.'),
+          SnackBar(
+            content: _snackContent(context, '이미 다른 상대와 진행 중인 거래예요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1138,7 +1145,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(errorMessage),
+            content: _snackContent(context, errorMessage),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1151,8 +1158,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('거래 제안을 보냈어요. 작성자 승낙을 기다려 주세요.'),
+        SnackBar(
+          content: _snackContent(context, '거래 제안을 보냈어요. 작성자 승낙을 기다려 주세요.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1186,8 +1193,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('제안 승낙에 실패했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: _snackContent(context, '제안 승낙에 실패했어요. 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1200,8 +1207,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('선택한 제안을 승낙했어요. 거래 코드를 준비해 주세요.'),
+        SnackBar(
+          content: _snackContent(context, '선택한 제안을 승낙했어요. 거래 코드를 준비해 주세요.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1400,7 +1407,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 if (!isCompletedByStatus)
                   ListTile(
                     leading: const Icon(Icons.pin_outlined),
-                    title: const Text('코드 확인'),
+                    title: Text(
+                      '코드 확인',
+                      style: AppTextStyles.bodyPrimaryStrong,
+                    ),
                     onTap: () async {
                       Navigator.of(context).pop();
                       await _openTradeCodePage(context, ref);
@@ -1409,7 +1419,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 if (canDeleteMineOffer)
                   ListTile(
                     leading: const Icon(Icons.delete_outline_rounded),
-                    title: const Text('삭제하기'),
+                    title: Text('삭제하기', style: AppTextStyles.bodyPrimaryStrong),
                     onTap: () async {
                       Navigator.of(context).pop();
                       await _deleteMyOffer(context, ref);
@@ -1438,7 +1448,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               if (!isCompletedByStatus)
                 ListTile(
                   leading: const Icon(Icons.pin_outlined),
-                  title: const Text('코드 확인'),
+                  title: Text('코드 확인', style: AppTextStyles.bodyPrimaryStrong),
                   onTap: () async {
                     Navigator.of(context).pop();
                     await _openTradeCodePage(context, ref);
@@ -1446,7 +1456,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 ),
               ListTile(
                 leading: const Icon(Icons.visibility_off_outlined),
-                title: const Text('숨기기'),
+                title: Text('숨기기', style: AppTextStyles.bodyPrimaryStrong),
                 onTap: () async {
                   Navigator.of(context).pop();
                   await _hideOffer(context, ref);
@@ -1454,7 +1464,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.block_outlined),
-                title: const Text('이 유저 차단'),
+                title: Text('이 유저 차단', style: AppTextStyles.bodyPrimaryStrong),
                 onTap: () async {
                   Navigator.of(context).pop();
                   await _blockOfferOwner(context, ref);
@@ -1462,7 +1472,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.flag_outlined),
-                title: const Text('신고하기'),
+                title: Text('신고하기', style: AppTextStyles.bodyPrimaryStrong),
                 onTap: () async {
                   Navigator.of(context).pop();
                   await _reportOffer(context, ref);
@@ -1481,8 +1491,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('거래가 종료되어 코드를 확인할 수 없어요.'),
+          SnackBar(
+            content: _snackContent(context, '거래가 종료되어 코드를 확인할 수 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1497,8 +1507,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('아직 거래 코드가 생성되지 않았어요.'),
+          SnackBar(
+            content: _snackContent(context, '아직 거래 코드가 생성되지 않았어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1538,8 +1548,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('신고 접수에 실패했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: _snackContent(context, '신고 접수에 실패했어요. 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1564,6 +1574,19 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return null;
   }
 
+  Text _snackContent(BuildContext context, String message) {
+    final baseStyle = DefaultTextStyle.of(context).style;
+    return Text(
+      message,
+      style: baseStyle.copyWith(
+        fontFamily: AppTypography.fontFamily,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: AppTypography.letterSpacingFor(16),
+      ),
+    );
+  }
+
   Future<void> _hideOffer(BuildContext context, WidgetRef ref) async {
     final shouldHide = await _showHideConfirmDialog(context);
     if (shouldHide != true || !context.mounted) {
@@ -1579,8 +1602,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('거래 글 숨기기에 실패했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: _snackContent(context, '거래 글 숨기기에 실패했어요. 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1593,8 +1616,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('거래 글을 숨겼어요. 목록에서 제외됩니다.'),
+        SnackBar(
+          content: _snackContent(context, '거래 글을 숨겼어요. 목록에서 제외됩니다.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1618,8 +1641,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('유저 차단에 실패했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: _snackContent(context, '유저 차단에 실패했어요. 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1632,8 +1655,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('해당 유저를 차단했어요. 게시물/요청을 숨깁니다.'),
+        SnackBar(
+          content: _snackContent(context, '해당 유저를 차단했어요. 게시물/요청을 숨깁니다.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1806,7 +1829,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(errorMessage),
+            content: _snackContent(context, errorMessage),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1818,8 +1841,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('거래를 완료로 변경했어요.'),
+        SnackBar(
+          content: _snackContent(context, '거래를 완료로 변경했어요.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1849,8 +1872,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('거래 취소에 실패했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: _snackContent(context, '거래 취소에 실패했어요. 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1863,7 +1886,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(
+          content: _snackContent(
+            context,
             hasAcceptedProposal
                 ? '거래를 취소했어요. 게시글이 다시 대기 상태로 돌아갔어요.'
                 : '보낸 거래 제안을 취소했어요.',
@@ -1893,8 +1917,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('거래 취소에 실패했어요. 다시 시도해 주세요.'),
+          SnackBar(
+            content: _snackContent(context, '거래 취소에 실패했어요. 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -1906,8 +1930,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('진행 중인 거래를 취소했어요.'),
+        SnackBar(
+          content: _snackContent(context, '진행 중인 거래를 취소했어요.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -2073,8 +2097,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('완료된 거래는 삭제할 수 없어요.'),
+          SnackBar(
+            content: _snackContent(context, '완료된 거래는 삭제할 수 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -2093,8 +2117,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('거래 글을 삭제했어요.'),
+        SnackBar(
+          content: _snackContent(context, '거래 글을 삭제했어요.'),
           behavior: SnackBarBehavior.floating,
         ),
       );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/constants/app_strings.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/presentation/state/sign_in_view_state.dart';
@@ -62,7 +63,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
           child: Column(
             children: <Widget>[
               const Spacer(flex: 2),
@@ -84,7 +85,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: AppSpacing.s22),
               AnimatedFadeSlide(
                 delay: Duration(milliseconds: 40),
                 child: Text(
@@ -93,7 +94,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: AppSpacing.s14),
               AnimatedFadeSlide(
                 delay: Duration(milliseconds: 80),
                 child: Text(
@@ -128,7 +129,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                           height: 22,
                           fit: BoxFit.contain,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: AppSpacing.s10),
                         Text(
                           AppStrings.appleLogin,
                           style: AppTextStyles.labelWithColor(
@@ -141,7 +142,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.s12),
               AnimatedFadeSlide(
                 delay: const Duration(milliseconds: 160),
                 child: AnimatedScaleButton(
@@ -164,7 +165,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                           height: 22,
                           fit: BoxFit.contain,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: AppSpacing.s10),
                         Text(
                           AppStrings.googleLogin,
                           style: AppTextStyles.labelWithColor(
@@ -177,7 +178,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.s8),
               AnimatedFadeSlide(
                 delay: const Duration(milliseconds: 200),
                 child: TextButton(
@@ -222,7 +223,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: AppSpacing.s22),
             ],
           ),
         ),

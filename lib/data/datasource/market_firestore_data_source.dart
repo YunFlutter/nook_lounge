@@ -698,6 +698,7 @@ class MarketFirestoreDataSource {
       'code': '',
       'codeSenderUid': codeSenderUid,
       'codeReceiverUid': codeReceiverUid,
+      'senderIslandRules': FieldValue.delete(),
       'acceptedAt': FieldValue.serverTimestamp(),
       'acceptedAtMillis': FieldValue.delete(),
       'codeSentAt': FieldValue.delete(),
@@ -718,6 +719,7 @@ class MarketFirestoreDataSource {
         code: '',
         codeSenderUid: codeSenderUid,
         codeReceiverUid: codeReceiverUid,
+        senderIslandRules: '',
         acceptedAt: now,
         updatedAt: now,
       );
@@ -809,6 +811,48 @@ class MarketFirestoreDataSource {
     }
   }
 
+  Future<String?> fetchPreferredTradeIslandRules({
+    required String offerId,
+    required String senderUid,
+  }) async {
+    final normalizedOfferId = offerId.trim();
+    final normalizedSenderUid = senderUid.trim();
+    if (normalizedOfferId.isEmpty || normalizedSenderUid.isEmpty) {
+      return null;
+    }
+
+    try {
+      final sessionSnapshot = await _firestore
+          .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
+          .get();
+      final sessionData = sessionSnapshot.data() ?? const <String, dynamic>{};
+      final codeSenderUid =
+          (sessionData['codeSenderUid'] as String?)?.trim() ?? '';
+      if (codeSenderUid.isNotEmpty && codeSenderUid != normalizedSenderUid) {
+        return null;
+      }
+
+      final senderProfile = await _loadPrimaryIslandProfile(
+        normalizedSenderUid,
+      );
+      if (senderProfile == null) {
+        return AirportSession.defaultRules;
+      }
+
+      final queueSnapshot = await _firestore
+          .doc(FirestorePaths.airportQueue(senderProfile.islandId))
+          .get();
+      final queueData = queueSnapshot.data() ?? const <String, dynamic>{};
+      final rules = (queueData['rules'] as String?)?.trim() ?? '';
+      if (rules.isNotEmpty) {
+        return rules;
+      }
+      return AirportSession.defaultRules;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> sendTradeAcceptNotification({
     required String offerId,
     required String ownerUid,
@@ -841,17 +885,22 @@ class MarketFirestoreDataSource {
     required String senderUid,
     required String receiverUid,
     required String code,
+    required String islandRules,
     required String offerTitle,
   }) async {
     final normalizedOfferId = offerId.trim();
     final normalizedSenderUid = senderUid.trim();
     final normalizedReceiverUid = receiverUid.trim();
     final normalizedCode = code.trim().toUpperCase();
+    final normalizedIslandRules = islandRules.trim();
     if (normalizedOfferId.isEmpty || normalizedSenderUid.isEmpty) {
       throw StateError('invalid_trade_code_payload');
     }
     if (!_dodoCodePattern.hasMatch(normalizedCode)) {
       throw StateError('invalid_trade_code_format');
+    }
+    if (normalizedIslandRules.isEmpty) {
+      throw StateError('invalid_trade_rules');
     }
 
     var effectiveCode = normalizedCode;
@@ -876,6 +925,7 @@ class MarketFirestoreDataSource {
         .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
         .set(<String, dynamic>{
           'code': effectiveCode,
+          'senderIslandRules': normalizedIslandRules,
           'codeSentAt': FieldValue.serverTimestamp(),
           'codeSentAtMillis': FieldValue.delete(),
           'updatedAt': FieldValue.serverTimestamp(),
@@ -886,7 +936,10 @@ class MarketFirestoreDataSource {
       eventType: 'trade_code_sent',
       actorUid: normalizedSenderUid,
       counterpartUid: normalizedReceiverUid,
-      payload: <String, dynamic>{'inviteCode': effectiveCode},
+      payload: <String, dynamic>{
+        'inviteCode': effectiveCode,
+        'rulesLength': normalizedIslandRules.length,
+      },
     );
     try {
       await _syncAirportInviteForTradeCode(

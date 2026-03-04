@@ -51,7 +51,7 @@ class SettingsPage extends ConsumerWidget {
         ),
         children: <Widget>[
           _sectionLabel('섬 정보'),
-          const SizedBox(height: 6),
+          const SizedBox(height: SettingsUiTokens.labelGap),
           _menuTile(
             title: '섬 정보 수정',
             onTap: () {

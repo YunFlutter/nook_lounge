@@ -374,6 +374,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     required MarketOffer offer,
     required String receiverUid,
     required String code,
+    required String islandRules,
   }) async {
     final senderUid = currentUserId;
     if (senderUid.isEmpty) {
@@ -385,6 +386,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       senderUid: senderUid,
       receiverUid: receiverUid,
       code: code,
+      islandRules: islandRules,
       offerTitle: offer.title,
     );
     state = state.copyWith(errorMessage: null);
@@ -400,6 +402,19 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       return null;
     }
     return _repository.fetchPreferredTradeDodoCode(
+      offerId: offerId,
+      senderUid: senderUid,
+    );
+  }
+
+  Future<String?> fetchPreferredTradeIslandRules({
+    required String offerId,
+  }) async {
+    final senderUid = currentUserId.trim();
+    if (senderUid.isEmpty) {
+      return null;
+    }
+    return _repository.fetchPreferredTradeIslandRules(
       offerId: offerId,
       senderUid: senderUid,
     );

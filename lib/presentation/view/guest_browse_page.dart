@@ -91,7 +91,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
               ),
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.s6),
         ],
       ),
       body: RefreshIndicator(
@@ -160,7 +160,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
               .length;
           return Padding(
             padding: EdgeInsets.only(
-              bottom: index == categories.length - 1 ? 0 : 8,
+              bottom: index == categories.length - 1 ? 0 : AppSpacing.s8,
             ),
             child: AnimatedFadeSlide(
               delay: Duration(milliseconds: 20 + (index * 24)),
@@ -169,8 +169,8 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                 onTap: () => _openCategory(category),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
+                    horizontal: AppSpacing.s14,
+                    vertical: AppSpacing.s12,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.catalogCardBg,
@@ -184,7 +184,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                         color: AppColors.textPrimary,
                         size: 18,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.s8),
                       Expanded(
                         child: Text(
                           _labelByCategory(category),
@@ -193,8 +193,8 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
+                          horizontal: AppSpacing.s8,
+                          vertical: AppSpacing.s4,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.catalogChipBg,
@@ -205,7 +205,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
                           style: AppTextStyles.captionSecondary,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.s8),
                       const Icon(
                         Icons.chevron_right_rounded,
                         color: AppColors.textMuted,
@@ -278,7 +278,10 @@ class _GuestIntroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s14,
+        vertical: AppSpacing.s12,
+      ),
       decoration: BoxDecoration(
         color: AppColors.catalogChipBg,
         borderRadius: BorderRadius.circular(16),

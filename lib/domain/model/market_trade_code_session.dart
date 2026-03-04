@@ -15,6 +15,7 @@ sealed class MarketTradeCodeSession with _$MarketTradeCodeSession {
     @Default('') String code,
     @Default('') String codeSenderUid,
     @Default('') String codeReceiverUid,
+    @Default('') String senderIslandRules,
     required DateTime acceptedAt,
     DateTime? codeSentAt,
     required DateTime updatedAt,
@@ -46,6 +47,10 @@ sealed class MarketTradeCodeSession with _$MarketTradeCodeSession {
     return codeReceiverUid == normalized;
   }
 
+  String get normalizedSenderIslandRules => senderIslandRules.trim();
+
+  bool get hasSenderIslandRules => normalizedSenderIslandRules.isNotEmpty;
+
   factory MarketTradeCodeSession.fromMap({
     required String offerId,
     required Map<String, dynamic> data,
@@ -62,6 +67,7 @@ sealed class MarketTradeCodeSession with _$MarketTradeCodeSession {
       code: (data['code'] as String?) ?? '',
       codeSenderUid: (data['codeSenderUid'] as String?) ?? '',
       codeReceiverUid: (data['codeReceiverUid'] as String?) ?? '',
+      senderIslandRules: (data['senderIslandRules'] as String?)?.trim() ?? '',
       acceptedAt: _parseDateTime(
         dateTime: data['acceptedAt'],
         legacyMillis: data['acceptedAtMillis'],
@@ -86,6 +92,7 @@ sealed class MarketTradeCodeSession with _$MarketTradeCodeSession {
       'code': code,
       'codeSenderUid': codeSenderUid,
       'codeReceiverUid': codeReceiverUid,
+      'senderIslandRules': senderIslandRules.trim(),
       'acceptedAt': acceptedAt,
       'codeSentAt': codeSentAt,
       'updatedAt': updatedAt,

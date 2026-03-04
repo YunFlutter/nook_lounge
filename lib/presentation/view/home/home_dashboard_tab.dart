@@ -204,7 +204,7 @@ class HomeDashboardTab extends ConsumerWidget {
     return Column(
       children: <Widget>[
         content,
-        const SizedBox(height: 14),
+        const SizedBox(height: AppSpacing.s14),
         Container(height: 1, color: AppColors.borderDefault),
       ],
     );
@@ -235,7 +235,7 @@ class HomeDashboardTab extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 14),
+        const SizedBox(width: AppSpacing.s14),
         Expanded(
           child: AnimatedFadeSlide(
             delay: const Duration(milliseconds: 55),
@@ -258,7 +258,7 @@ class HomeDashboardTab extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: AppSpacing.s6),
                     Text(
                       fruitEmoji,
                       style: AppTextStyles.bodyWithSize(
@@ -269,14 +269,14 @@ class HomeDashboardTab extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.s10),
                 Row(
                   children: <Widget>[
                     AnimatedFadeSlide(
                       delay: const Duration(milliseconds: 75),
                       child: _buildHemisphereBadge(island.hemisphere),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.s10),
                     AnimatedFadeSlide(
                       delay: const Duration(milliseconds: 95),
                       child: AirportGatePillToggle(
@@ -305,7 +305,7 @@ class HomeDashboardTab extends ConsumerWidget {
   Widget _buildHemisphereBadge(String hemisphere) {
     return Container(
       height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
       decoration: BoxDecoration(
         color: AppColors.badgeBlueBg,
         borderRadius: BorderRadius.circular(999),
@@ -318,7 +318,7 @@ class HomeDashboardTab extends ConsumerWidget {
             size: 15,
             color: AppColors.badgeYellowText,
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.s6),
           Text(
             hemisphere,
             style: AppTextStyles.bodyWithSize(
@@ -396,7 +396,7 @@ class HomeDashboardTab extends ConsumerWidget {
             );
           },
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.s10),
         if (loading)
           const SizedBox(
             height: 82,
@@ -412,7 +412,8 @@ class HomeDashboardTab extends ConsumerWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: residents.length,
-              separatorBuilder: (_, index) => const SizedBox(width: 12),
+              separatorBuilder: (_, index) =>
+                  const SizedBox(width: AppSpacing.s12),
               itemBuilder: (context, index) {
                 final item = residents[index];
                 return AnimatedFadeSlide(
@@ -441,7 +442,7 @@ class HomeDashboardTab extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: AppSpacing.s6),
                           Text(
                             item.name,
                             maxLines: 1,
@@ -474,10 +475,15 @@ class HomeDashboardTab extends ConsumerWidget {
           onTap: () =>
               ref.read(homeShellViewModelProvider.notifier).changeTab(4),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.s10),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.s14,
+            AppSpacing.s14,
+            AppSpacing.s14,
+            AppSpacing.s12,
+          ),
           decoration: BoxDecoration(
             color: AppColors.catalogCardBg,
             borderRadius: BorderRadius.circular(20),
@@ -533,7 +539,7 @@ class HomeDashboardTab extends ConsumerWidget {
                               color: AppColors.badgeYellowText,
                               label: '최소',
                             ),
-                            SizedBox(width: 8),
+                            SizedBox(width: AppSpacing.s8),
                             TurnipLegendDot(
                               color: AppColors.primaryDefault,
                               label: '최대',
@@ -543,7 +549,7 @@ class HomeDashboardTab extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.s8),
                   AnimatedFadeSlide(
                     delay: const Duration(milliseconds: 45),
                     child: Text(
@@ -551,7 +557,7 @@ class HomeDashboardTab extends ConsumerWidget {
                       style: AppTextStyles.captionMuted,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.s12),
                   AnimatedFadeSlide(
                     delay: const Duration(milliseconds: 60),
                     child: TurnipPredictionChart(
@@ -589,7 +595,7 @@ class HomeDashboardTab extends ConsumerWidget {
           onTap: () =>
               ref.read(homeShellViewModelProvider.notifier).changeTab(3),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.s10),
         if (loading)
           const SizedBox(
             height: 120,
@@ -600,8 +606,8 @@ class HomeDashboardTab extends ConsumerWidget {
         else
           GridView.count(
             crossAxisCount: 2,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
+            mainAxisSpacing: AppSpacing.s10,
+            crossAxisSpacing: AppSpacing.s10,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 0.98,
@@ -702,7 +708,7 @@ class HomeDashboardTab extends ConsumerWidget {
             initialCategory: '전체',
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.s10),
         if (loading)
           const SizedBox(
             height: 84,
@@ -715,7 +721,10 @@ class HomeDashboardTab extends ConsumerWidget {
             delay: const Duration(milliseconds: 24),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.s16,
+                vertical: AppSpacing.s14,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.catalogCardBg,
                 borderRadius: BorderRadius.circular(18),
@@ -737,7 +746,8 @@ class HomeDashboardTab extends ConsumerWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: orderedKeys.length,
-              separatorBuilder: (_, unused) => const SizedBox(width: 10),
+              separatorBuilder: (_, unused) =>
+                  const SizedBox(width: AppSpacing.s10),
               itemBuilder: (context, index) {
                 final key = orderedKeys[index];
                 final bucket = grouped[key] ?? const <CatalogItem>[];
@@ -756,7 +766,7 @@ class HomeDashboardTab extends ConsumerWidget {
                       ),
                       child: Container(
                         width: 132,
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(AppSpacing.s10),
                         decoration: BoxDecoration(
                           color: AppColors.catalogCardBg,
                           borderRadius: BorderRadius.circular(16),
@@ -781,7 +791,7 @@ class HomeDashboardTab extends ConsumerWidget {
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.bodySecondaryStrong,
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: AppSpacing.s2),
                             Text(
                               '${bucket.length}개',
                               style: AppTextStyles.captionMuted,
@@ -834,7 +844,7 @@ class HomeDashboardTab extends ConsumerWidget {
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(AppSpacing.s12),
             decoration: BoxDecoration(
               color: AppColors.catalogCardBg,
               borderRadius: BorderRadius.circular(20),
@@ -899,7 +909,7 @@ class HomeDashboardTab extends ConsumerWidget {
                               height: 40,
                               fit: BoxFit.contain,
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: AppSpacing.s6),
                             Text(
                               '$percentage%',
                               style: AppTextStyles.bodyWithSize(

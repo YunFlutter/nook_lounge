@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -48,7 +49,9 @@ class MarketMyTradesPage extends ConsumerWidget {
         (bottomInset > 0 ? bottomInset : AppSpacing.s10);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('내 거래관리')),
+      appBar: AppBar(
+        title: Text('내 거래관리', style: AppTextStyles.headingH2Secondary),
+      ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,
@@ -574,7 +577,18 @@ class MarketMyTradesPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+        SnackBar(
+          content: Text(
+            message,
+            style: DefaultTextStyle.of(context).style.copyWith(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: AppTypography.letterSpacingFor(16),
+            ),
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
   }
 

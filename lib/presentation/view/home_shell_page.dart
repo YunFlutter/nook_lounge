@@ -147,7 +147,7 @@ class HomeShellPage extends ConsumerWidget {
           ),
           _buildNotificationAction(context),
           _buildSettingsAction(context),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.s6),
         ],
       );
     }
@@ -160,7 +160,7 @@ class HomeShellPage extends ConsumerWidget {
         actions: <Widget>[
           _buildNotificationAction(context),
           _buildSettingsAction(context),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.s6),
         ],
       );
     }
@@ -191,7 +191,10 @@ class HomeShellPage extends ConsumerWidget {
             selectedIslandId: selectedIsland?.id,
           ),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s14,
+              vertical: AppSpacing.s8,
+            ),
             decoration: BoxDecoration(
               color: AppColors.bgCard,
               borderRadius: BorderRadius.circular(999),
@@ -208,7 +211,7 @@ class HomeShellPage extends ConsumerWidget {
                     weight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.s4),
                 const Icon(
                   Icons.keyboard_arrow_down_rounded,
                   color: AppColors.textSecondary,
@@ -226,7 +229,7 @@ class HomeShellPage extends ConsumerWidget {
             icon: const Icon(Icons.settings, color: AppColors.textPrimary),
             tooltip: '설정',
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.s6),
         ],
       );
     }
@@ -247,7 +250,7 @@ class HomeShellPage extends ConsumerWidget {
           ),
           _buildNotificationAction(context),
           _buildSettingsAction(context),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.s6),
         ],
       );
     }
@@ -255,9 +258,10 @@ class HomeShellPage extends ConsumerWidget {
     if (tabIndex == 4) {
       return AppBar(
         centerTitle: false,
-        title: const Text('무 주식 계산기'),
+        titleSpacing: AppSpacing.pageHorizontal,
+        title: _buildStaticHomeStyleTitle('무 주식 계산기'),
         actions: <Widget>[
-          TextButton.icon(
+          IconButton(
             onPressed: () {
               ref
                   .read(
@@ -268,18 +272,15 @@ class HomeShellPage extends ConsumerWidget {
                   )
                   .reset();
             },
-            icon: const Icon(Icons.refresh_rounded),
-            label: const Text('초기화'),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.textSecondary,
-              textStyle: AppTextStyles.bodyWithSize(
-                16,
-                color: AppColors.textSecondary,
-                weight: FontWeight.w700,
-              ),
+            icon: const Icon(
+              Icons.refresh_rounded,
+              color: AppColors.textPrimary,
             ),
+            tooltip: '초기화',
           ),
-          const SizedBox(width: 8),
+          _buildNotificationAction(context),
+          _buildSettingsAction(context),
+          const SizedBox(width: AppSpacing.s6),
         ],
       );
     }
@@ -300,7 +301,10 @@ class HomeShellPage extends ConsumerWidget {
 
   Widget _buildStaticHomeStyleTitle(String title) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s14,
+        vertical: AppSpacing.s8,
+      ),
       decoration: BoxDecoration(
         color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(999),

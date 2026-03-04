@@ -38,7 +38,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.bgPrimary,
       cardColor: AppColors.bgCard,
       dividerColor: AppColors.borderDefault,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: AppColors.bgPrimary,
         foregroundColor: textColor,
@@ -46,6 +46,8 @@ class AppTheme {
         scrolledUnderElevation: 0,
         surfaceTintColor: AppColors.transparent,
         shadowColor: AppColors.transparent,
+        titleTextStyle: AppTextStyles.headingH2Secondary,
+        toolbarTextStyle: AppTextStyles.bodyPrimaryStrong,
       ),
       textTheme: TextTheme(
         displaySmall: AppTypography.headingH1.copyWith(color: textColor),
@@ -127,6 +129,23 @@ class AppTheme {
         ),
         hintStyle: WidgetStatePropertyAll(AppTextStyles.bodyHintStrong),
         textStyle: WidgetStatePropertyAll(AppTextStyles.bodyPrimaryStrong),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: colorScheme.inverseSurface,
+        contentTextStyle: AppTypography.bodyLarge.copyWith(
+          color: colorScheme.onInverseSurface,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        titleTextStyle: AppTextStyles.dialogTitleCompact,
+        contentTextStyle: AppTextStyles.dialogBodyCompact,
+      ),
+      listTileTheme: ListTileThemeData(
+        iconColor: AppColors.textPrimary,
+        textColor: AppColors.textPrimary,
+        titleTextStyle: AppTextStyles.bodyPrimaryStrong,
+        subtitleTextStyle: AppTextStyles.captionMuted,
       ),
     );
   }

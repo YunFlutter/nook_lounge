@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -106,7 +107,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
               AppSpacing.pageHorizontal,
               AppSpacing.s10,
               AppSpacing.pageHorizontal,
-              98,
+              AppSpacing.fabListBottomInset,
             ),
             children: <Widget>[
               AnimatedFadeSlide(
@@ -115,7 +116,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                   focusNode: _searchFocusNode,
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: AppSpacing.s10),
               AnimatedFadeSlide(
                 delay: const Duration(milliseconds: 40),
                 child: _buildCategoryChips(
@@ -126,10 +127,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                   },
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.s12),
               if (state.errorMessage != null)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.only(bottom: AppSpacing.s10),
                   child: Text(
                     state.errorMessage!,
                     style: AppTextStyles.captionWithColor(
@@ -189,7 +190,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
         ),
         Positioned(
           right: AppSpacing.pageHorizontal,
-          bottom: AppSpacing.pageHorizontal + 8,
+          bottom: AppSpacing.pageHorizontal + AppSpacing.s8,
           child: AnimatedFadeSlide(
             delay: const Duration(milliseconds: 240),
             offset: const Offset(0, 0.2),
@@ -244,11 +245,11 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
           width: _isSearchFocused ? 1.6 : 1,
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s14),
       child: Row(
         children: <Widget>[
           Icon(Icons.search_rounded, color: iconColor, size: 30),
-          const SizedBox(width: 10),
+          const SizedBox(width: AppSpacing.s10),
           Expanded(
             child: TextField(
               focusNode: focusNode,
@@ -284,7 +285,8 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: MarketFilterCategory.values.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) =>
+            const SizedBox(width: AppSpacing.s8),
         itemBuilder: (context, index) {
           final category = MarketFilterCategory.values[index];
           final isSelected = category == selected;
@@ -294,7 +296,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.s14,
+                vertical: AppSpacing.s8,
+              ),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.catalogChipSelectedBg
@@ -317,7 +322,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
 
   Widget _buildEmptyCard() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s20,
+        vertical: AppSpacing.s28,
+      ),
       decoration: BoxDecoration(
         color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(20),
@@ -330,9 +338,9 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
             size: 42,
             color: AppColors.textHint,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.s8),
           Text('등록된 거래가 없어요.', style: AppTextStyles.bodySecondaryStrong),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.s4),
           Text('플러스 버튼으로 첫 거래를 등록해보세요.', style: AppTextStyles.bodyHintStrong),
         ],
       ),
@@ -396,20 +404,25 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
             borderRadius: BorderRadius.circular(26),
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.s20,
+              AppSpacing.s22,
+              AppSpacing.s20,
+              AppSpacing.s18,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text('거래 글 삭제', style: AppTextStyles.dialogTitleCompact),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.s10),
                 Text(
                   '정말 이 거래 글을 삭제할까요?',
                   style: AppTextStyles.dialogBodyCompact,
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.s6),
                 Text('삭제 후에는 복구할 수 없어요.', style: AppTextStyles.dialogDanger),
-                const SizedBox(height: 18),
+                const SizedBox(height: AppSpacing.s18),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -430,7 +443,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.s10),
                     Expanded(
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -498,18 +511,23 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
             borderRadius: BorderRadius.circular(26),
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.s20,
+              AppSpacing.s22,
+              AppSpacing.s20,
+              AppSpacing.s18,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text('거래 완료 처리', style: AppTextStyles.dialogTitleCompact),
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.s10),
                 Text(
                   '이 거래를 완료 상태로 변경할까요?',
                   style: AppTextStyles.dialogBodyCompact,
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: AppSpacing.s18),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -530,7 +548,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.s10),
                     Expanded(
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
@@ -566,7 +584,18 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+        SnackBar(
+          content: Text(
+            message,
+            style: DefaultTextStyle.of(context).style.copyWith(
+              fontFamily: AppTypography.fontFamily,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: AppTypography.letterSpacingFor(16),
+            ),
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
   }
 }

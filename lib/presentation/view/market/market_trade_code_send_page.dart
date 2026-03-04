@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
@@ -34,8 +36,11 @@ class _MarketTradeCodeSendPageState
     r'^(?=.*[A-Z])(?=.*\d)[A-Z\d]{5}$',
   );
   late final TextEditingController _codeController;
+  late final TextEditingController _rulesController;
   String _seedCode = '';
+  String _seedRules = '';
   bool _hasUserEditedCode = false;
+  bool _hasUserEditedRules = false;
   bool _isSending = false;
 
   @override
@@ -52,12 +57,25 @@ class _MarketTradeCodeSendPageState
         _hasUserEditedCode = true;
       }
     });
+    final initialRules = widget.session.normalizedSenderIslandRules.isNotEmpty
+        ? widget.session.normalizedSenderIslandRules
+        : AirportSession.defaultRules;
+    _seedRules = initialRules;
+    _rulesController = TextEditingController(text: initialRules);
+    _rulesController.addListener(() {
+      final normalized = _rulesController.text.trim();
+      if (normalized != _seedRules) {
+        _hasUserEditedRules = true;
+      }
+    });
     unawaited(_hydrateCodeFromAirportIfAvailable());
+    unawaited(_hydrateRulesFromAirportIfAvailable());
   }
 
   @override
   void dispose() {
     _codeController.dispose();
+    _rulesController.dispose();
     super.dispose();
   }
 
@@ -68,7 +86,9 @@ class _MarketTradeCodeSendPageState
     final bool isSender = widget.session.isCodeSender(currentUid);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('도도 코드 보내기')),
+      appBar: AppBar(
+        title: Text('도도 코드 보내기', style: AppTextStyles.headingH2Secondary),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,
@@ -172,6 +192,43 @@ class _MarketTradeCodeSendPageState
               ),
             ),
           ),
+          const SizedBox(height: 8),
+          Text('섬 방문 규칙', style: AppTextStyles.bodyPrimaryHeavy),
+          const SizedBox(height: 8),
+          Text(
+            '코드를 받는 상대가 확인할 수 있어요. 핵심 규칙을 간단히 적어주세요.',
+            style: AppTextStyles.captionMuted,
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s14,
+              vertical: AppSpacing.s10,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.bgCard,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.borderStrong),
+            ),
+            child: TextField(
+              controller: _rulesController,
+              minLines: 3,
+              maxLines: 6,
+              style: AppTextStyles.bodyPrimaryStrong,
+              cursorColor: AppColors.accentDeepOrange,
+              decoration: const InputDecoration(
+                hintText: '예) 꽃 밟지 않기, 떨어진 아이템 줍지 않기',
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ),
           if (!isSender)
             Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -224,12 +281,24 @@ class _MarketTradeCodeSendPageState
 
   Future<void> _sendCode(BuildContext context, WidgetRef ref) async {
     final code = _codeController.text.trim();
+    final rules = _rulesController.text.trim();
     if (!_dodoCodePattern.hasMatch(code)) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('코드는 영문 대문자+숫자 조합 5자리로 입력해 주세요.'),
+          SnackBar(
+            content: _buildSnackText(context, '코드는 영문 대문자+숫자 조합 5자리로 입력해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
+    if (rules.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: _buildSnackText(context, '섬 규칙을 한 줄 이상 입력해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -244,6 +313,7 @@ class _MarketTradeCodeSendPageState
             offer: widget.offer,
             receiverUid: widget.session.codeReceiverUid,
             code: code,
+            islandRules: rules,
           );
     } catch (error) {
       if (!context.mounted) {
@@ -253,7 +323,10 @@ class _MarketTradeCodeSendPageState
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+          SnackBar(
+            content: _buildSnackText(context, message),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       setState(() => _isSending = false);
       return;
@@ -279,6 +352,8 @@ class _MarketTradeCodeSendPageState
           return '코드 수신 대상을 찾지 못했어요. 다시 시도해 주세요.';
         case 'invalid_trade_code_payload':
           return '코드 전송 정보가 올바르지 않아요. 다시 시도해 주세요.';
+        case 'invalid_trade_rules':
+          return '섬 규칙을 한 줄 이상 입력해 주세요.';
       }
     }
     if (error is FirebaseException) {
@@ -320,6 +395,47 @@ class _MarketTradeCodeSendPageState
       text: normalizedPreset,
       selection: TextSelection.collapsed(offset: normalizedPreset.length),
       composing: TextRange.empty,
+    );
+  }
+
+  Future<void> _hydrateRulesFromAirportIfAvailable() async {
+    final viewModel = ref.read(marketViewModelProvider.notifier);
+    final currentUid = viewModel.currentUserId.trim();
+    if (!widget.session.isCodeSender(currentUid) || widget.session.hasCode) {
+      return;
+    }
+
+    final preset = await viewModel.fetchPreferredTradeIslandRules(
+      offerId: widget.offer.id,
+    );
+    final normalizedPreset = (preset ?? '').trim();
+    if (!mounted || normalizedPreset.isEmpty || _hasUserEditedRules) {
+      return;
+    }
+
+    final current = _rulesController.text.trim();
+    if (current.isNotEmpty && current != _seedRules) {
+      return;
+    }
+
+    _seedRules = normalizedPreset;
+    _rulesController.value = _rulesController.value.copyWith(
+      text: normalizedPreset,
+      selection: TextSelection.collapsed(offset: normalizedPreset.length),
+      composing: TextRange.empty,
+    );
+  }
+
+  Text _buildSnackText(BuildContext context, String message) {
+    final baseStyle = DefaultTextStyle.of(context).style;
+    return Text(
+      message,
+      style: baseStyle.copyWith(
+        fontFamily: AppTypography.fontFamily,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: AppTypography.letterSpacingFor(16),
+      ),
     );
   }
 

@@ -70,6 +70,11 @@ abstract class MarketRepository {
     required String senderUid,
   });
 
+  Future<String?> fetchPreferredTradeIslandRules({
+    required String offerId,
+    required String senderUid,
+  });
+
   Future<void> sendTradeAcceptNotification({
     required String offerId,
     required String ownerUid,
@@ -82,6 +87,7 @@ abstract class MarketRepository {
     required String senderUid,
     required String receiverUid,
     required String code,
+    required String islandRules,
     required String offerTitle,
   });
 

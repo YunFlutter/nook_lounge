@@ -65,6 +65,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomSafeInset = MediaQuery.of(context).viewPadding.bottom;
     final completedOverrides = widget.readOnly
         ? const <String, CatalogUserState>{}
         : ref.watch(
@@ -87,6 +88,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Stack(
+        clipBehavior: Clip.none,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -190,7 +192,9 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
           Positioned(
             left: AppSpacing.catalogHorizontal,
             right: AppSpacing.catalogHorizontal,
-            bottom: AppSpacing.s10,
+            // 유지보수 포인트:
+            // iOS 홈 인디케이터 영역을 고려해 토스트가 하단에 잘리지 않도록 보정합니다.
+            bottom: bottomSafeInset + AppSpacing.s10,
             child: AnimatedSlide(
               duration: const Duration(milliseconds: 240),
               offset: _toastMessage == null
@@ -225,7 +229,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
                               backgroundColor: AppColors.bgSecondary,
                               child: ClipOval(
                                 child: Image.asset(
-                                  'assets/images/icon_blue_fish.png',
+                                  'assets/app_icons.png',
                                   width: 28,
                                   height: 28,
                                   fit: BoxFit.contain,

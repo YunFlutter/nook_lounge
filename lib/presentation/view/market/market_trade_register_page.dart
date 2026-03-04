@@ -211,7 +211,12 @@ class _MarketTradeRegisterPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_isEditMode ? '거래 수정하기' : '거래를 등록하기')),
+      appBar: AppBar(
+        title: Text(
+          _isEditMode ? '거래 수정하기' : '거래를 등록하기',
+          style: AppTextStyles.headingH2Secondary,
+        ),
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -621,12 +626,12 @@ class _MarketTradeRegisterPageState
                             .map(
                               (item) => Container(
                                 constraints: const BoxConstraints(
-                                  minHeight: 32,
+                                  minHeight: 28,
                                   maxWidth: 220,
                                 ),
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
+                                  horizontal: 9,
+                                  vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
                                   color: AppColors.catalogChipBg,
@@ -2085,7 +2090,7 @@ class _MarketTradeRegisterPageState
             children: options
                 .map((option) {
                   return ListTile(
-                    title: Text(option),
+                    title: Text(option, style: AppTextStyles.bodyPrimaryStrong),
                     onTap: () => Navigator.of(context).pop(option),
                   );
                 })

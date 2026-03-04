@@ -197,6 +197,17 @@ class MarketRepositoryImpl implements MarketRepository {
   }
 
   @override
+  Future<String?> fetchPreferredTradeIslandRules({
+    required String offerId,
+    required String senderUid,
+  }) {
+    return _firestoreDataSource.fetchPreferredTradeIslandRules(
+      offerId: offerId,
+      senderUid: senderUid,
+    );
+  }
+
+  @override
   Future<void> sendTradeAcceptNotification({
     required String offerId,
     required String ownerUid,
@@ -217,6 +228,7 @@ class MarketRepositoryImpl implements MarketRepository {
     required String senderUid,
     required String receiverUid,
     required String code,
+    required String islandRules,
     required String offerTitle,
   }) {
     return _firestoreDataSource.sendTradeCode(
@@ -224,6 +236,7 @@ class MarketRepositoryImpl implements MarketRepository {
       senderUid: senderUid,
       receiverUid: receiverUid,
       code: code,
+      islandRules: islandRules,
       offerTitle: offerTitle,
     );
   }

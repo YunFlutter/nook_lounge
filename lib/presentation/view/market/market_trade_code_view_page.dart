@@ -21,7 +21,9 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
         offer.status == MarketOfferStatus.closed;
     if (isCompleted) {
       return Scaffold(
-        appBar: AppBar(title: const Text('거래 코드 확인')),
+        appBar: AppBar(
+          title: Text('거래 코드 확인', style: AppTextStyles.headingH2Secondary),
+        ),
         body: _buildMessage(
           title: '거래가 종료되어 코드를 확인할 수 없어요.',
           subtitle: '종료된 거래의 코드는 더 이상 표시되지 않습니다.',
@@ -33,7 +35,9 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
     final currentUid = ref.read(marketViewModelProvider.notifier).currentUserId;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('거래 코드 확인')),
+      appBar: AppBar(
+        title: Text('거래 코드 확인', style: AppTextStyles.headingH2Secondary),
+      ),
       body: sessionAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => _buildMessage(
@@ -64,6 +68,8 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
   }) {
     final bool isSender = session.isCodeSender(currentUid);
     final bool hasCode = session.hasCode;
+    final rules = session.normalizedSenderIslandRules;
+    final canShowSenderRules = !isSender && hasCode;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -108,6 +114,10 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
             ],
           ),
         ),
+        if (canShowSenderRules) ...<Widget>[
+          const SizedBox(height: 14),
+          _buildRulesCard(rules: rules, isSenderRulesMissing: rules.isEmpty),
+        ],
         if (isSender && !hasCode) ...<Widget>[
           const SizedBox(height: 14),
           FilledButton(
@@ -154,6 +164,32 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
           Text('코드 발송자: $senderRole', style: AppTextStyles.captionSecondary),
           const SizedBox(height: 4),
           Text('코드 수신자: $receiverRole', style: AppTextStyles.captionSecondary),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRulesCard({
+    required String rules,
+    required bool isSenderRulesMissing,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderDefault),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('상대 섬 방문 규칙', style: AppTextStyles.captionMuted),
+          const SizedBox(height: 6),
+          Text(
+            isSenderRulesMissing ? '상대가 아직 규칙을 입력하지 않았어요.' : rules,
+            style: AppTextStyles.bodySecondaryStrong,
+          ),
         ],
       ),
     );

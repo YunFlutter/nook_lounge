@@ -143,13 +143,16 @@ class MarketOfferCard extends StatelessWidget {
   }
 
   Widget _buildSingleOfferTop(BuildContext context) {
+    final normalizedHeader = offer.offerHeaderLabel.trim();
+    final headerLabel = normalizedHeader.isEmpty ? '나눔' : normalizedHeader;
+    final showMineSharingBadge = offer.isMine && headerLabel != '나눔';
+
     return Column(
       children: <Widget>[
-        if (offer.isMine)
+        if (showMineSharingBadge)
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: AppColors.catalogSuccessBg,
@@ -162,9 +165,9 @@ class MarketOfferCard extends StatelessWidget {
               ),
             ),
           ),
-        const SizedBox(height: 6),
+        if (showMineSharingBadge) const SizedBox(height: 6),
         Text(
-          offer.offerHeaderLabel,
+          headerLabel,
           style: AppTextStyles.captionWithColor(AppColors.primaryDefault),
         ),
         const SizedBox(height: 4),
@@ -380,8 +383,8 @@ class MarketOfferCard extends StatelessWidget {
   Widget _buildTouchingTagChip(String tag) {
     return IntrinsicWidth(
       child: Container(
-        constraints: const BoxConstraints(minWidth: 74, minHeight: 32),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        constraints: const BoxConstraints(minWidth: 62, minHeight: 28),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: _touchingTagColor(tag),
@@ -555,8 +558,8 @@ class MarketOfferCard extends StatelessWidget {
 
     return IntrinsicWidth(
       child: Container(
-        constraints: const BoxConstraints(minWidth: 74, minHeight: 32),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        constraints: const BoxConstraints(minWidth: 60, minHeight: 28),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(999),
@@ -566,7 +569,7 @@ class MarketOfferCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, size: 12, color: textColor),
+            Icon(icon, size: 11, color: textColor),
             const SizedBox(width: 3),
             Text(
               normalized.isEmpty ? '아이템' : normalized,
