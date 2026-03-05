@@ -317,6 +317,9 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     required AirportSession session,
     required ValueChanged<bool> onToggle,
   }) {
+    final introSummary = _resolveGateIntroSummary(session);
+    final hasIntroSummary = introSummary.isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -359,13 +362,15 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            '${session.purpose.label} · ${session.introMessage}',
-            style: AppTextStyles.captionMuted,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          if (hasIntroSummary) ...<Widget>[
+            const SizedBox(height: 8),
+            Text(
+              introSummary,
+              style: AppTextStyles.captionMuted,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ],
       ),
     );
@@ -442,6 +447,16 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
         ),
       ],
     );
+  }
+
+  String _resolveGateIntroSummary(AirportSession session) {
+    // 유지보수 포인트: 비행장 메인 카드에서는 기본 소개문(고정 문구)을
+    // 노출하지 않고, 사용자가 직접 입력한 소개 문구만 보여줍니다.
+    final intro = session.introMessage.trim();
+    if (intro.isEmpty || intro == AirportSession.defaultIntroMessage) {
+      return '';
+    }
+    return intro;
   }
 
   Widget _buildMyWaitingSection(

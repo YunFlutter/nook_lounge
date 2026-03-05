@@ -60,10 +60,9 @@ class FirestorePaths {
 
   static String userNotifications(String uid) => 'users/$uid/notifications';
 
-  static String userAccessLogs(String uid) => 'users/$uid/accessLogs';
+  static String userAccessLogs() => 'userAccessLogs';
 
-  static String userAccessLog(String uid, String logId) =>
-      '${userAccessLogs(uid)}/$logId';
+  static String userAccessLog(String logId) => '${userAccessLogs()}/$logId';
 
   static String hiddenMarketOffers(String uid) =>
       'users/$uid/hiddenMarketOffers';
@@ -86,11 +85,10 @@ class FirestorePaths {
   static String supportInquiry(String inquiryId) =>
       '${supportInquiries()}/$inquiryId';
 
-  static String airportRequestLogs(String islandId) =>
-      '${airportQueue(islandId)}/requestLogs';
+  static String airportRequestLogs() => 'airportRequestLogs';
 
-  static String airportRequestLog(String islandId, String logId) =>
-      '${airportRequestLogs(islandId)}/$logId';
+  static String airportRequestLog(String logId) =>
+      '${airportRequestLogs()}/$logId';
 
   static String appNotices() => 'appNotices';
 
@@ -101,9 +99,7 @@ class FirestorePaths {
   static String appDocument(String documentId) =>
       '${appDocuments()}/$documentId';
 
-  static String marketTradeLogs(String offerId) =>
-      '${marketPost(offerId)}/tradeLogs';
+  static String marketTradeLogs() => 'marketTradeLogs';
 
-  static String marketTradeLog(String offerId, String logId) =>
-      '${marketTradeLogs(offerId)}/$logId';
+  static String marketTradeLog(String logId) => '${marketTradeLogs()}/$logId';
 }

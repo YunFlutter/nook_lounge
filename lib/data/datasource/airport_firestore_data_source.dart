@@ -700,9 +700,9 @@ class AirportFirestoreDataSource {
     }
 
     // 유지보수 포인트:
-    // 방문 신청/초대/상태변경 이력을 queue 하위 로그 컬렉션에 append-only로 남깁니다.
+    // 방문 신청/초대/상태변경 이력을 카테고리별 루트 로그 컬렉션에 append-only로 남깁니다.
     final logRef = _firestore
-        .collection(FirestorePaths.airportRequestLogs(normalizedIslandId))
+        .collection(FirestorePaths.airportRequestLogs())
         .doc();
     await logRef.set(<String, dynamic>{
       'id': logRef.id,

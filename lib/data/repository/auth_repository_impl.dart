@@ -11,9 +11,16 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<String?> watchUserId() => _dataSource.watchUserId();
 
   @override
+  Stream<bool> watchUserDocumentExists(String uid) =>
+      _dataSource.watchUserDocumentExists(uid);
+
+  @override
   String? get currentUserId => _dataSource.currentUserId;
   @override
   bool get isAnonymous => _dataSource.isAnonymous;
+
+  @override
+  Future<bool> hasUserDocument(String uid) => _dataSource.hasUserDocument(uid);
 
   @override
   Future<void> signInWithGoogle() => _dataSource.signInWithGoogle();

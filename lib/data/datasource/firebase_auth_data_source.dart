@@ -23,8 +23,49 @@ class FirebaseAuthDataSource {
     return _firebaseAuth.authStateChanges().map((User? user) => user?.uid);
   }
 
+  Stream<bool> watchUserDocumentExists(String uid) {
+    final normalizedUid = uid.trim();
+    if (normalizedUid.isEmpty) {
+      return const Stream<bool>.empty();
+    }
+
+    return _firestore
+        .doc(FirestorePaths.user(normalizedUid))
+        .snapshots(includeMetadataChanges: true)
+        .where((snapshot) => !snapshot.metadata.isFromCache)
+        .map((snapshot) => snapshot.exists)
+        .distinct();
+  }
+
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
   bool get isAnonymous => _firebaseAuth.currentUser?.isAnonymous ?? false;
+
+  Future<bool> hasUserDocument(String uid) async {
+    final normalizedUid = uid.trim();
+    if (normalizedUid.isEmpty) {
+      return false;
+    }
+
+    final userRef = _firestore.doc(FirestorePaths.user(normalizedUid));
+
+    try {
+      final cachedDoc = await userRef.get(
+        const GetOptions(source: Source.cache),
+      );
+      if (cachedDoc.exists) {
+        return true;
+      }
+    } on FirebaseException {
+      // 유지보수 포인트:
+      // 캐시 조회 실패는 오프라인/로컬 상태 이슈일 수 있으므로
+      // 서버 확인 결과를 최종 기준으로 사용합니다.
+    }
+
+    final serverDoc = await userRef.get(
+      const GetOptions(source: Source.server),
+    );
+    return serverDoc.exists;
+  }
 
   Future<void> signInWithGoogle() async {
     if (!_googleInitialized) {
@@ -187,10 +228,8 @@ class FirebaseAuthDataSource {
     }
 
     // 유지보수 포인트:
-    // 보안/감사 기준으로 접속 이력을 별도 컬렉션에 append-only로 저장합니다.
-    final logRef = _firestore
-        .collection(FirestorePaths.userAccessLogs(normalizedUid))
-        .doc();
+    // 보안/감사 기준으로 접속 이력을 카테고리별 루트 컬렉션에 append-only로 저장합니다.
+    final logRef = _firestore.collection(FirestorePaths.userAccessLogs()).doc();
     await logRef.set(<String, dynamic>{
       'id': logRef.id,
       'uid': normalizedUid,

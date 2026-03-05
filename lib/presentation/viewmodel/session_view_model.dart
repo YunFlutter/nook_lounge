@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/core/constants/app_strings.dart';
 import 'package:nook_lounge_app/core/error/firebase_error_mapper.dart';
 import 'package:nook_lounge_app/domain/model/session_state.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
@@ -24,9 +25,14 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
   final IslandRepository _islandRepository;
 
   late final StreamSubscription<String?> _subscription;
+  StreamSubscription<bool>? _userDocumentSubscription;
   bool _isGuestBrowsing = false;
+  bool _isForcingSignOutForMissingUser = false;
 
   Future<void> _onUserChanged(String? uid) async {
+    await _userDocumentSubscription?.cancel();
+    _userDocumentSubscription = null;
+
     // 유지보수 포인트:
     // 앱 시작 분기(로그인/섬생성/홈)는 캐시 기반으로 즉시 처리하고,
     // 서버 재검증은 백그라운드에서만 수행합니다.
@@ -35,6 +41,9 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
     }
 
     if (uid == null) {
+      final hasSignedOutMessage =
+          state.session is SessionSignedOut &&
+          (state.errorMessage?.trim().isNotEmpty ?? false);
       if (_isGuestBrowsing) {
         state = state.copyWith(
           isLoading: false,
@@ -47,8 +56,8 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
       state = state.copyWith(
         isLoading: false,
         session: const SessionState.signedOut(),
-        errorTitle: null,
-        errorMessage: null,
+        errorTitle: hasSignedOutMessage ? state.errorTitle : null,
+        errorMessage: hasSignedOutMessage ? state.errorMessage : null,
       );
       return;
     }
@@ -60,6 +69,14 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
     );
 
     try {
+      final hasUserDocument = await _authRepository.hasUserDocument(uid);
+      if (!hasUserDocument) {
+        await _handleMissingUserDocument(uid);
+        return;
+      }
+
+      _watchUserDocument(uid);
+
       if (_authRepository.isAnonymous) {
         // 유지보수 포인트:
         // 비회원(익명) 세션은 여권 등록을 강제하지 않고 둘러보기 홈으로 보냅니다.
@@ -86,6 +103,60 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
         errorMessage: displayInfo.message,
       );
     }
+  }
+
+  Future<void> _handleMissingUserDocument(String uid) async {
+    if (_authRepository.currentUserId != uid ||
+        _isForcingSignOutForMissingUser) {
+      return;
+    }
+
+    _isForcingSignOutForMissingUser = true;
+
+    // 유지보수 포인트:
+    // users/{uid}가 없는 계정은 비정상 세션으로 간주하고
+    // 즉시 로그아웃 처리해 로그인부터 다시 시작하도록 강제합니다.
+    try {
+      try {
+        await _authRepository.signOut();
+      } catch (error, stackTrace) {
+        debugPrint('Missing-user forced sign-out failed: $error\n$stackTrace');
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      final currentUid = _authRepository.currentUserId;
+      if (currentUid != null && currentUid != uid) {
+        // 다른 계정으로 이미 전환된 경우 안내 문구를 덮어쓰지 않습니다.
+        return;
+      }
+
+      state = state.copyWith(
+        isLoading: false,
+        session: const SessionState.signedOut(),
+        errorTitle: null,
+        errorMessage: AppStrings.missingLoginInfoMessage,
+      );
+    } finally {
+      _isForcingSignOutForMissingUser = false;
+    }
+  }
+
+  void _watchUserDocument(String uid) {
+    _userDocumentSubscription = _authRepository
+        .watchUserDocumentExists(uid)
+        .listen(
+          (exists) async {
+            if (!exists) {
+              await _handleMissingUserDocument(uid);
+            }
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            debugPrint('User document watch failed: $error\n$stackTrace');
+          },
+        );
   }
 
   Future<void> _revalidateInBackground(String uid) async {
@@ -147,6 +218,13 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
     await _onUserChanged(_authRepository.currentUserId);
   }
 
+  void clearError() {
+    if (state.errorTitle == null && state.errorMessage == null) {
+      return;
+    }
+    state = state.copyWith(errorTitle: null, errorMessage: null);
+  }
+
   void enterGuestBrowseMode() {
     _isGuestBrowsing = true;
     state = state.copyWith(
@@ -169,6 +247,7 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
 
   @override
   void dispose() {
+    _userDocumentSubscription?.cancel();
     _subscription.cancel();
     super.dispose();
   }

@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/app/theme/passport_palette.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/domain/model/create_island_draft.dart';
 
@@ -25,17 +25,15 @@ class PassportIssuedPage extends StatefulWidget {
 
 class _PassportIssuedPageState extends State<PassportIssuedPage>
     with TickerProviderStateMixin {
-  late final AnimationController _spotlightController;
+  /// 유지보수 포인트:
+  /// 과거 spotlight 애니메이션 제거 이후 hot-reload 상황에서 ticker 누수가 남을 수 있어
+  /// 레거시 컨트롤러를 안전하게 정리하기 위해 nullable로 유지합니다.
+  AnimationController? _spotlightController;
   late final AnimationController _confettiController;
 
   @override
   void initState() {
     super.initState();
-
-    _spotlightController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4600),
-    )..repeat();
 
     _confettiController = AnimationController(
       vsync: this,
@@ -44,8 +42,17 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
   }
 
   @override
+  void reassemble() {
+    super.reassemble();
+    // hot-reload 시 과거 상태의 ticker 누수가 있으면 즉시 정리합니다.
+    _spotlightController?.dispose();
+    _spotlightController = null;
+  }
+
+  @override
   void dispose() {
-    _spotlightController.dispose();
+    _spotlightController?.dispose();
+    _spotlightController = null;
     _confettiController.dispose();
     super.dispose();
   }
@@ -59,7 +66,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
     );
 
     return Scaffold(
-      backgroundColor: AppColors.passportPageBg,
+      backgroundColor: PassportPalette.pageBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -72,7 +79,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                 '여권 발급 완료!',
                 style: AppTextStyles.bodyWithSize(
                   48,
-                  color: AppColors.passportTitleBlue,
+                  color: PassportPalette.titleAccent,
                   weight: FontWeight.w800,
                 ),
               ),
@@ -82,10 +89,6 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                 child: Stack(
                   alignment: Alignment.center,
                   children: <Widget>[
-                    CustomPaint(
-                      size: const Size(380, 380),
-                      painter: _SpotlightPainter(_spotlightController.value),
-                    ),
                     AnimatedBuilder(
                       animation: _confettiController,
                       builder: (context, child) {
@@ -111,7 +114,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                 '환영합니다!',
                 style: AppTextStyles.bodyWithSize(
                   32,
-                  color: AppColors.passportWelcomePurple,
+                  color: PassportPalette.welcomeAccent,
                   weight: FontWeight.w800,
                 ),
               ),
@@ -121,7 +124,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
-                      color: AppColors.shadowStrong,
+                      color: PassportPalette.shadowStrong,
                       blurRadius: 12,
                       offset: Offset(0, 6),
                     ),
@@ -137,7 +140,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                   },
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(58),
-                    backgroundColor: AppColors.primaryDefault,
+                    backgroundColor: PassportPalette.actionGreen,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
@@ -161,122 +164,183 @@ class _PassportCard extends StatelessWidget {
     this.imagePath,
   });
 
+  /// 유지보수 포인트:
+  /// 여권 카드 입체감(그림자 깊이/퍼짐)을 조절할 때 아래 상수만 변경하면 됩니다.
+  static const double _cardCornerRadius = 16;
+  static const double _castShadowInset = 18;
+  static const double _castShadowHeight = 34;
+  static const double _castShadowOffset = 16;
+
   final double width;
   final CreateIslandDraft draft;
   final String? imagePath;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final cardBorderRadius = BorderRadius.circular(_cardCornerRadius);
+
+    return SizedBox(
       width: width,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: AppColors.passportCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.passportCardBorder, width: 5),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: AppColors.shadowMedium,
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
+          Positioned(
+            left: _castShadowInset,
+            right: _castShadowInset,
+            bottom: -_castShadowOffset,
+            child: IgnorePointer(
+              child: Container(
+                height: _castShadowHeight,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(_cardCornerRadius + 8),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      PassportPalette.shadowMedium.withValues(alpha: 0.16),
+                      PassportPalette.shadowSoft.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
               ),
-              color: AppColors.passportCardHeaderBg,
             ),
-            child: Row(
-              children: <Widget>[
-                SizedBox(width: 6),
-                Expanded(
-                  child: Divider(
-                    color: AppColors.passportLine,
-                    thickness: 1.6,
-                    height: 1,
-                  ),
+          ),
+          Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color.lerp(
+                    PassportPalette.cardDetailBackground,
+                    Colors.white,
+                    0.10,
+                  )!,
+                  PassportPalette.cardDetailBackground,
+                ],
+                stops: const <double>[0, 0.45],
+              ),
+              borderRadius: cardBorderRadius,
+              border: Border.all(color: PassportPalette.cardBorder, width: 5),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: PassportPalette.shadowMedium.withValues(alpha: 0.22),
+                  blurRadius: 34,
+                  spreadRadius: 0.4,
+                  offset: const Offset(0, 14),
                 ),
-                SizedBox(width: 8),
-                Text(
-                  'PASSPORT',
-                  style: AppTextStyles.bodyWithSize(
-                    16,
-                    color: AppColors.passportTextTitle,
-                    weight: FontWeight.w800,
-                  ),
+                BoxShadow(
+                  color: PassportPalette.shadowSoft.withValues(alpha: 0.18),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Divider(
-                    color: AppColors.passportLine,
-                    thickness: 1.6,
-                    height: 1,
-                  ),
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.36),
+                  blurRadius: 4,
+                  spreadRadius: -2,
+                  offset: const Offset(0, -1),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: AppSpacing.s10),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                _PassportPhoto(imagePath: imagePath),
-                const SizedBox(width: AppSpacing.s10),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          '섬 이름:',
-                          style: AppTextStyles.bodyWithSize(
-                            12,
-                            color: AppColors.passportTextSub,
-                            weight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          draft.islandName,
-                          style: AppTextStyles.bodyWithSize(
-                            16,
-                            color: AppColors.passportTextMain,
-                            weight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          '주민 이름:',
-                          style: AppTextStyles.bodyWithSize(
-                            12,
-                            color: AppColors.passportTextSub,
-                            weight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          draft.representativeName,
-                          style: AppTextStyles.bodyWithSize(
-                            16,
-                            color: AppColors.passportTextMain,
-                            weight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        _FruitBadge(fruitName: draft.nativeFruit),
-                      ],
+                Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
                     ),
+                    color: PassportPalette.cardHeaderBackground,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Divider(
+                          color: PassportPalette.textPrimary,
+                          thickness: 1.6,
+                          height: 1,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'PASSPORT',
+                        style: AppTextStyles.bodyWithSize(
+                          16,
+                          color: PassportPalette.textPrimary,
+                          weight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Divider(
+                          color: PassportPalette.textPrimary,
+                          thickness: 1.6,
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s10),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _PassportPhoto(imagePath: imagePath),
+                      const SizedBox(width: AppSpacing.s10),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '섬 이름:',
+                                style: AppTextStyles.bodyWithSize(
+                                  12,
+                                  color: PassportPalette.textSecondary,
+                                  weight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                draft.islandName,
+                                style: AppTextStyles.bodyWithSize(
+                                  16,
+                                  color: PassportPalette.textPrimary,
+                                  weight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                '주민 이름:',
+                                style: AppTextStyles.bodyWithSize(
+                                  12,
+                                  color: PassportPalette.textSecondary,
+                                  weight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                draft.representativeName,
+                                style: AppTextStyles.bodyWithSize(
+                                  16,
+                                  color: PassportPalette.textPrimary,
+                                  weight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              _FruitBadge(fruitName: draft.nativeFruit),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -299,9 +363,9 @@ class _PassportPhoto extends StatelessWidget {
       width: 94,
       height: 94,
       decoration: BoxDecoration(
-        color: AppColors.passportPhotoBg,
+        color: PassportPalette.photoBackground,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.passportPhotoBorder),
+        border: Border.all(color: PassportPalette.photoBorder),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
@@ -328,7 +392,7 @@ class _FruitBadge extends StatelessWidget {
           icon,
           style: AppTextStyles.bodyWithSize(
             30,
-            color: AppColors.textPrimary,
+            color: PassportPalette.textPrimary,
             weight: FontWeight.w700,
           ),
         ),
@@ -339,7 +403,7 @@ class _FruitBadge extends StatelessWidget {
               '특산물:',
               style: AppTextStyles.bodyWithSize(
                 12,
-                color: AppColors.passportTextSub,
+                color: PassportPalette.textSecondary,
                 weight: FontWeight.w700,
               ),
             ),
@@ -348,7 +412,7 @@ class _FruitBadge extends StatelessWidget {
               fruitName,
               style: AppTextStyles.bodyWithSize(
                 14,
-                color: AppColors.passportTextMain,
+                color: PassportPalette.textPrimary,
                 weight: FontWeight.w800,
               ),
             ),
@@ -367,57 +431,6 @@ class _FruitBadge extends StatelessWidget {
   };
 }
 
-class _SpotlightPainter extends CustomPainter {
-  const _SpotlightPainter(this.progress);
-
-  final double progress;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
-
-    final glowPaint = Paint()
-      ..shader = RadialGradient(
-        colors: <Color>[
-          AppColors.passportSpotGlow.withValues(alpha: 0.74),
-          AppColors.passportSpotGlow.withValues(alpha: 0),
-        ],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
-
-    canvas.drawCircle(center, radius * 0.92, glowPaint);
-
-    final rayPaint = Paint()..style = PaintingStyle.fill;
-    const rayCount = 20;
-    final rotation = progress * math.pi * 2;
-
-    for (var i = 0; i < rayCount; i++) {
-      final startAngle = (i / rayCount) * math.pi * 2 + rotation;
-      final sweep = (math.pi * 2 / rayCount) * 0.55;
-
-      final alpha = i.isEven ? 0.14 : 0.07;
-      rayPaint.color = AppColors.passportSpotRay.withValues(alpha: alpha);
-
-      final path = Path()
-        ..moveTo(center.dx, center.dy)
-        ..arcTo(
-          Rect.fromCircle(center: center, radius: radius),
-          startAngle,
-          sweep,
-          false,
-        )
-        ..close();
-
-      canvas.drawPath(path, rayPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _SpotlightPainter oldDelegate) {
-    return oldDelegate.progress != progress;
-  }
-}
-
 class _ConfettiPainter extends CustomPainter {
   const _ConfettiPainter(this.progress);
 
@@ -431,11 +444,11 @@ class _ConfettiPainter extends CustomPainter {
       ..strokeWidth = 2.4;
 
     const colors = <Color>[
-      AppColors.confettiPurple,
-      AppColors.confettiMint,
-      AppColors.confettiYellow,
-      AppColors.confettiBlue,
-      AppColors.confettiOrange,
+      PassportPalette.confettiPurple,
+      PassportPalette.confettiMint,
+      PassportPalette.confettiYellow,
+      PassportPalette.confettiBlue,
+      PassportPalette.confettiOrange,
     ];
 
     final burstOrigins = <Offset>[
@@ -458,7 +471,7 @@ class _ConfettiPainter extends CustomPainter {
 
       if (local < 0.12) {
         final ringRadius = 8 + (local / 0.12) * 30;
-        ringPaint.color = AppColors.passportBurstGlow.withValues(
+        ringPaint.color = PassportPalette.burstGlow.withValues(
           alpha: 1 - (local / 0.12),
         );
         canvas.drawCircle(origin, ringRadius, ringPaint);

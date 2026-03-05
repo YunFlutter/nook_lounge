@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
-import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -587,11 +586,10 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
         SnackBar(
           content: Text(
             message,
-            style: DefaultTextStyle.of(context).style.copyWith(
-              fontFamily: AppTypography.fontFamily,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              letterSpacing: AppTypography.letterSpacingFor(16),
+            style: AppTextStyles.bodyWithSize(
+              16,
+              color: AppColors.textInverse,
+              weight: FontWeight.w700,
             ),
           ),
           behavior: SnackBarBehavior.floating,

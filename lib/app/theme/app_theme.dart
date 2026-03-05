@@ -131,11 +131,14 @@ class AppTheme {
         textStyle: WidgetStatePropertyAll(AppTextStyles.bodyPrimaryStrong),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: colorScheme.inverseSurface,
+        backgroundColor: AppColors.textPrimary,
         contentTextStyle: AppTypography.bodyLarge.copyWith(
-          color: colorScheme.onInverseSurface,
+          color: AppColors.textInverse,
           fontWeight: FontWeight.w700,
         ),
+        behavior: SnackBarBehavior.floating,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       dialogTheme: DialogThemeData(
         titleTextStyle: AppTextStyles.dialogTitleCompact,

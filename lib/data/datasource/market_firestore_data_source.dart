@@ -1971,9 +1971,9 @@ class MarketFirestoreDataSource {
     }
 
     // 유지보수 포인트:
-    // 거래 흐름의 핵심 상태 변경을 offer 하위 로그 컬렉션에 append-only로 저장합니다.
+    // 거래 흐름의 핵심 상태 변경을 카테고리별 루트 로그 컬렉션에 append-only로 저장합니다.
     final logRef = _firestore
-        .collection(FirestorePaths.marketTradeLogs(normalizedOfferId))
+        .collection(FirestorePaths.marketTradeLogs())
         .doc();
     await logRef.set(<String, dynamic>{
       'id': logRef.id,
