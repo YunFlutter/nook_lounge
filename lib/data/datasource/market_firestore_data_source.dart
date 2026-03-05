@@ -551,6 +551,13 @@ class MarketFirestoreDataSource {
       FirestorePaths.marketTradeProposals(normalizedOfferId),
     );
     final existingProposals = await proposalsRef.get();
+    final offerRef = _firestore.doc(
+      FirestorePaths.marketPost(normalizedOfferId),
+    );
+    final offerSnapshot = await offerRef.get();
+    final offerData = offerSnapshot.data() ?? const <String, dynamic>{};
+    final tradeTypeName = (offerData['tradeType'] as String?)?.trim() ?? '';
+    final isTouchingTrade = tradeTypeName == MarketTradeType.touching.name;
     final selectedRef = _firestore.doc(
       FirestorePaths.marketTradeProposal(
         normalizedOfferId,
@@ -601,6 +608,23 @@ class MarketFirestoreDataSource {
       }
 
       final status = (proposalDoc.data()['status'] as String?) ?? '';
+      if (isTouchingTrade) {
+        // 유지보수 포인트:
+        // 만지작은 대기열을 유지해야 하므로, 선택된 신청자만 승낙하고
+        // 나머지는 '대기중' 상태를 보존합니다.
+        // 단, 레거시/경합으로 기존 accepted가 남아 있으면 pending으로 되돌려
+        // 동시 승낙 상태를 방지합니다.
+        if (status == MarketTradeProposalStatus.accepted.name) {
+          batch.set(proposalDoc.reference, <String, dynamic>{
+            'status': MarketTradeProposalStatus.pending.name,
+            'acceptedAt': FieldValue.delete(),
+            'acceptedAtMillis': FieldValue.delete(),
+            'updatedAt': FieldValue.serverTimestamp(),
+            'updatedAtMillis': FieldValue.delete(),
+          }, SetOptions(merge: true));
+        }
+        continue;
+      }
       if (status == MarketTradeProposalStatus.pending.name ||
           status == MarketTradeProposalStatus.accepted.name) {
         batch.set(proposalDoc.reference, <String, dynamic>{
@@ -630,9 +654,6 @@ class MarketFirestoreDataSource {
       }, SetOptions(merge: true));
     }
 
-    final offerRef = _firestore.doc(
-      FirestorePaths.marketPost(normalizedOfferId),
-    );
     batch.set(offerRef, <String, dynamic>{
       'status': MarketOfferStatus.waiting.name,
       'lifecycle': MarketLifecycleTab.ongoing.name,

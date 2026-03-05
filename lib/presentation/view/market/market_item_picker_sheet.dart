@@ -533,9 +533,12 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.bodyPrimaryHeavy,
                       ),
+                      SizedBox(
+                        height: 7,
+                      ),
                       if (priceTag.isNotEmpty)
                         Text(
-                          '판매가 $priceTag',
+                          '판매가   $priceTag',
                           style: AppTextStyles.captionMuted,
                         ),
                     ],

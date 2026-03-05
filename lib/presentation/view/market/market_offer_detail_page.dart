@@ -794,13 +794,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(
-                  Icons.swap_vert_rounded,
-                  color: AppColors.textAccent,
-                ),
-              ),
+              _buildTradeDirectionIndicator(),
               Expanded(
                 child: _buildItemMiniCard(
                   header: offer.wantHeaderLabel,
@@ -844,13 +838,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(
-                  Icons.swap_vert_rounded,
-                  color: AppColors.textAccent,
-                ),
-              ),
+              _buildTradeDirectionIndicator(),
               Expanded(
                 child: _buildItemMiniCard(
                   header: '만지작',
@@ -913,6 +901,19 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return '$preview 외 $remainCount개';
   }
 
+  Widget _buildTradeDirectionIndicator() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(Icons.arrow_forward_rounded, color: AppColors.textAccent),
+          Icon(Icons.arrow_back_rounded, color: AppColors.textAccent),
+        ],
+      ),
+    );
+  }
+
   List<String> _resolveTouchingTags() {
     return resolveTouchingTagLabels(offer.touchingTags);
   }
@@ -927,8 +928,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     required String categoryLabel,
     IconData emptyImageIcon = Icons.image_not_supported_outlined,
   }) {
-    final displayName = _resolvedDisplayName(title, quantity);
-    final displayQuantity = _resolvedDisplayQuantity(title, quantity);
+    final displayName = title.trim().isEmpty ? '-' : title.trim();
+    final displayQuantity = quantity <= 0 ? 0 : quantity;
     final headerText = header.trim().isEmpty ? defaultHeader : header;
     return Column(
       children: <Widget>[
@@ -961,7 +962,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.bodyPrimaryHeavy,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         _buildItemTypeBadge(categoryLabel),
         if (displayQuantity > 1) ...<Widget>[
           const SizedBox(height: 4),
@@ -979,8 +980,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
 
     switch (normalized) {
       case '재화':
-        bgColor = AppColors.badgeBlueBg;
-        textColor = AppColors.badgeBlueText;
+        bgColor = AppColors.marketBlueBadgeBg;
+        textColor = AppColors.marketBlueBadgeText;
         icon = Icons.paid_rounded;
       case '레시피':
         bgColor = AppColors.badgeYellowBg;
@@ -1011,6 +1012,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(icon, size: 11, color: textColor),
             const SizedBox(width: 3),
@@ -1065,32 +1067,6 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return name.contains('벨') ||
         name.contains('마일 여행권') ||
         name.contains('마일 이용권');
-  }
-
-  String _resolvedDisplayName(String rawName, int quantity) {
-    final trimmed = rawName.trim();
-    if (trimmed.isEmpty) {
-      return '-';
-    }
-    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
-    final starMatch = starPattern.firstMatch(trimmed);
-    if (starMatch != null && quantity <= 1) {
-      return starMatch.group(1)?.trim() ?? trimmed;
-    }
-    return trimmed;
-  }
-
-  int _resolvedDisplayQuantity(String rawName, int quantity) {
-    final safeQuantity = quantity <= 0 ? 0 : quantity;
-    final starPattern = RegExp(r'^(.+?)\s*\*\s*(\d+)$');
-    final starMatch = starPattern.firstMatch(rawName.trim());
-    if (starMatch != null) {
-      final parsed = int.tryParse(starMatch.group(2) ?? '');
-      if (parsed != null && parsed > 0) {
-        return parsed;
-      }
-    }
-    return safeQuantity;
   }
 
   Widget _buildImage(String source) {

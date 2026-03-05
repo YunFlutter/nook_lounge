@@ -111,6 +111,9 @@ class AppColors {
   static const Color marketBlueBadgeText = Color(0xFF2C6BCF);
   static const Color marketProposalBadgeBg = Color(0xFFFEDED6);
   static const Color marketProposalBadgeText = accentDeepOrange;
+  static const Color marketQueueBadgeBg = Color(0xFF4060AD);
+  static const Color marketOwnerCompleteActionBg = Color(0xff9EE476);
+  static const Color marketOwnerCompleteActionText = Color(0xFF4B9222);
 
   // Settings
   // 유지보수 포인트:

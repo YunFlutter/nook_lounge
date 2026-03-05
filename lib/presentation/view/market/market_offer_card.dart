@@ -47,7 +47,7 @@ class MarketOfferCard extends StatelessWidget {
   ];
   static const int _touchingPreviewMaxSlots = 4;
   static const double _touchingPreviewCircleSize = 70;
-  static const double _touchingPreviewItemGap = 10;
+  static const double _touchingPreviewItemGap = 18;
   static const double _touchingPreviewLabelGap = 8;
 
   @override
@@ -310,11 +310,17 @@ class MarketOfferCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    // Text(
+                    //   offer.ownerName,
+                    //   style: AppTextStyles.bodyPrimaryHeavy,
+                    // ),
                     Text(
-                      offer.ownerName,
+                      touchingTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.bodyPrimaryHeavy,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 7),
                     Text(
                       formatRelativeTime(offer.createdAt),
                       style: AppTextStyles.captionMuted,
@@ -324,29 +330,22 @@ class MarketOfferCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            touchingTitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.bodyPrimaryHeavy,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            offer.description,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.labelWithColor(
-              AppColors.textPrimary,
-              weight: FontWeight.w700,
-              height: 1.25,
+          if (offer.description.isNotEmpty)
+            Text(
+              offer.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.labelWithColor(
+                AppColors.textPrimary,
+                weight: FontWeight.w700,
+                height: 1.25,
+              ),
             ),
-          ),
           if (touchingItems.isNotEmpty) ...<Widget>[
             const SizedBox(height: 10),
             _buildTouchingPreviewRow(touchingItems),
           ],
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Row(
             children: <Widget>[
               Text('입장료', style: AppTextStyles.captionMuted),
@@ -354,7 +353,7 @@ class MarketOfferCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
-                  vertical: 4,
+                  vertical: 7,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.badgeYellowBg,
@@ -369,10 +368,13 @@ class MarketOfferCard extends StatelessWidget {
                   ),
                 ),
               ),
+              Expanded(child: Container()),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _buildActionArea(),
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          Align(alignment: Alignment.centerRight, child: _buildActionArea()),
         ],
       ),
     );
@@ -622,6 +624,7 @@ class MarketOfferCard extends StatelessWidget {
   Widget _buildActionChip() {
     final actionLabel = _resolveActionLabel();
     final isProposalAction = actionLabel == '거래제안';
+    final isQueueAction = actionLabel == '줄서기';
     final bool disabled =
         _isCompletedOffer ||
         offer.status == MarketOfferStatus.closed ||
@@ -630,6 +633,8 @@ class MarketOfferCard extends StatelessWidget {
         offer.dimmed;
     final Color enabledBgColor = isProposalAction
         ? AppColors.marketProposalBadgeBg
+        : isQueueAction
+        ? AppColors.marketQueueBadgeBg
         : AppColors.badgeBlueText;
     final Color enabledTextColor = isProposalAction
         ? AppColors.marketProposalBadgeText
@@ -659,15 +664,25 @@ class MarketOfferCard extends StatelessWidget {
     required VoidCallback? onTap,
   }) {
     final bool isEditChip = label == '수정';
+    final bool isDeleteChip = label == '삭제';
+    final bool isCompleteChip = label == '완료';
     final bool disabled = onTap == null || offer.dimmed;
-    final Color bgColor = disabled
-        ? AppColors.catalogChipBg
-        : (isEditChip ? AppColors.marketBlueBadgeBg : AppColors.badgeBlueBg);
-    final Color textColor = disabled
-        ? AppColors.textMuted
-        : (isEditChip
-              ? AppColors.marketBlueBadgeText
-              : AppColors.badgeBlueText);
+    final Color enabledBgColor = isEditChip
+        ? AppColors.marketBlueBadgeBg
+        : isDeleteChip
+        ? AppColors.marketProposalBadgeBg
+        : isCompleteChip
+        ? AppColors.marketOwnerCompleteActionBg.withValues(alpha: 0.3)
+        : AppColors.badgeBlueBg;
+    final Color enabledTextColor = isEditChip
+        ? AppColors.marketBlueBadgeText
+        : isDeleteChip
+        ? AppColors.marketProposalBadgeText
+        : isCompleteChip
+        ? AppColors.marketOwnerCompleteActionText
+        : AppColors.badgeBlueText;
+    final Color bgColor = disabled ? AppColors.catalogChipBg : enabledBgColor;
+    final Color textColor = disabled ? AppColors.textMuted : enabledTextColor;
     return Material(
       color: bgColor,
       borderRadius: BorderRadius.circular(10),
