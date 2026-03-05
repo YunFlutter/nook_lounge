@@ -43,18 +43,18 @@ class IslandSwitchSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
             ),
           ),
-          const SizedBox(height: AppSpacing.modalOuter),
+          const SizedBox(height: AppSpacing.s20),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.modalInner),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 '섬 선택하기',
-                style: AppTextStyles.dialogTitleWithSize(38),
+                style: AppTextStyles.dialogTitleWithSize(28),
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.modalOuter),
+          const SizedBox(height: AppSpacing.s20),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.fromLTRB(
@@ -95,7 +95,7 @@ class IslandSwitchSheet extends StatelessWidget {
                         color: selected
                             ? AppColors.primaryDefault
                             : AppColors.borderDefault,
-                        width: selected ? 2 : 1,
+                        width: selected ? 3 : 1,
                       ),
                     ),
                     child: Row(
@@ -116,12 +116,12 @@ class IslandSwitchSheet extends StatelessWidget {
                               Text(
                                 island.islandName,
                                 style: AppTextStyles.bodyWithSize(
-                                  16,
+                                  18,
                                   color: AppColors.textPrimary,
                                   weight: FontWeight.w800,
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              const SizedBox(height: AppSpacing.s10),
                               Text(
                                 '대표: ${island.representativeName}',
                                 style: AppTextStyles.bodyWithSize(
@@ -136,7 +136,7 @@ class IslandSwitchSheet extends StatelessWidget {
                         Text(
                           '$fruitEmoji ${island.nativeFruit}',
                           style: AppTextStyles.bodyWithSize(
-                            14,
+                            16,
                             color: AppColors.textSecondary,
                             weight: FontWeight.w700,
                           ),
@@ -147,15 +147,15 @@ class IslandSwitchSheet extends StatelessWidget {
                           child: selected
                               ? Container(
                                   key: const ValueKey<String>('selected'),
-                                  width: 28,
-                                  height: 28,
+                                  width: 24,
+                                  height: 24,
                                   decoration: const BoxDecoration(
                                     color: AppColors.primaryDefault,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
                                     Icons.check,
-                                    size: 18,
+                                    size: 16,
                                     color: AppColors.white,
                                   ),
                                 )

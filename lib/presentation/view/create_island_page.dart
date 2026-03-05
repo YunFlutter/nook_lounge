@@ -171,10 +171,10 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 child: Text(
                   '나만의 여권을\n등록해볼까요?',
                   style: AppTextStyles.bodyWithSize(
-                    20,
+                    24,
                     color: AppColors.textPrimary,
                     weight: FontWeight.w800,
-                    height: 1.2,
+                    height: 1.5,
                   ),
                 ),
               ),
@@ -184,7 +184,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 child: Text(
                   '당신의 섬 정보를 입력해 주세요.',
                   style: AppTextStyles.bodyWithSize(
-                    14,
+                    16,
                     color: AppColors.textMuted,
                     weight: FontWeight.w700,
                   ),
@@ -242,7 +242,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 ),
               ),
               const SizedBox(height: AppSpacing.s10 * 2),
-              Text('섬 이름', style: AppTextStyles.bodyPrimaryStrong),
+              Text('섬 이름', style: AppTextStyles.headingH2Secondary),
               const SizedBox(height: 6),
               TextFormField(
                 controller: _islandNameController,
@@ -255,8 +255,8 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: AppSpacing.s10),
-              Text('대표 주민 이름', style: AppTextStyles.bodyPrimaryStrong),
+              const SizedBox(height: AppSpacing.s22),
+              Text('대표 주민 이름', style: AppTextStyles.headingH2Secondary),
               const SizedBox(height: AppSpacing.s10),
               TextFormField(
                 controller: _representativeController,
@@ -269,8 +269,8 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: AppSpacing.s10),
-              Text('반구 선택', style: AppTextStyles.bodyPrimaryStrong),
+              const SizedBox(height: AppSpacing.s22),
+              Text('반구 선택', style: AppTextStyles.headingH2Secondary),
               const SizedBox(height: AppSpacing.s10),
               Row(
                 children: <Widget>[
@@ -295,8 +295,8 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.s10 + 6),
-              Text('특산물', style: AppTextStyles.bodyPrimaryStrong),
+              const SizedBox(height: AppSpacing.s22),
+              Text('특산물', style: AppTextStyles.headingH2Secondary),
               const SizedBox(height: AppSpacing.s10),
               Wrap(
                 spacing: AppSpacing.s10,
@@ -354,7 +354,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
     return InputDecoration(
       hintText: hintText,
       errorStyle: AppTextStyles.bodyWithSize(
-        12,
+        14,
         color: AppColors.accentDeepOrange,
         weight: FontWeight.w700,
       ),
@@ -368,7 +368,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
       ),
       errorBorder: const OutlineInputBorder(
         borderRadius: borderRadius,
-        borderSide: BorderSide(color: AppColors.accentDeepOrange, width: 1.5),
+        borderSide: BorderSide(color: AppColors.accentDeepOrange, width: 3.0),
       ),
       focusedErrorBorder: const OutlineInputBorder(
         borderRadius: borderRadius,
@@ -407,7 +407,7 @@ class _HemisphereCard extends StatelessWidget {
             color: selected
                 ? AppColors.accentDeepOrange
                 : AppColors.borderDefault,
-            width: selected ? 2 : 1,
+            width: selected ? 3 : 1,
           ),
         ),
         child: Column(
@@ -422,6 +422,7 @@ class _HemisphereCard extends StatelessWidget {
                 weight: FontWeight.w700,
               ),
             ),
+            const SizedBox(height: AppSpacing.s10),
           ],
         ),
       ),
@@ -456,7 +457,7 @@ class _FruitCircleButton extends StatelessWidget {
             color: selected
                 ? AppColors.accentDeepOrange
                 : AppColors.borderDefault,
-            width: selected ? 2.5 : 1,
+            width: selected ? 3 : 1,
           ),
         ),
         alignment: Alignment.center,

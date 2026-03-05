@@ -79,7 +79,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
               Text(
                 '여권 발급 완료!',
                 style: AppTextStyles.bodyWithSize(
-                  48,
+                  56,
                   color: PassportPalette.titleAccent,
                   weight: FontWeight.w800,
                 ),
@@ -114,19 +114,20 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
               Text(
                 '환영합니다!',
                 style: AppTextStyles.bodyWithSize(
-                  32,
+                  40,
                   color: PassportPalette.welcomeAccent,
                   weight: FontWeight.w800,
                 ),
               ),
-              Expanded(child: SizedBox()),
+              const SizedBox(height: AppSpacing.s10*5),
+              // Expanded(child: SizedBox()),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: const <BoxShadow>[
                     BoxShadow(
                       color: PassportPalette.shadowStrong,
-                      blurRadius: 12,
+                      blurRadius: 1,
                       offset: Offset(0, 6),
                     ),
                   ],
@@ -163,7 +164,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                           }
                         },
                   style: FilledButton.styleFrom(
-                    minimumSize: const Size.fromHeight(58),
+                    minimumSize: const Size.fromHeight(60),
                     backgroundColor: PassportPalette.actionGreen,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
@@ -175,7 +176,8 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.s10 * 2),
+
+              const SizedBox(height: AppSpacing.s10 * 7),
             ],
           ),
         ),
@@ -282,34 +284,37 @@ class _PassportCard extends StatelessWidget {
                     ),
                     color: PassportPalette.cardHeaderBackground,
                   ),
-                  child: Row(
-                    children: <Widget>[
-                      SizedBox(width: 6),
-                      Expanded(
-                        child: Divider(
-                          color: PassportPalette.textPrimary,
-                          thickness: 1.6,
-                          height: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(width: 6),
+                        Expanded(
+                          child: Divider(
+                            color: PassportPalette.textPrimary,
+                            thickness: 1.6,
+                            height: 1,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'PASSPORT',
-                        style: AppTextStyles.bodyWithSize(
-                          16,
-                          color: PassportPalette.textPrimary,
-                          weight: FontWeight.w800,
+                        SizedBox(width: 8),
+                        Text(
+                          'PASSPORT',
+                          style: AppTextStyles.bodyWithSize(
+                            16,
+                            color: PassportPalette.textPrimary,
+                            weight: FontWeight.w800,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Divider(
-                          color: PassportPalette.textPrimary,
-                          thickness: 1.6,
-                          height: 1,
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Divider(
+                            color: PassportPalette.textPrimary,
+                            thickness: 1.6,
+                            height: 1,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.s10),
@@ -329,7 +334,7 @@ class _PassportCard extends StatelessWidget {
                               Text(
                                 '섬 이름:',
                                 style: AppTextStyles.bodyWithSize(
-                                  12,
+                                  14,
                                   color: PassportPalette.textSecondary,
                                   weight: FontWeight.w700,
                                 ),
@@ -338,7 +343,7 @@ class _PassportCard extends StatelessWidget {
                               Text(
                                 draft.islandName,
                                 style: AppTextStyles.bodyWithSize(
-                                  16,
+                                  18,
                                   color: PassportPalette.textPrimary,
                                   weight: FontWeight.w800,
                                 ),
@@ -347,7 +352,7 @@ class _PassportCard extends StatelessWidget {
                               Text(
                                 '주민 이름:',
                                 style: AppTextStyles.bodyWithSize(
-                                  12,
+                                  14,
                                   color: PassportPalette.textSecondary,
                                   weight: FontWeight.w700,
                                 ),
@@ -356,13 +361,14 @@ class _PassportCard extends StatelessWidget {
                               Text(
                                 draft.representativeName,
                                 style: AppTextStyles.bodyWithSize(
-                                  16,
+                                  18,
                                   color: PassportPalette.textPrimary,
                                   weight: FontWeight.w800,
                                 ),
                               ),
                               const SizedBox(height: 10),
                               _FruitBadge(fruitName: draft.nativeFruit),
+                              const SizedBox(height: 10),
                             ],
                           ),
                         ),
@@ -415,6 +421,7 @@ class _FruitBadge extends StatelessWidget {
 
     return Row(
       children: [
+        const SizedBox(width: 10),
         Text(
           icon,
           style: AppTextStyles.bodyWithSize(
@@ -429,7 +436,7 @@ class _FruitBadge extends StatelessWidget {
             Text(
               '특산물:',
               style: AppTextStyles.bodyWithSize(
-                12,
+                14,
                 color: PassportPalette.textSecondary,
                 weight: FontWeight.w700,
               ),
@@ -438,7 +445,7 @@ class _FruitBadge extends StatelessWidget {
             Text(
               fruitName,
               style: AppTextStyles.bodyWithSize(
-                14,
+                18,
                 color: PassportPalette.textPrimary,
                 weight: FontWeight.w800,
               ),
