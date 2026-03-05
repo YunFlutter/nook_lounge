@@ -18,6 +18,13 @@ class CreateIslandViewModel extends StateNotifier<CreateIslandViewState> {
     required String uid,
     required CreateIslandDraft draft,
   }) async {
+    // 유지보수 포인트:
+    // 빠른 연타/중복 탭으로 동일 요청이 여러 번 들어오지 않도록
+    // ViewModel 레벨에서 1차 방어합니다.
+    if (state.isSubmitting) {
+      return null;
+    }
+
     state = state.copyWith(
       isSubmitting: true,
       submitSuccess: false,

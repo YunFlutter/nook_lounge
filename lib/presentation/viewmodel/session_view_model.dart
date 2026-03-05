@@ -218,6 +218,28 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
     await _onUserChanged(_authRepository.currentUserId);
   }
 
+  void markIslandSetupCompleted({required String uid}) {
+    final normalizedUid = uid.trim();
+    if (normalizedUid.isEmpty ||
+        _authRepository.currentUserId != normalizedUid) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 여권 발급 직후에는 캐시 전파 지연으로 hasPrimaryIsland(cache)가
+    // 잠시 false를 반환할 수 있어, 사용자가 "섬으로 입장하기"를 눌렀을 때
+    // 즉시 홈으로 전환되도록 ready 상태를 선반영합니다.
+    state = state.copyWith(
+      isLoading: false,
+      errorTitle: null,
+      errorMessage: null,
+      session: SessionState.ready(uid: normalizedUid),
+    );
+
+    // 서버 기준 실제 상태와의 불일치는 백그라운드 재검증으로 보정합니다.
+    unawaited(_revalidateInBackground(normalizedUid));
+  }
+
   void clearError() {
     if (state.errorTitle == null && state.errorMessage == null) {
       return;

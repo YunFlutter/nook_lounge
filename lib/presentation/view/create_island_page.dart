@@ -95,9 +95,15 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
                 draft: submittedDraft,
                 imagePath: next.selectedImagePath,
                 onEnterIsland: () async {
-                  await sessionViewModel.refresh();
                   final islandId = _lastCreatedIslandId;
-                  if (islandId != null && widget.onIslandEntered != null) {
+                  if (islandId == null) {
+                    await sessionViewModel.refresh();
+                    return;
+                  }
+
+                  sessionViewModel.markIslandSetupCompleted(uid: widget.uid);
+
+                  if (widget.onIslandEntered != null) {
                     await widget.onIslandEntered!(islandId);
                   }
                 },

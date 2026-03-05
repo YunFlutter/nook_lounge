@@ -81,6 +81,8 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
   late bool _isFavorite;
   late bool _isCompleted;
   late TextEditingController _memoController;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _memoFocusNode = FocusNode();
   bool _isMemoSaving = false;
   String? _selectedDetailImageUrl;
 
@@ -90,10 +92,15 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     _isFavorite = widget.isFavorite;
     _isCompleted = widget.isCompleted;
     _memoController = TextEditingController(text: widget.initialMemo);
+    _memoFocusNode.addListener(_handleMemoFocusChanged);
   }
 
   @override
   void dispose() {
+    _memoFocusNode
+      ..removeListener(_handleMemoFocusChanged)
+      ..dispose();
+    _scrollController.dispose();
     _memoController.dispose();
     super.dispose();
   }
@@ -101,6 +108,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
   @override
   Widget build(BuildContext context) {
     final sheetHeight = MediaQuery.sizeOf(context).height * 0.85;
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
     final detailRows = _buildDetailRows();
     final detailImages = _buildDetailImages();
     final optionDrivenImageUrl =
@@ -135,11 +143,17 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
               const SizedBox(height: AppSpacing.s10),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(
+                  controller: _scrollController,
+                  // 유지보수 포인트:
+                  // 주민 메모 입력 중 스크롤할 때 키보드가 즉시 내려가면
+                  // 작성 흐름이 끊기므로 manual 유지가 UX에 유리합니다.
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.manual,
+                  padding: EdgeInsets.fromLTRB(
                     AppSpacing.modalInner,
                     0,
                     AppSpacing.modalInner,
-                    AppSpacing.modalInner,
+                    AppSpacing.modalInner + keyboardInset,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -539,20 +553,36 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
           child: SafeArea(
             child: Stack(
               children: <Widget>[
-                Center(
-                  child: InteractiveViewer(
-                    minScale: 1,
-                    maxScale: 4,
-                    child: Image.network(
-                      image.url,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/no_data_image.png',
-                          fit: BoxFit.contain,
-                        );
-                      },
-                    ),
+                Positioned.fill(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return InteractiveViewer(
+                        minScale: 1,
+                        maxScale: 4,
+                        boundaryMargin: const EdgeInsets.all(80),
+                        clipBehavior: Clip.none,
+                        child: SizedBox(
+                          width: constraints.maxWidth,
+                          height: constraints.maxHeight,
+                          child: Center(
+                            child: Image.network(
+                              image.url,
+                              width: constraints.maxWidth,
+                              height: constraints.maxHeight,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/no_data_image.png',
+                                  width: constraints.maxWidth,
+                                  height: constraints.maxHeight,
+                                  fit: BoxFit.contain,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -718,10 +748,12 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         const SizedBox(height: 8),
         TextField(
           controller: _memoController,
+          focusNode: _memoFocusNode,
           minLines: 3,
           maxLines: 5,
           maxLength: 300,
           textInputAction: TextInputAction.newline,
+          onTap: _scrollMemoFieldIntoView,
           decoration: const InputDecoration(hintText: '이 주민에 대한 메모를 남겨주세요.'),
         ),
         const SizedBox(height: 8),
@@ -741,6 +773,30 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         ),
       ],
     );
+  }
+
+  void _handleMemoFocusChanged() {
+    if (_memoFocusNode.hasFocus) {
+      _scrollMemoFieldIntoView();
+    }
+  }
+
+  void _scrollMemoFieldIntoView() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) {
+        return;
+      }
+      final position = _scrollController.position;
+      final maxOffset = position.maxScrollExtent;
+      if (maxOffset <= position.pixels) {
+        return;
+      }
+      _scrollController.animateTo(
+        maxOffset,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+      );
+    });
   }
 
   Future<void> _saveMemo() async {

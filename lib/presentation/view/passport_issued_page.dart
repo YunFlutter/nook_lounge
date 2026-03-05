@@ -30,6 +30,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
   /// 레거시 컨트롤러를 안전하게 정리하기 위해 nullable로 유지합니다.
   AnimationController? _spotlightController;
   late final AnimationController _confettiController;
+  bool _isEnteringIsland = false;
 
   @override
   void initState() {
@@ -131,13 +132,36 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                   ],
                 ),
                 child: FilledButton(
-                  onPressed: () async {
-                    await widget.onEnterIsland();
-                    if (!context.mounted) {
-                      return;
-                    }
-                    Navigator.of(context).pop(true);
-                  },
+                  onPressed: _isEnteringIsland
+                      ? null
+                      : () async {
+                          setState(() {
+                            _isEnteringIsland = true;
+                          });
+
+                          try {
+                            await widget.onEnterIsland();
+                            if (!context.mounted) {
+                              return;
+                            }
+                            Navigator.of(context).pop(true);
+                          } catch (error) {
+                            if (!context.mounted) {
+                              return;
+                            }
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(content: Text('입장에 실패했어요.\n$error')),
+                              );
+                          } finally {
+                            if (mounted) {
+                              setState(() {
+                                _isEnteringIsland = false;
+                              });
+                            }
+                          }
+                        },
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(58),
                     backgroundColor: PassportPalette.actionGreen,
@@ -145,7 +169,10 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                       borderRadius: BorderRadius.circular(28),
                     ),
                   ),
-                  child: Text('섬으로 입장하기', style: AppTextStyles.buttonPrimary),
+                  child: Text(
+                    _isEnteringIsland ? '입장 중...' : '섬으로 입장하기',
+                    style: AppTextStyles.buttonPrimary,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.s10 * 2),

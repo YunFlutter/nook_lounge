@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
+import 'package:nook_lounge_app/core/error/last_island_deletion_blocked_exception.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
 
 class IslandFirestoreDataSource {
@@ -157,8 +158,21 @@ class IslandFirestoreDataSource {
     final islandSnapshot = await _firestore
         .collection(FirestorePaths.islands(uid))
         .get();
+    final islandDocs = islandSnapshot.docs;
+    final targetExists = islandDocs.any((doc) => doc.id == normalizedIslandId);
+    if (!targetExists) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 유저의 섬이 1개뿐이면 마지막 섬 삭제를 차단해
+    // 세션/홈 분기(ready vs needsIslandSetup)가 예기치 않게 흔들리지 않도록 합니다.
+    if (islandDocs.length <= 1) {
+      throw const LastIslandDeletionBlockedException();
+    }
+
     String? nextPrimaryIslandId;
-    for (final doc in islandSnapshot.docs) {
+    for (final doc in islandDocs) {
       if (doc.id == normalizedIslandId) {
         continue;
       }

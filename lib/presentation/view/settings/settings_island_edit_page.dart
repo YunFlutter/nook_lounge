@@ -7,8 +7,10 @@ import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/island_profile_options.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
+import 'package:nook_lounge_app/core/error/last_island_deletion_blocked_exception.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
+import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 
 class SettingsIslandEditPage extends ConsumerStatefulWidget {
@@ -63,6 +65,12 @@ class _SettingsIslandEditPageState
     final appBarTitle = _islandNameController.text.trim().isEmpty
         ? widget.island.islandName
         : _islandNameController.text.trim();
+    final islandCount = ref
+        .watch(homeDashboardIslandsProvider(widget.uid))
+        .valueOrNull
+        ?.length;
+    final canDeleteIsland =
+        !_isSaving && !_isDeleting && (islandCount ?? 0) > 1;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +82,7 @@ class _SettingsIslandEditPageState
         title: Text(appBarTitle),
         actions: <Widget>[
           IconButton(
-            onPressed: _isSaving || _isDeleting ? null : _deleteIsland,
+            onPressed: canDeleteIsland ? _deleteIsland : null,
             icon: const Icon(Icons.delete_rounded),
             tooltip: '섬 삭제',
           ),
@@ -371,9 +379,12 @@ class _SettingsIslandEditPageState
       if (!mounted) {
         return;
       }
+      final message = error is LastIslandDeletionBlockedException
+          ? error.message
+          : '삭제에 실패했어요.\n$error';
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text('삭제에 실패했어요.\n$error')));
+        ..showSnackBar(SnackBar(content: Text(message)));
       setState(() {
         _isDeleting = false;
       });

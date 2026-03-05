@@ -63,6 +63,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
     final isMine =
         currentOffer.isMine ||
         (currentUid.isNotEmpty && currentOffer.ownerUid.trim() == currentUid);
+    final canOpenSimpleMenu = _canOpenSimpleMenu(
+      isMine: isMine,
+      currentOffer: currentOffer,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -73,17 +77,19 @@ class MarketOfferDetailPage extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.headingH2Secondary,
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => _showSimpleMenu(
-              context,
-              ref,
-              isMine: isMine,
-              currentOffer: currentOffer,
-            ),
-            icon: const Icon(Icons.more_vert_rounded),
-          ),
-        ],
+        actions: canOpenSimpleMenu
+            ? <Widget>[
+                IconButton(
+                  onPressed: () => _showSimpleMenu(
+                    context,
+                    ref,
+                    isMine: isMine,
+                    currentOffer: currentOffer,
+                  ),
+                  icon: const Icon(Icons.more_vert_rounded),
+                ),
+              ]
+            : const <Widget>[],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -108,7 +114,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
           _buildTradeSummaryCard(),
           const SizedBox(height: 20),
           isMine
-              ? _buildOwnerProposalQueueSection(context, ref)
+              ? _buildOwnerProposalQueueSection(
+                  context,
+                  ref,
+                  currentOffer: currentOffer,
+                )
               : _buildMyProposalStatusSection(ref, currentUid),
           const SizedBox(height: 20),
           Text('거래 이동 방식', style: AppTextStyles.bodyPrimaryHeavy),
@@ -227,6 +237,23 @@ class MarketOfferDetailPage extends ConsumerWidget {
         target.status == MarketOfferStatus.closed;
   }
 
+  bool _canOpenSimpleMenu({
+    required bool isMine,
+    required MarketOffer currentOffer,
+  }) {
+    if (!isMine) {
+      return true;
+    }
+
+    final isInactiveOffer = _isInactiveOffer(currentOffer);
+    final canDeleteMineOffer =
+        !isInactiveOffer &&
+        currentOffer.status != MarketOfferStatus.waiting &&
+        currentOffer.status != MarketOfferStatus.trading;
+    final canOpenCode = !isInactiveOffer;
+    return canOpenCode || canDeleteMineOffer;
+  }
+
   Widget _buildVisitorBottomActions(
     BuildContext context,
     WidgetRef ref, {
@@ -313,7 +340,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
             secondaryOnPressed = () => Navigator.of(context).pop();
           } else {
             primaryLabel = '코드 확인하기';
-            primaryOnPressed = () => _openTradeCodePage(context, ref);
+            primaryOnPressed = () =>
+                _openTradeCodePage(context, ref, currentOffer: currentOffer);
             secondaryLabel = canCancelTrade ? '거래 취소' : '닫기';
             secondaryOnPressed = canCancelTrade
                 ? () => _cancelTradeAsParticipant(
@@ -529,7 +557,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildOwnerProposalQueueSection(BuildContext context, WidgetRef ref) {
+  Widget _buildOwnerProposalQueueSection(
+    BuildContext context,
+    WidgetRef ref, {
+    required MarketOffer currentOffer,
+  }) {
     final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
     return proposalsAsync.when(
       loading: () => Container(
@@ -586,10 +618,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   final index = entry.key;
                   final proposal = entry.value;
                   final canAccept =
-                      !_isCompletedOffer &&
+                      !_isInactiveOffer(currentOffer) &&
                       proposal.status == MarketTradeProposalStatus.pending;
                   final canOpenCode =
-                      !_isCompletedOffer &&
+                      !_isInactiveOffer(currentOffer) &&
                       proposal.status == MarketTradeProposalStatus.accepted;
                   return Padding(
                     padding: EdgeInsets.only(
@@ -663,7 +695,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
                             )
                           else if (canOpenCode)
                             OutlinedButton(
-                              onPressed: () => _openTradeCodePage(context, ref),
+                              onPressed: () => _openTradeCodePage(
+                                context,
+                                ref,
+                                currentOffer: currentOffer,
+                              ),
                               style: OutlinedButton.styleFrom(
                                 minimumSize: const Size(84, 38),
                                 side: const BorderSide(
@@ -1387,9 +1423,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
     required bool isMine,
     required MarketOffer currentOffer,
   }) async {
-    final isCompletedByStatus = _isCompletedOfferByStatus(currentOffer);
+    if (!_canOpenSimpleMenu(isMine: isMine, currentOffer: currentOffer)) {
+      return;
+    }
+
+    final isInactiveOffer = _isInactiveOffer(currentOffer);
     final canDeleteMineOffer =
-        !isCompletedByStatus &&
+        !isInactiveOffer &&
         currentOffer.status != MarketOfferStatus.waiting &&
         currentOffer.status != MarketOfferStatus.trading;
     if (isMine) {
@@ -1404,7 +1444,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (!isCompletedByStatus)
+                if (!isInactiveOffer)
                   ListTile(
                     leading: const Icon(Icons.pin_outlined),
                     title: Text(
@@ -1413,7 +1453,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
                     ),
                     onTap: () async {
                       Navigator.of(context).pop();
-                      await _openTradeCodePage(context, ref);
+                      await _openTradeCodePage(
+                        context,
+                        ref,
+                        currentOffer: currentOffer,
+                      );
                     },
                   ),
                 if (canDeleteMineOffer)
@@ -1445,13 +1489,17 @@ class MarketOfferDetailPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              if (!isCompletedByStatus)
+              if (!isInactiveOffer)
                 ListTile(
                   leading: const Icon(Icons.pin_outlined),
                   title: Text('코드 확인', style: AppTextStyles.bodyPrimaryStrong),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    await _openTradeCodePage(context, ref);
+                    await _openTradeCodePage(
+                      context,
+                      ref,
+                      currentOffer: currentOffer,
+                    );
                   },
                 ),
               ListTile(
@@ -1486,20 +1534,24 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _openTradeCodePage(BuildContext context, WidgetRef ref) async {
-    if (_isCompletedOffer) {
+  Future<void> _openTradeCodePage(
+    BuildContext context,
+    WidgetRef ref, {
+    required MarketOffer currentOffer,
+  }) async {
+    if (_isInactiveOffer(currentOffer)) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _snackContent(context, '거래가 종료되어 코드를 확인할 수 없어요.'),
+            content: _snackContent(context, '취소/종료된 거래는 코드를 확인할 수 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
       return;
     }
     final viewModel = ref.read(marketViewModelProvider.notifier);
-    final session = await viewModel.fetchTradeCodeSession(offer.id);
+    final session = await viewModel.fetchTradeCodeSession(currentOffer.id);
     if (!context.mounted) {
       return;
     }
@@ -1519,8 +1571,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => shouldSendCode
-            ? MarketTradeCodeSendPage(offer: offer, session: session)
-            : MarketTradeCodeViewPage(offer: offer),
+            ? MarketTradeCodeSendPage(offer: currentOffer, session: session)
+            : MarketTradeCodeViewPage(offer: currentOffer),
       ),
     );
   }
