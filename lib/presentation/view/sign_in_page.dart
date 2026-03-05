@@ -66,7 +66,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
           child: Column(
             children: <Widget>[
-              const Spacer(flex: 2),
+              const Spacer(flex: 3),
               AnimatedBuilder(
                 animation: _heroAnimationController,
                 builder: (context, child) {
@@ -107,7 +107,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   textAlign: TextAlign.center,
                 ),
               ),
-              const Spacer(flex: 3),
+              const Spacer(flex: 2),
               AnimatedFadeSlide(
                 delay: const Duration(milliseconds: 120),
                 child: AnimatedScaleButton(
@@ -115,7 +115,7 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   child: FilledButton(
                     onPressed: loading ? null : viewModel.signInWithApple,
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.black,
+                      backgroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
                       ),

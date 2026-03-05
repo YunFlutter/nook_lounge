@@ -67,14 +67,13 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                   widget.onCompleted != null) {
                 _notifiedCompleted = true;
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                 // if (mounted) {
-                //    widget.onCompleted!.call();
-                 // }
+                  if (mounted) {
+                    widget.onCompleted!.call();
+                  }
                 });
               }
 
               return Column(
-
                 children: <Widget>[
                   const Spacer(flex: 3),
                   Transform.translate(
