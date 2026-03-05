@@ -32,7 +32,8 @@ class CatalogItemDetailSheet extends StatefulWidget {
   State<CatalogItemDetailSheet> createState() => _CatalogItemDetailSheetState();
 }
 
-class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
+class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
+    with WidgetsBindingObserver {
   static const Set<String> _imageTagPrefixes = <String>{
     '주민사진URL',
     '아이콘URL',
@@ -77,18 +78,22 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
     '스타일',
     '그룹',
   ];
+  static const double _memoScrollBottomPadding = 140;
 
   late bool _isFavorite;
   late bool _isCompleted;
   late TextEditingController _memoController;
   final ScrollController _scrollController = ScrollController();
   final FocusNode _memoFocusNode = FocusNode();
+  final GlobalKey _memoSectionKey = GlobalKey();
+  final GlobalKey _memoFieldKey = GlobalKey();
   bool _isMemoSaving = false;
   String? _selectedDetailImageUrl;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _isFavorite = widget.isFavorite;
     _isCompleted = widget.isCompleted;
     _memoController = TextEditingController(text: widget.initialMemo);
@@ -97,6 +102,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _memoFocusNode
       ..removeListener(_handleMemoFocusChanged)
       ..dispose();
@@ -106,11 +112,29 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
   }
 
   @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    if (!_memoFocusNode.hasFocus) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_memoFocusNode.hasFocus) {
+        return;
+      }
+      _ensureMemoSectionVisible();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final sheetHeight = MediaQuery.sizeOf(context).height * 0.85;
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
     final detailRows = _buildDetailRows();
     final detailImages = _buildDetailImages();
+    final personality = _isVillager ? _extractPrefixedTagValue('성격') : null;
+    final personalityBadgeStyle = personality == null
+        ? null
+        : _VillagerPersonalityBadgeStyle.resolve(personality);
     final optionDrivenImageUrl =
         _selectedDetailImageUrl ??
         ((_isOptionCategory && detailImages.isNotEmpty)
@@ -166,7 +190,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                           selectedImageUrl: optionDrivenImageUrl,
                         ),
                       ],
-                      const SizedBox(height: AppSpacing.s10 * 2),
+                      const SizedBox(height: AppSpacing.s20 * 2),
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -175,30 +199,30 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                               style: AppTextStyles.headingH2,
                             ),
                           ),
-                          IconButton(
-                            onPressed: widget.readOnly
-                                ? null
-                                : () async {
-                                    final next = !_isFavorite;
-                                    setState(() => _isFavorite = next);
-                                    try {
-                                      await widget.onFavoriteChanged(next);
-                                    } catch (_) {
-                                      if (!mounted) {
-                                        return;
-                                      }
-                                      setState(() => _isFavorite = !next);
-                                    }
-                                  },
-                            icon: Icon(
-                              _isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: _isFavorite
-                                  ? AppColors.badgeRedText
-                                  : AppColors.textHint,
-                            ),
-                          ),
+                          // IconButton(
+                          //   onPressed: widget.readOnly
+                          //       ? null
+                          //       : () async {
+                          //           final next = !_isFavorite;
+                          //           setState(() => _isFavorite = next);
+                          //           try {
+                          //             await widget.onFavoriteChanged(next);
+                          //           } catch (_) {
+                          //             if (!mounted) {
+                          //               return;
+                          //             }
+                          //             setState(() => _isFavorite = !next);
+                          //           }
+                          //         },
+                          //   icon: Icon(
+                          //     _isFavorite
+                          //         ? Icons.favorite
+                          //         : Icons.favorite_border,
+                          //     color: _isFavorite
+                          //         ? AppColors.badgeRedText
+                          //         : AppColors.textHint,
+                          //   ),
+                          // ),
                         ],
                       ),
                       const SizedBox(height: AppSpacing.s10),
@@ -206,14 +230,28 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                         spacing: 6,
                         runSpacing: 6,
                         children: _displayTags
-                            .map((tag) => _InfoChip(label: tag))
+                            .map((tag) {
+                              final isPersonalityTag =
+                                  _isVillager &&
+                                  personality != null &&
+                                  tag == personality &&
+                                  personalityBadgeStyle != null;
+                              if (!isPersonalityTag) {
+                                return _InfoChip(label: tag);
+                              }
+                              return _InfoChip(
+                                label: tag,
+                                background: personalityBadgeStyle.background,
+                                foreground: personalityBadgeStyle.foreground,
+                              );
+                            })
                             .toList(growable: false),
                       ),
-                      const SizedBox(height: AppSpacing.s10 * 2),
+                      const SizedBox(height: AppSpacing.s20 * 2),
                       ...detailRows.map(
                         (row) => Padding(
                           padding: const EdgeInsets.only(
-                            bottom: AppSpacing.s10,
+                            bottom: AppSpacing.s20,
                           ),
                           child: _InfoSection(
                             title: row.label,
@@ -231,7 +269,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
                       if (_isVillager &&
                           !widget.readOnly &&
                           widget.onMemoSaved != null) ...<Widget>[
-                        const SizedBox(height: AppSpacing.s10 * 2),
+                        const SizedBox(height: AppSpacing.s20 * 2),
                         _buildVillagerMemoSection(),
                       ],
                     ],
@@ -260,6 +298,20 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
       labels.add(widget.item.category);
     }
     return labels;
+  }
+
+  String? _extractPrefixedTagValue(String prefix) {
+    final key = '$prefix:';
+    for (final tag in widget.item.tags) {
+      if (!tag.startsWith(key)) {
+        continue;
+      }
+      final value = tag.substring(key.length).trim();
+      if (value.isNotEmpty) {
+        return value;
+      }
+    }
+    return null;
   }
 
   List<_DetailRow> _buildDetailRows() {
@@ -429,7 +481,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          _isOptionCategory ? '색상 옵션' : '참고 이미지',
+          _isOptionCategory ? '색상 옵션' : '',
           style: AppTextStyles.bodyPrimaryHeavy,
         ),
         const SizedBox(height: 8),
@@ -683,10 +735,10 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
   List<Widget> _buildVillagerStateToggles() {
     return <Widget>[
       Text('주민 상태', style: AppTextStyles.headingH2),
-      const SizedBox(height: AppSpacing.s10),
+      const SizedBox(height: AppSpacing.s20),
       Text(
         '거주',
-        style: AppTextStyles.bodyWithSize(14, color: AppColors.textSecondary),
+        style: AppTextStyles.bodyWithSize(14, color: AppColors.textMuted),
       ),
       const SizedBox(height: 6),
       _SegmentStatusToggle(
@@ -695,7 +747,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         onLabel: '거주중',
         offIcon: Icons.home_outlined,
         onIcon: Icons.home_rounded,
-        onSelectedColor: AppColors.catalogSuccessText,
+        onSelectedColor: AppColors.textPrimary,
         onChanged: (value) async {
           final previous = _isCompleted;
           setState(() => _isCompleted = value);
@@ -710,10 +762,10 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
           }
         },
       ),
-      const SizedBox(height: AppSpacing.s10),
+      const SizedBox(height: AppSpacing.s20),
       Text(
         '선호',
-        style: AppTextStyles.bodyWithSize(14, color: AppColors.textSecondary),
+        style: AppTextStyles.bodyWithSize(14, color: AppColors.textMuted),
       ),
       const SizedBox(height: 6),
       _SegmentStatusToggle(
@@ -722,7 +774,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
         onLabel: '선호',
         offIcon: Icons.favorite_border_rounded,
         onIcon: Icons.favorite_rounded,
-        onSelectedColor: AppColors.badgePurpleText,
+        onSelectedColor: Colors.red,
         onChanged: (value) async {
           final previous = _isFavorite;
           setState(() => _isFavorite = value);
@@ -742,21 +794,29 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   Widget _buildVillagerMemoSection() {
     return Column(
+      key: _memoSectionKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text('주민 메모', style: AppTextStyles.headingH2),
         const SizedBox(height: 8),
         TextField(
+          key: _memoFieldKey,
           controller: _memoController,
           focusNode: _memoFocusNode,
           minLines: 3,
           maxLines: 5,
           maxLength: 300,
           textInputAction: TextInputAction.newline,
+          scrollPadding: const EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            _memoScrollBottomPadding,
+          ),
           onTap: _scrollMemoFieldIntoView,
           decoration: const InputDecoration(hintText: '이 주민에 대한 메모를 남겨주세요.'),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -783,20 +843,49 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet> {
 
   void _scrollMemoFieldIntoView() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) {
+      if (!mounted) {
         return;
       }
-      final position = _scrollController.position;
-      final maxOffset = position.maxScrollExtent;
-      if (maxOffset <= position.pixels) {
-        return;
-      }
-      _scrollController.animateTo(
-        maxOffset,
+      _ensureMemoSectionVisible();
+      // 유지보수 포인트:
+      // 키보드 애니메이션 중 첫 ensureVisible 결과가 어긋날 수 있어
+      // 포커스가 유지되는 경우 한 번 더 보정합니다.
+      Future<void>.delayed(const Duration(milliseconds: 220), () {
+        if (!mounted || !_memoFocusNode.hasFocus) {
+          return;
+        }
+        _ensureMemoSectionVisible();
+      });
+    });
+  }
+
+  void _ensureMemoSectionVisible() {
+    final memoContext =
+        _memoFieldKey.currentContext ?? _memoSectionKey.currentContext;
+    if (memoContext != null) {
+      Scrollable.ensureVisible(
+        memoContext,
         duration: const Duration(milliseconds: 220),
         curve: Curves.easeOutCubic,
+        alignment: 1,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
       );
-    });
+      return;
+    }
+
+    if (!_scrollController.hasClients) {
+      return;
+    }
+    final position = _scrollController.position;
+    final maxOffset = position.maxScrollExtent;
+    if (maxOffset <= position.pixels) {
+      return;
+    }
+    _scrollController.animateTo(
+      maxOffset,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   Future<void> _saveMemo() async {
@@ -907,8 +996,12 @@ class _InfoSection extends StatelessWidget {
       children: <Widget>[
         SizedBox(
           width: 96,
-          child: Text(title, style: AppTextStyles.bodySecondaryStrong),
+          child: Text(
+            title,
+            style: AppTextStyles.captionMuted.copyWith(fontSize: 16),
+          ),
         ),
+        SizedBox(height: AppSpacing.s20),
         Expanded(child: Text(value, style: AppTextStyles.bodyPrimaryStrong)),
       ],
     );
@@ -916,20 +1009,89 @@ class _InfoSection extends StatelessWidget {
 }
 
 class _InfoChip extends StatelessWidget {
-  const _InfoChip({required this.label});
+  const _InfoChip({
+    required this.label,
+    this.background = AppColors.catalogChipBg,
+    this.foreground = AppColors.textPrimary,
+  });
 
   final String label;
+  final Color background;
+  final Color foreground;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: AppColors.catalogChipBg,
+        color: background,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(label, style: AppTextStyles.captionPrimary),
+      child: Text(label, style: AppTextStyles.captionWithColor(foreground)),
     );
+  }
+}
+
+class _VillagerPersonalityBadgeStyle {
+  const _VillagerPersonalityBadgeStyle({
+    required this.background,
+    required this.foreground,
+  });
+
+  final Color background;
+  final Color foreground;
+
+  static _VillagerPersonalityBadgeStyle resolve(String personality) {
+    switch (personality.trim()) {
+      case '운동광':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffE8F3FF),
+          foreground: Color(0xff2C6BCF),
+        );
+      case '단순활발':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffFFF6CC),
+          foreground: Color(0xffC29B1E),
+        );
+      case '먹보':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffFFF4E5),
+          foreground: Color(0xffC57A1F),
+        );
+      case '무뚝뚝':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffF0F0F0),
+          foreground: Color(0xff6A6A6A),
+        );
+      case '보통':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffF1E39C),
+          foreground: AppColors.textPrimary,
+        );
+      case '스누티':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffF8D7FF),
+          foreground: Color(0xffC24AE9),
+        );
+      case '아이돌':
+        return const _VillagerPersonalityBadgeStyle(
+          background: Color(0xffEDE7FF),
+          foreground: Color(0xff6C63C9),
+        );
+      case '느끼함':
+        return const _VillagerPersonalityBadgeStyle(
+          background: AppColors.navActiveBg,
+          foreground: AppColors.textSecondary,
+        );
+      default:
+        // 유지보수 포인트:
+        // 데이터셋에 새로운 성격이 추가되면 기본값(블루)으로 우선 노출됩니다.
+        // 필요 시 switch 케이스만 추가해 성격별 색상을 확장해 주세요.
+        return const _VillagerPersonalityBadgeStyle(
+          background: AppColors.badgeBlueBg,
+          foreground: AppColors.badgeBlueText,
+        );
+    }
   }
 }
 

@@ -145,8 +145,6 @@ class HomeShellPage extends ConsumerWidget {
               textStyle: AppTextStyles.captionSecondary,
             ),
           ),
-          _buildNotificationAction(context),
-          _buildSettingsAction(context),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -157,11 +155,6 @@ class HomeShellPage extends ConsumerWidget {
         centerTitle: false,
         titleSpacing: AppSpacing.pageHorizontal,
         title: _buildStaticHomeStyleTitle('도감 관리'),
-        actions: <Widget>[
-          _buildNotificationAction(context),
-          _buildSettingsAction(context),
-          const SizedBox(width: AppSpacing.s6),
-        ],
       );
     }
 
@@ -203,14 +196,7 @@ class HomeShellPage extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
-                  islandTitle,
-                  style: AppTextStyles.bodyWithSize(
-                    16,
-                    color: AppColors.textPrimary,
-                    weight: FontWeight.w800,
-                  ),
-                ),
+                Text(islandTitle, style: AppTextStyles.appBarHomeTitle),
                 const SizedBox(width: AppSpacing.s4),
                 const Icon(
                   Icons.keyboard_arrow_down_rounded,
@@ -222,13 +208,7 @@ class HomeShellPage extends ConsumerWidget {
         ),
         actions: <Widget>[
           _buildNotificationAction(context),
-          IconButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => SettingsPage(uid: uid)),
-            ),
-            icon: const Icon(Icons.settings, color: AppColors.textPrimary),
-            tooltip: '설정',
-          ),
+          _buildSettingsAction(context),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -243,13 +223,11 @@ class HomeShellPage extends ConsumerWidget {
           IconButton(
             onPressed: () => MarketTabPage.openMyTradesPage(context),
             icon: const Icon(
-              Icons.delete_rounded,
+              Icons.shopping_cart_rounded,
               color: AppColors.textPrimary,
             ),
             tooltip: '내 거래관리',
           ),
-          _buildNotificationAction(context),
-          _buildSettingsAction(context),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -278,8 +256,6 @@ class HomeShellPage extends ConsumerWidget {
             ),
             tooltip: '초기화',
           ),
-          _buildNotificationAction(context),
-          _buildSettingsAction(context),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -310,14 +286,7 @@ class HomeShellPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: AppColors.borderDefault),
       ),
-      child: Text(
-        title,
-        style: AppTextStyles.bodyWithSize(
-          16,
-          color: AppColors.textPrimary,
-          weight: FontWeight.w800,
-        ),
-      ),
+      child: Text(title, style: AppTextStyles.appBarHomeTitle),
     );
   }
 

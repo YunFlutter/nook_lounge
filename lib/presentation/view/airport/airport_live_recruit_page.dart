@@ -5,6 +5,7 @@ import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 class AirportLiveRecruitPage extends StatefulWidget {
   const AirportLiveRecruitPage({
@@ -104,7 +105,10 @@ class _AirportLiveRecruitPageState extends State<AirportLiveRecruitPage> {
         .toList(growable: false);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('실시간 방문 모집'), centerTitle: true),
+      appBar: AppBar(
+        title: const HomeStyleAppBarTitle('실시간 방문 모집'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[

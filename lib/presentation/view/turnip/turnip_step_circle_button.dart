@@ -23,14 +23,14 @@ class TurnipStepCircleButton extends StatelessWidget {
         height: 34,
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: isAccent ? AppColors.badgeMintBg : AppColors.bgCard,
+          color: AppColors.bgCard ,
           shape: BoxShape.circle,
           border: Border.all(color: AppColors.borderDefault),
         ),
         child: Icon(
           icon,
           size: 18,
-          color: isAccent ? AppColors.primaryDefault : AppColors.textMuted,
+          color: AppColors.textMuted,
         ),
       ),
     );

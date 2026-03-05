@@ -19,6 +19,15 @@ class AppTextStyles {
     color: AppColors.textPrimary,
   );
 
+  // AppBar
+  // 유지보수 포인트:
+  // 홈 탭 앱바 제목(캡슐형 타이틀)과 동일한 타이포 토큰입니다.
+  // 일반 AppBar 제목도 이 토큰을 사용하면 화면 간 제목 스타일을 한 번에 맞출 수 있습니다.
+  static final TextStyle appBarHomeTitle = AppTypography.bodyLarge.copyWith(
+    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w800,
+  );
+
   // Dialog
   static final TextStyle dialogTitle = AppTypography.headingH1.copyWith(
     color: AppColors.textPrimary,

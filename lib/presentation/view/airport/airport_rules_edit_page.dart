@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 class AirportRulesEditPage extends StatefulWidget {
   const AirportRulesEditPage({required this.initialRules, super.key});
@@ -47,7 +48,10 @@ class _AirportRulesEditPageState extends State<AirportRulesEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('섬 방문 규칙 작성하기'), centerTitle: true),
+      appBar: AppBar(
+        title: const HomeStyleAppBarTitle('섬 방문 규칙 작성하기'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(

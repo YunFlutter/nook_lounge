@@ -87,7 +87,7 @@ class TurnipPage extends ConsumerWidget {
                           weight: FontWeight.w800,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 7),
                       Text('무파니에게 구매한 가격', style: AppTextStyles.captionMuted),
                     ],
                   ),

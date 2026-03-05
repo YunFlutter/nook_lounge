@@ -4,6 +4,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 typedef MarketReportDraft = ({String reason, String detail});
 
@@ -166,7 +167,7 @@ class _MarketReportReasonPageState extends State<MarketReportReasonPage> {
               color: AppColors.textSecondary,
             ),
           ),
-          title: Text(_screenTitle, style: AppTextStyles.headingH2Secondary),
+          title: HomeStyleAppBarTitle(_screenTitle),
         ),
         body: SafeArea(
           top: false,

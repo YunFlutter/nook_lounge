@@ -46,7 +46,7 @@ class AppTheme {
         scrolledUnderElevation: 0,
         surfaceTintColor: AppColors.transparent,
         shadowColor: AppColors.transparent,
-        titleTextStyle: AppTextStyles.headingH2Secondary,
+        titleTextStyle: AppTextStyles.appBarHomeTitle,
         toolbarTextStyle: AppTextStyles.bodyPrimaryStrong,
       ),
       textTheme: TextTheme(

@@ -214,7 +214,7 @@ class _MarketTradeRegisterPageState
       appBar: AppBar(
         title: Text(
           _isEditMode ? '거래 수정하기' : '거래를 등록하기',
-          style: AppTextStyles.headingH2Secondary,
+          style: AppTextStyles.appBarHomeTitle,
         ),
       ),
       body: Column(

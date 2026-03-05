@@ -9,6 +9,7 @@ import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 final wishListCatalogProvider = FutureProvider.autoDispose
     .family<List<CatalogItem>, String>((ref, uid) async {
@@ -91,7 +92,7 @@ class _WishListPageState extends ConsumerState<WishListPage> {
               .toList(growable: false);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('카테고리 위시 리스트')),
+      appBar: AppBar(title: const HomeStyleAppBarTitle('카테고리 위시 리스트')),
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.pageHorizontal,

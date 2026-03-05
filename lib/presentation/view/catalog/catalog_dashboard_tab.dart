@@ -452,6 +452,7 @@ class _ProgressSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const cardSpacing = AppSpacing.s10;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -473,17 +474,26 @@ class _ProgressSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.s10),
-        Wrap(
-          spacing: AppSpacing.s10,
-          runSpacing: AppSpacing.s10,
-          children: cards
-              .map(
-                (card) => _ProgressCircleCard(
-                  data: card,
-                  onTap: () => onCardTap(card),
-                ),
-              )
-              .toList(growable: false),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // 유지보수 포인트:
+            // 카드 폭은 화면 전체가 아니라 "실제 섹션 가용 너비" 기준으로 계산해야
+            // 좌우 패딩 변경 시에도 2열 레이아웃이 안정적으로 유지됩니다.
+            final cardWidth = (constraints.maxWidth - cardSpacing) / 2;
+            return Wrap(
+              spacing: cardSpacing,
+              runSpacing: cardSpacing,
+              children: cards
+                  .map(
+                    (card) => _ProgressCircleCard(
+                      width: cardWidth,
+                      data: card,
+                      onTap: () => onCardTap(card),
+                    ),
+                  )
+                  .toList(growable: false),
+            );
+          },
         ),
       ],
     );
@@ -491,14 +501,18 @@ class _ProgressSection extends StatelessWidget {
 }
 
 class _ProgressCircleCard extends StatelessWidget {
-  const _ProgressCircleCard({required this.data, required this.onTap});
+  const _ProgressCircleCard({
+    required this.width,
+    required this.data,
+    required this.onTap,
+  });
 
+  final double width;
   final _ProgressCardData data;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final width = (MediaQuery.sizeOf(context).width - 30) / 2;
     final percentLabel = '${(data.percent * 100).round()} %';
 
     return SizedBox(

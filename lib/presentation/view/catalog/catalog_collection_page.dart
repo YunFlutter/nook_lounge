@@ -86,7 +86,11 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
         .toList(growable: false);
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        centerTitle: false,
+        titleSpacing: AppSpacing.pageHorizontal,
+        title: _buildHomeStyleAppBarTitle(widget.title),
+      ),
       body: Stack(
         clipBehavior: Clip.none,
         children: <Widget>[
@@ -304,6 +308,21 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
             })
             .toList(growable: false),
       ),
+    );
+  }
+
+  Widget _buildHomeStyleAppBarTitle(String title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s14,
+        vertical: AppSpacing.s8,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.borderDefault),
+      ),
+      child: Text(title, style: AppTextStyles.appBarHomeTitle),
     );
   }
 
@@ -929,7 +948,6 @@ class _CatalogItemCard extends StatelessWidget {
                     selectedForeground: AppColors.textPrimary,
                     onTap: onToggleResident,
                   ),
-                  const SizedBox(width: 8),
                   _QuickIconToggleButton(
                     icon: Icons.favorite_rounded,
                     semanticLabel: favorite ? '선호중' : '선호 선택',
@@ -1088,7 +1106,7 @@ class _QuickIconToggleButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
             side: BorderSide(
-              color: selected ? Colors.transparent : AppColors.borderDefault,
+              color: selected ? selectedForeground : AppColors.borderDefault,
             ),
           ),
         ),

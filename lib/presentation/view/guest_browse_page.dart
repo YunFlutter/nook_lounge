@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_collection_page.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 class GuestBrowsePage extends ConsumerStatefulWidget {
   const GuestBrowsePage({required this.uid, super.key});
@@ -76,7 +77,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('비회원 둘러보기'),
+        title: const HomeStyleAppBarTitle('비회원 둘러보기'),
         actions: <Widget>[
           TextButton(
             onPressed: () async {

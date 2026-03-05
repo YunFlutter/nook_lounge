@@ -13,6 +13,7 @@ import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 
 class MarketTradeCodeSendPage extends ConsumerStatefulWidget {
@@ -87,7 +88,7 @@ class _MarketTradeCodeSendPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('도도 코드 보내기', style: AppTextStyles.headingH2Secondary),
+        title: const HomeStyleAppBarTitle('도도 코드 보내기'),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(

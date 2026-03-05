@@ -31,8 +31,9 @@ class AppSpacing {
   static const double pageBottom = s20;
 
   /// 유지보수 포인트:
-  /// 도감 화면 전용 좌우 여백(10px)
-  static const double catalogHorizontal = s10;
+  /// 도감 화면 전용 좌우 여백은 홈과 동일 규칙을 사용합니다.
+  /// 필요 시 도감만 별도 조정하려면 이 토큰만 변경하면 됩니다.
+  static const double catalogHorizontal = pageHorizontal;
 
   /// 유지보수 포인트:
   /// 모달 여백 규칙(바깥 10px, 내부 20px)

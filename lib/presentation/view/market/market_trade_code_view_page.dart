@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
 
 class MarketTradeCodeViewPage extends ConsumerWidget {
@@ -22,7 +23,7 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
     if (isCompleted) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('거래 코드 확인', style: AppTextStyles.headingH2Secondary),
+          title: const HomeStyleAppBarTitle('거래 코드 확인'),
         ),
         body: _buildMessage(
           title: '거래가 종료되어 코드를 확인할 수 없어요.',
@@ -36,7 +37,7 @@ class MarketTradeCodeViewPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('거래 코드 확인', style: AppTextStyles.headingH2Secondary),
+        title: const HomeStyleAppBarTitle('거래 코드 확인'),
       ),
       body: sessionAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

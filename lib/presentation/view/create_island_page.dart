@@ -10,6 +10,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/create_island_draft.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/view/passport_issued_page.dart';
 
 class CreateIslandPage extends ConsumerStatefulWidget {
@@ -154,7 +155,7 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
     final viewModel = ref.read(createIslandViewModelProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('여권 만들기')),
+      appBar: AppBar(title: const HomeStyleAppBarTitle('여권 만들기')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,

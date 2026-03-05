@@ -6,6 +6,7 @@ import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/airport_view_model.dart';
 
 enum _TradeExitAction { complete, cancel }
@@ -38,7 +39,10 @@ class AirportVisitorManifestPage extends ConsumerWidget {
         : (currentCount / capacity).clamp(0.0, 1.0);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('방문객 명단'), centerTitle: true),
+      appBar: AppBar(
+        title: const HomeStyleAppBarTitle('방문객 명단'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(

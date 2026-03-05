@@ -78,10 +78,11 @@ class HomeDashboardTab extends ConsumerWidget {
   static const Color _turnipEmptyCtaColor = Color(0xFF72D7B2);
   static const Color _turnipEmptyCtaShadowColor = Color(0x1A000000);
   static const double _turnipEmptyMinHeight = 250;
-  static const double _turnipEmptyGap = 60;
+  static const double _turnipEmptyImageSize = 88;
   static const double _turnipEmptyButtonWidth = 288;
   static const double _turnipEmptyButtonHeight = 56;
   static const double _turnipEmptyButtonRadius = 30;
+  static const String _noDataImageAssetPath = 'assets/images/no_data_image.png';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -245,8 +246,8 @@ class HomeDashboardTab extends ConsumerWidget {
           offset: const Offset(-0.08, 0),
           child: ClipOval(
             child: Container(
-              width: 78,
-              height: 78,
+              width: 90,
+              height: 90,
               color: AppColors.bgSecondary,
               child: _buildNetworkImage(island.imageUrl),
             ),
@@ -268,7 +269,7 @@ class HomeDashboardTab extends ConsumerWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.bodyWithSize(
-                          20,
+                          24,
                           color: AppColors.textPrimary,
                           weight: FontWeight.w800,
                           height: 1.1,
@@ -279,7 +280,7 @@ class HomeDashboardTab extends ConsumerWidget {
                     Text(
                       fruitEmoji,
                       style: AppTextStyles.bodyWithSize(
-                        16,
+                        20,
                         color: AppColors.textPrimary,
                         weight: FontWeight.w700,
                       ),
@@ -603,18 +604,42 @@ class HomeDashboardTab extends ConsumerWidget {
               ),
             ),
           ],
-          const SizedBox(height: _turnipEmptyGap),
+          const SizedBox(height: AppSpacing.s24),
           Center(
-            child: Text(
-              '아직 데이터가 없어요..',
-              style: AppTextStyles.bodyWithSize(
-                18,
-                color: AppColors.textPrimary,
-                weight: FontWeight.w700,
-              ),
+            child: Column(
+              children: <Widget>[
+                Semantics(
+                  label: '무주식 데이터 없음 이미지',
+                  image: true,
+                  child: Image.asset(
+                    _noDataImageAssetPath,
+                    width: _turnipEmptyImageSize,
+                    height: _turnipEmptyImageSize,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s12),
+                Text(
+                  '데이터가 없어요.',
+                  style: AppTextStyles.bodyWithSize(
+                    18,
+                    color: AppColors.textPrimary,
+                    weight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s6),
+                Text(
+                  '무 가격을 입력하고 계산해 주세요.',
+                  style: AppTextStyles.bodyWithSize(
+                    14,
+                    color: AppColors.textMuted,
+                    weight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: _turnipEmptyGap),
+          const SizedBox(height: AppSpacing.s24),
           Center(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -859,7 +884,7 @@ class HomeDashboardTab extends ConsumerWidget {
                                 color: AppColors.bgSecondary,
                                 child: preview == null
                                     ? Image.asset(
-                                        'assets/images/no_data_image.png',
+                                        _noDataImageAssetPath,
                                         fit: BoxFit.contain,
                                       )
                                     : _buildNetworkImage(preview.imageUrl),
@@ -1093,7 +1118,12 @@ class HomeDashboardTab extends ConsumerWidget {
                 child: Container(
                   width: _residentAvatarSize,
                   height: _residentAvatarSize,
-                  color: AppColors.bgSecondary,
+
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 3),
+                    color: AppColors.bgSecondary,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
                   child: _buildNetworkImage(_resolveResidentThumbUrl(item)),
                 ),
               ),

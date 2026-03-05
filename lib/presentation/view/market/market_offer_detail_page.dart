@@ -12,6 +12,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_report_reason_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_report_result_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
@@ -71,11 +72,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: HomeStyleAppBarTitle(
           _appBarTitle,
           maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: AppTextStyles.headingH2Secondary,
         ),
         actions: canOpenSimpleMenu
             ? <Widget>[

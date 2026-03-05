@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_register_page.dart';
@@ -49,7 +50,7 @@ class MarketMyTradesPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('내 거래관리', style: AppTextStyles.headingH2Secondary),
+        title: const HomeStyleAppBarTitle('내 거래관리'),
       ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
@@ -121,8 +122,7 @@ class MarketMyTradesPage extends ConsumerWidget {
               return Expanded(
                 child: GestureDetector(
                   onTap: () => onSelect(tab),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                  child: Container(
                     height: 45,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(

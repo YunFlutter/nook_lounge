@@ -4,6 +4,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 class AirportRequestListPage extends StatefulWidget {
   const AirportRequestListPage({
@@ -87,7 +88,10 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
     final hasRequests = widget.pendingRequests.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('방문 신청 목록'), centerTitle: true),
+      appBar: AppBar(
+        title: const HomeStyleAppBarTitle('방문 신청 목록'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[

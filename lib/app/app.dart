@@ -55,7 +55,8 @@ class NookLoungeApp extends ConsumerWidget {
         final shouldApplyGlobalBottomSafeArea =
             platform == TargetPlatform.android;
         final shouldUseTapDismissKeyboardOnRoot =
-            platform == TargetPlatform.iOS;
+            platform == TargetPlatform.iOS ||
+            platform == TargetPlatform.android;
 
         final wrappedChild = ColoredBox(
           color: scaffoldBackground,
@@ -75,7 +76,7 @@ class NookLoungeApp extends ConsumerWidget {
 
         if (shouldUseTapDismissKeyboardOnRoot) {
           // 유지보수 포인트:
-          // iOS에서는 스크롤 시작 터치도 pointer down으로 들어오므로
+          // iOS/Android에서는 스크롤 시작 터치도 pointer down으로 들어오므로
           // 전역 포인터 다운 dismiss를 쓰면 입력 중 스크롤만으로 키보드가 내려갑니다.
           // 탭 확정 시점(onTap)으로만 dismiss해 입력/스크롤 UX를 분리합니다.
           return GestureDetector(
