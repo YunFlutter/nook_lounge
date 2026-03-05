@@ -49,9 +49,7 @@ class MarketMyTradesPage extends ConsumerWidget {
         (bottomInset > 0 ? bottomInset : AppSpacing.s10);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const HomeStyleAppBarTitle('내 거래관리'),
-      ),
+      appBar: AppBar(title: const HomeStyleAppBarTitle('내 거래관리')),
       body: ListView(
         padding: EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,
@@ -234,7 +232,7 @@ class MarketMyTradesPage extends ConsumerWidget {
                             overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.bodyPrimaryHeavy,
                           ),
-                          if (offerDisplayQuantity > 0)
+                          if (offerDisplayQuantity > 1)
                             Text(
                               'X$offerDisplayQuantity',
                               style: AppTextStyles.bodyPrimaryHeavy,
@@ -270,7 +268,7 @@ class MarketMyTradesPage extends ConsumerWidget {
                             overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.bodyPrimaryHeavy,
                           ),
-                          if (wantDisplayQuantity > 0)
+                          if (wantDisplayQuantity > 1)
                             Text(
                               'X$wantDisplayQuantity',
                               style: AppTextStyles.bodyPrimaryHeavy,
@@ -311,7 +309,7 @@ class MarketMyTradesPage extends ConsumerWidget {
                           final shouldCancel = await _showConfirmDialog(
                             context: context,
                             title: '거래 취소',
-                            message: '이 거래를 취소 상태로 변경할까요?',
+                            message: '현재 진행 제안을 취소하고 거래글을 다시 열까요?',
                             confirmLabel: '취소',
                           );
                           if (shouldCancel != true) {
@@ -319,7 +317,7 @@ class MarketMyTradesPage extends ConsumerWidget {
                           }
                           await viewModel.cancelTrade(offer: offer);
                           if (context.mounted) {
-                            _showInfo(context, '거래를 취소로 변경했어요.');
+                            _showInfo(context, '거래를 취소하고 다시 열었어요.');
                           }
                         },
                       ),
@@ -576,17 +574,7 @@ class MarketMyTradesPage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: AppTextStyles.bodyWithSize(
-              16,
-              color: AppColors.textInverse,
-              weight: FontWeight.w700,
-            ),
-          ),
-          behavior: SnackBarBehavior.floating,
-        ),
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );
   }
 

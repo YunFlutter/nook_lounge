@@ -186,6 +186,17 @@ class MarketRepositoryImpl implements MarketRepository {
   }
 
   @override
+  Stream<bool> watchTradeRuleAgreement({
+    required String offerId,
+    required String receiverUid,
+  }) {
+    return _firestoreDataSource.watchTradeRuleAgreement(
+      offerId: offerId,
+      receiverUid: receiverUid,
+    );
+  }
+
+  @override
   Future<String?> fetchPreferredTradeDodoCode({
     required String offerId,
     required String senderUid,
@@ -238,6 +249,19 @@ class MarketRepositoryImpl implements MarketRepository {
       code: code,
       islandRules: islandRules,
       offerTitle: offerTitle,
+    );
+  }
+
+  @override
+  Future<void> agreeTradeRules({
+    required String offerId,
+    required String receiverUid,
+    required String code,
+  }) {
+    return _firestoreDataSource.agreeTradeRules(
+      offerId: offerId,
+      receiverUid: receiverUid,
+      code: code,
     );
   }
 

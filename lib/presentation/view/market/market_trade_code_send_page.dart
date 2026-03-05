@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
-import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -288,7 +287,7 @@ class _MarketTradeCodeSendPageState
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _buildSnackText(context, '코드는 영문 대문자+숫자 조합 5자리로 입력해 주세요.'),
+            content: const Text('코드는 영문 대문자+숫자 조합 5자리로 입력해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -299,7 +298,7 @@ class _MarketTradeCodeSendPageState
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _buildSnackText(context, '섬 규칙을 한 줄 이상 입력해 주세요.'),
+            content: const Text('섬 규칙을 한 줄 이상 입력해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -325,7 +324,7 @@ class _MarketTradeCodeSendPageState
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _buildSnackText(context, message),
+            content: Text(message),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -424,19 +423,6 @@ class _MarketTradeCodeSendPageState
       text: normalizedPreset,
       selection: TextSelection.collapsed(offset: normalizedPreset.length),
       composing: TextRange.empty,
-    );
-  }
-
-  Text _buildSnackText(BuildContext context, String message) {
-    final baseStyle = DefaultTextStyle.of(context).style;
-    return Text(
-      message,
-      style: baseStyle.copyWith(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        letterSpacing: AppTypography.letterSpacingFor(16),
-      ),
     );
   }
 

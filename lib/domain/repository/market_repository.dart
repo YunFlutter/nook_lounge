@@ -65,6 +65,11 @@ abstract class MarketRepository {
 
   Future<MarketTradeCodeSession?> fetchTradeCodeSession(String offerId);
 
+  Stream<bool> watchTradeRuleAgreement({
+    required String offerId,
+    required String receiverUid,
+  });
+
   Future<String?> fetchPreferredTradeDodoCode({
     required String offerId,
     required String senderUid,
@@ -89,6 +94,12 @@ abstract class MarketRepository {
     required String code,
     required String islandRules,
     required String offerTitle,
+  });
+
+  Future<void> agreeTradeRules({
+    required String offerId,
+    required String receiverUid,
+    required String code,
   });
 
   Future<void> cancelTrade({

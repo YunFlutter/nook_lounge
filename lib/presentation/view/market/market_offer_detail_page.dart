@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
-import 'package:nook_lounge_app/app/theme/app_typography.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
+import 'package:nook_lounge_app/core/utils/touching_item_tag_codec.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -72,10 +72,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: HomeStyleAppBarTitle(
-          _appBarTitle,
-          maxLines: 1,
-        ),
+        title: HomeStyleAppBarTitle(_appBarTitle, maxLines: 1),
         actions: canOpenSimpleMenu
             ? <Widget>[
                 IconButton(
@@ -249,8 +246,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         !isInactiveOffer &&
         currentOffer.status != MarketOfferStatus.waiting &&
         currentOffer.status != MarketOfferStatus.trading;
-    final canOpenCode = !isInactiveOffer;
-    return canOpenCode || canDeleteMineOffer;
+    return canDeleteMineOffer;
   }
 
   Widget _buildVisitorBottomActions(
@@ -871,30 +867,32 @@ class MarketOfferDetailPage extends ConsumerWidget {
           ),
           if (touchingTags.isNotEmpty) ...<Widget>[
             const SizedBox(height: 10),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: touchingTags
-                  .map(
-                    (tag) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.badgePurpleBg,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        tag,
-                        style: AppTextStyles.captionWithColor(
-                          AppColors.badgePurpleText,
-                          weight: FontWeight.w800,
-                        ),
-                      ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.bgSecondary,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.borderDefault),
+              ),
+              child: Row(
+                children: <Widget>[
+                  const Icon(
+                    Icons.unfold_less_rounded,
+                    size: 15,
+                    color: AppColors.textMuted,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      _buildFoldedTouchingSummaryText(touchingTags),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.captionMuted,
                     ),
-                  )
-                  .toList(growable: false),
+                  ),
+                ],
+              ),
             ),
           ],
         ],
@@ -902,17 +900,21 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  List<String> _resolveTouchingTags() {
-    final normalized = <String>{};
-    for (final raw in offer.touchingTags) {
-      for (final token in raw.split(',')) {
-        final value = token.trim();
-        if (value.isNotEmpty) {
-          normalized.add(value);
-        }
-      }
+  String _buildFoldedTouchingSummaryText(List<String> touchingTags) {
+    if (touchingTags.isEmpty) {
+      return '선택된 만지작 아이템이 없어요';
     }
-    return normalized.toList(growable: false);
+    const previewLimit = 3;
+    final preview = touchingTags.take(previewLimit).join(', ');
+    final remainCount = touchingTags.length - previewLimit;
+    if (remainCount <= 0) {
+      return preview;
+    }
+    return '$preview 외 $remainCount개';
+  }
+
+  List<String> _resolveTouchingTags() {
+    return resolveTouchingTagLabels(offer.touchingTags);
   }
 
   Widget _buildItemMiniCard({
@@ -961,7 +963,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ),
         const SizedBox(height: 4),
         _buildItemTypeBadge(categoryLabel),
-        if (displayQuantity > 0) ...<Widget>[
+        if (displayQuantity > 1) ...<Widget>[
           const SizedBox(height: 4),
           Text('X$displayQuantity', style: AppTextStyles.bodyPrimaryHeavy),
         ],
@@ -1443,22 +1445,6 @@ class MarketOfferDetailPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (!isInactiveOffer)
-                  ListTile(
-                    leading: const Icon(Icons.pin_outlined),
-                    title: Text(
-                      '코드 확인',
-                      style: AppTextStyles.bodyPrimaryStrong,
-                    ),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await _openTradeCodePage(
-                        context,
-                        ref,
-                        currentOffer: currentOffer,
-                      );
-                    },
-                  ),
                 if (canDeleteMineOffer)
                   ListTile(
                     leading: const Icon(Icons.delete_outline_rounded),
@@ -1488,19 +1474,6 @@ class MarketOfferDetailPage extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              if (!isInactiveOffer)
-                ListTile(
-                  leading: const Icon(Icons.pin_outlined),
-                  title: Text('코드 확인', style: AppTextStyles.bodyPrimaryStrong),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    await _openTradeCodePage(
-                      context,
-                      ref,
-                      currentOffer: currentOffer,
-                    );
-                  },
-                ),
               ListTile(
                 leading: const Icon(Icons.visibility_off_outlined),
                 title: Text('숨기기', style: AppTextStyles.bodyPrimaryStrong),
@@ -1625,17 +1598,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return null;
   }
 
-  Text _snackContent(BuildContext context, String message) {
-    final baseStyle = DefaultTextStyle.of(context).style;
-    return Text(
-      message,
-      style: baseStyle.copyWith(
-        fontFamily: AppTypography.fontFamily,
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        letterSpacing: AppTypography.letterSpacingFor(16),
-      ),
-    );
+  Text _snackContent(BuildContext _, String message) {
+    return Text(message);
   }
 
   Future<void> _hideOffer(BuildContext context, WidgetRef ref) async {

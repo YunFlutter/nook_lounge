@@ -1163,40 +1163,78 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
   }
 
   Future<bool?> _showReportUserConfirmDialog({required String targetUserName}) {
+    // 유지보수 포인트:
+    // 비행장/거래 다이얼로그 버튼 높이를 동일 토큰으로 맞춰 화면별 시각 일관성을 유지합니다.
+    const dialogButtonHeight = 54.0;
     final targetName = targetUserName.trim().isEmpty
         ? '해당 유저'
         : targetUserName.trim();
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: AppColors.bgCard,
+        return Dialog(
+          backgroundColor: AppColors.white,
+          surfaceTintColor: AppColors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(26),
           ),
-          title: Text('손님 신고', style: AppTextStyles.headingH2),
-          content: Text(
-            '$targetName 님을 신고할까요?\n신고 내용은 운영팀 검토 후 처리됩니다.',
-            style: AppTextStyles.bodySecondaryStrong,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('손님 신고', style: AppTextStyles.dialogTitleCompact),
+                const SizedBox(height: 10),
+                Text(
+                  '$targetName 님을 신고할까요?\n신고 내용은 운영팀 검토 후 처리됩니다.',
+                  style: AppTextStyles.dialogBodyCompact,
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          side: const BorderSide(color: AppColors.borderStrong),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '취소',
+                          style: AppTextStyles.dialogButtonOutline,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.accentDeepOrange,
+                          minimumSize: const Size.fromHeight(
+                            dialogButtonHeight,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(
+                          '신고',
+                          style: AppTextStyles.dialogButtonPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          actions: <Widget>[
-            OutlinedButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.borderDefault),
-                foregroundColor: AppColors.textSecondary,
-              ),
-              child: const Text('취소'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.badgeRedText,
-                foregroundColor: AppColors.textInverse,
-              ),
-              child: const Text('신고'),
-            ),
-          ],
         );
       },
     );

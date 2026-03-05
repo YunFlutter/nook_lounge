@@ -135,6 +135,10 @@ class AppTheme {
         contentTextStyle: AppTypography.bodyLarge.copyWith(
           color: AppColors.textInverse,
           fontWeight: FontWeight.w700,
+          // 유지보수 포인트:
+          // 스낵바 문구는 화면별 DefaultTextStyle 영향을 받지 않도록
+          // 장식(밑줄/취소선)을 명시적으로 비활성화합니다.
+          decoration: TextDecoration.none,
         ),
         behavior: SnackBarBehavior.floating,
         elevation: 2,

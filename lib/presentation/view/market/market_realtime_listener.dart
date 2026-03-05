@@ -291,14 +291,7 @@ class _MarketRealtimeListenerState
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(
-              '실시간 승낙 처리에 실패했어요. 대기열에서 다시 시도해 주세요.',
-              style: AppTextStyles.bodyWithSize(
-                16,
-                color: Theme.of(context).colorScheme.onInverseSurface,
-                weight: FontWeight.w700,
-              ),
-            ),
+            content: const Text('실시간 승낙 처리에 실패했어요. 대기열에서 다시 시도해 주세요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );

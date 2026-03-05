@@ -14,6 +14,8 @@ class AirportFirestoreDataSource {
   );
   static const String _duplicateVisitReportErrorCode =
       'duplicate_airport_visit_report';
+  static const String _tradeLinkedSourceType = 'market_trade';
+  static const String _tradeRequestIdPrefix = 'trade_';
 
   final FirebaseFirestore _firestore;
 
@@ -46,18 +48,40 @@ class AirportFirestoreDataSource {
     return _firestore
         .collection(FirestorePaths.airportRequests(normalizedIslandId))
         .snapshots()
-        .map((snapshot) {
-          final requests = snapshot.docs
-              .map(
-                (doc) => AirportVisitRequest.fromMap(
-                  id: doc.id,
-                  islandId: normalizedIslandId,
-                  data: doc.data(),
-                ),
-              )
-              .toList(growable: false);
-          requests.sort(_sortIncomingRequests);
-          return requests;
+        .asyncMap((snapshot) async {
+          final requests = <AirportVisitRequest>[];
+          final tradeRequestRefsByOffer =
+              <String, List<DocumentReference<Map<String, dynamic>>>>{};
+          for (final doc in snapshot.docs) {
+            final data = doc.data();
+            final request = AirportVisitRequest.fromMap(
+              id: doc.id,
+              islandId: normalizedIslandId,
+              data: data,
+            );
+            requests.add(request);
+
+            final sourceOfferId = _resolveTradeSourceOfferId(
+              requestId: doc.id,
+              sourceType: (data['sourceType'] as String?)?.trim() ?? '',
+              sourceOfferId: (data['sourceOfferId'] as String?)?.trim() ?? '',
+            );
+            if (request.isActive && sourceOfferId.isNotEmpty) {
+              tradeRequestRefsByOffer
+                  .putIfAbsent(
+                    sourceOfferId,
+                    () => <DocumentReference<Map<String, dynamic>>>[],
+                  )
+                  .add(doc.reference);
+            }
+          }
+
+          final filtered = await _filterAndCleanupStaleTradeRequests(
+            requests: requests,
+            tradeRequestRefsByOffer: tradeRequestRefsByOffer,
+          );
+          filtered.sort(_sortIncomingRequests);
+          return filtered;
         });
   }
 
@@ -72,7 +96,7 @@ class AirportFirestoreDataSource {
         .collectionGroup('requests')
         .where('requesterUid', isEqualTo: normalizedUid)
         .snapshots()
-        .map((snapshot) {
+        .asyncMap((snapshot) async {
           final requests = <AirportVisitRequest>[];
           final tradeRequestRefsByOffer =
               <String, List<DocumentReference<Map<String, dynamic>>>>{};
@@ -90,12 +114,12 @@ class AirportFirestoreDataSource {
             );
             requests.add(request);
 
-            final sourceType = (data['sourceType'] as String?)?.trim() ?? '';
-            final sourceOfferId =
-                (data['sourceOfferId'] as String?)?.trim() ?? '';
-            if (request.isActive &&
-                sourceType == 'market_trade' &&
-                sourceOfferId.isNotEmpty) {
+            final sourceOfferId = _resolveTradeSourceOfferId(
+              requestId: doc.id,
+              sourceType: (data['sourceType'] as String?)?.trim() ?? '',
+              sourceOfferId: (data['sourceOfferId'] as String?)?.trim() ?? '',
+            );
+            if (request.isActive && sourceOfferId.isNotEmpty) {
               tradeRequestRefsByOffer
                   .putIfAbsent(
                     sourceOfferId,
@@ -104,15 +128,12 @@ class AirportFirestoreDataSource {
                   .add(doc.reference);
             }
           }
-          if (tradeRequestRefsByOffer.isNotEmpty) {
-            // 유지보수 포인트:
-            // "내가 대기 중인 섬 현황" 노출은 즉시 반영하고
-            // 삭제/종료 거래 정리는 백그라운드로 수행해 실시간 체감 지연을 줄입니다.
-            unawaited(_cleanupStaleTradeRequests(tradeRequestRefsByOffer));
-          }
-
-          requests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-          return requests;
+          final filtered = await _filterAndCleanupStaleTradeRequests(
+            requests: requests,
+            tradeRequestRefsByOffer: tradeRequestRefsByOffer,
+          );
+          filtered.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+          return filtered;
         });
   }
 
@@ -484,17 +505,76 @@ class AirportFirestoreDataSource {
       return;
     }
 
-    await _firestore
-        .doc(
-          FirestorePaths.airportRequest(
-            normalizedIslandId,
-            normalizedRequestId,
-          ),
-        )
-        .set(<String, dynamic>{
-          'status': AirportVisitRequestStatus.completed.name,
-          'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+    final requestRef = _firestore.doc(
+      FirestorePaths.airportRequest(normalizedIslandId, normalizedRequestId),
+    );
+    final requestSnapshot = await requestRef.get();
+    final requestData = requestSnapshot.data() ?? const <String, dynamic>{};
+    final sourceOfferId = _resolveTradeSourceOfferId(
+      requestId: normalizedRequestId,
+      sourceType: (requestData['sourceType'] as String?)?.trim() ?? '',
+      sourceOfferId: (requestData['sourceOfferId'] as String?)?.trim() ?? '',
+    );
+
+    final targetRefs = <DocumentReference<Map<String, dynamic>>>[];
+    if (sourceOfferId.isNotEmpty) {
+      try {
+        final relatedDocs = await _findTradeLinkedRequestDocsByOfferId(
+          sourceOfferId,
+        );
+        for (final doc in relatedDocs) {
+          final statusName = (doc.data()['status'] as String?)?.trim() ?? '';
+          if (!_isActiveRequestStatusName(statusName)) {
+            continue;
+          }
+          targetRefs.add(doc.reference);
+        }
+      } catch (_) {}
+    }
+    if (targetRefs.every((ref) => ref.path != requestRef.path)) {
+      targetRefs.add(requestRef);
+    }
+
+    final sameIslandRefs = <DocumentReference<Map<String, dynamic>>>[];
+    final crossIslandRefs = <DocumentReference<Map<String, dynamic>>>[];
+    final seenPaths = <String>{};
+    for (final ref in targetRefs) {
+      if (!seenPaths.add(ref.path)) {
+        continue;
+      }
+      final refIslandId = _extractIslandIdFromRequestRefPath(ref.path);
+      if (refIslandId == normalizedIslandId) {
+        sameIslandRefs.add(ref);
+      } else {
+        crossIslandRefs.add(ref);
+      }
+    }
+    if (sameIslandRefs.isEmpty) {
+      sameIslandRefs.add(requestRef);
+    }
+
+    final payload = <String, dynamic>{
+      'status': AirportVisitRequestStatus.completed.name,
+      'inviteCode': FieldValue.delete(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+    final batch = _firestore.batch();
+    for (final ref in sameIslandRefs) {
+      batch.set(ref, payload, SetOptions(merge: true));
+    }
+    await batch.commit();
+
+    var syncedRequestCount = sameIslandRefs.length;
+    for (final ref in crossIslandRefs) {
+      try {
+        await ref.set(payload, SetOptions(merge: true));
+        syncedRequestCount += 1;
+      } catch (_) {
+        // 유지보수 포인트:
+        // 교차 섬 요청 동기화는 권한/규칙에 따라 실패할 수 있으므로
+        // 현재 섬 방문 종료 처리 자체는 성공으로 유지합니다.
+      }
+    }
 
     await _writeVisitLog(
       islandId: normalizedIslandId,
@@ -502,8 +582,22 @@ class AirportFirestoreDataSource {
       requestId: normalizedRequestId,
       payload: <String, dynamic>{
         'status': AirportVisitRequestStatus.completed.name,
+        'sourceOfferId': sourceOfferId,
+        'syncedRequestCount': syncedRequestCount,
+        'candidateRequestCount': sameIslandRefs.length + crossIslandRefs.length,
       },
     );
+  }
+
+  String _extractIslandIdFromRequestRefPath(String path) {
+    final segments = path.split('/');
+    if (segments.length < 4) {
+      return '';
+    }
+    if (segments[0] != 'airportQueues' || segments[2] != 'requests') {
+      return '';
+    }
+    return segments[1];
   }
 
   Future<void> reportVisitRequester({
@@ -576,29 +670,74 @@ class AirportFirestoreDataSource {
     );
   }
 
-  Future<void> _cleanupStaleTradeRequests(
-    Map<String, List<DocumentReference<Map<String, dynamic>>>>
-    requestRefsByOfferId,
-  ) async {
-    if (requestRefsByOfferId.isEmpty) {
-      return;
+  String _resolveTradeSourceOfferId({
+    required String requestId,
+    required String sourceType,
+    required String sourceOfferId,
+  }) {
+    final normalizedSourceOfferId = sourceOfferId.trim();
+    if (normalizedSourceOfferId.isNotEmpty) {
+      return normalizedSourceOfferId;
     }
-    final staleOfferIds = await _findStaleTradeOfferIds(
-      requestRefsByOfferId.keys,
-    );
-    if (staleOfferIds.isEmpty) {
-      return;
+    final normalizedSourceType = sourceType.trim();
+    if (normalizedSourceType.isNotEmpty &&
+        normalizedSourceType != _tradeLinkedSourceType) {
+      return '';
+    }
+    final normalizedRequestId = requestId.trim();
+    if (!normalizedRequestId.startsWith(_tradeRequestIdPrefix)) {
+      return '';
+    }
+    return normalizedRequestId.substring(_tradeRequestIdPrefix.length).trim();
+  }
+
+  Future<List<AirportVisitRequest>> _filterAndCleanupStaleTradeRequests({
+    required List<AirportVisitRequest> requests,
+    required Map<String, List<DocumentReference<Map<String, dynamic>>>>
+    tradeRequestRefsByOffer,
+  }) async {
+    if (requests.isEmpty || tradeRequestRefsByOffer.isEmpty) {
+      return requests;
     }
 
+    final staleOfferIds = await _findStaleTradeOfferIds(
+      tradeRequestRefsByOffer.keys,
+    );
+    if (staleOfferIds.isEmpty) {
+      return requests;
+    }
+
+    final filtered = requests
+        .where((request) {
+          if (!request.isActive) {
+            return true;
+          }
+          final resolvedOfferId = _resolveTradeSourceOfferId(
+            requestId: request.id,
+            sourceType: request.sourceType?.trim() ?? '',
+            sourceOfferId: request.sourceOfferId?.trim() ?? '',
+          );
+          return resolvedOfferId.isEmpty ||
+              !staleOfferIds.contains(resolvedOfferId);
+        })
+        .toList(growable: false);
+
+    // 유지보수 포인트:
+    // 거래 완료/취소 직후에는 화면에서 먼저 숨기고,
+    // 실제 요청 문서는 백그라운드에서 cancelled로 정리합니다.
     final staleRefs = <DocumentReference<Map<String, dynamic>>>[];
     for (final offerId in staleOfferIds) {
-      final refs = requestRefsByOfferId[offerId];
+      final refs = tradeRequestRefsByOffer[offerId];
       if (refs == null || refs.isEmpty) {
         continue;
       }
       staleRefs.addAll(refs);
     }
-    await _cancelTradeRequestRefs(staleRefs);
+    if (staleRefs.isNotEmpty) {
+      unawaited(_cancelTradeRequestRefs(staleRefs));
+    }
+
+    return filtered;
   }
 
   Future<Set<String>> _findStaleTradeOfferIds(Iterable<String> offerIds) async {
@@ -638,6 +777,46 @@ class AirportFirestoreDataSource {
     );
 
     return stale;
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+  _findTradeLinkedRequestDocsByOfferId(String offerId) async {
+    final normalizedOfferId = offerId.trim();
+    if (normalizedOfferId.isEmpty) {
+      return const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    }
+
+    final docsByPath = <String, QueryDocumentSnapshot<Map<String, dynamic>>>{};
+    final bySourceOfferId = await _firestore
+        .collectionGroup('requests')
+        .where('sourceOfferId', isEqualTo: normalizedOfferId)
+        .limit(50)
+        .get();
+    for (final doc in bySourceOfferId.docs) {
+      final sourceType = (doc.data()['sourceType'] as String?)?.trim() ?? '';
+      if (sourceType.isNotEmpty && sourceType != _tradeLinkedSourceType) {
+        continue;
+      }
+      docsByPath[doc.reference.path] = doc;
+    }
+
+    final legacyRequestId = '$_tradeRequestIdPrefix$normalizedOfferId';
+    final byLegacyRequestId = await _firestore
+        .collectionGroup('requests')
+        .where(FieldPath.documentId, isEqualTo: legacyRequestId)
+        .limit(10)
+        .get();
+    for (final doc in byLegacyRequestId.docs) {
+      docsByPath[doc.reference.path] = doc;
+    }
+
+    return docsByPath.values.toList(growable: false);
+  }
+
+  bool _isActiveRequestStatusName(String statusName) {
+    return statusName == AirportVisitRequestStatus.pending.name ||
+        statusName == AirportVisitRequestStatus.invited.name ||
+        statusName == AirportVisitRequestStatus.arrived.name;
   }
 
   Future<void> _cancelTradeRequestRefs(

@@ -107,6 +107,10 @@ class AppColors {
   static const Color marketTouchFlooring = textAccent;
   static const Color marketTouchMusic = navActive;
   static const Color marketTouchFashion = accentDeepOrange;
+  static const Color marketBlueBadgeBg = Color(0xFFE8F3FF);
+  static const Color marketBlueBadgeText = Color(0xFF2C6BCF);
+  static const Color marketProposalBadgeBg = Color(0xFFFEDED6);
+  static const Color marketProposalBadgeText = accentDeepOrange;
 
   // Settings
   // 유지보수 포인트:

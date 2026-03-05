@@ -392,6 +392,36 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     state = state.copyWith(errorMessage: null);
   }
 
+  Future<void> agreeTradeRules({
+    required MarketOffer offer,
+    required MarketTradeCodeSession session,
+  }) async {
+    final receiverUid = currentUserId.trim();
+    if (receiverUid.isEmpty) {
+      state = state.copyWith(errorMessage: '로그인 후 규칙 동의를 진행해 주세요.');
+      throw StateError('unauthenticated');
+    }
+    if (!session.isCodeReceiver(receiverUid)) {
+      state = state.copyWith(errorMessage: '코드 수신자만 규칙에 동의할 수 있어요.');
+      throw StateError('trade_rule_agreement_permission_denied');
+    }
+    if (!session.hasCode) {
+      state = state.copyWith(errorMessage: '아직 확인할 코드가 준비되지 않았어요.');
+      throw StateError('trade_code_not_ready');
+    }
+    if (!session.hasSenderIslandRules) {
+      state = state.copyWith(errorMessage: '상대 섬 방문 규칙이 아직 없어요.');
+      throw StateError('trade_rule_missing');
+    }
+
+    await _repository.agreeTradeRules(
+      offerId: offer.id,
+      receiverUid: receiverUid,
+      code: session.code,
+    );
+    state = state.copyWith(errorMessage: null);
+  }
+
   Future<MarketTradeCodeSession?> fetchTradeCodeSession(String offerId) {
     return _repository.fetchTradeCodeSession(offerId);
   }

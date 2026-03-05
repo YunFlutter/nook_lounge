@@ -584,14 +584,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text(
-            message,
-            style: AppTextStyles.bodyWithSize(
-              16,
-              color: AppColors.textInverse,
-              weight: FontWeight.w700,
-            ),
-          ),
+          content: Text(message),
           behavior: SnackBarBehavior.floating,
         ),
       );

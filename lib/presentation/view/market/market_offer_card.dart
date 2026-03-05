@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
+import 'package:nook_lounge_app/core/utils/touching_item_tag_codec.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 
 class MarketOfferCard extends StatelessWidget {
@@ -44,6 +45,10 @@ class MarketOfferCard extends StatelessWidget {
     1,
     0,
   ];
+  static const int _touchingPreviewMaxSlots = 4;
+  static const double _touchingPreviewCircleSize = 70;
+  static const double _touchingPreviewItemGap = 10;
+  static const double _touchingPreviewLabelGap = 8;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +130,7 @@ class MarketOfferCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.bodyPrimaryHeavy,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 7),
                     Text(
                       formatRelativeTime(offer.createdAt),
                       style: AppTextStyles.captionMuted,
@@ -190,11 +195,13 @@ class MarketOfferCard extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         _buildItemTypeBadge(_resolveItemTypeLabel(isOfferSide: true)),
-        const SizedBox(height: 10),
-        Text(
-          'X${offer.offerItemQuantity}',
-          style: AppTextStyles.bodyPrimaryHeavy,
-        ),
+        if (offer.offerItemQuantity > 1) ...<Widget>[
+          const SizedBox(height: 10),
+          Text(
+            'X${offer.offerItemQuantity}',
+            style: AppTextStyles.bodyPrimaryHeavy,
+          ),
+        ],
       ],
     );
   }
@@ -273,13 +280,17 @@ class MarketOfferCard extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         _buildItemTypeBadge(categoryLabel),
-        const SizedBox(height: 10),
-        Text('X$quantity', style: AppTextStyles.bodyPrimaryHeavy),
+        if (quantity > 1) ...<Widget>[
+          const SizedBox(height: 10),
+          Text('X$quantity', style: AppTextStyles.bodyPrimaryHeavy),
+        ],
       ],
     );
   }
 
   Widget _buildTouchingBody(BuildContext context) {
+    final touchingItems = _touchingPreviewItems;
+    final touchingTitle = _resolvedTouchingTitle;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       child: Column(
@@ -315,6 +326,13 @@ class MarketOfferCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
+            touchingTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.bodyPrimaryHeavy,
+          ),
+          const SizedBox(height: 6),
+          Text(
             offer.description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -324,14 +342,10 @@ class MarketOfferCard extends StatelessWidget {
               height: 1.25,
             ),
           ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _normalizedTouchingTags
-                .map(_buildTouchingTagChip)
-                .toList(growable: false),
-          ),
+          if (touchingItems.isNotEmpty) ...<Widget>[
+            const SizedBox(height: 10),
+            _buildTouchingPreviewRow(touchingItems),
+          ],
           const SizedBox(height: 10),
           Row(
             children: <Widget>[
@@ -364,41 +378,220 @@ class MarketOfferCard extends StatelessWidget {
     );
   }
 
-  List<String> get _normalizedTouchingTags {
+  String get _resolvedTouchingTitle {
+    final normalized = offer.title.trim();
+    if (normalized.isNotEmpty) {
+      return normalized;
+    }
+    return '만지작 거래';
+  }
+
+  List<({String label, String imageUrl, String category})>
+  get _touchingPreviewItems {
     // 유지보수 포인트:
-    // 과거 데이터에서 콤마/슬래시로 묶여 저장된 문자열이 있어도
-    // 화면에서는 칩 단위로 보이도록 정규화합니다.
-    final normalized = <String>{};
+    // 신규 데이터(인코딩된 선택 아이템)와 과거 데이터(문자열 태그)를
+    // 모두 읽어서 리스트 카드 미리보기 포맷으로 정규화합니다.
+    final items =
+        <({String key, String label, String imageUrl, String category})>[];
+    final seen = <String>{};
     for (final raw in offer.touchingTags) {
+      final decoded = decodeTouchingItemTag(raw);
+      if (decoded != null) {
+        final key = decoded.id.isEmpty ? decoded.name : decoded.id;
+        if (!seen.add(key)) {
+          continue;
+        }
+        items.add((
+          key: key,
+          label: decoded.name,
+          imageUrl: decoded.imageUrl,
+          category: decoded.category,
+        ));
+        continue;
+      }
+
       for (final token in raw.split(',')) {
         final value = token.trim();
         if (value.isNotEmpty) {
-          normalized.add(value);
+          final key = value;
+          if (!seen.add(key)) {
+            continue;
+          }
+          items.add((key: key, label: value, imageUrl: '', category: ''));
         }
       }
     }
-    return normalized.toList(growable: false);
+    return items
+        .map(
+          (item) => (
+            label: item.label,
+            imageUrl: item.imageUrl,
+            category: item.category,
+          ),
+        )
+        .toList(growable: false);
   }
 
-  Widget _buildTouchingTagChip(String tag) {
-    return IntrinsicWidth(
-      child: Container(
-        constraints: const BoxConstraints(minWidth: 62, minHeight: 28),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: _touchingTagColor(tag),
-          borderRadius: BorderRadius.circular(999),
+  Widget _buildTouchingPreviewRow(
+    List<({String label, String imageUrl, String category})> items,
+  ) {
+    // 유지보수 포인트:
+    // 리스트 카드에서는 태그 칩을 나열하지 않고 Figma 압축 카드(최대 4칸, 초과 시 +N)로 고정합니다.
+    final hasOverflow = items.length > _touchingPreviewMaxSlots;
+    final visibleItems = hasOverflow
+        ? items.take(_touchingPreviewMaxSlots - 1).toList(growable: false)
+        : items.take(_touchingPreviewMaxSlots).toList(growable: false);
+    final tiles = <Widget>[
+      for (final item in visibleItems)
+        _buildTouchingPreviewItem(
+          label: item.label,
+          imageUrl: item.imageUrl,
+          category: item.category,
         ),
-        child: Text(
-          tag,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.captionInverseHeavy,
+      if (hasOverflow)
+        _buildTouchingOverflowItem(
+          overflowCount: items.length - visibleItems.length,
         ),
+    ];
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: <Widget>[
+          for (var index = 0; index < tiles.length; index++) ...<Widget>[
+            if (index > 0) const SizedBox(width: _touchingPreviewItemGap),
+            tiles[index],
+          ],
+        ],
       ),
     );
+  }
+
+  Widget _buildTouchingPreviewItem({
+    required String label,
+    required String imageUrl,
+    required String category,
+  }) {
+    return SizedBox(
+      width: _touchingPreviewCircleSize,
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: _touchingPreviewCircleSize,
+            height: _touchingPreviewCircleSize,
+            decoration: const BoxDecoration(
+              color: AppColors.bgSecondary,
+              shape: BoxShape.circle,
+            ),
+            child: _buildTouchingPreviewCircleContent(
+              label: label,
+              imageUrl: imageUrl,
+              category: category,
+            ),
+          ),
+          const SizedBox(height: _touchingPreviewLabelGap),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.captionWithColor(
+              AppColors.textMuted,
+              weight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTouchingOverflowItem({required int overflowCount}) {
+    final overflowText = overflowCount > 99 ? '+99' : '+$overflowCount';
+    return SizedBox(
+      width: _touchingPreviewCircleSize,
+      child: Column(
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              Container(
+                width: _touchingPreviewCircleSize,
+                height: _touchingPreviewCircleSize,
+                decoration: const BoxDecoration(
+                  color: AppColors.bgSecondary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.inventory_2_rounded,
+                  size: 34,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Container(
+                width: _touchingPreviewCircleSize,
+                height: _touchingPreviewCircleSize,
+                decoration: const BoxDecoration(
+                  color: Color(0x99000000),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  overflowText,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.captionInverseHeavy,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: _touchingPreviewLabelGap),
+          Text(
+            '더보기',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.captionWithColor(
+              AppColors.textMuted,
+              weight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTouchingPreviewCircleContent({
+    required String label,
+    required String imageUrl,
+    required String category,
+  }) {
+    if (imageUrl.isNotEmpty) {
+      return ClipOval(child: _buildImage(imageUrl, fit: BoxFit.cover));
+    }
+    return Icon(
+      _touchingPreviewIcon(label: label, category: category),
+      size: 34,
+      color: AppColors.textPrimary,
+    );
+  }
+
+  IconData _touchingPreviewIcon({
+    required String label,
+    required String category,
+  }) {
+    final source = category.isEmpty ? label : '$category $label';
+    if (source.contains('가구')) {
+      return Icons.chair_rounded;
+    }
+    if (source.contains('벽지') || source.contains('천장')) {
+      return Icons.wallpaper_rounded;
+    }
+    if (source.contains('바닥') || source.contains('러그')) {
+      return Icons.grid_view_rounded;
+    }
+    if (source.contains('음악') || source.contains('음향')) {
+      return Icons.music_note_rounded;
+    }
+    if (source.contains('패션') || source.contains('의상')) {
+      return Icons.checkroom_rounded;
+    }
+    return Icons.inventory_2_rounded;
   }
 
   Widget _buildActionArea() {
@@ -427,16 +620,22 @@ class MarketOfferCard extends StatelessWidget {
   }
 
   Widget _buildActionChip() {
+    final actionLabel = _resolveActionLabel();
+    final isProposalAction = actionLabel == '거래제안';
     final bool disabled =
         _isCompletedOffer ||
         offer.status == MarketOfferStatus.closed ||
         offer.status == MarketOfferStatus.offline ||
         offer.status == MarketOfferStatus.trading ||
         offer.dimmed;
-    final Color bgColor = disabled
-        ? AppColors.catalogChipBg
+    final Color enabledBgColor = isProposalAction
+        ? AppColors.marketProposalBadgeBg
         : AppColors.badgeBlueText;
-    final Color textColor = disabled ? AppColors.textMuted : AppColors.white;
+    final Color enabledTextColor = isProposalAction
+        ? AppColors.marketProposalBadgeText
+        : AppColors.white;
+    final Color bgColor = disabled ? AppColors.catalogChipBg : enabledBgColor;
+    final Color textColor = disabled ? AppColors.textMuted : enabledTextColor;
     return Material(
       color: bgColor,
       borderRadius: BorderRadius.circular(12),
@@ -446,7 +645,7 @@ class MarketOfferCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           child: Text(
-            _resolveActionLabel(),
+            actionLabel,
             textAlign: TextAlign.center,
             style: AppTextStyles.chip(textColor),
           ),
@@ -459,13 +658,16 @@ class MarketOfferCard extends StatelessWidget {
     required String label,
     required VoidCallback? onTap,
   }) {
+    final bool isEditChip = label == '수정';
     final bool disabled = onTap == null || offer.dimmed;
     final Color bgColor = disabled
         ? AppColors.catalogChipBg
-        : AppColors.badgeBlueBg;
+        : (isEditChip ? AppColors.marketBlueBadgeBg : AppColors.badgeBlueBg);
     final Color textColor = disabled
         ? AppColors.textMuted
-        : AppColors.badgeBlueText;
+        : (isEditChip
+              ? AppColors.marketBlueBadgeText
+              : AppColors.badgeBlueText);
     return Material(
       color: bgColor,
       borderRadius: BorderRadius.circular(10),
@@ -534,8 +736,8 @@ class MarketOfferCard extends StatelessWidget {
 
     switch (normalized) {
       case '재화':
-        bgColor = AppColors.badgeBlueBg;
-        textColor = AppColors.badgeBlueText;
+        bgColor = AppColors.marketBlueBadgeBg;
+        textColor = AppColors.marketBlueBadgeText;
         icon = Icons.paid_rounded;
       case '레시피':
         bgColor = AppColors.badgeYellowBg;
@@ -585,25 +787,6 @@ class MarketOfferCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _touchingTagColor(String tag) {
-    if (tag.contains('가구')) {
-      return AppColors.marketTouchFurniture;
-    }
-    if (tag.contains('벽지')) {
-      return AppColors.marketTouchWallpaper;
-    }
-    if (tag.contains('바닥')) {
-      return AppColors.marketTouchFlooring;
-    }
-    if (tag.contains('음악')) {
-      return AppColors.marketTouchMusic;
-    }
-    if (tag.contains('패션')) {
-      return AppColors.marketTouchFashion;
-    }
-    return AppColors.badgeBlueText;
   }
 
   Widget _buildImage(String source, {required BoxFit fit}) {

@@ -17,6 +17,9 @@ class MarketFirestoreDataSource {
   );
   static const String _tradeAirportSourceType = 'market_trade';
   static const String _tradeAirportRequestIdPrefix = 'trade_';
+  static const String _receiverRuleAgreedUidField = 'receiverRuleAgreedUid';
+  static const String _receiverRuleAgreedCodeField = 'receiverRuleAgreedCode';
+  static const String _receiverRuleAgreedAtField = 'receiverRuleAgreedAt';
 
   MarketFirestoreDataSource({required FirebaseFirestore firestore})
     : _firestore = firestore;
@@ -187,13 +190,33 @@ class MarketFirestoreDataSource {
         .where('status', isEqualTo: MarketTradeProposalStatus.accepted.name)
         .limit(1)
         .get();
-    if (acceptedProposalSnapshot.docs.isEmpty) {
-      // 유지보수 포인트:
-      // 승낙된 상대가 없는 상태(취소 포함)에서는 거래 완료를 허용하지 않습니다.
-      throw StateError('trade_complete_no_active_proposal');
-    }
-    final counterpartUid = acceptedProposalSnapshot.docs.first.id.trim();
+    String counterpartUid = acceptedProposalSnapshot.docs.isEmpty
+        ? ''
+        : acceptedProposalSnapshot.docs.first.id.trim();
+
     if (counterpartUid.isEmpty) {
+      final codeData = codeSnapshot.data() ?? const <String, dynamic>{};
+      final codeOwnerUid = (codeData['ownerUid'] as String?)?.trim() ?? '';
+      final codeProposerUid =
+          (codeData['proposerUid'] as String?)?.trim() ?? '';
+      final ownerMatched = codeOwnerUid == ownerUid;
+      final requesterIsParticipant =
+          normalizedRequesterUid == ownerUid ||
+          normalizedRequesterUid == codeProposerUid;
+
+      // 유지보수 포인트:
+      // 제안 문서가 누락되어도 코드 세션의 참여자가 유효하면
+      // 거래 완료를 허용해 방문 종료 플로우가 막히지 않게 합니다.
+      if (ownerMatched &&
+          status == MarketOfferStatus.waiting.name &&
+          codeProposerUid.isNotEmpty &&
+          requesterIsParticipant) {
+        counterpartUid = codeProposerUid;
+      }
+    }
+    if (counterpartUid.isEmpty) {
+      // 유지보수 포인트:
+      // 승낙 제안과 코드 세션 모두 참여자 식별이 불가하면 완료를 막습니다.
       throw StateError('trade_complete_no_active_proposal');
     }
 
@@ -463,13 +486,6 @@ class MarketFirestoreDataSource {
         existingStatus == MarketTradeProposalStatus.accepted.name) {
       throw StateError('trade_proposal_already_exists');
     }
-    if (existingStatus == MarketTradeProposalStatus.rejected.name ||
-        existingStatus == MarketTradeProposalStatus.cancelled.name) {
-      // 유지보수 포인트:
-      // 정책상 "다시 제안하기"를 지원하지 않으므로
-      // 거절/취소된 제안은 재등록하지 않습니다.
-      throw StateError('trade_reproposal_not_allowed');
-    }
 
     await proposalRef.set(<String, dynamic>{
       'offerId': normalizedOfferId,
@@ -703,6 +719,10 @@ class MarketFirestoreDataSource {
       'acceptedAtMillis': FieldValue.delete(),
       'codeSentAt': FieldValue.delete(),
       'codeSentAtMillis': FieldValue.delete(),
+      _receiverRuleAgreedUidField: FieldValue.delete(),
+      _receiverRuleAgreedCodeField: FieldValue.delete(),
+      _receiverRuleAgreedAtField: FieldValue.delete(),
+      'receiverRuleAgreedAtMillis': FieldValue.delete(),
       'updatedAt': FieldValue.serverTimestamp(),
       'updatedAtMillis': FieldValue.delete(),
     }, SetOptions(merge: true));
@@ -765,6 +785,104 @@ class MarketFirestoreDataSource {
     return MarketTradeCodeSession.fromMap(
       offerId: normalizedOfferId,
       data: data,
+    );
+  }
+
+  Stream<bool> watchTradeRuleAgreement({
+    required String offerId,
+    required String receiverUid,
+  }) {
+    final normalizedOfferId = offerId.trim();
+    final normalizedReceiverUid = receiverUid.trim();
+    if (normalizedOfferId.isEmpty || normalizedReceiverUid.isEmpty) {
+      return Stream<bool>.value(false);
+    }
+
+    return _firestore
+        .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
+        .snapshots()
+        .map((snapshot) {
+          final data = snapshot.data();
+          if (data == null) {
+            return false;
+          }
+          final codeReceiverUid =
+              (data['codeReceiverUid'] as String?)?.trim() ?? '';
+          if (codeReceiverUid != normalizedReceiverUid) {
+            return false;
+          }
+          final currentCode =
+              (data['code'] as String?)?.trim().toUpperCase() ?? '';
+          if (!_dodoCodePattern.hasMatch(currentCode)) {
+            return false;
+          }
+          final agreedUid =
+              (data[_receiverRuleAgreedUidField] as String?)?.trim() ?? '';
+          final agreedCode =
+              (data[_receiverRuleAgreedCodeField] as String?)
+                  ?.trim()
+                  .toUpperCase() ??
+              '';
+          return agreedUid == normalizedReceiverUid &&
+              agreedCode == currentCode;
+        });
+  }
+
+  Future<void> agreeTradeRules({
+    required String offerId,
+    required String receiverUid,
+    required String code,
+  }) async {
+    final normalizedOfferId = offerId.trim();
+    final normalizedReceiverUid = receiverUid.trim();
+    final normalizedCode = code.trim().toUpperCase();
+    if (normalizedOfferId.isEmpty ||
+        normalizedReceiverUid.isEmpty ||
+        !_dodoCodePattern.hasMatch(normalizedCode)) {
+      throw StateError('invalid_trade_rule_agreement_payload');
+    }
+
+    final docRef = _firestore.doc(
+      FirestorePaths.marketTradeCode(normalizedOfferId),
+    );
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      final data = snapshot.data();
+      if (!snapshot.exists || data == null) {
+        throw StateError('trade_code_session_not_found');
+      }
+      final codeReceiverUid =
+          (data['codeReceiverUid'] as String?)?.trim() ?? '';
+      if (codeReceiverUid != normalizedReceiverUid) {
+        throw StateError('trade_rule_agreement_permission_denied');
+      }
+      final currentCode = (data['code'] as String?)?.trim().toUpperCase() ?? '';
+      if (!_dodoCodePattern.hasMatch(currentCode)) {
+        throw StateError('trade_code_not_ready');
+      }
+      if (currentCode != normalizedCode) {
+        throw StateError('trade_rule_code_mismatch');
+      }
+      final rules = (data['senderIslandRules'] as String?)?.trim() ?? '';
+      if (rules.isEmpty) {
+        throw StateError('trade_rule_missing');
+      }
+
+      transaction.set(docRef, <String, dynamic>{
+        _receiverRuleAgreedUidField: normalizedReceiverUid,
+        _receiverRuleAgreedCodeField: normalizedCode,
+        _receiverRuleAgreedAtField: FieldValue.serverTimestamp(),
+        'receiverRuleAgreedAtMillis': FieldValue.delete(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAtMillis': FieldValue.delete(),
+      }, SetOptions(merge: true));
+    });
+
+    await _writeTradeLog(
+      offerId: normalizedOfferId,
+      eventType: 'trade_rules_agreed',
+      actorUid: normalizedReceiverUid,
+      payload: <String, dynamic>{'code': normalizedCode},
     );
   }
 
@@ -928,6 +1046,10 @@ class MarketFirestoreDataSource {
           'senderIslandRules': normalizedIslandRules,
           'codeSentAt': FieldValue.serverTimestamp(),
           'codeSentAtMillis': FieldValue.delete(),
+          _receiverRuleAgreedUidField: FieldValue.delete(),
+          _receiverRuleAgreedCodeField: FieldValue.delete(),
+          _receiverRuleAgreedAtField: FieldValue.delete(),
+          'receiverRuleAgreedAtMillis': FieldValue.delete(),
           'updatedAt': FieldValue.serverTimestamp(),
           'updatedAtMillis': FieldValue.delete(),
         }, SetOptions(merge: true));
@@ -1103,7 +1225,6 @@ class MarketFirestoreDataSource {
     final WriteBatch batch = _firestore.batch();
     String counterpartUid = '';
     bool shouldReopenOffer = false;
-    bool shouldCancelOffer = false;
     bool shouldDeleteCodeSession = false;
 
     if (requesterIsOwner) {
@@ -1121,9 +1242,8 @@ class MarketFirestoreDataSource {
         shouldReopenOffer = true;
         shouldDeleteCodeSession = true;
         // 유지보수 포인트:
-        // 작성자가 승낙된 거래를 취소할 때는
-        // "기존 상대 1명만 재신청 불가" 정책을 위해 해당 상대를 cancelled로 고정하고,
-        // 나머지 rejected 제안만 pending으로 복구합니다.
+        // 작성자가 승낙된 거래를 취소하면 현재 매칭은 끊고 게시글을 다시 엽니다.
+        // 기존 제안자들은 상태를 갱신하되, 재신청 자체는 허용합니다.
         for (final doc in proposalsSnapshot.docs) {
           final proposalId = doc.id.trim();
           final status = (doc.data()['status'] as String?) ?? '';
@@ -1143,9 +1263,9 @@ class MarketFirestoreDataSource {
         }
       } else {
         // 유지보수 포인트:
-        // 작성자가 거래를 취소하면 게시글 자체를 취소 상태로 돌리고
-        // 남아있는 대기 제안도 모두 취소 처리합니다.
-        shouldCancelOffer = true;
+        // 작성자가 거래를 취소해도 게시글은 유지하고 다시 열어둡니다.
+        // (요구사항: 게시글 삭제 전까지 재신청 가능)
+        shouldReopenOffer = true;
         shouldDeleteCodeSession = true;
         for (final doc in proposalsSnapshot.docs) {
           final status = (doc.data()['status'] as String?) ?? '';
@@ -1230,14 +1350,6 @@ class MarketFirestoreDataSource {
         'updatedAtMillis': FieldValue.delete(),
         'actionLabel': FieldValue.delete(),
       }, SetOptions(merge: true));
-    } else if (shouldCancelOffer) {
-      batch.set(offerRef, <String, dynamic>{
-        'lifecycle': MarketLifecycleTab.cancelled.name,
-        'status': MarketOfferStatus.offline.name,
-        'updatedAt': FieldValue.serverTimestamp(),
-        'updatedAtMillis': FieldValue.delete(),
-        'actionLabel': FieldValue.delete(),
-      }, SetOptions(merge: true));
     }
 
     if (shouldDeleteCodeSession) {
@@ -1275,7 +1387,7 @@ class MarketFirestoreDataSource {
       payload: <String, dynamic>{
         'requesterIsOwner': requesterIsOwner,
         'reopened': shouldReopenOffer,
-        'offerCancelled': shouldCancelOffer,
+        'offerCancelled': false,
       },
     );
   }
@@ -1716,18 +1828,40 @@ class MarketFirestoreDataSource {
     if (normalizedOfferId.isEmpty) {
       return const <DocumentReference<Map<String, dynamic>>>[];
     }
-    final snapshot = await _firestore
+    final snapshotBySourceOfferId = await _firestore
         .collectionGroup('requests')
         .where('sourceOfferId', isEqualTo: normalizedOfferId)
         .limit(50)
         .get();
     final refs = <DocumentReference<Map<String, dynamic>>>[];
-    for (final doc in snapshot.docs) {
+    final seenPaths = <String>{};
+    for (final doc in snapshotBySourceOfferId.docs) {
       final sourceType = (doc.data()['sourceType'] as String?)?.trim() ?? '';
-      if (sourceType != _tradeAirportSourceType) {
+      if (sourceType.isNotEmpty && sourceType != _tradeAirportSourceType) {
         continue;
       }
-      refs.add(doc.reference);
+      if (seenPaths.add(doc.reference.path)) {
+        refs.add(doc.reference);
+      }
+    }
+
+    if (refs.isNotEmpty) {
+      return refs;
+    }
+
+    // 유지보수 포인트:
+    // 레거시 문서 중 sourceOfferId/sourceType이 비어 있는 경우를 대비해
+    // trade_{offerId} 요청 문서 ID 패턴으로 fallback 조회합니다.
+    final legacyRequestId = _tradeAirportRequestId(normalizedOfferId);
+    final snapshotByLegacyRequestId = await _firestore
+        .collectionGroup('requests')
+        .where(FieldPath.documentId, isEqualTo: legacyRequestId)
+        .limit(10)
+        .get();
+    for (final doc in snapshotByLegacyRequestId.docs) {
+      if (seenPaths.add(doc.reference.path)) {
+        refs.add(doc.reference);
+      }
     }
     return refs;
   }

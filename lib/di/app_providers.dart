@@ -327,6 +327,19 @@ final marketTradeCodeSessionProvider =
       return ref.watch(marketRepositoryProvider).watchTradeCodeSession(offerId);
     });
 
+final marketTradeRuleAgreementProvider =
+    StreamProvider.family<bool, ({String offerId, String receiverUid})>((
+      ref,
+      args,
+    ) {
+      return ref
+          .watch(marketRepositoryProvider)
+          .watchTradeRuleAgreement(
+            offerId: args.offerId,
+            receiverUid: args.receiverUid,
+          );
+    });
+
 final marketTradeProposalsProvider =
     StreamProvider.family<List<MarketTradeProposal>, String>((ref, offerId) {
       return ref.watch(marketRepositoryProvider).watchTradeProposals(offerId);
