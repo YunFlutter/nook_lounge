@@ -236,6 +236,14 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
                                   personality != null &&
                                   tag == personality &&
                                   personalityBadgeStyle != null;
+                              final isRareTag = _isRareBadgeTag(tag);
+                              if (isRareTag) {
+                                return _InfoChip(
+                                  label: tag,
+                                  background: AppColors.badgeRedBg,
+                                  foreground: AppColors.badgeRedText,
+                                );
+                              }
                               if (!isPersonalityTag) {
                                 return _InfoChip(label: tag);
                               }
@@ -312,6 +320,14 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
       }
     }
     return null;
+  }
+
+  bool _isRareBadgeTag(String tag) {
+    final normalized = tag.trim();
+    if (normalized.isEmpty) {
+      return false;
+    }
+    return normalized == '희귀종' || normalized.contains('희귀');
   }
 
   List<_DetailRow> _buildDetailRows() {

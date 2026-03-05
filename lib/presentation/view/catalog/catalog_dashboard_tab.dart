@@ -14,6 +14,13 @@ import 'package:nook_lounge_app/presentation/view/catalog/catalog_collection_pag
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
 
+// 유지보수 포인트:
+// 홈과 도감의 주민 슬롯 수/크기를 맞춰 빈 상태 UI를 일관되게 유지합니다.
+const int _villagerSlotCount = 10;
+const double _villagerSlotListHeight = 104;
+const double _villagerSlotWidth = 84;
+const double _villagerAvatarSize = 70;
+
 class CatalogDashboardTab extends ConsumerStatefulWidget {
   const CatalogDashboardTab({
     required this.uid,
@@ -119,14 +126,22 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
     BuildContext context,
     Map<String, CatalogUserState> userStates,
   ) {
-    final villagers = _items
+    final villagerItems = _items
         .where((item) => item.category == '주민')
+        .toList(growable: false);
+    final residentVillagers = villagerItems
         .where(
           (item) => resolveCatalogCompleted(item: item, userStates: userStates),
         )
-        .take(8)
+        .take(_villagerSlotCount)
         .toList(growable: false);
-    final hasResidentVillagers = villagers.isNotEmpty;
+    final slots = List<CatalogItem?>.generate(
+      _villagerSlotCount,
+      (index) =>
+          index < residentVillagers.length ? residentVillagers[index] : null,
+      growable: false,
+    );
+    final canOpenCollection = villagerItems.isNotEmpty;
 
     return AnimatedFadeSlide(
       child: Column(
@@ -141,28 +156,40 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
               allItems: _items,
             ),
           ),
-          if (hasResidentVillagers) ...<Widget>[
-            const SizedBox(height: AppSpacing.s10),
-            SizedBox(
-              height: 96,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: villagers.length,
-                separatorBuilder: (_, unused) =>
-                    const SizedBox(width: AppSpacing.s10),
-                itemBuilder: (context, index) {
-                  final item = villagers[index];
-                  return _VillagerAvatarItem(
-                    item: item,
-                    onTap: () => _openVillagerDetailSheet(
-                      item: item,
-                      userStates: userStates,
+          const SizedBox(height: AppSpacing.s10),
+          SizedBox(
+            height: _villagerSlotListHeight,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: slots.length,
+              separatorBuilder: (_, unused) =>
+                  const SizedBox(width: AppSpacing.s12),
+              itemBuilder: (context, index) {
+                final item = slots[index];
+                if (item == null) {
+                  return _VillagerEmptySlot(
+                    slotIndex: index,
+                    canOpenCollection: canOpenCollection,
+                    onTap: () => _openCategoryPage(
+                      context,
+                      title: '주민 도감',
+                      category: '주민',
+                      allItems: _items,
+                      startWithResidentFilter: false,
                     ),
                   );
-                },
-              ),
+                }
+                return _VillagerAvatarItem(
+                  item: item,
+                  slotIndex: index,
+                  onTap: () => _openVillagerDetailSheet(
+                    item: item,
+                    userStates: userStates,
+                  ),
+                );
+              },
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -312,6 +339,7 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
     required String title,
     required String category,
     required List<CatalogItem> allItems,
+    bool startWithResidentFilter = false,
   }) {
     Navigator.of(context).push(
       PageRouteBuilder<void>(
@@ -330,6 +358,7 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
               title: title,
               category: category,
               allItems: allItems,
+              startWithResidentFilter: startWithResidentFilter,
             ),
           );
         },
@@ -419,7 +448,15 @@ class _SectionTitleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Text(title, style: AppTextStyles.headingH3),
+        Text(
+          title,
+          style: AppTextStyles.bodyWithSize(
+            22,
+            color: AppColors.textPrimary,
+            weight: FontWeight.w800,
+            height: 1.15,
+          ),
+        ),
         const Spacer(),
         TextButton(
           onPressed: onTap,
@@ -460,7 +497,15 @@ class _ProgressSection extends StatelessWidget {
           children: <Widget>[
             Icon(icon, color: AppColors.textPrimary),
             const SizedBox(width: 6),
-            Text(title, style: AppTextStyles.headingH3),
+            Text(
+              title,
+              style: AppTextStyles.bodyWithSize(
+                22,
+                color: AppColors.textPrimary,
+                weight: FontWeight.w800,
+                height: 1.15,
+              ),
+            ),
             const Spacer(),
             TextButton(
               onPressed: onViewAll,
@@ -581,59 +626,158 @@ class _ProgressCircleCard extends StatelessWidget {
 }
 
 class _VillagerAvatarItem extends StatelessWidget {
-  const _VillagerAvatarItem({required this.item, required this.onTap});
+  const _VillagerAvatarItem({
+    required this.item,
+    required this.slotIndex,
+    required this.onTap,
+  });
 
   final CatalogItem item;
+  final int slotIndex;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: SizedBox(
-        width: 90,
-        child: Column(
-          children: <Widget>[
-            Container(
-              width: 76,
-              height: 76,
-              decoration: const BoxDecoration(
-                color: AppColors.bgSecondary,
-                shape: BoxShape.circle,
-              ),
-              child: ClipOval(
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: item.imageUrl.isEmpty
-                      ? Image.asset(
-                          'assets/images/icon_raccoon_character.png',
-                          fit: BoxFit.contain,
-                        )
-                      : Image.network(
-                          item.imageUrl,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Image.asset(
-                                'assets/images/icon_raccoon_character.png',
-                                fit: BoxFit.contain,
-                              ),
-                        ),
+    return Semantics(
+      label: '주민 슬롯 ${slotIndex + 1}: ${item.name}',
+      button: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: SizedBox(
+          width: _villagerSlotWidth,
+          child: Column(
+            children: <Widget>[
+              ClipOval(
+                child: Container(
+                  width: _villagerAvatarSize,
+                  height: _villagerAvatarSize,
+                  decoration: BoxDecoration(
+                    color: AppColors.bgSecondary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: _buildNetworkImage(_resolveResidentThumbUrl(item)),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              item.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.bodyWithSize(
-                14,
-                color: AppColors.textPrimary,
-                weight: FontWeight.w700,
+              const SizedBox(height: AppSpacing.s6),
+              Text(
+                item.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.bodySecondaryStrong,
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNetworkImage(String? url) {
+    if (url == null || url.isEmpty) {
+      return Image.asset(
+        'assets/images/icon_raccoon_character.png',
+        fit: BoxFit.cover,
+      );
+    }
+    return Image.network(
+      url,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return Image.asset(
+          'assets/images/icon_raccoon_character.png',
+          fit: BoxFit.cover,
+        );
+      },
+    );
+  }
+
+  String _resolveResidentThumbUrl(CatalogItem item) {
+    // 유지보수 포인트:
+    // 주민 슬롯은 아이콘URL > 주민사진URL > 기본 imageUrl 순서로 노출합니다.
+    final iconUrl = _extractTagValue(item.tags, '아이콘URL');
+    if (iconUrl.isNotEmpty) {
+      return iconUrl;
+    }
+
+    final photoUrl = _extractTagValue(item.tags, '주민사진URL');
+    if (photoUrl.isNotEmpty) {
+      return photoUrl;
+    }
+
+    return item.imageUrl;
+  }
+
+  String _extractTagValue(List<String> tags, String prefix) {
+    final needle = '$prefix:';
+    for (final tag in tags) {
+      if (!tag.startsWith(needle)) {
+        continue;
+      }
+      final value = tag.substring(needle.length).trim();
+      if (value.isNotEmpty) {
+        return value;
+      }
+    }
+    return '';
+  }
+}
+
+class _VillagerEmptySlot extends StatelessWidget {
+  const _VillagerEmptySlot({
+    required this.slotIndex,
+    required this.canOpenCollection,
+    required this.onTap,
+  });
+
+  final int slotIndex;
+  final bool canOpenCollection;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: canOpenCollection
+          ? '빈 주민 슬롯 ${slotIndex + 1}, 탭해서 주민 추가'
+          : '빈 주민 슬롯 ${slotIndex + 1}',
+      button: canOpenCollection,
+      child: Material(
+        color: AppColors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: canOpenCollection ? onTap : null,
+          child: SizedBox(
+            width: _villagerSlotWidth,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  width: _villagerAvatarSize,
+                  height: _villagerAvatarSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.bgSecondary,
+                    border: Border.all(color: Colors.white, width: 3),
+                  ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    size: 26,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s6),
+                Text(
+                  '추가',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.captionMuted,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

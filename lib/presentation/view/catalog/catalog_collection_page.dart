@@ -87,7 +87,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
+        centerTitle: true,
         titleSpacing: AppSpacing.pageHorizontal,
         title: _buildHomeStyleAppBarTitle(widget.title),
       ),
@@ -851,6 +851,7 @@ class _CatalogItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rare = _isRare(item.tags);
     final isVillager = item.category == '주민';
+    final hideCategoryBadge = item.category == '해산물' || item.category == '화석';
     final tag1 = _resolvePrimaryTag(item.tags) ?? item.category;
     final speciesLabel = isVillager
         ? (_extractPrefixedTagValue(item.tags, '종') ?? tag1)
@@ -895,11 +896,22 @@ class _CatalogItemCard extends StatelessWidget {
                         ),
                       ),
                       if (rare)
-                        Text(
-                          '희귀종',
-                          style: AppTextStyles.bodyWithSize(
-                            14,
-                            color: AppColors.badgeRedText,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.badgeRedBg,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            '희귀종',
+                            style: AppTextStyles.bodyWithSize(
+                              13,
+                              color: AppColors.badgeRedText,
+                              weight: FontWeight.w800,
+                            ),
                           ),
                         ),
                     ],
@@ -909,11 +921,12 @@ class _CatalogItemCard extends StatelessWidget {
                     spacing: 6,
                     runSpacing: 6,
                     children: <Widget>[
-                      _SmallBadge(
-                        label: speciesLabel,
-                        background: AppColors.transparent,
-                        foreground: AppColors.textMuted,
-                      ),
+                      if (!hideCategoryBadge)
+                        _SmallBadge(
+                          label: speciesLabel,
+                          background: AppColors.transparent,
+                          foreground: AppColors.textMuted,
+                        ),
                       if (isVillager && personality != null)
                         _SmallBadge(
                           label: personality,
@@ -1182,12 +1195,12 @@ class _StatusStyle {
     if (donationMode) {
       return completed
           ? const _StatusStyle(
-              background: AppColors.badgeRedBg,
-              foreground: AppColors.badgeRedText,
+              background: AppColors.accentDeepOrange,
+              foreground: AppColors.white,
             )
           : const _StatusStyle(
-              background: AppColors.badgeBeigeBg,
-              foreground: AppColors.badgeBeigeText,
+              background: AppColors.navActiveBg,
+              foreground: AppColors.textSecondary,
             );
     }
 
