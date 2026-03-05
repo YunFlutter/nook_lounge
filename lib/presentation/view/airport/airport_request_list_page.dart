@@ -106,22 +106,22 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                 children: <Widget>[
                   Text(
                     '대기 중인 유저 ${widget.pendingRequests.length}명',
-                    style: AppTextStyles.headingH3,
+                    style: AppTextStyles.headingH1,
                   ),
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
-                      vertical: 4,
+                      vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.badgeBlueBg,
+                      color: Color(0xffbbeaff).withOpacity(0.3),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       '$remainSeats자리 남음',
                       style: AppTextStyles.captionWithColor(
-                        AppColors.badgeBlueText,
+                        AppColors.textPrimary,
                         weight: FontWeight.w800,
                       ),
                     ),
@@ -138,16 +138,19 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.pageHorizontal,
-                0,
-                AppSpacing.pageHorizontal,
-                4,
-              ),
-              child: Text(
-                '도도코드는 비행장 탭에 등록된 코드를 사용해요.',
-                style: AppTextStyles.captionMuted,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.pageHorizontal,
+                  AppSpacing.s2,
+                  AppSpacing.pageHorizontal,
+                  0,
+                ),
+                child: Text(
+                  '도도코드는 비행장 탭에 등록된 코드를 사용해요.',
+                  style: AppTextStyles.captionMuted,
+                ),
               ),
             ),
             Expanded(
@@ -268,8 +271,8 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                           const SizedBox(height: 12),
                           Image.asset(
                             'assets/images/no_data_image.png',
-                            width: 88,
-                            height: 88,
+                            width: 200,
+                            height: 200,
                             fit: BoxFit.contain,
                           ),
                         ],

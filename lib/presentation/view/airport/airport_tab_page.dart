@@ -30,6 +30,8 @@ class AirportTabPage extends ConsumerStatefulWidget {
 }
 
 class _AirportTabPageState extends ConsumerState<AirportTabPage> {
+  static const double _visitorSlotWidth = 72;
+  static const double _visitorAvatarSize = 58;
   Timer? _relativeTimeTicker;
   String _ensuredIslandId = '';
 
@@ -235,9 +237,9 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                 );
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
           myWaitingSection,
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
           _buildPendingSection(
             requests: pendingRequests,
             selectedIds: state.selectedRequestIds,
@@ -253,7 +255,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
               initiallySelectedIds: state.selectedRequestIds,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
           _buildInvitedSection(
             requests: waitingGuests,
             onMarkArrived: (requestId) => viewModel.markArrived(requestId),
@@ -267,9 +269,12 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
               initiallySelectedIds: state.selectedRequestIds,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
           _buildCurrentVisitorsSection(
             visitors: currentVisitors,
+            waitingGuests: waitingGuests,
+            capacity: session.capacity,
+            onMarkArrived: (requestId) => viewModel.markArrived(requestId),
             onOpenManifest: () => _openVisitorManifest(
               context: context,
               uid: widget.uid,
@@ -325,53 +330,56 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
       decoration: BoxDecoration(
         color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.badgeBlueBg, width: 1.5),
+        border: Border.all(color: AppColors.badgeBlueBg, width: 3),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(child: Text('게이트 상태', style: AppTextStyles.headingH2)),
-              AirportGatePillToggle(
-                gateOpen: session.gateOpen,
-                semanticLabel: '게이트 열기',
-                onTap: () {
-                  onToggle(!session.gateOpen);
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: <Widget>[
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: session.gateOpen
-                      ? AppColors.badgeRedText
-                      : AppColors.textHint,
-                  shape: BoxShape.circle,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(child: Text('게이트 상태', style: AppTextStyles.headingH2)),
+                AirportGatePillToggle(
+                  gateOpen: session.gateOpen,
+                  semanticLabel: '게이트 열기',
+                  onTap: () {
+                    onToggle(!session.gateOpen);
+                  },
                 ),
-              ),
-              const SizedBox(width: 8),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: session.gateOpen
+                        ? AppColors.badgeRedText
+                        : AppColors.textHint,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  session.gateOpen ? '방문객에게 열림' : '방문객에게 닫힘',
+                  style: AppTextStyles.bodySecondaryStrong,
+                ),
+              ],
+            ),
+            if (hasIntroSummary) ...<Widget>[
+              const SizedBox(height: 8),
               Text(
-                session.gateOpen ? '방문객에게 열림' : '방문객에게 닫힘',
-                style: AppTextStyles.bodySecondaryStrong,
+                introSummary,
+                style: AppTextStyles.captionMuted,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
-          ),
-          if (hasIntroSummary) ...<Widget>[
-            const SizedBox(height: 8),
-            Text(
-              introSummary,
-              style: AppTextStyles.captionMuted,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
           ],
-        ],
+        ),
       ),
     );
   }
@@ -400,13 +408,13 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        // const SizedBox(height: 8),
         InkWell(
           onTap: onInputCode,
           borderRadius: BorderRadius.circular(18),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: AppColors.bgCard,
               borderRadius: BorderRadius.circular(18),
@@ -421,8 +429,9 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                     style: code.isEmpty
                         ? AppTextStyles.bodyHintStrong
                         : AppTextStyles.bodyWithSize(
-                            46,
-                            color: AppColors.textPrimary,
+                            32,
+                            letterSpacing: 1.5,
+                            color: AppColors.navInactive,
                             weight: FontWeight.w800,
                           ),
                   ),
@@ -440,10 +449,12 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          code.isEmpty ? '방문객과 미리 도도코드를 공유해 주세요.' : '도도코드는 10분간 노출됩니다.',
-          style: AppTextStyles.captionHint,
-          textAlign: TextAlign.center,
+        Center(
+          child: Text(
+            '방문객과 이 5자리 코드를 공유하세요.',
+            style: AppTextStyles.captionMuted,
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     );
@@ -473,7 +484,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         if (loading)
           Container(
             width: double.infinity,
@@ -1050,8 +1061,19 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
 
   Widget _buildCurrentVisitorsSection({
     required List<AirportVisitRequest> visitors,
+    required List<AirportVisitRequest> waitingGuests,
+    required int capacity,
+    required Future<void> Function(String requestId) onMarkArrived,
     required VoidCallback onOpenManifest,
   }) {
+    final canAddRequests = waitingGuests
+        .where(_canAddFromWaitingGuest)
+        .toList(growable: false);
+    final slotCount = (capacity <= 0 ? 8 : capacity).clamp(1, 20);
+    final renderedSlots = visitors.length > slotCount
+        ? visitors.length
+        : slotCount;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -1070,61 +1092,213 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height: 92,
-          child: visitors.isEmpty
-              ? Center(
-                  child: Text(
-                    '현재 방문객이 없어요.',
-                    style: AppTextStyles.bodySecondaryStrong,
-                  ),
-                )
-              : ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: visitors.length,
-                  separatorBuilder: (_, unused) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final visitor = visitors[index];
-                    return SizedBox(
-                      width: 72,
-                      child: Column(
-                        children: <Widget>[
-                          ClipOval(
-                            child: SizedBox(
-                              width: 58,
-                              height: 58,
-                              child: visitor.requesterAvatarUrl.trim().isEmpty
-                                  ? Image.asset(
-                                      'assets/images/icon_raccoon_character.png',
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.network(
-                                      visitor.requesterAvatarUrl,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Image.asset(
-                                          'assets/images/icon_raccoon_character.png',
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            visitor.requesterName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.bodySecondaryStrong,
-                          ),
-                        ],
+          height: 96,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: renderedSlots,
+            separatorBuilder: (_, unused) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              if (index < visitors.length) {
+                return _buildVisitorFilledSlot(visitors[index]);
+              }
+              return _buildVisitorEmptySlot(
+                canAdd: canAddRequests.isNotEmpty,
+                onTap: canAddRequests.isEmpty
+                    ? null
+                    : () => _openWaitingGuestPicker(
+                        waitingGuests: canAddRequests,
+                        onMarkArrived: onMarkArrived,
                       ),
-                    );
-                  },
-                ),
+              );
+            },
+          ),
         ),
       ],
     );
+  }
+
+  Widget _buildVisitorFilledSlot(AirportVisitRequest visitor) {
+    return SizedBox(
+      width: _visitorSlotWidth,
+      child: Column(
+        children: <Widget>[
+          ClipOval(
+            child: Container(
+              width: _visitorAvatarSize,
+              height: _visitorAvatarSize,
+              decoration: BoxDecoration(
+                color: AppColors.bgSecondary,
+                border: Border.all(color: Colors.white, width: 3),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: visitor.requesterAvatarUrl.trim().isEmpty
+                  ? Image.asset(
+                      'assets/images/icon_raccoon_character.png',
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      visitor.requesterAvatarUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/icon_raccoon_character.png',
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            visitor.requesterName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodySecondaryStrong,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVisitorEmptySlot({
+    required bool canAdd,
+    required VoidCallback? onTap,
+  }) {
+    return Material(
+      color: AppColors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: SizedBox(
+          width: _visitorSlotWidth,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: _visitorAvatarSize,
+                height: _visitorAvatarSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.bgSecondary,
+                  border: Border.all(color: Colors.white, width: 3),
+                ),
+                child: Icon(
+                  Icons.add_rounded,
+                  size: 26,
+                  color: canAdd
+                      ? AppColors.primaryDefault
+                      : AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                canAdd ? '추가' : '비어있음',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: canAdd
+                    ? AppTextStyles.captionPrimaryHeavy
+                    : AppTextStyles.captionMuted,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _canAddFromWaitingGuest(AirportVisitRequest request) {
+    if (request.status == AirportVisitRequestStatus.arrived) {
+      return false;
+    }
+    if (request.status == AirportVisitRequestStatus.invited) {
+      return true;
+    }
+    return request.inviteCode?.trim().isNotEmpty ?? false;
+  }
+
+  Future<void> _openWaitingGuestPicker({
+    required List<AirportVisitRequest> waitingGuests,
+    required Future<void> Function(String requestId) onMarkArrived,
+  }) async {
+    final selected = await showModalBottomSheet<AirportVisitRequest>(
+      context: context,
+      backgroundColor: AppColors.bgCard,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (context) {
+        if (waitingGuests.isEmpty) {
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                '대기 중인 손님이 없어요.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodySecondaryStrong,
+              ),
+            ),
+          );
+        }
+        return SafeArea(
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: waitingGuests.length,
+            separatorBuilder: (_, unused) =>
+                const Divider(height: 1, color: AppColors.borderDefault),
+            itemBuilder: (context, index) {
+              final request = waitingGuests[index];
+              return ListTile(
+                leading: ClipOval(
+                  child: SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: request.requesterAvatarUrl.trim().isEmpty
+                        ? Image.asset(
+                            'assets/images/icon_raccoon_character.png',
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            request.requesterAvatarUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/icon_raccoon_character.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          ),
+                  ),
+                ),
+                title: Text(
+                  request.requesterName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.bodyPrimaryStrong,
+                ),
+                subtitle: Text(
+                  '${request.requesterIslandName} · ${request.purpose.label}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.captionMuted,
+                ),
+                trailing: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: AppColors.textMuted,
+                ),
+                onTap: () => Navigator.of(context).pop(request),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    if (!mounted || selected == null) {
+      return;
+    }
+    await onMarkArrived(selected.id);
   }
 
   Future<void> _onTapReportUser({

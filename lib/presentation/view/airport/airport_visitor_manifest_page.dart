@@ -52,6 +52,15 @@ class AirportVisitorManifestPage extends ConsumerWidget {
             110,
           ),
           children: <Widget>[
+            Text('현재 방문객', style: AppTextStyles.headingH1),
+            const SizedBox(height: 15),
+            Text(
+              '비행장 입국 현황을 모니터링 중입니다.',
+              style: AppTextStyles.bodySecondaryStrong.copyWith(color: AppColors.navInactive),
+            ),
+            SizedBox(
+              height: 30,
+            ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               decoration: BoxDecoration(
@@ -60,15 +69,9 @@ class AirportVisitorManifestPage extends ConsumerWidget {
                 border: Border.all(color: AppColors.borderDefault),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('현재 방문객', style: AppTextStyles.headingH1),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${resolvedSession.islandName} 입구 현황을 모니터링 중입니다.',
-                    style: AppTextStyles.bodySecondaryStrong,
-                  ),
-                  const SizedBox(height: 18),
                   Row(
                     children: <Widget>[
                       Expanded(
