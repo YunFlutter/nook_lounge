@@ -65,6 +65,23 @@ class HomeDashboardTab extends ConsumerWidget {
     '복숭아': '🍑',
     '배': '🍐',
   };
+  // 유지보수 포인트:
+  // 주민 슬롯 수는 주민 최대 거주 가능 수(10명)와 동일해야 합니다.
+  // 홈 UI 슬롯 수와 저장 제한이 어긋나지 않도록 함께 관리해 주세요.
+  static const int _residentSlotCount = 10;
+  static const double _residentSlotListHeight = 104;
+  static const double _residentSlotWidth = 84;
+  static const double _residentAvatarSize = 70;
+  // 유지보수 포인트:
+  // 무주식 빈 상태 CTA 색상/사이즈는 Figma(603:12282) 기준으로 잡았습니다.
+  // 디자인 변경 시 아래 토큰만 수정하면 홈 빈 카드가 함께 반영됩니다.
+  static const Color _turnipEmptyCtaColor = Color(0xFF72D7B2);
+  static const Color _turnipEmptyCtaShadowColor = Color(0x1A000000);
+  static const double _turnipEmptyMinHeight = 250;
+  static const double _turnipEmptyGap = 60;
+  static const double _turnipEmptyButtonWidth = 288;
+  static const double _turnipEmptyButtonHeight = 56;
+  static const double _turnipEmptyButtonRadius = 30;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -307,7 +324,9 @@ class HomeDashboardTab extends ConsumerWidget {
       height: 40,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16),
       decoration: BoxDecoration(
-        color: AppColors.badgeBlueBg,
+        color: hemisphere == '북반구'
+            ? AppColors.badgeBlueBg
+            : AppColors.accentOrange,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
@@ -369,8 +388,13 @@ class HomeDashboardTab extends ConsumerWidget {
         .where(
           (item) => resolveCatalogCompleted(item: item, userStates: userStates),
         )
-        .take(10)
+        .take(_residentSlotCount)
         .toList(growable: false);
+    final residentSlots = List<CatalogItem?>.generate(
+      _residentSlotCount,
+      (index) => index < residents.length ? residents[index] : null,
+      growable: false,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,20 +403,10 @@ class HomeDashboardTab extends ConsumerWidget {
           context: context,
           title: '우리 섬 주민들',
           onTap: () async {
-            if (items.isEmpty) {
-              return;
-            }
-            await Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => CatalogCollectionPage(
-                  uid: uid,
-                  islandId: currentIslandId,
-                  title: '우리 섬 주민들',
-                  category: '주민',
-                  allItems: items,
-                  startWithResidentFilter: true,
-                ),
-              ),
+            await _openResidentCollectionPage(
+              context: context,
+              islandId: currentIslandId,
+              items: items,
             );
           },
         ),
@@ -404,55 +418,34 @@ class HomeDashboardTab extends ConsumerWidget {
           )
         else if (hasError)
           Text('주민 정보를 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
-        else if (residents.isEmpty)
-          Text('아직 거주 주민이 없어요.', style: AppTextStyles.bodySecondaryStrong)
         else
           SizedBox(
-            height: 104,
+            height: _residentSlotListHeight,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: residents.length,
+              itemCount: residentSlots.length,
               separatorBuilder: (_, index) =>
                   const SizedBox(width: AppSpacing.s12),
               itemBuilder: (context, index) {
-                final item = residents[index];
+                final item = residentSlots[index];
                 return AnimatedFadeSlide(
                   delay: Duration(milliseconds: 30 + (index * 24)),
                   offset: const Offset(0.06, 0),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _openResidentDetailSheet(
-                      context: context,
-                      ref: ref,
-                      islandId: currentIslandId,
-                      item: item,
-                      userStates: userStates,
-                    ),
-                    child: SizedBox(
-                      width: 84,
-                      child: Column(
-                        children: <Widget>[
-                          ClipOval(
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              color: AppColors.bgSecondary,
-                              child: _buildNetworkImage(
-                                _resolveResidentThumbUrl(item),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.s6),
-                          Text(
-                            item.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTextStyles.bodySecondaryStrong,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: item == null
+                      ? _buildResidentEmptySlot(
+                          context: context,
+                          islandId: currentIslandId,
+                          items: items,
+                          slotIndex: index,
+                        )
+                      : _buildResidentFilledSlot(
+                          context: context,
+                          ref: ref,
+                          islandId: currentIslandId,
+                          item: item,
+                          userStates: userStates,
+                          slotIndex: index,
+                        ),
                 );
               },
             ),
@@ -479,10 +472,10 @@ class HomeDashboardTab extends ConsumerWidget {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(
+            AppSpacing.s20,
+            AppSpacing.s20,
+            AppSpacing.s20,
             AppSpacing.s14,
-            AppSpacing.s14,
-            AppSpacing.s14,
-            AppSpacing.s12,
           ),
           decoration: BoxDecoration(
             color: AppColors.catalogCardBg,
@@ -502,16 +495,9 @@ class HomeDashboardTab extends ConsumerWidget {
 
               final prediction = turnipState.prediction;
               if (prediction == null) {
-                final message =
-                    turnipState.errorMessage ??
-                    '입력된 무주식 데이터가 없어요.\n무주식 탭에서 계산 후 결과를 확인해보세요.';
-                return Text(
-                  message,
-                  style: AppTextStyles.labelWithColor(
-                    AppColors.textSecondary,
-                    weight: FontWeight.w700,
-                    height: 1.4,
-                  ),
+                return _buildTurnipEmptyCard(
+                  ref: ref,
+                  errorMessage: turnipState.errorMessage,
                 );
               }
 
@@ -574,6 +560,113 @@ class HomeDashboardTab extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildTurnipEmptyCard({
+    required WidgetRef ref,
+    required String? errorMessage,
+  }) {
+    final hasError = errorMessage != null && errorMessage.trim().isNotEmpty;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: _turnipEmptyMinHeight),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '예측 결과',
+            style: AppTextStyles.bodyWithSize(
+              18,
+              color: AppColors.textPrimary,
+              weight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.s12),
+          Text(
+            '입력된 정보를 기반으로 한 결과입니다.',
+            style: AppTextStyles.bodyWithSize(
+              15,
+              color: AppColors.textMuted,
+              weight: FontWeight.w700,
+            ),
+          ),
+          if (hasError) ...<Widget>[
+            const SizedBox(height: AppSpacing.s6),
+            Text(
+              errorMessage,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.bodyWithSize(
+                12,
+                color: AppColors.accentDeepOrange,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ],
+          const SizedBox(height: _turnipEmptyGap),
+          Center(
+            child: Text(
+              '아직 데이터가 없어요..',
+              style: AppTextStyles.bodyWithSize(
+                18,
+                color: AppColors.textPrimary,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(height: _turnipEmptyGap),
+          Center(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final buttonWidth = math.min(
+                  _turnipEmptyButtonWidth,
+                  constraints.maxWidth,
+                );
+                return SizedBox(
+                  width: buttonWidth,
+                  height: _turnipEmptyButtonHeight,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        _turnipEmptyButtonRadius,
+                      ),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: _turnipEmptyCtaShadowColor,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () => ref
+                          .read(homeShellViewModelProvider.notifier)
+                          .changeTab(4),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _turnipEmptyCtaColor,
+                        foregroundColor: AppColors.textInverse,
+                        elevation: 0,
+                        shadowColor: AppColors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            _turnipEmptyButtonRadius,
+                          ),
+                        ),
+                        textStyle: AppTextStyles.bodyWithSize(
+                          18,
+                          color: AppColors.textInverse,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                      child: const Text('계산하러 가기 \u2192'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -692,7 +785,14 @@ class HomeDashboardTab extends ConsumerWidget {
       '아이템',
     ];
     final orderedKeys = categoryOrder
-        .where((key) => (grouped[key]?.isNotEmpty ?? false))
+        .where((key) {
+          // 유지보수 포인트:
+          // 위시가 비어도 기존 카드형 UI를 유지해 카테고리별 0개 상태를 노출합니다.
+          if (favorites.isEmpty) {
+            return true;
+          }
+          return grouped[key]?.isNotEmpty ?? false;
+        })
         .toList(growable: false);
 
     return Column(
@@ -716,30 +816,6 @@ class HomeDashboardTab extends ConsumerWidget {
           )
         else if (hasError)
           Text('위시 리스트를 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
-        else if (favorites.isEmpty)
-          AnimatedFadeSlide(
-            delay: const Duration(milliseconds: 24),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.s16,
-                vertical: AppSpacing.s14,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.catalogCardBg,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppColors.borderDefault),
-              ),
-              child: Text(
-                '아직 위시 아이템이 없어요.\n도감 상세에서 하트를 눌러 위시 리스트를 채워보세요.',
-                style: AppTextStyles.labelWithColor(
-                  AppColors.textSecondary,
-                  weight: FontWeight.w700,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          )
         else ...<Widget>[
           SizedBox(
             height: 104,
@@ -751,7 +827,7 @@ class HomeDashboardTab extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final key = orderedKeys[index];
                 final bucket = grouped[key] ?? const <CatalogItem>[];
-                final preview = bucket.first;
+                final preview = bucket.isEmpty ? null : bucket.first;
                 return AnimatedFadeSlide(
                   delay: Duration(milliseconds: 25 + (index * 20)),
                   child: Material(
@@ -781,20 +857,29 @@ class HomeDashboardTab extends ConsumerWidget {
                                 width: 42,
                                 height: 42,
                                 color: AppColors.bgSecondary,
-                                child: _buildNetworkImage(preview.imageUrl),
+                                child: preview == null
+                                    ? Image.asset(
+                                        'assets/images/no_data_image.png',
+                                        fit: BoxFit.contain,
+                                      )
+                                    : _buildNetworkImage(preview.imageUrl),
                               ),
                             ),
                             const Spacer(),
-                            Text(
-                              _wishCategoryLabel(key),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.bodySecondaryStrong,
-                            ),
-                            const SizedBox(height: AppSpacing.s2),
-                            Text(
-                              '${bucket.length}개',
-                              style: AppTextStyles.captionMuted,
+                            Row(
+                              children: [
+                                Text(
+                                  _wishCategoryLabel(key),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyles.bodySecondaryStrong,
+                                ),
+                                Expanded(child: SizedBox()),
+                                Text(
+                                  '${bucket.length}개',
+                                  style: AppTextStyles.captionMuted,
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -924,6 +1009,7 @@ class HomeDashboardTab extends ConsumerWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: AppSpacing.s12),
               ],
             ),
           ),
@@ -974,6 +1060,134 @@ class HomeDashboardTab extends ConsumerWidget {
           uid: uid,
           islandId: islandId,
           initialCategory: initialCategory,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResidentFilledSlot({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String islandId,
+    required CatalogItem item,
+    required Map<String, CatalogUserState> userStates,
+    required int slotIndex,
+  }) {
+    return Semantics(
+      label: '주민 슬롯 ${slotIndex + 1}: ${item.name}',
+      button: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => _openResidentDetailSheet(
+          context: context,
+          ref: ref,
+          islandId: islandId,
+          item: item,
+          userStates: userStates,
+        ),
+        child: SizedBox(
+          width: _residentSlotWidth,
+          child: Column(
+            children: <Widget>[
+              ClipOval(
+                child: Container(
+                  width: _residentAvatarSize,
+                  height: _residentAvatarSize,
+                  color: AppColors.bgSecondary,
+                  child: _buildNetworkImage(_resolveResidentThumbUrl(item)),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.s6),
+              Text(
+                item.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.bodySecondaryStrong,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResidentEmptySlot({
+    required BuildContext context,
+    required String islandId,
+    required List<CatalogItem> items,
+    required int slotIndex,
+  }) {
+    final canOpenCollection = items.isNotEmpty;
+    return Semantics(
+      label: canOpenCollection
+          ? '빈 주민 슬롯 ${slotIndex + 1}, 탭해서 주민 추가'
+          : '빈 주민 슬롯 ${slotIndex + 1}',
+      button: canOpenCollection,
+      child: Material(
+        color: AppColors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: canOpenCollection
+              ? () async {
+                  await _openResidentCollectionPage(
+                    context: context,
+                    islandId: islandId,
+                    items: items,
+                    startWithResidentFilter: false,
+                  );
+                }
+              : null,
+          child: SizedBox(
+            width: _residentSlotWidth,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  width: _residentAvatarSize,
+                  height: _residentAvatarSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.bgSecondary,
+                    border: Border.all(color: Colors.white, width: 3),
+                  ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    size: 26,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s6),
+                Text(
+                  '추가',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.captionMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openResidentCollectionPage({
+    required BuildContext context,
+    required String islandId,
+    required List<CatalogItem> items,
+    bool startWithResidentFilter = true,
+  }) async {
+    if (items.isEmpty) {
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => CatalogCollectionPage(
+          uid: uid,
+          islandId: islandId,
+          title: '우리 섬 주민들',
+          category: '주민',
+          allItems: items,
+          startWithResidentFilter: startWithResidentFilter,
         ),
       ),
     );

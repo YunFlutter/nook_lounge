@@ -370,14 +370,20 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
           final options = _buildDropdownOptions(filter, categoryItems);
           final selectedRaw = _selectedDropdownValues[filter.key] ?? '전체';
           final selected = options.contains(selectedRaw) ? selectedRaw : '전체';
+          final displayValue = selected == '전체' ? filter.label : selected;
+          final hasSelection = selected != '전체';
 
           return _CatalogDropdownFilter(
             width: filter.width,
-            title: filter.label,
-            selectedValue: selected,
-            options: options,
-            onChanged: (value) {
-              if (value == null) {
+            valueLabel: displayValue,
+            selected: hasSelection,
+            onTap: () async {
+              final value = await _showDropdownFilterBottomSheet(
+                title: filter.label,
+                options: options,
+                selectedValue: selected,
+              );
+              if (value == null || !mounted) {
                 return;
               }
               setState(() => _selectedDropdownValues[filter.key] = value);
@@ -385,6 +391,91 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
           );
         },
       ),
+    );
+  }
+
+  Future<String?> _showDropdownFilterBottomSheet({
+    required String title,
+    required List<String> options,
+    required String selectedValue,
+  }) {
+    // 유지보수 포인트:
+    // 도감 필터 선택 UX를 드롭다운 대신 바텀 시트로 통일합니다.
+    // 옵션 추가/정렬은 _buildDropdownOptions 에서만 관리하면 이 시트에 자동 반영됩니다.
+    return showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: AppColors.bgCard,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        final maxHeight = MediaQuery.sizeOf(sheetContext).height * 0.62;
+        return SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.modalInner,
+                AppSpacing.s16,
+                AppSpacing.modalInner,
+                AppSpacing.modalInner,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: AppTextStyles.bodyPrimaryHeavy,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                        tooltip: '닫기',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.s8),
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: options.length,
+                      separatorBuilder: (_, unused) =>
+                          const Divider(height: 1, color: AppColors.navBorder),
+                      itemBuilder: (context, index) {
+                        final option = options[index];
+                        final isSelected = option == selectedValue;
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.s4,
+                          ),
+                          title: Text(
+                            option,
+                            style: isSelected
+                                ? AppTextStyles.bodyPrimaryHeavy
+                                : AppTextStyles.bodyPrimaryStrong,
+                          ),
+                          trailing: isSelected
+                              ? const Icon(
+                                  Icons.check_rounded,
+                                  color: AppColors.primaryDefault,
+                                )
+                              : null,
+                          onTap: () => Navigator.of(sheetContext).pop(option),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -978,64 +1069,49 @@ class _QuickIconToggleButton extends StatelessWidget {
 class _CatalogDropdownFilter extends StatelessWidget {
   const _CatalogDropdownFilter({
     required this.width,
-    required this.title,
-    required this.selectedValue,
-    required this.options,
-    required this.onChanged,
+    required this.valueLabel,
+    required this.selected,
+    required this.onTap,
   });
 
   final double width;
-  final String title;
-  final String selectedValue;
-  final List<String> options;
-  final ValueChanged<String?> onChanged;
+  final String valueLabel;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.catalogChipBg,
+      child: Material(
+        color: AppColors.catalogChipBg,
+        borderRadius: BorderRadius.circular(999),
+        child: InkWell(
           borderRadius: BorderRadius.circular(999),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedValue,
-              isExpanded: true,
-              borderRadius: BorderRadius.circular(14),
-              icon: const Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: AppColors.textMuted,
-              ),
-              selectedItemBuilder: (context) {
-                return options
-                    .map(
-                      (option) => Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          option == '전체' ? title : option,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.bodyWithSize(
-                            14,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(growable: false);
-              },
-              items: options
-                  .map(
-                    (option) => DropdownMenuItem<String>(
-                      value: option,
-                      child: Text(option, overflow: TextOverflow.ellipsis),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    valueLabel,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodyWithSize(
+                      14,
+                      color: selected
+                          ? AppColors.textPrimary
+                          : AppColors.textMuted,
+                      weight: selected ? FontWeight.w800 : FontWeight.w700,
                     ),
-                  )
-                  .toList(growable: false),
-              onChanged: onChanged,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.s4),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: selected ? AppColors.textPrimary : AppColors.textMuted,
+                ),
+              ],
             ),
           ),
         ),
