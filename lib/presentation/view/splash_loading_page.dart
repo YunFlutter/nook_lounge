@@ -51,7 +51,7 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 72),
           child: AnimatedBuilder(
             animation: Listenable.merge(<Listenable>[
               _progressController,
@@ -67,21 +67,21 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                   widget.onCompleted != null) {
                 _notifiedCompleted = true;
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    widget.onCompleted!.call();
-                  }
+                 // if (mounted) {
+                //    widget.onCompleted!.call();
+                 // }
                 });
               }
 
               return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+
                 children: <Widget>[
-                  const Spacer(flex: 2),
+                  const Spacer(flex: 3),
                   Transform.translate(
                     offset: Offset(0, floatOffset),
                     child: Image.asset(
                       'assets/images/splash.png',
-                      width: size.width * 0.56,
+                      width: size.width * 0.5,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -91,7 +91,7 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                     textAlign: TextAlign.center,
                     style: AppTextStyles.headingH1,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
                     '섬과 섬을 잇는 라운지',
                     textAlign: TextAlign.center,
@@ -100,7 +100,7 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                       weight: FontWeight.w400,
                     ),
                   ),
-                  const Spacer(flex: 2),
+                  const Spacer(flex: 1),
                   Row(
                     children: <Widget>[
                       Expanded(
