@@ -831,8 +831,17 @@ class _CatalogItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rare = _isRare(item.tags);
-    final tag1 = _resolvePrimaryTag(item.tags) ?? item.category;
     final isVillager = item.category == '주민';
+    final tag1 = _resolvePrimaryTag(item.tags) ?? item.category;
+    final speciesLabel = isVillager
+        ? (_extractPrefixedTagValue(item.tags, '종') ?? tag1)
+        : tag1;
+    final personality = isVillager
+        ? _extractPrefixedTagValue(item.tags, '성격')
+        : null;
+    final personalityBadgeStyle = personality == null
+        ? null
+        : _PersonalityBadgeStyle.resolve(personality);
     final statusStyle = _StatusStyle.resolve(
       completed: completed,
       donationMode: donationMode,
@@ -882,10 +891,16 @@ class _CatalogItemCard extends StatelessWidget {
                     runSpacing: 6,
                     children: <Widget>[
                       _SmallBadge(
-                        label: tag1,
-                        background: AppColors.badgeBlueBg,
-                        foreground: AppColors.badgeBlueText,
+                        label: speciesLabel,
+                        background: AppColors.transparent,
+                        foreground: AppColors.textMuted,
                       ),
+                      if (isVillager && personality != null)
+                        _SmallBadge(
+                          label: personality,
+                          background: personalityBadgeStyle!.background,
+                          foreground: personalityBadgeStyle.foreground,
+                        ),
                       if (!isVillager)
                         _SmallBadge(
                           label: donationMode
@@ -908,8 +923,10 @@ class _CatalogItemCard extends StatelessWidget {
                     icon: Icons.home_rounded,
                     semanticLabel: completed ? '거주중' : '거주 선택',
                     selected: completed,
-                    selectedBackground: AppColors.catalogSuccessBg,
-                    selectedForeground: AppColors.catalogSuccessText,
+                    selectedBackground: AppColors.textPrimary.withValues(
+                      alpha: 0.3,
+                    ),
+                    selectedForeground: AppColors.textPrimary,
                     onTap: onToggleResident,
                   ),
                   const SizedBox(width: 8),
@@ -917,8 +934,8 @@ class _CatalogItemCard extends StatelessWidget {
                     icon: Icons.favorite_rounded,
                     semanticLabel: favorite ? '선호중' : '선호 선택',
                     selected: favorite,
-                    selectedBackground: AppColors.badgePurpleBg,
-                    selectedForeground: AppColors.badgePurpleText,
+                    selectedBackground: Colors.red.withValues(alpha: 0.3),
+                    selectedForeground: Colors.red,
                     onTap: onToggleFavorite,
                   ),
                 ],
@@ -939,6 +956,20 @@ class _CatalogItemCard extends StatelessWidget {
         continue;
       }
       return tag;
+    }
+    return null;
+  }
+
+  String? _extractPrefixedTagValue(List<String> tags, String prefix) {
+    final key = '$prefix:';
+    for (final tag in tags) {
+      if (!tag.startsWith(key)) {
+        continue;
+      }
+      final value = tag.substring(key.length).trim();
+      if (value.isNotEmpty) {
+        return value;
+      }
     }
     return null;
   }
@@ -1055,9 +1086,9 @@ class _QuickIconToggleButton extends StatelessWidget {
           minimumSize: const Size(36, 36),
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(100),
             side: BorderSide(
-              color: selected ? selectedForeground : AppColors.borderDefault,
+              color: selected ? Colors.transparent : AppColors.borderDefault,
             ),
           ),
         ),
@@ -1151,6 +1182,69 @@ class _StatusStyle {
             background: AppColors.badgeBeigeBg,
             foreground: AppColors.badgeBeigeText,
           );
+  }
+}
+
+class _PersonalityBadgeStyle {
+  const _PersonalityBadgeStyle({
+    required this.background,
+    required this.foreground,
+  });
+
+  final Color background;
+  final Color foreground;
+
+  static _PersonalityBadgeStyle resolve(String personality) {
+    switch (personality.trim()) {
+      case '운동광':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffE8F3FF),
+          foreground: Color(0xff2C6BCF),
+        );
+      case '단순활발':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffFFF6CC),
+          foreground: Color(0xffC29B1E),
+        );
+      case '먹보':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffFFF4E5),
+          foreground: Color(0xffC57A1F),
+        );
+      case '무뚝뚝':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffF0F0F0),
+          foreground: Color(0xff6A6A6A),
+        );
+      case '보통':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffF1E39C),
+          foreground: AppColors.textPrimary,
+        );
+      case '스누티':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffF8D7FF),
+          foreground: Color(0xffC24AE9),
+        );
+      case '아이돌':
+        return const _PersonalityBadgeStyle(
+          background: Color(0xffEDE7FF),
+          foreground: Color(0xff6C63C9),
+        );
+      case '느끼함':
+        return const _PersonalityBadgeStyle(
+          background: AppColors.navActiveBg,
+          foreground: AppColors.textSecondary,
+        );
+      default:
+        // 유지보수 포인트:
+        // 데이터셋에 새로운 성격이 추가되면 기본값(블루)으로 우선 노출됩니다.
+        // 필요 시 switch 케이스만 추가해 성격별 색상을 확장해 주세요.
+        return const _PersonalityBadgeStyle(
+          background: AppColors.badgeBlueBg,
+          foreground: AppColors.badgeBlueText,
+        );
+    }
   }
 }
 
