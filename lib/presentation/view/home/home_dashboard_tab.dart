@@ -77,7 +77,7 @@ class HomeDashboardTab extends ConsumerWidget {
   // 디자인 변경 시 아래 토큰만 수정하면 홈 빈 카드가 함께 반영됩니다.
   static const Color _turnipEmptyCtaColor = Color(0xFF72D7B2);
   static const Color _turnipEmptyCtaShadowColor = Color(0x1A000000);
-  static const double _turnipEmptyMinHeight = 250;
+  static const double _turnipEmptyMinHeight = 300;
   static const double _turnipEmptyImageSize = 88;
   static const double _turnipEmptyButtonWidth = 288;
   static const double _turnipEmptyButtonHeight = 56;
@@ -627,7 +627,7 @@ class HomeDashboardTab extends ConsumerWidget {
                     weight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.s6),
+                const SizedBox(height: AppSpacing.s12),
                 Text(
                   '무 가격을 입력하고 계산해 주세요.',
                   style: AppTextStyles.bodyWithSize(

@@ -84,6 +84,10 @@ class _MarketRealtimeListenerState
     final now = DateTime.now();
     _pruneHandledEventCache(now);
     final queuedEventKeys = _pendingQueue.map(_notificationEventKey).toSet();
+    final recentlyReadEventKeys = _collectRecentlyReadEventKeys(
+      notifications: notifications,
+      now: now,
+    );
     final duplicateIdsToAutoRead = <String>[];
 
     final sorted = notifications.toList(growable: false)
@@ -116,6 +120,15 @@ class _MarketRealtimeListenerState
       }
 
       final eventKey = _notificationEventKey(notification);
+      if (recentlyReadEventKeys.contains(eventKey)) {
+        // 유지보수 포인트:
+        // 같은 이벤트 키가 이미 "읽음"으로 남아 있으면
+        // 미읽음 중복 문서는 즉시 읽음 처리해 모달 재노출을 막습니다.
+        _handledNotificationIds.add(notification.id);
+        duplicateIdsToAutoRead.add(notification.id);
+        continue;
+      }
+
       final handledAt = _handledEventAtByKey[eventKey];
       final isDuplicatedEvent =
           queuedEventKeys.contains(eventKey) ||
@@ -149,8 +162,11 @@ class _MarketRealtimeListenerState
         if (!_isRealtimeModalEnabled(notification)) {
           continue;
         }
-        await _showNotificationModal(notification);
+        // 유지보수 포인트:
+        // 모달 표시 전에 읽음 저장을 먼저 수행해
+        // 앱 재진입/화면 전환 시 같은 알림 모달이 반복 노출되는 현상을 줄입니다.
         await _markAsRead(notification.id);
+        await _showNotificationModal(notification);
         _handledEventAtByKey[_notificationEventKey(notification)] =
             DateTime.now();
       }
@@ -419,6 +435,29 @@ class _MarketRealtimeListenerState
     for (final id in notificationIds) {
       await _markAsRead(id);
     }
+  }
+
+  Set<String> _collectRecentlyReadEventKeys({
+    required List<MarketUserNotification> notifications,
+    required DateTime now,
+  }) {
+    final readEventKeys = <String>{};
+    for (final notification in notifications) {
+      if (!notification.isRead) {
+        continue;
+      }
+      if (!notification.isTradeAccept &&
+          !notification.isTradeCode &&
+          !notification.isTradeProposal &&
+          !notification.isTradeCancel) {
+        continue;
+      }
+      if (now.difference(notification.createdAt) > _realtimeLookbackWindow) {
+        continue;
+      }
+      readEventKeys.add(_notificationEventKey(notification));
+    }
+    return readEventKeys;
   }
 
   String _notificationEventKey(MarketUserNotification notification) {

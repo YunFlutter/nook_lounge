@@ -132,6 +132,10 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
     final detailRows = _buildDetailRows();
     final detailImages = _buildDetailImages();
     final personality = _isVillager ? _extractPrefixedTagValue('성격') : null;
+    final habitat = _isVillager ? null : _extractPrefixedTagValue('서식처');
+    final habitatBadgeStyle = habitat == null
+        ? null
+        : _HabitatBadgeStyle.resolve(habitat);
     final personalityBadgeStyle = personality == null
         ? null
         : _VillagerPersonalityBadgeStyle.resolve(personality);
@@ -236,12 +240,24 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
                                   personality != null &&
                                   tag == personality &&
                                   personalityBadgeStyle != null;
+                              final isHabitatTag =
+                                  !_isVillager &&
+                                  habitat != null &&
+                                  tag == habitat &&
+                                  habitatBadgeStyle != null;
                               final isRareTag = _isRareBadgeTag(tag);
                               if (isRareTag) {
                                 return _InfoChip(
                                   label: tag,
                                   background: AppColors.badgeRedBg,
                                   foreground: AppColors.badgeRedText,
+                                );
+                              }
+                              if (isHabitatTag) {
+                                return _InfoChip(
+                                  label: tag,
+                                  background: habitatBadgeStyle.background,
+                                  foreground: habitatBadgeStyle.foreground,
                                 );
                               }
                               if (!isPersonalityTag) {
@@ -496,11 +512,12 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        const SizedBox(height: 12),
         Text(
           _isOptionCategory ? '색상 옵션' : '',
           style: AppTextStyles.bodyPrimaryHeavy,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         SizedBox(
           height: 138,
           child: ListView.separated(
@@ -1045,6 +1062,115 @@ class _InfoChip extends StatelessWidget {
       ),
       child: Text(label, style: AppTextStyles.captionWithColor(foreground)),
     );
+  }
+}
+
+class _HabitatBadgeStyle {
+  const _HabitatBadgeStyle({
+    required this.background,
+    required this.foreground,
+  });
+
+  final Color background;
+  final Color foreground;
+
+  static const _HabitatBadgeStyle _waterStyle = _HabitatBadgeStyle(
+    background: Color(0xffE8F3FF),
+    foreground: Color(0xff2C6BCF),
+  );
+  static const _HabitatBadgeStyle _flowerStyle = _HabitatBadgeStyle(
+    background: Color(0xffFFF6CC),
+    foreground: Color(0xffC29B1E),
+  );
+  static const _HabitatBadgeStyle _treeStyle = _HabitatBadgeStyle(
+    background: Color(0xffFFF4E5),
+    foreground: Color(0xffC57A1F),
+  );
+  static const _HabitatBadgeStyle _rockStyle = _HabitatBadgeStyle(
+    background: Color(0xffF0F0F0),
+    foreground: Color(0xff6A6A6A),
+  );
+  static const _HabitatBadgeStyle _groundStyle = _HabitatBadgeStyle(
+    background: Color(0xffF1E39C),
+    foreground: AppColors.textPrimary,
+  );
+  static const _HabitatBadgeStyle _airStyle = _HabitatBadgeStyle(
+    background: Color(0xffF8D7FF),
+    foreground: Color(0xffC24AE9),
+  );
+  static const _HabitatBadgeStyle _specialStyle = _HabitatBadgeStyle(
+    background: Color(0xffEDE7FF),
+    foreground: Color(0xff6C63C9),
+  );
+  static const _HabitatBadgeStyle _neutralStyle = _HabitatBadgeStyle(
+    background: AppColors.navActiveBg,
+    foreground: AppColors.textSecondary,
+  );
+  static const List<_HabitatBadgeStyle> _fallbackPalette = <_HabitatBadgeStyle>[
+    _waterStyle,
+    _flowerStyle,
+    _treeStyle,
+    _rockStyle,
+    _groundStyle,
+    _airStyle,
+    _specialStyle,
+    _neutralStyle,
+  ];
+
+  static _HabitatBadgeStyle resolve(String habitat) {
+    final normalized = habitat.trim();
+    if (normalized.isEmpty) {
+      return _waterStyle;
+    }
+    if (_containsAny(normalized, <String>[
+      '바다',
+      '강',
+      '연못',
+      '물가',
+      '부둣가',
+      '해안',
+    ])) {
+      return _waterStyle;
+    }
+    if (_containsAny(normalized, <String>['꽃'])) {
+      return _flowerStyle;
+    }
+    if (_containsAny(normalized, <String>['나무', '야자수', '그루터기', '열매'])) {
+      return _treeStyle;
+    }
+    if (_containsAny(normalized, <String>['바위', '절벽'])) {
+      return _rockStyle;
+    }
+    if (_containsAny(normalized, <String>[
+      '지면',
+      '언더그라운드',
+      '쓰레기',
+      '썩은',
+      '눈덩이',
+    ])) {
+      return _groundStyle;
+    }
+    if (_containsAny(normalized, <String>['비행', '광원'])) {
+      return _airStyle;
+    }
+    if (_containsAny(normalized, <String>['위장', '주민'])) {
+      return _specialStyle;
+    }
+
+    // 유지보수 포인트:
+    // 새 서식처 문자열이 들어와도 한 가지 색으로 고정되지 않도록
+    // 해시 버킷으로 팔레트에 분산해 카드/상세 시트의 시각 톤을 맞춥니다.
+    final bucket = normalized.runes.fold<int>(0, (sum, rune) => sum + rune);
+    return _fallbackPalette[bucket % _fallbackPalette.length];
+  }
+
+  static bool _containsAny(String source, List<String> keywords) {
+    for (final keyword in keywords) {
+      if (source.contains(keyword)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
