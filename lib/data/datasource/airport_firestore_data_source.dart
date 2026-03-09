@@ -341,20 +341,6 @@ class AirportFirestoreDataSource {
       'sourceOfferId': sourceOfferId?.trim(),
       'sourceMoveType': sourceMoveType?.trim(),
     });
-
-    await _writeVisitLog(
-      islandId: normalizedIslandId,
-      eventType: 'visit_request_submitted',
-      requestId: requestDoc.id,
-      hostUid: normalizedHostUid,
-      requesterUid: normalizedRequesterUid,
-      payload: <String, dynamic>{
-        'purpose': purpose.name,
-        'sourceType': sourceType?.trim() ?? '',
-        'sourceOfferId': sourceOfferId?.trim() ?? '',
-        'sourceMoveType': sourceMoveType?.trim() ?? '',
-      },
-    );
   }
 
   Future<void> cancelVisitRequest({
@@ -383,16 +369,6 @@ class AirportFirestoreDataSource {
           'cancelByUid': normalizedCancelByUid,
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
-
-    await _writeVisitLog(
-      islandId: normalizedIslandId,
-      eventType: 'visit_request_cancelled',
-      requestId: normalizedRequestId,
-      actorUid: normalizedCancelByUid,
-      payload: <String, dynamic>{
-        'status': AirportVisitRequestStatus.cancelled.name,
-      },
-    );
   }
 
   Future<void> inviteRequests({
@@ -444,22 +420,6 @@ class AirportFirestoreDataSource {
     );
 
     await batch.commit();
-
-    for (final requestId in requestIds) {
-      final normalizedRequestId = requestId.trim();
-      if (normalizedRequestId.isEmpty) {
-        continue;
-      }
-      await _writeVisitLog(
-        islandId: normalizedIslandId,
-        eventType: 'visit_request_invited',
-        requestId: normalizedRequestId,
-        payload: <String, dynamic>{
-          'inviteCode': normalizedCode,
-          'status': AirportVisitRequestStatus.invited.name,
-        },
-      );
-    }
   }
 
   Future<void> markArrived({
@@ -484,15 +444,6 @@ class AirportFirestoreDataSource {
           'arrivedAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
-
-    await _writeVisitLog(
-      islandId: normalizedIslandId,
-      eventType: 'visit_request_arrived',
-      requestId: normalizedRequestId,
-      payload: <String, dynamic>{
-        'status': AirportVisitRequestStatus.arrived.name,
-      },
-    );
   }
 
   Future<void> completeVisit({
@@ -564,29 +515,15 @@ class AirportFirestoreDataSource {
     }
     await batch.commit();
 
-    var syncedRequestCount = sameIslandRefs.length;
     for (final ref in crossIslandRefs) {
       try {
         await ref.set(payload, SetOptions(merge: true));
-        syncedRequestCount += 1;
       } catch (_) {
         // 유지보수 포인트:
         // 교차 섬 요청 동기화는 권한/규칙에 따라 실패할 수 있으므로
         // 현재 섬 방문 종료 처리 자체는 성공으로 유지합니다.
       }
     }
-
-    await _writeVisitLog(
-      islandId: normalizedIslandId,
-      eventType: 'visit_request_completed',
-      requestId: normalizedRequestId,
-      payload: <String, dynamic>{
-        'status': AirportVisitRequestStatus.completed.name,
-        'sourceOfferId': sourceOfferId,
-        'syncedRequestCount': syncedRequestCount,
-        'candidateRequestCount': sameIslandRefs.length + crossIslandRefs.length,
-      },
-    );
   }
 
   String _extractIslandIdFromRequestRefPath(String path) {
@@ -655,19 +592,6 @@ class AirportFirestoreDataSource {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     });
-
-    await _writeVisitLog(
-      islandId: normalizedIslandId,
-      eventType: 'visit_request_reported',
-      requestId: normalizedRequestId,
-      hostUid: normalizedHostUid,
-      requesterUid: normalizedRequesterUid,
-      actorUid: normalizedReporterUid,
-      payload: <String, dynamic>{
-        'sourceType': normalizedSourceType,
-        'sourceOfferId': normalizedSourceOfferId,
-      },
-    );
   }
 
   String _resolveTradeSourceOfferId({
@@ -861,38 +785,5 @@ class AirportFirestoreDataSource {
       case AirportVisitRequestStatus.completed:
         return 4;
     }
-  }
-
-  Future<void> _writeVisitLog({
-    required String islandId,
-    required String eventType,
-    String? requestId,
-    String? hostUid,
-    String? requesterUid,
-    String? actorUid,
-    Map<String, dynamic>? payload,
-  }) async {
-    final normalizedIslandId = islandId.trim();
-    final normalizedEventType = eventType.trim();
-    if (normalizedIslandId.isEmpty || normalizedEventType.isEmpty) {
-      return;
-    }
-
-    // 유지보수 포인트:
-    // 방문 신청/초대/상태변경 이력을 카테고리별 루트 로그 컬렉션에 append-only로 남깁니다.
-    final logRef = _firestore
-        .collection(FirestorePaths.airportRequestLogs())
-        .doc();
-    await logRef.set(<String, dynamic>{
-      'id': logRef.id,
-      'islandId': normalizedIslandId,
-      'eventType': normalizedEventType,
-      'requestId': requestId?.trim() ?? '',
-      'hostUid': hostUid?.trim() ?? '',
-      'requesterUid': requesterUid?.trim() ?? '',
-      'actorUid': actorUid?.trim() ?? '',
-      'createdAt': FieldValue.serverTimestamp(),
-      ...?payload,
-    });
   }
 }

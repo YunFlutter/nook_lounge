@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,48 +97,27 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
         prediction: prediction,
         errorMessage: null,
       );
-    } on TimeoutException catch (error, stackTrace) {
-      _logError('calculate timeout', error: error, stackTrace: stackTrace);
+    } on TimeoutException {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '요청 시간이 초과되었어요. 잠시 후 다시 시도해주세요.',
       );
-    } on SocketException catch (error, stackTrace) {
-      _logError(
-        'calculate socket exception',
-        error: error,
-        stackTrace: stackTrace,
-      );
+    } on SocketException {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '네트워크에 연결할 수 없어요. 인터넷 상태를 확인해주세요.',
       );
-    } on HttpException catch (error, stackTrace) {
-      _logError(
-        'calculate http exception',
-        error: error,
-        stackTrace: stackTrace,
-      );
+    } on HttpException catch (error) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '서버 응답 오류가 발생했어요. (${error.message})',
       );
-    } on FormatException catch (error, stackTrace) {
-      _logError(
-        'calculate format exception',
-        error: error,
-        stackTrace: stackTrace,
-      );
+    } on FormatException {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '예측 데이터 형식을 해석하지 못했어요. 잠시 후 다시 시도해주세요.',
       );
-    } catch (error, stackTrace) {
-      _logError(
-        'calculate unknown exception',
-        error: error,
-        stackTrace: stackTrace,
-      );
+    } catch (_) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '예측 계산 중 알 수 없는 오류가 발생했어요. 다시 시도해주세요.',
@@ -169,18 +147,9 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
         return;
       }
       _applySavedState(saved);
-    } on TimeoutException catch (error, stackTrace) {
-      _logError(
-        'initial saved state load timeout',
-        error: error,
-        stackTrace: stackTrace,
-      );
-    } catch (error, stackTrace) {
-      _logError(
-        'initial saved state load failed',
-        error: error,
-        stackTrace: stackTrace,
-      );
+    } on TimeoutException {
+      // 저장 데이터 첫 로드 타임아웃은 입력 기반 사용을 허용하기 위해 무시합니다.
+    } catch (_) {
       if (!mounted) {
         return;
       }
@@ -201,15 +170,6 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
       prediction: saved.prediction,
       errorMessage: null,
       activeDayIndex: -1,
-    );
-  }
-
-  void _logError(String message, {Object? error, StackTrace? stackTrace}) {
-    developer.log(
-      '[TurnipViewModel] $message',
-      error: error,
-      stackTrace: stackTrace,
-      name: 'turnip',
     );
   }
 }

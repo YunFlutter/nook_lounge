@@ -60,9 +60,9 @@ class FirestorePaths {
 
   static String userNotifications(String uid) => 'users/$uid/notifications';
 
-  static String userAccessLogs() => 'userAccessLogs';
+  static String userServiceBlocks() => 'userServiceBlocks';
 
-  static String userAccessLog(String logId) => '${userAccessLogs()}/$logId';
+  static String userServiceBlock(String uid) => '${userServiceBlocks()}/$uid';
 
   static String hiddenMarketOffers(String uid) =>
       'users/$uid/hiddenMarketOffers';
@@ -85,11 +85,6 @@ class FirestorePaths {
   static String supportInquiry(String inquiryId) =>
       '${supportInquiries()}/$inquiryId';
 
-  static String airportRequestLogs() => 'airportRequestLogs';
-
-  static String airportRequestLog(String logId) =>
-      '${airportRequestLogs()}/$logId';
-
   static String appNotices() => 'appNotices';
 
   static String appNotice(String noticeId) => '${appNotices()}/$noticeId';
@@ -98,8 +93,4 @@ class FirestorePaths {
 
   static String appDocument(String documentId) =>
       '${appDocuments()}/$documentId';
-
-  static String marketTradeLogs() => 'marketTradeLogs';
-
-  static String marketTradeLog(String logId) => '${marketTradeLogs()}/$logId';
 }

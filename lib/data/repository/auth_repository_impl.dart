@@ -1,3 +1,4 @@
+import 'package:nook_lounge_app/domain/model/user_service_block.dart';
 import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 
@@ -21,6 +22,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> hasUserDocument(String uid) => _dataSource.hasUserDocument(uid);
+
+  @override
+  Future<UserServiceBlock?> getActiveServiceBlock(String uid) {
+    return _dataSource.getActiveServiceBlock(uid);
+  }
 
   @override
   Future<void> signInWithGoogle() => _dataSource.signInWithGoogle();

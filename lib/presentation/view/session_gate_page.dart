@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/error_retry_view.dart';
 import 'package:nook_lounge_app/presentation/view/guest_browse_page.dart';
 import 'package:nook_lounge_app/presentation/view/home_shell_page.dart';
+import 'package:nook_lounge_app/presentation/view/session_access_blocked_dialog.dart';
 import 'package:nook_lounge_app/presentation/view/sign_in_page.dart';
 import 'package:nook_lounge_app/presentation/view/splash_loading_page.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
@@ -23,6 +24,8 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
   bool _splashCompleted = false;
   ProviderSubscription<SessionViewState>? _sessionSubscription;
   String? _lastSignedOutMessage;
+  String? _lastBlockedDialogKey;
+  bool _isShowingBlockedDialog = false;
 
   @override
   void initState() {
@@ -49,6 +52,23 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
     SessionViewState next,
   ) {
     final nextSession = next.session;
+    if (nextSession is SessionBlocked) {
+      final blockedDialogKey = _buildBlockedDialogKey(nextSession);
+      if (_isShowingBlockedDialog ||
+          blockedDialogKey == _lastBlockedDialogKey) {
+        return;
+      }
+      _lastBlockedDialogKey = blockedDialogKey;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        _showBlockedDialog(nextSession);
+      });
+      return;
+    }
+
+    _lastBlockedDialogKey = null;
     if (nextSession is! SessionSignedOut) {
       _lastSignedOutMessage = null;
       return;
@@ -89,6 +109,42 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
         ref.read(sessionViewModelProvider.notifier).clearError();
       }
     });
+  }
+
+  String _buildBlockedDialogKey(SessionBlocked session) {
+    return [
+      session.uid,
+      session.block.blockedUntilDateTime
+          .toUtc()
+          .millisecondsSinceEpoch
+          .toString(),
+      session.block.normalizedReason ?? '',
+    ].join('|');
+  }
+
+  Future<void> _showBlockedDialog(SessionBlocked session) async {
+    if (_isShowingBlockedDialog) {
+      return;
+    }
+
+    _isShowingBlockedDialog = true;
+    try {
+      // 유지보수 포인트:
+      // blocked 세션은 화면 이동을 막는 상태이므로, 동일 차단 정보에 대해
+      // 다이얼로그가 중복으로 누적되지 않게 1회만 띄웁니다.
+      await SessionAccessBlockedDialog.show(
+        context: context,
+        block: session.block,
+      );
+      if (!mounted) {
+        return;
+      }
+      await ref
+          .read(sessionViewModelProvider.notifier)
+          .acknowledgeBlockedSession();
+    } finally {
+      _isShowingBlockedDialog = false;
+    }
   }
 
   void _showSignedOutSnackBar(String message) {
@@ -132,6 +188,7 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
     final isAnonymous = ref.watch(authRepositoryProvider).isAnonymous;
     final session = state.session;
     final isSignedOut = session is SessionSignedOut;
+    final isBlocked = session is SessionBlocked;
 
     if (!_splashCompleted) {
       return SplashLoadingPage(
@@ -147,7 +204,7 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
       );
     }
 
-    if (!isSignedOut && state.errorMessage != null) {
+    if (!isSignedOut && !isBlocked && state.errorMessage != null) {
       return ErrorRetryView(
         title: state.errorTitle ?? '데이터를 불러오지 못했어요',
         message: state.errorMessage ?? AppStrings.loadErrorMessage,
@@ -165,6 +222,7 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
       ready: (uid) => uid == SessionViewModel.guestUid || isAnonymous
           ? GuestBrowsePage(uid: uid)
           : HomeShellPage(uid: uid),
+      blocked: (uid, block) => const SignInPage(),
     );
   }
 }

@@ -44,7 +44,6 @@ class PushMessageService {
     Duration(seconds: 2),
     Duration(seconds: 3),
   ];
-
   static const String _diagNotificationPermissionDenied =
       'NOTIFICATION_PERMISSION_DENIED';
   static const String _diagApnsTokenUnavailable = 'APNS_TOKEN_UNAVAILABLE';

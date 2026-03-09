@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
 import 'package:nook_lounge_app/core/error/app_exception.dart';
+import 'package:nook_lounge_app/domain/model/user_service_block.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class FirebaseAuthDataSource {
@@ -67,6 +69,36 @@ class FirebaseAuthDataSource {
     return serverDoc.exists;
   }
 
+  Future<UserServiceBlock?> getActiveServiceBlock(String uid) async {
+    final normalizedUid = uid.trim();
+    if (normalizedUid.isEmpty) {
+      return null;
+    }
+
+    final blockRef = _firestore.doc(
+      FirestorePaths.userServiceBlock(normalizedUid),
+    );
+
+    try {
+      final serverDoc = await blockRef.get(
+        const GetOptions(source: Source.server),
+      );
+
+      // 유지보수 포인트:
+      // 서비스 차단은 users 문서가 아닌 전용 컬렉션(userServiceBlocks/{uid})을
+      // 단일 소스로 보고, 서버 상태를 최우선으로 확인합니다.
+      return parseActiveServiceBlock(serverDoc.data());
+    } on FirebaseException {
+      // 유지보수 포인트:
+      // 서버 확인이 실패하면 마지막 캐시 상태로만 제한적으로 fallback 합니다.
+    }
+
+    final cachedDoc = await blockRef.get(
+      const GetOptions(source: Source.cache),
+    );
+    return parseActiveServiceBlock(cachedDoc.data());
+  }
+
   Future<void> signInWithGoogle() async {
     if (!_googleInitialized) {
       await _googleSignIn.initialize();
@@ -89,14 +121,6 @@ class FirebaseAuthDataSource {
     final userCredential = await _firebaseAuth.signInWithCredential(credential);
     final user = userCredential.user;
     await _syncUserDocument(user);
-    if (user != null) {
-      await _writeAccessLog(
-        uid: user.uid,
-        eventType: 'sign_in',
-        provider: 'google',
-        isAnonymous: user.isAnonymous,
-      );
-    }
   }
 
   Future<void> signInWithApple() async {
@@ -122,41 +146,15 @@ class FirebaseAuthDataSource {
     final userCredential = await _firebaseAuth.signInWithCredential(credential);
     final user = userCredential.user;
     await _syncUserDocument(user);
-    if (user != null) {
-      await _writeAccessLog(
-        uid: user.uid,
-        eventType: 'sign_in',
-        provider: 'apple',
-        isAnonymous: user.isAnonymous,
-      );
-    }
   }
 
   Future<void> signInAnonymously() async {
     final userCredential = await _firebaseAuth.signInAnonymously();
     final user = userCredential.user;
     await _syncUserDocument(user);
-    if (user != null) {
-      await _writeAccessLog(
-        uid: user.uid,
-        eventType: 'sign_in',
-        provider: 'anonymous',
-        isAnonymous: user.isAnonymous,
-      );
-    }
   }
 
   Future<void> signOut() async {
-    final currentUser = _firebaseAuth.currentUser;
-    if (currentUser != null) {
-      await _writeAccessLog(
-        uid: currentUser.uid,
-        eventType: 'sign_out',
-        provider: _resolvePrimaryProvider(currentUser),
-        isAnonymous: currentUser.isAnonymous,
-      );
-    }
-
     await _firebaseAuth.signOut();
 
     if (_googleInitialized) {
@@ -175,13 +173,6 @@ class FirebaseAuthDataSource {
       'withdrawnAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
-
-    await _writeAccessLog(
-      uid: currentUser.uid,
-      eventType: 'withdrawal_requested',
-      provider: _resolvePrimaryProvider(currentUser),
-      isAnonymous: currentUser.isAnonymous,
-    );
   }
 
   Future<void> _syncUserDocument(User? user) async {
@@ -215,47 +206,54 @@ class FirebaseAuthDataSource {
     }, SetOptions(merge: true));
   }
 
-  Future<void> _writeAccessLog({
-    required String uid,
-    required String eventType,
-    required String provider,
-    required bool isAnonymous,
-  }) async {
-    final normalizedUid = uid.trim();
-    final normalizedEventType = eventType.trim();
-    if (normalizedUid.isEmpty || normalizedEventType.isEmpty) {
-      return;
+  @visibleForTesting
+  static UserServiceBlock? parseActiveServiceBlock(
+    Map<String, dynamic>? data, {
+    DateTime? now,
+  }) {
+    if (data == null || data.isEmpty) {
+      return null;
     }
 
-    // 유지보수 포인트:
-    // 보안/감사 기준으로 접속 이력을 카테고리별 루트 컬렉션에 append-only로 저장합니다.
-    final logRef = _firestore.collection(FirestorePaths.userAccessLogs()).doc();
-    await logRef.set(<String, dynamic>{
-      'id': logRef.id,
-      'uid': normalizedUid,
-      'eventType': normalizedEventType,
-      'provider': provider.trim(),
-      'isAnonymous': isAnonymous,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    final blockedUntilDateTime = _readFirestoreDateTime(
+      data['blockedUntilDateTime'],
+    );
+    if (blockedUntilDateTime == null) {
+      return null;
+    }
+
+    final currentTime = now ?? DateTime.now();
+    final block = UserServiceBlock(
+      blockedUntilDateTime: blockedUntilDateTime,
+      blockedAtDateTime: _readFirestoreDateTime(data['blockedAtDateTime']),
+      reason: _readTrimmedString(data['reason']),
+    );
+
+    if (!block.isActiveAt(currentTime)) {
+      return null;
+    }
+
+    return block;
   }
 
-  String _resolvePrimaryProvider(User user) {
-    if (user.isAnonymous) {
-      return 'anonymous';
+  static DateTime? _readFirestoreDateTime(Object? value) {
+    if (value is Timestamp) {
+      return value.toDate();
     }
-    for (final provider in user.providerData) {
-      final providerId = provider.providerId.trim();
-      if (providerId == 'google.com') {
-        return 'google';
-      }
-      if (providerId == 'apple.com') {
-        return 'apple';
-      }
-      if (providerId.isNotEmpty) {
-        return providerId;
-      }
+    if (value is DateTime) {
+      return value;
     }
-    return 'unknown';
+    return null;
+  }
+
+  static String? _readTrimmedString(Object? value) {
+    if (value is! String) {
+      return null;
+    }
+    final trimmedValue = value.trim();
+    if (trimmedValue.isEmpty) {
+      return null;
+    }
+    return trimmedValue;
   }
 }

@@ -75,18 +75,6 @@ class MarketFirestoreDataSource {
     await _firestore
         .doc(FirestorePaths.marketPost(offer.id))
         .set(payload, SetOptions(merge: true));
-    await _writeTradeLog(
-      offerId: offer.id,
-      eventType: 'offer_created',
-      actorUid: offer.ownerUid,
-      payload: <String, dynamic>{
-        'title': offer.title.trim(),
-        'tradeType': offer.tradeType.name,
-        'moveType': offer.moveType.name,
-        'status': offer.status.name,
-        'lifecycle': offer.lifecycle.name,
-      },
-    );
   }
 
   Future<void> updateOffer(MarketOffer offer) async {
@@ -104,18 +92,6 @@ class MarketFirestoreDataSource {
     await _firestore
         .doc(FirestorePaths.marketPost(offer.id))
         .set(payload, SetOptions(merge: true));
-    await _writeTradeLog(
-      offerId: offer.id,
-      eventType: 'offer_updated',
-      actorUid: offer.ownerUid,
-      payload: <String, dynamic>{
-        'title': offer.title.trim(),
-        'tradeType': offer.tradeType.name,
-        'moveType': offer.moveType.name,
-        'status': offer.status.name,
-        'lifecycle': offer.lifecycle.name,
-      },
-    );
   }
 
   Future<void> updateOfferLifecycle({
@@ -136,14 +112,6 @@ class MarketFirestoreDataSource {
     await _firestore
         .doc(FirestorePaths.marketPost(offerId))
         .set(payload, SetOptions(merge: true));
-    await _writeTradeLog(
-      offerId: offerId,
-      eventType: 'offer_lifecycle_updated',
-      payload: <String, dynamic>{
-        'lifecycle': lifecycle.name,
-        'status': status?.name ?? '',
-      },
-    );
   }
 
   Future<void> completeTrade({
@@ -294,16 +262,6 @@ class MarketFirestoreDataSource {
         body: '$normalizedTitle 거래가 완료 처리되었어요.',
       );
     }
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_completed',
-      actorUid: normalizedRequesterUid,
-      counterpartUid: counterpartUid,
-      payload: <String, dynamic>{
-        'title': offerTitle.trim(),
-        'ownerUid': ownerUid,
-      },
-    );
   }
 
   Future<void> updateOfferBasicInfo({
@@ -351,11 +309,6 @@ class MarketFirestoreDataSource {
         status: AirportVisitRequestStatus.cancelled,
       );
     } catch (_) {}
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'offer_deleted',
-      payload: <String, dynamic>{'status': 'deleted'},
-    );
   }
 
   Stream<List<MarketTradeProposal>> watchTradeProposals(String offerId) {
@@ -503,15 +456,6 @@ class MarketFirestoreDataSource {
       'updatedAt': FieldValue.serverTimestamp(),
       'updatedAtMillis': FieldValue.delete(),
     }, SetOptions(merge: true));
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_proposal_sent',
-      actorUid: trimmedProposerUid,
-      counterpartUid: trimmedOwnerUid,
-      payload: <String, dynamic>{
-        'status': MarketTradeProposalStatus.pending.name,
-      },
-    );
 
     final normalizedTitle = offerTitle.trim().isEmpty
         ? '거래글'
@@ -693,13 +637,6 @@ class MarketFirestoreDataSource {
       offerId: normalizedOfferId,
       title: '거래 승낙 알림',
       body: '$normalizedTitle 거래가 승낙되었어요. 코드를 확인해 주세요.',
-    );
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_proposal_accepted',
-      actorUid: normalizedOwnerUid,
-      counterpartUid: normalizedProposerUid,
-      payload: <String, dynamic>{'moveType': moveType.name},
     );
     return session;
   }
@@ -898,13 +835,6 @@ class MarketFirestoreDataSource {
         'updatedAtMillis': FieldValue.delete(),
       }, SetOptions(merge: true));
     });
-
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_rules_agreed',
-      actorUid: normalizedReceiverUid,
-      payload: <String, dynamic>{'code': normalizedCode},
-    );
   }
 
   Future<String?> fetchPreferredTradeDodoCode({
@@ -1074,16 +1004,6 @@ class MarketFirestoreDataSource {
           'updatedAt': FieldValue.serverTimestamp(),
           'updatedAtMillis': FieldValue.delete(),
         }, SetOptions(merge: true));
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_code_sent',
-      actorUid: normalizedSenderUid,
-      counterpartUid: normalizedReceiverUid,
-      payload: <String, dynamic>{
-        'inviteCode': effectiveCode,
-        'rulesLength': normalizedIslandRules.length,
-      },
-    );
     try {
       await _syncAirportInviteForTradeCode(
         offerId: normalizedOfferId,
@@ -1400,17 +1320,6 @@ class MarketFirestoreDataSource {
         body: '$normalizedTitle 거래가 취소되어 대기 상태로 변경되었어요.',
       );
     }
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_cancelled',
-      actorUid: normalizedRequesterUid,
-      counterpartUid: counterpartUid,
-      payload: <String, dynamic>{
-        'requesterIsOwner': requesterIsOwner,
-        'reopened': shouldReopenOffer,
-        'offerCancelled': false,
-      },
-    );
   }
 
   Future<void> reportTradeOffer({
@@ -1483,16 +1392,6 @@ class MarketFirestoreDataSource {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     });
-    await _writeTradeLog(
-      offerId: normalizedOfferId,
-      eventType: 'trade_offer_reported',
-      actorUid: normalizedReporterUid,
-      counterpartUid: normalizedOwnerUid,
-      payload: <String, dynamic>{
-        'reason': normalizedReason,
-        'hasDetail': normalizedDetail.isNotEmpty,
-      },
-    );
   }
 
   Stream<Set<String>> watchHiddenOfferIds(String uid) {
@@ -2110,35 +2009,6 @@ class MarketFirestoreDataSource {
     ]);
 
     return (proposerName, proposerAvatarUrl);
-  }
-
-  Future<void> _writeTradeLog({
-    required String offerId,
-    required String eventType,
-    String? actorUid,
-    String? counterpartUid,
-    Map<String, dynamic>? payload,
-  }) async {
-    final normalizedOfferId = offerId.trim();
-    final normalizedEventType = eventType.trim();
-    if (normalizedOfferId.isEmpty || normalizedEventType.isEmpty) {
-      return;
-    }
-
-    // 유지보수 포인트:
-    // 거래 흐름의 핵심 상태 변경을 카테고리별 루트 로그 컬렉션에 append-only로 저장합니다.
-    final logRef = _firestore
-        .collection(FirestorePaths.marketTradeLogs())
-        .doc();
-    await logRef.set(<String, dynamic>{
-      'id': logRef.id,
-      'offerId': normalizedOfferId,
-      'eventType': normalizedEventType,
-      'actorUid': actorUid?.trim() ?? '',
-      'counterpartUid': counterpartUid?.trim() ?? '',
-      'createdAt': FieldValue.serverTimestamp(),
-      ...?payload,
-    });
   }
 
   Future<void> _sendUserNotification({

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/core/constants/app_strings.dart';
 import 'package:nook_lounge_app/core/error/firebase_error_mapper.dart';
@@ -77,6 +76,22 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
 
       _watchUserDocument(uid);
 
+      final activeServiceBlock = await _authRepository.getActiveServiceBlock(
+        uid,
+      );
+      if (activeServiceBlock != null) {
+        // 유지보수 포인트:
+        // 로그인은 성공했더라도 서비스 차단 기간이면 홈/섬 생성 화면으로 보내지 않고
+        // 세션 게이트에서 차단 모달만 띄울 수 있도록 blocked 상태로 고정합니다.
+        state = state.copyWith(
+          isLoading: false,
+          errorTitle: null,
+          errorMessage: null,
+          session: SessionState.blocked(uid: uid, block: activeServiceBlock),
+        );
+        return;
+      }
+
       if (_authRepository.isAnonymous) {
         // 유지보수 포인트:
         // 비회원(익명) 세션은 여권 등록을 강제하지 않고 둘러보기 홈으로 보냅니다.
@@ -119,9 +134,7 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
     try {
       try {
         await _authRepository.signOut();
-      } catch (error, stackTrace) {
-        debugPrint('Missing-user forced sign-out failed: $error\n$stackTrace');
-      }
+      } catch (_) {}
 
       if (!mounted) {
         return;
@@ -147,16 +160,11 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
   void _watchUserDocument(String uid) {
     _userDocumentSubscription = _authRepository
         .watchUserDocumentExists(uid)
-        .listen(
-          (exists) async {
-            if (!exists) {
-              await _handleMissingUserDocument(uid);
-            }
-          },
-          onError: (Object error, StackTrace stackTrace) {
-            debugPrint('User document watch failed: $error\n$stackTrace');
-          },
-        );
+        .listen((exists) async {
+          if (!exists) {
+            await _handleMissingUserDocument(uid);
+          }
+        }, onError: (_, _) {});
   }
 
   Future<void> _revalidateInBackground(String uid) async {
@@ -188,9 +196,8 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
         errorMessage: null,
         session: nextSession,
       );
-    } catch (error, stackTrace) {
-      // 백그라운드 재검증 실패는 UX를 막지 않도록 로그만 남깁니다.
-      debugPrint('Background revalidate failed: $error\n$stackTrace');
+    } catch (_) {
+      // 백그라운드 재검증 실패는 UX를 막지 않도록 현재 세션을 유지합니다.
     }
   }
 
@@ -216,6 +223,27 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
       return;
     }
     await _onUserChanged(_authRepository.currentUserId);
+  }
+
+  Future<void> acknowledgeBlockedSession() async {
+    final currentSession = state.session;
+    if (currentSession is! SessionBlocked) {
+      return;
+    }
+
+    try {
+      // 유지보수 포인트:
+      // 차단 안내 확인 후에는 인증 세션을 종료해, 사용자가 차단 기간 중
+      // 앱 내부 상태를 유지한 채 재진입하지 않도록 로그인 화면으로 되돌립니다.
+      await _authRepository.signOut();
+    } catch (error) {
+      final displayInfo = FirebaseErrorMapper.map(error);
+      state = state.copyWith(
+        isLoading: false,
+        errorTitle: displayInfo.title,
+        errorMessage: displayInfo.message,
+      );
+    }
   }
 
   void markIslandSetupCompleted({required String uid}) {

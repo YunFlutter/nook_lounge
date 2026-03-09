@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' as developer;
 import 'dart:io';
 
 class TurnipApiDataSource {
@@ -15,7 +14,6 @@ class TurnipApiDataSource {
     final uri = Uri.parse(
       'https://api.ac-turnip.com/data/',
     ).replace(queryParameters: <String, String>{'f': filter.join('-')});
-    developer.log('[TurnipApiDataSource] request $uri', name: 'turnip');
 
     final request = await _httpClient
         .getUrl(uri)
@@ -24,10 +22,6 @@ class TurnipApiDataSource {
     final response = await request.close().timeout(const Duration(seconds: 8));
 
     if (response.statusCode != HttpStatus.ok) {
-      developer.log(
-        '[TurnipApiDataSource] non-200 status=${response.statusCode}',
-        name: 'turnip',
-      );
       throw HttpException('turnip_api_status_${response.statusCode}');
     }
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
@@ -378,7 +377,6 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
             _applyMyRequests(markInitialized: true);
           },
           onError: (Object error, StackTrace stackTrace) {
-            debugPrint('$error');
             state = state.copyWith(
               isInitializing: false,
               errorMessage: '내 방문 요청 현황을 불러오지 못했어요.',
