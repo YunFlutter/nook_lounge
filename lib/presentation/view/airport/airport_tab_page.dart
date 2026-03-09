@@ -324,13 +324,16 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
   }) {
     final introSummary = _resolveGateIntroSummary(session);
     final hasIntroSummary = introSummary.isNotEmpty;
+    final gateBorderColor = session.gateOpen
+        ? AppColors.badgeBlueBg
+        : AppColors.borderDefault;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.bgCard,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.badgeBlueBg, width: 3),
+        border: Border.all(color: gateBorderColor, width: 3),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
