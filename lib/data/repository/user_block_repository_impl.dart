@@ -13,7 +13,20 @@ class UserBlockRepositoryImpl implements UserBlockRepository {
   }
 
   @override
+  Stream<Set<String>> watchInvisibleUserIds(String uid) {
+    return _dataSource.watchInvisibleUserIds(uid);
+  }
+
+  @override
   Future<void> blockUser({required String uid, required String blockedUid}) {
     return _dataSource.blockUser(uid: uid, blockedUid: blockedUid);
+  }
+
+  @override
+  Future<bool> hasBlockRelationship({
+    required String uid,
+    required String otherUid,
+  }) {
+    return _dataSource.hasBlockRelationship(uid: uid, otherUid: otherUid);
   }
 }

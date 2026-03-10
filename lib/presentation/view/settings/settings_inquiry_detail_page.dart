@@ -6,6 +6,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 
 class SettingsInquiryDetailPage extends ConsumerStatefulWidget {
   const SettingsInquiryDetailPage({
@@ -25,6 +26,7 @@ class SettingsInquiryDetailPage extends ConsumerStatefulWidget {
 class _SettingsInquiryDetailPageState
     extends ConsumerState<SettingsInquiryDetailPage> {
   static final DateFormat _dateFormat = DateFormat('yyyy.MM.dd');
+  static final DateFormat _dateTimeFormat = DateFormat('yyyy.MM.dd HH:mm');
 
   bool _deleting = false;
 
@@ -75,6 +77,13 @@ class _SettingsInquiryDetailPageState
           const Divider(height: 1),
           const SizedBox(height: 16),
           Text('운영자 답변', style: AppTextStyles.headingH3),
+          if (inquiry.answeredAt != null) ...<Widget>[
+            const SizedBox(height: 8),
+            Text(
+              '답변일 ${_dateTimeFormat.format(inquiry.answeredAt!)}',
+              style: AppTextStyles.captionMuted,
+            ),
+          ],
           const SizedBox(height: 12),
           Container(
             width: double.infinity,
@@ -102,24 +111,9 @@ class _SettingsInquiryDetailPageState
   }
 
   Future<void> _deleteInquiry() async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete = await SettingsDialogs.showInquiryDeleteConfirm(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('문의를 삭제할까요?'),
-          content: const Text('삭제된 문의는 복구할 수 없어요.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('취소'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('삭제'),
-            ),
-          ],
-        );
-      },
+      isAppeal: widget.inquiry.isAppeal,
     );
 
     if (shouldDelete != true || !mounted) {

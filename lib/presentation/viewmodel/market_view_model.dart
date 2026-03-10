@@ -286,18 +286,27 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   }
 
   Future<void> sendTradeProposal({required MarketOffer offer}) async {
-    final proposerUid = _authRepository.currentUserId ?? '';
+    final proposerUid = (_authRepository.currentUserId ?? '').trim();
     if (proposerUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 거래 제안을 보낼 수 있어요.');
       throw StateError('unauthenticated');
     }
-    if (offer.ownerUid.trim().isEmpty) {
+    final ownerUid = offer.ownerUid.trim();
+    if (ownerUid.isEmpty) {
       state = state.copyWith(errorMessage: '거래 작성자 정보를 찾지 못했어요.');
       throw StateError('invalid_offer_owner');
     }
-    if (offer.ownerUid == proposerUid) {
+    if (ownerUid == proposerUid) {
       state = state.copyWith(errorMessage: '내 거래글에는 제안할 수 없어요.');
       throw StateError('own_offer');
+    }
+    if (_blockedUserIds.contains(ownerUid) ||
+        await _userBlockRepository.hasBlockRelationship(
+          uid: proposerUid,
+          otherUid: ownerUid,
+        )) {
+      state = state.copyWith(errorMessage: '차단된 유저와는 거래 제안을 할 수 없어요.');
+      throw StateError('blocked_user');
     }
 
     final normalizedTitle = offer.title.trim().isEmpty
@@ -307,7 +316,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     try {
       await _repository.sendTradeProposalNotification(
         offerId: offer.id,
-        ownerUid: offer.ownerUid,
+        ownerUid: ownerUid,
         proposerUid: proposerUid,
         offerTitle: normalizedTitle,
       );
@@ -634,14 +643,14 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       return;
     }
     _blockedUserSubscription = _userBlockRepository
-        .watchBlockedUserIds(uid)
+        .watchInvisibleUserIds(uid)
         .listen(
           (blockedUserIds) {
             _blockedUserIds = blockedUserIds;
             _applyOffersState();
           },
           onError: (Object error, StackTrace stackTrace) {
-            state = state.copyWith(errorMessage: '차단 목록을 불러오지 못했어요.');
+            state = state.copyWith(errorMessage: '차단/상호 숨김 목록을 불러오지 못했어요.');
           },
         );
   }

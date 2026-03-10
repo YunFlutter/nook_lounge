@@ -1647,7 +1647,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: _snackContent(context, '해당 유저를 차단했어요. 게시물/요청을 숨깁니다.'),
+          content: _snackContent(context, '해당 유저를 차단했어요. 서로의 게시물/요청이 숨겨집니다.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1747,7 +1747,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 Text('유저 차단', style: AppTextStyles.dialogTitleCompact),
                 const SizedBox(height: 10),
                 Text(
-                  '해당 유저를 차단하면 게시물과 방문 요청이 보이지 않아요.',
+                  '해당 유저를 차단하면 서로의 게시물과 방문 요청이 보이지 않아요.',
                   style: AppTextStyles.dialogBodyCompact,
                 ),
                 const SizedBox(height: 18),

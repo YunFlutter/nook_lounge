@@ -5,11 +5,31 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_seed_data.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
+import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
 
 class SettingsInquiryFormPage extends ConsumerStatefulWidget {
-  const SettingsInquiryFormPage({required this.uid, super.key});
+  const SettingsInquiryFormPage({
+    required this.uid,
+    this.initialCategory,
+    this.initialTitle,
+    this.pageTitle = '1:1 문의하기',
+    this.submitButtonLabel = '문의 접수',
+    this.titleHintText = '문의 제목을 입력해주세요.',
+    this.bodyHintText = '문의하실 내용을 입력해주세요.',
+    this.lockCategory = false,
+    this.inquiryType = SupportInquiryType.general,
+    super.key,
+  });
 
   final String uid;
+  final String? initialCategory;
+  final String? initialTitle;
+  final String pageTitle;
+  final String submitButtonLabel;
+  final String titleHintText;
+  final String bodyHintText;
+  final bool lockCategory;
+  final SupportInquiryType inquiryType;
 
   @override
   ConsumerState<SettingsInquiryFormPage> createState() =>
@@ -22,8 +42,24 @@ class _SettingsInquiryFormPageState
   final _titleController = TextEditingController();
   final _bodyController = TextEditingController();
 
-  String _selectedCategory = SettingsSeedData.supportCategories.first;
+  late String _selectedCategory;
   bool _submitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final initialCategory = widget.initialCategory?.trim() ?? '';
+    _selectedCategory =
+        SettingsSeedData.supportCategories.contains(initialCategory)
+        ? initialCategory
+        : SettingsSeedData.supportCategories.first;
+
+    final initialTitle = widget.initialTitle?.trim() ?? '';
+    if (initialTitle.isNotEmpty) {
+      _titleController.text = initialTitle;
+    }
+  }
 
   @override
   void dispose() {
@@ -41,7 +77,7 @@ class _SettingsInquiryFormPageState
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('1:1 문의하기'),
+        title: Text(widget.pageTitle),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(
@@ -70,7 +106,7 @@ class _SettingsInquiryFormPageState
                       ),
                     )
                     .toList(growable: false),
-                onChanged: _submitting
+                onChanged: _submitting || widget.lockCategory
                     ? null
                     : (value) {
                         if (value == null) {
@@ -87,7 +123,7 @@ class _SettingsInquiryFormPageState
               TextFormField(
                 controller: _titleController,
                 enabled: !_submitting,
-                decoration: const InputDecoration(hintText: '문의 제목을 입력해주세요.'),
+                decoration: InputDecoration(hintText: widget.titleHintText),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return '제목을 입력해주세요.';
@@ -103,8 +139,8 @@ class _SettingsInquiryFormPageState
                 enabled: !_submitting,
                 minLines: 7,
                 maxLines: 12,
-                decoration: const InputDecoration(
-                  hintText: '문의하실 내용을 입력해주세요.',
+                decoration: InputDecoration(
+                  hintText: widget.bodyHintText,
                   alignLabelWithHint: true,
                 ),
                 validator: (value) {
@@ -125,7 +161,9 @@ class _SettingsInquiryFormPageState
                       borderRadius: BorderRadius.circular(26),
                     ),
                   ),
-                  child: Text(_submitting ? '접수 중...' : '문의 접수'),
+                  child: Text(
+                    _submitting ? '접수 중...' : widget.submitButtonLabel,
+                  ),
                 ),
               ),
             ],
@@ -152,6 +190,7 @@ class _SettingsInquiryFormPageState
             category: _selectedCategory,
             title: _titleController.text,
             body: _bodyController.text,
+            type: widget.inquiryType,
           );
 
       if (!mounted) {

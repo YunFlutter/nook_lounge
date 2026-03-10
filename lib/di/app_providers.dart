@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -40,6 +42,7 @@ import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
 import 'package:nook_lounge_app/domain/model/settings_document.dart';
+import 'package:nook_lounge_app/domain/model/settings_faq_item.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
 import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
 import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
@@ -360,7 +363,62 @@ final marketMyTradeProposalProvider =
 
 final marketUserNotificationsProvider =
     StreamProvider.family<List<MarketUserNotification>, String>((ref, uid) {
-      return ref.watch(marketRepositoryProvider).watchUserNotifications(uid);
+      final normalizedUid = uid.trim();
+      if (normalizedUid.isEmpty) {
+        return Stream<List<MarketUserNotification>>.value(
+          const <MarketUserNotification>[],
+        );
+      }
+
+      final marketRepository = ref.watch(marketRepositoryProvider);
+      final userBlockRepository = ref.watch(userBlockRepositoryProvider);
+      late final StreamController<List<MarketUserNotification>> controller;
+      StreamSubscription<List<MarketUserNotification>>?
+      notificationSubscription;
+      StreamSubscription<Set<String>>? invisibleUserSubscription;
+      var latestNotifications = const <MarketUserNotification>[];
+      var invisibleUserIds = const <String>{};
+
+      void emit() {
+        controller.add(
+          latestNotifications
+              .where((notification) {
+                return !invisibleUserIds.contains(
+                  notification.senderUid.trim(),
+                );
+              })
+              .toList(growable: false),
+        );
+      }
+
+      controller = StreamController<List<MarketUserNotification>>(
+        onListen: () {
+          notificationSubscription = marketRepository
+              .watchUserNotifications(normalizedUid)
+              .listen((notifications) {
+                latestNotifications = notifications;
+                emit();
+              }, onError: controller.addError);
+          invisibleUserSubscription = userBlockRepository
+              .watchInvisibleUserIds(normalizedUid)
+              .listen((ids) {
+                invisibleUserIds = ids;
+                emit();
+              }, onError: controller.addError);
+        },
+        onCancel: () async {
+          await notificationSubscription?.cancel();
+          await invisibleUserSubscription?.cancel();
+        },
+      );
+
+      ref.onDispose(() async {
+        await notificationSubscription?.cancel();
+        await invisibleUserSubscription?.cancel();
+        await controller.close();
+      });
+
+      return controller.stream;
     });
 
 final settingsNotificationPreferencesProvider =
@@ -378,6 +436,10 @@ final settingsDocumentProvider =
     StreamProvider.family<SettingsDocument, SettingsDocumentType>((ref, type) {
       return ref.watch(settingsRepositoryProvider).watchDocument(type);
     });
+
+final settingsFaqItemsProvider = StreamProvider<List<SettingsFaqItem>>((ref) {
+  return ref.watch(settingsRepositoryProvider).watchFaqItems();
+});
 
 final settingsInquiriesProvider =
     StreamProvider.family<List<SupportInquiry>, String>((ref, uid) {

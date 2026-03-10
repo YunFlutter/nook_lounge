@@ -31,6 +31,25 @@ class SettingsNoticeDetailPage extends StatelessWidget {
           SettingsUiTokens.verticalGap * 2,
         ),
         children: <Widget>[
+          if (notice.pinned) ...<Widget>[
+            Container(
+              width: 54,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.accentOrange,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                '고정',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.captionWithColor(
+                  AppColors.accentDeepOrange,
+                  weight: FontWeight.w800,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           Text(
             notice.title,
             style: AppTextStyles.bodyWithSize(

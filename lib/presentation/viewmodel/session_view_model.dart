@@ -225,27 +225,6 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
     await _onUserChanged(_authRepository.currentUserId);
   }
 
-  Future<void> acknowledgeBlockedSession() async {
-    final currentSession = state.session;
-    if (currentSession is! SessionBlocked) {
-      return;
-    }
-
-    try {
-      // 유지보수 포인트:
-      // 차단 안내 확인 후에는 인증 세션을 종료해, 사용자가 차단 기간 중
-      // 앱 내부 상태를 유지한 채 재진입하지 않도록 로그인 화면으로 되돌립니다.
-      await _authRepository.signOut();
-    } catch (error) {
-      final displayInfo = FirebaseErrorMapper.map(error);
-      state = state.copyWith(
-        isLoading: false,
-        errorTitle: displayInfo.title,
-        errorMessage: displayInfo.message,
-      );
-    }
-  }
-
   void markIslandSetupCompleted({required String uid}) {
     final normalizedUid = uid.trim();
     if (normalizedUid.isEmpty ||

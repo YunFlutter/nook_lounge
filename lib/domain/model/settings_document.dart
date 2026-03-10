@@ -20,7 +20,10 @@ class SettingsDocument {
     return SettingsDocument(
       type: type,
       title: (data['title'] as String?)?.trim() ?? type.defaultTitle,
-      body: (data['body'] as String?)?.trim() ?? '',
+      body:
+          (data['content'] as String?)?.trim() ??
+          (data['body'] as String?)?.trim() ??
+          '',
       updatedAt: _toDateTime(data['updatedAt']) ?? DateTime.now(),
     );
   }
@@ -28,6 +31,17 @@ class SettingsDocument {
 
 extension SettingsDocumentTypeX on SettingsDocumentType {
   String get documentId {
+    switch (this) {
+      case SettingsDocumentType.operationPolicy:
+        return 'community_policy';
+      case SettingsDocumentType.termsOfService:
+        return 'terms_of_service';
+      case SettingsDocumentType.privacyPolicy:
+        return 'privacy_policy';
+    }
+  }
+
+  String get legacyDocumentId {
     switch (this) {
       case SettingsDocumentType.operationPolicy:
         return 'operationPolicy';

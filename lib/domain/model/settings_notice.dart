@@ -4,12 +4,14 @@ class SettingsNotice {
     required this.title,
     required this.body,
     required this.publishedAt,
+    this.pinned = false,
   });
 
   final String id;
   final String title;
   final String body;
   final DateTime publishedAt;
+  final bool pinned;
 
   factory SettingsNotice.fromMap({
     required String id,
@@ -19,7 +21,10 @@ class SettingsNotice {
       id: id,
       title: (data['title'] as String?)?.trim() ?? '공지 제목',
       body: (data['body'] as String?)?.trim() ?? '',
-      publishedAt: _toDateTime(data['publishedAt']) ?? DateTime.now(),
+      publishedAt:
+          _toDateTime(data['createdAt'] ?? data['publishedAt']) ??
+          DateTime.now(),
+      pinned: data['pinned'] == true,
     );
   }
 }

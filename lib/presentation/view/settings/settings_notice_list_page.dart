@@ -80,6 +80,26 @@ class SettingsNoticeListPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              if (notice.pinned) ...<Widget>[
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentOrange,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '고정',
+                    style: AppTextStyles.captionWithColor(
+                      AppColors.accentDeepOrange,
+                      weight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
               Text(
                 notice.title,
                 style: AppTextStyles.bodyWithSize(

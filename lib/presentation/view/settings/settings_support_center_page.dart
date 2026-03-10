@@ -33,6 +33,12 @@ class _SettingsSupportCenterPageState
   @override
   Widget build(BuildContext context) {
     final inquiriesAsync = ref.watch(settingsInquiriesProvider(widget.uid));
+    final faqItemsAsync = ref.watch(settingsFaqItemsProvider);
+    final faqItems = faqItemsAsync.valueOrNull ?? SettingsSeedData.faqItems;
+    final categories = _resolveCategories(faqItems);
+    final selectedCategory = categories.contains(_selectedCategory)
+        ? _selectedCategory
+        : categories.first;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,9 +61,9 @@ class _SettingsSupportCenterPageState
           const SizedBox(height: 16),
           Text('무엇을 도와드릴까요?', style: AppTextStyles.headingH1),
           const SizedBox(height: 12),
-          _categoryChips(),
+          _categoryChips(categories, selectedCategory),
           const SizedBox(height: 14),
-          ..._faqList(),
+          ..._faqList(faqItems: faqItems, selectedCategory: selectedCategory),
         ],
       ),
     );
@@ -116,13 +122,28 @@ class _SettingsSupportCenterPageState
     );
   }
 
-  Widget _categoryChips() {
+  List<String> _resolveCategories(List<SettingsFaqItem> faqItems) {
+    final categories = <String>[];
+    for (final item in faqItems) {
+      final category = item.category.trim();
+      if (category.isEmpty || categories.contains(category)) {
+        continue;
+      }
+      categories.add(category);
+    }
+    if (categories.isNotEmpty) {
+      return categories;
+    }
+    return SettingsSeedData.supportCategories;
+  }
+
+  Widget _categoryChips(List<String> categories, String selectedCategory) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: SettingsSeedData.supportCategories
+      children: categories
           .map((category) {
-            final selected = _selectedCategory == category;
+            final selected = selectedCategory == category;
             return ChoiceChip(
               label: Text(
                 category,
@@ -156,9 +177,12 @@ class _SettingsSupportCenterPageState
     );
   }
 
-  List<Widget> _faqList() {
-    final filteredItems = SettingsSeedData.faqItems
-        .where((item) => item.category == _selectedCategory)
+  List<Widget> _faqList({
+    required List<SettingsFaqItem> faqItems,
+    required String selectedCategory,
+  }) {
+    final filteredItems = faqItems
+        .where((item) => item.category == selectedCategory)
         .toList(growable: false);
 
     return filteredItems.map((item) => _faqTile(item)).toList(growable: false);

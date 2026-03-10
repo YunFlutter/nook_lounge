@@ -10,6 +10,7 @@ import 'package:nook_lounge_app/presentation/view/home_shell_page.dart';
 import 'package:nook_lounge_app/presentation/view/session_access_blocked_dialog.dart';
 import 'package:nook_lounge_app/presentation/view/sign_in_page.dart';
 import 'package:nook_lounge_app/presentation/view/splash_loading_page.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_inquiry_list_page.dart';
 import 'package:nook_lounge_app/presentation/state/session_view_state.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/session_view_model.dart';
 
@@ -136,12 +137,6 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
         context: context,
         block: session.block,
       );
-      if (!mounted) {
-        return;
-      }
-      await ref
-          .read(sessionViewModelProvider.notifier)
-          .acknowledgeBlockedSession();
     } finally {
       _isShowingBlockedDialog = false;
     }
@@ -222,7 +217,11 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
       ready: (uid) => uid == SessionViewModel.guestUid || isAnonymous
           ? GuestBrowsePage(uid: uid)
           : HomeShellPage(uid: uid),
-      blocked: (uid, block) => const SignInPage(),
+      blocked: (uid, block) => SettingsInquiryListPage(
+        uid: uid,
+        blockedAccessMode: true,
+        allowAppealSubmission: true,
+      ),
     );
   }
 }

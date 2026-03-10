@@ -85,9 +85,29 @@ class FirestorePaths {
   static String supportInquiry(String inquiryId) =>
       '${supportInquiries()}/$inquiryId';
 
+  static String adminInquiryReplyTemplates() => 'adminInquiryReplyTemplates';
+
+  static String adminInquiryReplyTemplate(String templateId) =>
+      '${adminInquiryReplyTemplates()}/$templateId';
+
+  static String appConfigFaqs() => 'app_config/faqs';
+
+  static String moderationHistories() => 'moderationHistories';
+
+  static String moderationHistory(String historyId) =>
+      '${moderationHistories()}/$historyId';
+
+  static String notices() => 'notices';
+
+  static String notice(String noticeId) => '${notices()}/$noticeId';
+
   static String appNotices() => 'appNotices';
 
   static String appNotice(String noticeId) => '${appNotices()}/$noticeId';
+
+  static String legalDocs() => 'legal_docs';
+
+  static String legalDoc(String documentId) => '${legalDocs()}/$documentId';
 
   static String appDocuments() => 'appDocuments';
 

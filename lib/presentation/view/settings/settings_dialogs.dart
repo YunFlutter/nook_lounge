@@ -56,6 +56,19 @@ class SettingsDialogs {
     );
   }
 
+  static Future<bool> showInquiryDeleteConfirm({
+    required BuildContext context,
+    required bool isAppeal,
+  }) {
+    return _showDangerDecisionDialog(
+      context: context,
+      title: isAppeal ? '이의 신청을 삭제할까요?' : '문의를 삭제할까요?',
+      subtitle: isAppeal ? '삭제된 이의 신청은 복구할 수 없어요.' : '삭제된 문의는 복구할 수 없어요.',
+      primaryLabel: '삭제',
+      secondaryLabel: '취소',
+    );
+  }
+
   static Future<bool> _showDecisionDialog({
     required BuildContext context,
     required String title,
@@ -104,6 +117,90 @@ class SettingsDialogs {
                       flex: 2,
                       child: _dialogPrimaryButton(
                         label: primaryLabel,
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    return result ?? false;
+  }
+
+  static Future<bool> _showDangerDecisionDialog({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required String primaryLabel,
+    required String secondaryLabel,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: AppColors.settingsOverlay,
+      builder: (context) {
+        return Dialog(
+          elevation: 0,
+          backgroundColor: AppColors.transparent,
+          child: Container(
+            width: 330,
+            padding: const EdgeInsets.fromLTRB(20, 28, 20, 22),
+            decoration: BoxDecoration(
+              color: AppColors.bgCard,
+              borderRadius: BorderRadius.circular(
+                SettingsUiTokens.dialogRadius,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: const BoxDecoration(
+                    color: AppColors.badgeRedBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppColors.badgeRedText,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.dialogTitleCompact,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.dialogBodyCompact.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 22),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: _dialogOutlineButton(
+                        label: secondaryLabel,
+                        onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 2,
+                      child: _dialogPrimaryButton(
+                        label: primaryLabel,
+                        backgroundColor: AppColors.settingsWarning,
                         onPressed: () => Navigator.of(context).pop(true),
                       ),
                     ),
@@ -189,6 +286,7 @@ class SettingsDialogs {
 
   static Widget _dialogPrimaryButton({
     required String label,
+    Color backgroundColor = AppColors.settingsPrimaryButton,
     required VoidCallback onPressed,
   }) {
     return SizedBox(
@@ -196,7 +294,7 @@ class SettingsDialogs {
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.settingsPrimaryButton,
+          backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               SettingsUiTokens.actionButtonRadius,

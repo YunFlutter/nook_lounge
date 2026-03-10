@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
 import 'package:nook_lounge_app/core/constants/settings_seed_data.dart';
 import 'package:nook_lounge_app/domain/model/settings_document.dart';
+import 'package:nook_lounge_app/domain/model/settings_faq_item.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
 import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
 import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
@@ -54,13 +56,23 @@ class SettingsFirestoreDataSource {
         }, SetOptions(merge: true));
   }
 
-  Stream<List<SettingsNotice>> watchNotices() async* {
+  Stream<List<SettingsFaqItem>> watchFaqItems() async* {
     try {
       await for (final snapshot
-          in _firestore
-              .collection(FirestorePaths.appNotices())
-              .orderBy('publishedAt', descending: true)
-              .snapshots()) {
+          in _firestore.doc(FirestorePaths.appConfigFaqs()).snapshots()) {
+        final items = parseFaqItems(snapshot.data());
+        yield items.isEmpty ? SettingsSeedData.faqItems : items;
+      }
+    } catch (_) {
+      yield SettingsSeedData.faqItems;
+    }
+  }
+
+  Stream<List<SettingsNotice>> watchNotices() async* {
+    final collectionPath = await _resolveNoticeCollectionPath();
+    try {
+      await for (final snapshot
+          in _firestore.collection(collectionPath).snapshots()) {
         if (snapshot.docs.isEmpty) {
           yield SettingsSeedData.defaultNotices;
           continue;
@@ -70,6 +82,7 @@ class SettingsFirestoreDataSource {
         for (final doc in snapshot.docs) {
           notices.add(SettingsNotice.fromMap(id: doc.id, data: doc.data()));
         }
+        notices.sort(_sortNotices);
         yield notices;
       }
     } catch (_) {
@@ -83,12 +96,15 @@ class SettingsFirestoreDataSource {
       return null;
     }
 
-    final doc = await _firestore
-        .doc(FirestorePaths.appNotice(normalizedId))
-        .get();
-    final data = doc.data();
-    if (data != null) {
-      return SettingsNotice.fromMap(id: doc.id, data: data);
+    for (final path in <String>[
+      FirestorePaths.notice(normalizedId),
+      FirestorePaths.appNotice(normalizedId),
+    ]) {
+      final doc = await _firestore.doc(path).get();
+      final data = doc.data();
+      if (data != null) {
+        return SettingsNotice.fromMap(id: doc.id, data: data);
+      }
     }
 
     for (final notice in SettingsSeedData.defaultNotices) {
@@ -101,11 +117,9 @@ class SettingsFirestoreDataSource {
   }
 
   Stream<SettingsDocument> watchDocument(SettingsDocumentType type) async* {
+    final documentPath = await _resolveDocumentPath(type);
     try {
-      await for (final snapshot
-          in _firestore
-              .doc(FirestorePaths.appDocument(type.documentId))
-              .snapshots()) {
+      await for (final snapshot in _firestore.doc(documentPath).snapshots()) {
         final data = snapshot.data();
         if (data == null) {
           yield SettingsSeedData.defaultDocuments[type] ??
@@ -142,15 +156,16 @@ class SettingsFirestoreDataSource {
           in _firestore
               .collection(FirestorePaths.supportInquiries())
               .where('uid', isEqualTo: normalizedUid)
-              .orderBy('createdAt', descending: true)
               .snapshots()) {
         final inquiries = <SupportInquiry>[];
         for (final doc in snapshot.docs) {
           inquiries.add(SupportInquiry.fromMap(id: doc.id, data: doc.data()));
         }
+        inquiries.sort(sortInquiriesByCreatedAtDesc);
         yield inquiries;
       }
-    } catch (_) {
+    } catch (error, stackTrace) {
+      debugPrint('watchInquiries failed: $error\n$stackTrace');
       yield const <SupportInquiry>[];
     }
   }
@@ -160,6 +175,7 @@ class SettingsFirestoreDataSource {
     required String category,
     required String title,
     required String body,
+    SupportInquiryType type = SupportInquiryType.general,
   }) async {
     final normalizedUid = uid.trim();
     if (normalizedUid.isEmpty) {
@@ -173,6 +189,7 @@ class SettingsFirestoreDataSource {
       'category': category.trim(),
       'title': title.trim(),
       'body': body.trim(),
+      'type': type.name,
       'status': SupportInquiryStatus.received.name,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -232,5 +249,112 @@ class SettingsFirestoreDataSource {
     }
 
     return SupportInquiry.fromMap(id: doc.id, data: data);
+  }
+
+  Future<String> _resolveNoticeCollectionPath() async {
+    try {
+      final snapshot = await _firestore
+          .collection(FirestorePaths.notices())
+          .limit(1)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        return FirestorePaths.notices();
+      }
+    } catch (_) {}
+    return FirestorePaths.appNotices();
+  }
+
+  Future<String> _resolveDocumentPath(SettingsDocumentType type) async {
+    final primaryPath = FirestorePaths.legalDoc(type.documentId);
+    try {
+      final snapshot = await _firestore.doc(primaryPath).get();
+      if (snapshot.exists) {
+        return primaryPath;
+      }
+    } catch (_) {}
+    return FirestorePaths.appDocument(type.legacyDocumentId);
+  }
+
+  int _sortNotices(SettingsNotice a, SettingsNotice b) {
+    if (a.pinned != b.pinned) {
+      return a.pinned ? -1 : 1;
+    }
+    return b.publishedAt.compareTo(a.publishedAt);
+  }
+
+  @visibleForTesting
+  static List<SettingsFaqItem> parseFaqItems(Map<String, dynamic>? data) {
+    final rawCategories = data?['categories'];
+    if (rawCategories is! List) {
+      return const <SettingsFaqItem>[];
+    }
+
+    final items = <SettingsFaqItem>[];
+    for (
+      var categoryIndex = 0;
+      categoryIndex < rawCategories.length;
+      categoryIndex++
+    ) {
+      final rawCategory = rawCategories[categoryIndex];
+      if (rawCategory is! Map) {
+        continue;
+      }
+      final categoryData = Map<String, dynamic>.from(rawCategory);
+      final categoryId =
+          (categoryData['id'] as String?)?.trim() ?? 'category_$categoryIndex';
+      final categoryName = (categoryData['name'] as String?)?.trim() ?? '';
+      final rawItems = categoryData['items'];
+      if (categoryName.isEmpty || rawItems is! List) {
+        continue;
+      }
+
+      for (var itemIndex = 0; itemIndex < rawItems.length; itemIndex++) {
+        final rawItem = rawItems[itemIndex];
+        if (rawItem is! Map) {
+          continue;
+        }
+        final itemData = Map<String, dynamic>.from(rawItem);
+        final question = (itemData['question'] as String?)?.trim() ?? '';
+        final answer = (itemData['answer'] as String?)?.trim() ?? '';
+        final status = (itemData['status'] as String?)?.trim() ?? 'active';
+        if (question.isEmpty ||
+            answer.isEmpty ||
+            !_isVisibleFaqStatus(status)) {
+          continue;
+        }
+
+        final itemId =
+            (itemData['id'] as String?)?.trim() ??
+            '${categoryId}_item_$itemIndex';
+        items.add(
+          SettingsFaqItem(
+            id: itemId,
+            category: categoryName,
+            question: question,
+            answer: answer,
+            status: status,
+          ),
+        );
+      }
+    }
+    return items;
+  }
+
+  @visibleForTesting
+  static int sortInquiriesByCreatedAtDesc(SupportInquiry a, SupportInquiry b) {
+    return b.createdAt.compareTo(a.createdAt);
+  }
+
+  static bool _isVisibleFaqStatus(String status) {
+    final normalizedStatus = status.trim().toLowerCase();
+    switch (normalizedStatus) {
+      case 'hidden':
+      case 'inactive':
+      case 'disabled':
+      case 'draft':
+      case 'deleted':
+        return false;
+    }
+    return true;
   }
 }

@@ -196,11 +196,24 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
       state = state.copyWith(errorMessage: '로그인 후 방문 신청할 수 있어요.');
       return;
     }
+    final hostUid = targetSession.ownerUid.trim();
+    if (hostUid.isEmpty) {
+      state = state.copyWith(errorMessage: '방문 신청할 섬 주인 정보를 찾지 못했어요.');
+      throw StateError('invalid_host_uid');
+    }
+    if (_blockedUserIds.contains(hostUid) ||
+        await _userBlockRepository.hasBlockRelationship(
+          uid: _uid,
+          otherUid: hostUid,
+        )) {
+      state = state.copyWith(errorMessage: '차단된 유저의 섬에는 방문 신청할 수 없어요.');
+      throw StateError('blocked_user');
+    }
 
     await _runAction(
       action: () => _repository.submitVisitRequest(
         islandId: targetSession.islandId,
-        hostUid: targetSession.ownerUid,
+        hostUid: hostUid,
         hostName: targetSession.hostName,
         hostIslandName: targetSession.islandName,
         hostIslandImageUrl: targetSession.islandImageUrl,
@@ -425,7 +438,7 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
       return;
     }
     _blockedUsersSubscription = _userBlockRepository
-        .watchBlockedUserIds(_uid)
+        .watchInvisibleUserIds(_uid)
         .listen(
           (blockedUserIds) {
             _blockedUserIds = blockedUserIds;
@@ -433,7 +446,7 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
             _applyMyRequests();
           },
           onError: (Object error, StackTrace stackTrace) {
-            state = state.copyWith(errorMessage: '차단 목록을 불러오지 못했어요.');
+            state = state.copyWith(errorMessage: '차단/상호 숨김 목록을 불러오지 못했어요.');
           },
         );
   }
@@ -498,6 +511,8 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
           return '이미 신고 접수된 손님이에요.';
         case 'invalid_airport_report_payload':
           return '신고할 손님 정보를 찾지 못했어요.';
+        case 'blocked_user':
+          return '차단된 유저와는 방문 요청을 주고받을 수 없어요.';
         case 'cannot_report_self':
           return '본인 계정은 신고할 수 없어요.';
       }

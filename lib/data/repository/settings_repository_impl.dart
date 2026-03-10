@@ -1,5 +1,6 @@
 import 'package:nook_lounge_app/data/datasource/settings_firestore_data_source.dart';
 import 'package:nook_lounge_app/domain/model/settings_document.dart';
+import 'package:nook_lounge_app/domain/model/settings_faq_item.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
 import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
 import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
@@ -47,6 +48,11 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @override
+  Stream<List<SettingsFaqItem>> watchFaqItems() {
+    return _dataSource.watchFaqItems();
+  }
+
+  @override
   Stream<List<SupportInquiry>> watchInquiries({required String uid}) {
     return _dataSource.watchInquiries(uid: uid);
   }
@@ -57,12 +63,14 @@ class SettingsRepositoryImpl implements SettingsRepository {
     required String category,
     required String title,
     required String body,
+    SupportInquiryType type = SupportInquiryType.general,
   }) {
     return _dataSource.createInquiry(
       uid: uid,
       category: category,
       title: title,
       body: body,
+      type: type,
     );
   }
 
