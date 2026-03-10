@@ -38,6 +38,7 @@ import 'package:nook_lounge_app/domain/repository/settings_repository.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
+import 'package:nook_lounge_app/domain/model/blocked_user_summary.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
@@ -419,6 +420,11 @@ final marketUserNotificationsProvider =
       });
 
       return controller.stream;
+    });
+
+final blockedUserSummariesProvider =
+    StreamProvider.family<List<BlockedUserSummary>, String>((ref, uid) {
+      return ref.watch(userBlockRepositoryProvider).watchBlockedUsers(uid);
     });
 
 final settingsNotificationPreferencesProvider =

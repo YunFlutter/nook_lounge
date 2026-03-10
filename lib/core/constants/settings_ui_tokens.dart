@@ -13,6 +13,8 @@ class SettingsUiTokens {
   static const double actionButtonRadius = 28;
   static const double dialogRadius = 30;
   static const double chipRadius = 999;
+  static const double noticeBadgeHorizontalPadding = 10;
+  static const double noticeBadgeVerticalPadding = 5;
 
   static const Duration shortAnimation = Duration(milliseconds: 180);
   static const Duration normalAnimation = Duration(milliseconds: 240);

@@ -4,12 +4,13 @@ import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
 
 void main() {
   group('SettingsFirestoreDataSource.parseFaqItems', () {
-    test('categories 구조를 평탄화하고 숨김 상태 항목은 제외한다', () {
+    test('categories 구조를 평탄화하고 title 기반 FAQ만 노출한다', () {
       final items = SettingsFirestoreDataSource.parseFaqItems(<String, dynamic>{
         'categories': <Map<String, dynamic>>[
           <String, dynamic>{
             'id': 'account',
-            'name': '계정',
+            'title': '계정/로그인',
+            'status': 'active',
             'items': <Map<String, dynamic>>[
               <String, dynamic>{
                 'id': 'faq_login',
@@ -22,6 +23,19 @@ void main() {
                 'question': '숨김 처리된 항목',
                 'answer': '보이면 안 됩니다.',
                 'status': 'hidden',
+              },
+            ],
+          },
+          <String, dynamic>{
+            'id': 'hidden_category',
+            'title': '숨김 카테고리',
+            'status': 'hidden',
+            'items': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 'faq_blocked',
+                'question': '노출되면 안 되는 질문',
+                'answer': '노출되면 안 되는 답변',
+                'status': 'active',
               },
             ],
           },
@@ -40,7 +54,7 @@ void main() {
 
       expect(items, hasLength(2));
       expect(items[0].id, 'faq_login');
-      expect(items[0].category, '계정');
+      expect(items[0].category, '계정/로그인');
       expect(items[1].id, 'market_item_0');
       expect(items[1].category, '너굴마켓');
     });

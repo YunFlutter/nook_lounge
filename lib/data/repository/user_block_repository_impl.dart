@@ -1,4 +1,5 @@
 import 'package:nook_lounge_app/data/datasource/user_block_firestore_data_source.dart';
+import 'package:nook_lounge_app/domain/model/blocked_user_summary.dart';
 import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 
 class UserBlockRepositoryImpl implements UserBlockRepository {
@@ -18,8 +19,18 @@ class UserBlockRepositoryImpl implements UserBlockRepository {
   }
 
   @override
+  Stream<List<BlockedUserSummary>> watchBlockedUsers(String uid) {
+    return _dataSource.watchBlockedUsers(uid);
+  }
+
+  @override
   Future<void> blockUser({required String uid, required String blockedUid}) {
     return _dataSource.blockUser(uid: uid, blockedUid: blockedUid);
+  }
+
+  @override
+  Future<void> unblockUser({required String uid, required String blockedUid}) {
+    return _dataSource.unblockUser(uid: uid, blockedUid: blockedUid);
   }
 
   @override

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
-import 'package:nook_lounge_app/core/constants/settings_seed_data.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_faq_item.dart';
@@ -27,18 +26,16 @@ class SettingsSupportCenterPage extends ConsumerStatefulWidget {
 
 class _SettingsSupportCenterPageState
     extends ConsumerState<SettingsSupportCenterPage> {
-  String _selectedCategory = SettingsSeedData.supportCategories.first;
+  String _selectedCategory = '';
   String? _expandedFaqId;
 
   @override
   Widget build(BuildContext context) {
     final inquiriesAsync = ref.watch(settingsInquiriesProvider(widget.uid));
     final faqItemsAsync = ref.watch(settingsFaqItemsProvider);
-    final faqItems = faqItemsAsync.valueOrNull ?? SettingsSeedData.faqItems;
+    final faqItems = faqItemsAsync.valueOrNull ?? const <SettingsFaqItem>[];
     final categories = _resolveCategories(faqItems);
-    final selectedCategory = categories.contains(_selectedCategory)
-        ? _selectedCategory
-        : categories.first;
+    final selectedCategory = _resolveSelectedCategory(categories);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,9 +58,12 @@ class _SettingsSupportCenterPageState
           const SizedBox(height: 16),
           Text('무엇을 도와드릴까요?', style: AppTextStyles.headingH1),
           const SizedBox(height: 12),
-          _categoryChips(categories, selectedCategory),
-          const SizedBox(height: 14),
-          ..._faqList(faqItems: faqItems, selectedCategory: selectedCategory),
+          ..._faqSection(
+            faqItemsAsync: faqItemsAsync,
+            faqItems: faqItems,
+            categories: categories,
+            selectedCategory: selectedCategory,
+          ),
         ],
       ),
     );
@@ -131,10 +131,91 @@ class _SettingsSupportCenterPageState
       }
       categories.add(category);
     }
-    if (categories.isNotEmpty) {
-      return categories;
+    return categories;
+  }
+
+  String _resolveSelectedCategory(List<String> categories) {
+    if (categories.isEmpty) {
+      return '';
     }
-    return SettingsSeedData.supportCategories;
+    return categories.contains(_selectedCategory)
+        ? _selectedCategory
+        : categories.first;
+  }
+
+  List<Widget> _faqSection({
+    required AsyncValue<List<SettingsFaqItem>> faqItemsAsync,
+    required List<SettingsFaqItem> faqItems,
+    required List<String> categories,
+    required String selectedCategory,
+  }) {
+    if (faqItemsAsync.isLoading && faqItems.isEmpty) {
+      return <Widget>[
+        _faqStatusCard(
+          title: 'FAQ를 불러오는 중입니다.',
+          body: 'app_config/faqs 문서를 확인하고 있어요.',
+          trailing: const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ];
+    }
+
+    if (faqItemsAsync.hasError && faqItems.isEmpty) {
+      return <Widget>[
+        _faqStatusCard(title: 'FAQ를 불러오지 못했습니다.', body: '잠시 후 다시 확인해 주세요.'),
+      ];
+    }
+
+    if (categories.isEmpty) {
+      return <Widget>[
+        _faqStatusCard(
+          title: '등록된 FAQ가 없습니다.',
+          body: 'app_config/faqs 의 active 항목을 표시합니다.',
+        ),
+      ];
+    }
+
+    return <Widget>[
+      _categoryChips(categories, selectedCategory),
+      const SizedBox(height: 14),
+      ..._faqList(faqItems: faqItems, selectedCategory: selectedCategory),
+    ];
+  }
+
+  Widget _faqStatusCard({
+    required String title,
+    required String body,
+    Widget? trailing,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      decoration: BoxDecoration(
+        color: AppColors.bgSecondary,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(title, style: AppTextStyles.headingH3),
+                const SizedBox(height: 6),
+                Text(body, style: AppTextStyles.bodySecondaryStrong),
+              ],
+            ),
+          ),
+          if (trailing != null) ...<Widget>[
+            const SizedBox(width: 12),
+            trailing,
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _categoryChips(List<String> categories, String selectedCategory) {

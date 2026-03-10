@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_detail_page.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_notice_pinned_badge.dart';
 
 class SettingsNoticeListPage extends ConsumerWidget {
   const SettingsNoticeListPage({super.key});
@@ -81,23 +82,7 @@ class SettingsNoticeListPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (notice.pinned) ...<Widget>[
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentOrange,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    '고정',
-                    style: AppTextStyles.captionWithColor(
-                      AppColors.accentDeepOrange,
-                      weight: FontWeight.w800,
-                    ),
-                  ),
-                ),
+                const SettingsNoticePinnedBadge(),
                 const SizedBox(height: 10),
               ],
               Text(

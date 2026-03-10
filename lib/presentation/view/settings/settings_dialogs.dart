@@ -69,6 +69,22 @@ class SettingsDialogs {
     );
   }
 
+  static Future<bool> showUserUnblockConfirm({
+    required BuildContext context,
+    required String displayName,
+  }) {
+    final normalizedName = displayName.trim().isEmpty
+        ? '해당 유저'
+        : displayName.trim();
+    return _showDangerDecisionDialog(
+      context: context,
+      title: '$normalizedName 차단을 해제할까요?',
+      subtitle: '해제 후에는 서로의 게시물과 방문 요청이 다시 보일 수 있어요.',
+      primaryLabel: '해제',
+      secondaryLabel: '취소',
+    );
+  }
+
   static Future<bool> _showDecisionDialog({
     required BuildContext context,
     required String title,

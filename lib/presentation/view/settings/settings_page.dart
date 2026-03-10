@@ -9,6 +9,7 @@ import 'package:nook_lounge_app/domain/model/island_profile.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_document_page.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_blocked_users_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_island_edit_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_island_list_sheet.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_list_page.dart';
@@ -114,6 +115,14 @@ class SettingsPage extends ConsumerWidget {
                   uid: uid,
                   displayName: selectedIsland?.representativeName ?? '',
                 ),
+              ),
+            ),
+          ),
+          _menuTile(
+            title: '차단 관리',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => SettingsBlockedUsersPage(uid: uid),
               ),
             ),
           ),

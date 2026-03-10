@@ -75,6 +75,11 @@ class FirestorePaths {
   static String blockedUser(String uid, String blockedUid) =>
       '${blockedUsers(uid)}/$blockedUid';
 
+  static String blockedByUsers(String uid) => 'users/$uid/blockedByUsers';
+
+  static String blockedByUser(String uid, String blockerUid) =>
+      '${blockedByUsers(uid)}/$blockerUid';
+
   static String userSettings(String uid) => 'users/$uid/settings';
 
   static String userSetting(String uid, String settingId) =>

@@ -60,11 +60,11 @@ class SettingsFirestoreDataSource {
     try {
       await for (final snapshot
           in _firestore.doc(FirestorePaths.appConfigFaqs()).snapshots()) {
-        final items = parseFaqItems(snapshot.data());
-        yield items.isEmpty ? SettingsSeedData.faqItems : items;
+        yield parseFaqItems(snapshot.data());
       }
-    } catch (_) {
-      yield SettingsSeedData.faqItems;
+    } catch (error, stackTrace) {
+      debugPrint('watchFaqItems failed: $error\n$stackTrace');
+      yield const <SettingsFaqItem>[];
     }
   }
 
@@ -302,9 +302,19 @@ class SettingsFirestoreDataSource {
       final categoryData = Map<String, dynamic>.from(rawCategory);
       final categoryId =
           (categoryData['id'] as String?)?.trim() ?? 'category_$categoryIndex';
-      final categoryName = (categoryData['name'] as String?)?.trim() ?? '';
+      // 유지보수 포인트:
+      // app_config/faqs 문서는 title 필드를 기준으로 내려오고,
+      // 과거 데이터 호환을 위해 name 도 함께 허용합니다.
+      final categoryName =
+          _readTrimmedString(categoryData['title']) ??
+          _readTrimmedString(categoryData['name']) ??
+          '';
+      final categoryStatus =
+          _readTrimmedString(categoryData['status']) ?? 'active';
       final rawItems = categoryData['items'];
-      if (categoryName.isEmpty || rawItems is! List) {
+      if (categoryName.isEmpty ||
+          rawItems is! List ||
+          !_isVisibleFaqStatus(categoryStatus)) {
         continue;
       }
 
@@ -343,6 +353,18 @@ class SettingsFirestoreDataSource {
   @visibleForTesting
   static int sortInquiriesByCreatedAtDesc(SupportInquiry a, SupportInquiry b) {
     return b.createdAt.compareTo(a.createdAt);
+  }
+
+  static String? _readTrimmedString(Object? value) {
+    if (value is! String) {
+      return null;
+    }
+
+    final normalizedValue = value.trim();
+    if (normalizedValue.isEmpty) {
+      return null;
+    }
+    return normalizedValue;
   }
 
   static bool _isVisibleFaqStatus(String status) {

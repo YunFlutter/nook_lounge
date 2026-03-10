@@ -9,6 +9,7 @@ import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/core/utils/touching_item_tag_codec.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
+import 'package:nook_lounge_app/domain/model/island_profile.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
@@ -17,6 +18,34 @@ import 'package:nook_lounge_app/presentation/view/market/market_report_reason_pa
 import 'package:nook_lounge_app/presentation/view/market/market_report_result_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
+
+final _marketOfferDetailIslandsProvider = StreamProvider.autoDispose
+    .family<List<IslandProfile>, String>((ref, uid) {
+      return ref.watch(islandRepositoryProvider).watchIslands(uid);
+    });
+
+final _marketOfferDetailPrimaryIslandIdProvider = StreamProvider.autoDispose
+    .family<String?, String>((ref, uid) {
+      return ref.watch(islandRepositoryProvider).watchPrimaryIslandId(uid);
+    });
+
+IslandProfile? _resolveSelectedIslandForMarketOfferDetail({
+  required List<IslandProfile> islands,
+  required String? primaryIslandId,
+}) {
+  if (islands.isEmpty) {
+    return null;
+  }
+  if (primaryIslandId == null || primaryIslandId.trim().isEmpty) {
+    return islands.first;
+  }
+  for (final island in islands) {
+    if (island.id == primaryIslandId.trim()) {
+      return island;
+    }
+  }
+  return islands.first;
+}
 
 class MarketOfferDetailPage extends ConsumerWidget {
   const MarketOfferDetailPage({required this.offer, super.key});
@@ -105,6 +134,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
           ],
+          Text('올린 유저', style: AppTextStyles.bodyPrimaryHeavy),
+          const SizedBox(height: 8),
+          _buildOfferOwnerInfoCard(ref, currentOffer),
+          const SizedBox(height: 20),
           Text('교환 제안', style: AppTextStyles.bodyPrimaryHeavy),
           const SizedBox(height: 12),
           _buildTradeSummaryCard(),
@@ -247,6 +280,209 @@ class MarketOfferDetailPage extends ConsumerWidget {
         currentOffer.status != MarketOfferStatus.waiting &&
         currentOffer.status != MarketOfferStatus.trading;
     return canDeleteMineOffer;
+  }
+
+  Widget _buildOfferOwnerInfoCard(WidgetRef ref, MarketOffer currentOffer) {
+    final ownerUid = currentOffer.ownerUid.trim();
+    final islandsAsync = ownerUid.isEmpty
+        ? null
+        : ref.watch(_marketOfferDetailIslandsProvider(ownerUid));
+    final primaryIslandIdAsync = ownerUid.isEmpty
+        ? null
+        : ref.watch(_marketOfferDetailPrimaryIslandIdProvider(ownerUid));
+    final selectedIsland = _resolveSelectedIslandForMarketOfferDetail(
+      islands: islandsAsync?.valueOrNull ?? const <IslandProfile>[],
+      primaryIslandId: primaryIslandIdAsync?.valueOrNull,
+    );
+    final displayName = _resolveOfferOwnerDisplayName(
+      currentOffer: currentOffer,
+      selectedIsland: selectedIsland,
+    );
+    final islandName = (selectedIsland?.islandName ?? '').trim();
+    final avatarUrl = _resolveOfferOwnerAvatarUrl(
+      currentOffer: currentOffer,
+      selectedIsland: selectedIsland,
+    );
+    final hemisphere = (selectedIsland?.hemisphere ?? '').trim();
+    final nativeFruit = (selectedIsland?.nativeFruit ?? '').trim();
+    final secondaryText = islandName.isNotEmpty
+        ? islandName
+        : ownerUid.isEmpty
+        ? '게시자 정보 일부만 표시하고 있어요.'
+        : (islandsAsync?.isLoading == true ||
+              primaryIslandIdAsync?.isLoading == true)
+        ? '대표 섬 정보를 불러오는 중이에요.'
+        : '등록된 대표 섬 정보가 없어요.';
+
+    return Semantics(
+      label: '거래 게시자 정보 카드',
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.borderDefault),
+          boxShadow: const <BoxShadow>[
+            BoxShadow(
+              color: AppColors.shadowSoft,
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ClipOval(
+              child: Container(
+                width: 58,
+                height: 58,
+                color: AppColors.bgSecondary,
+                child: avatarUrl.isEmpty
+                    ? Image.asset(
+                        'assets/images/icon_raccoon_character.png',
+                        fit: BoxFit.cover,
+                      )
+                    : _buildImage(avatarUrl),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          displayName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.bodyPrimaryHeavy,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.badgeYellowBg,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          '작성자',
+                          style: AppTextStyles.captionWithColor(
+                            AppColors.badgeYellowText,
+                            weight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    secondaryText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.captionMuted,
+                  ),
+                  if (nativeFruit.isNotEmpty ||
+                      hemisphere.isNotEmpty) ...<Widget>[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: <Widget>[
+                        if (nativeFruit.isNotEmpty)
+                          _buildOfferOwnerMetaChip(
+                            icon: Icons.apple_rounded,
+                            label: nativeFruit,
+                            backgroundColor: AppColors.navActiveBg,
+                            foregroundColor: AppColors.textPrimary,
+                          ),
+                        if (hemisphere.isNotEmpty)
+                          _buildOfferOwnerMetaChip(
+                            icon: Icons.public_rounded,
+                            label: hemisphere,
+                            backgroundColor: AppColors.badgeBlueBg,
+                            foregroundColor: AppColors.badgeBlueText,
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _resolveOfferOwnerDisplayName({
+    required MarketOffer currentOffer,
+    required IslandProfile? selectedIsland,
+  }) {
+    // 유지보수 포인트:
+    // 거래 글에는 등록 시점 이름이 저장되지만, 상세에서는 대표 섬 스트림을 우선 사용해
+    // 프로필 수정 후에도 최신 대표 주민명을 보여주도록 보강합니다.
+    final representativeName = (selectedIsland?.representativeName ?? '')
+        .trim();
+    if (representativeName.isNotEmpty) {
+      return representativeName;
+    }
+    final ownerName = currentOffer.ownerName.trim();
+    if (ownerName.isNotEmpty) {
+      return ownerName;
+    }
+    final islandName = (selectedIsland?.islandName ?? '').trim();
+    if (islandName.isNotEmpty) {
+      return islandName;
+    }
+    return '거래자';
+  }
+
+  String _resolveOfferOwnerAvatarUrl({
+    required MarketOffer currentOffer,
+    required IslandProfile? selectedIsland,
+  }) {
+    final latestImageUrl = (selectedIsland?.imageUrl ?? '').trim();
+    if (latestImageUrl.isNotEmpty) {
+      return latestImageUrl;
+    }
+    return currentOffer.ownerAvatarUrl.trim();
+  }
+
+  Widget _buildOfferOwnerMetaChip({
+    required IconData icon,
+    required String label,
+    required Color backgroundColor,
+    required Color foregroundColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 13, color: foregroundColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: AppTextStyles.captionWithColor(
+              foregroundColor,
+              weight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildVisitorBottomActions(
