@@ -52,6 +52,9 @@ IslandProfile? _resolveSelectedIslandForMarketOfferDetail({
 class MarketOfferDetailPage extends ConsumerWidget {
   const MarketOfferDetailPage({required this.offer, super.key});
 
+  static const double _sectionCornerRadius = 28;
+  static const double _panelCornerRadius = 22;
+
   final MarketOffer offer;
 
   String get _appBarTitle {
@@ -99,6 +102,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       isMine: isMine,
       currentOffer: currentOffer,
     );
+    final showBottomActionBar =
+        !isMine || !_isCompletedOfferByStatus(currentOffer);
 
     return Scaffold(
       appBar: AppBar(
@@ -119,117 +124,54 @@ class MarketOfferDetailPage extends ConsumerWidget {
             : const <Widget>[],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+        padding: EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,
           AppSpacing.s10,
           AppSpacing.pageHorizontal,
-          120,
+          showBottomActionBar ? 136 : 40,
         ),
         children: <Widget>[
           if (offer.coverImageUrl.trim().isNotEmpty) ...<Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: SizedBox(
-                height: 230,
-                child: _buildImage(offer.coverImageUrl),
-              ),
-            ),
-            const SizedBox(height: 20),
+            _buildCoverImageCard(),
+            const SizedBox(height: AppSpacing.s20),
           ],
           _buildOfferOverviewCard(ref, currentOffer),
-          const SizedBox(height: 20),
-          Text(
-            isMine ? '받은 거래 제안' : '내 거래 제안',
-            style: AppTextStyles.bodyPrimaryHeavy,
+          const SizedBox(height: AppSpacing.s18),
+          _buildSectionCard(
+            title: isMine ? '받은 거래 제안' : '내 거래 제안',
+            child: isMine
+                ? _buildOwnerProposalQueueSection(
+                    context,
+                    ref,
+                    currentOffer: currentOffer,
+                  )
+                : _buildMyProposalStatusSection(ref, currentUid),
           ),
-          const SizedBox(height: 8),
-          isMine
-              ? _buildOwnerProposalQueueSection(
-                  context,
-                  ref,
-                  currentOffer: currentOffer,
-                )
-              : _buildMyProposalStatusSection(ref, currentUid),
-          const SizedBox(height: 20),
-          Text('거래 이동 방식', style: AppTextStyles.bodyPrimaryHeavy),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 46,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: AppColors.catalogChipBg,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Icon(
-                    offer.moveType == MarketMoveType.host
-                        ? Icons.home_rounded
-                        : Icons.flight_takeoff_rounded,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    offer.moveType.label,
-                    style: AppTextStyles.bodyPrimaryHeavy,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text('방문객 안내 사항', style: AppTextStyles.bodyPrimaryHeavy),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
-            child: Text(
-              offer.description.isEmpty ? '상세 안내가 없어요.' : offer.description,
-              style: AppTextStyles.labelWithColor(
-                AppColors.textPrimary,
-                weight: FontWeight.w700,
-                height: 1.32,
-              ),
-            ),
+          const SizedBox(height: AppSpacing.s18),
+          _buildSectionCard(title: '거래 이동 방식', child: _buildMoveTypePanel()),
+          const SizedBox(height: AppSpacing.s18),
+          _buildSectionCard(
+            title: '방문객 안내 사항',
+            child: _buildVisitorGuidePanel(),
           ),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.pageHorizontal,
-            10,
-            AppSpacing.pageHorizontal,
-            10,
-          ),
-          child: isMine
-              ? _buildOwnerBottomActions(
-                  context,
-                  ref,
-                  currentOffer: currentOffer,
-                )
-              : _buildVisitorBottomActions(
-                  context,
-                  ref,
-                  currentUid: currentUid,
-                  currentOffer: currentOffer,
-                ),
-        ),
-      ),
+      bottomNavigationBar: showBottomActionBar
+          ? _buildBottomActionBar(
+              child: isMine
+                  ? _buildOwnerBottomActions(
+                      context,
+                      ref,
+                      currentOffer: currentOffer,
+                    )
+                  : _buildVisitorBottomActions(
+                      context,
+                      ref,
+                      currentUid: currentUid,
+                      currentOffer: currentOffer,
+                    ),
+            )
+          : null,
     );
   }
 
@@ -283,6 +225,96 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return canDeleteMineOffer;
   }
 
+  // 유지보수 포인트:
+  // 상세 화면의 카드 질감(반경/보더/그림자)을 한 곳에서 맞추면
+  // 이후 시장 화면 전체의 톤을 바꿀 때 이 메서드만 조정하면 됩니다.
+  BoxDecoration _buildSurfaceDecoration({
+    required Color color,
+    required double radius,
+    bool elevated = true,
+  }) {
+    return BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: AppColors.borderDefault.withValues(
+          alpha: elevated ? 0.78 : 0.68,
+        ),
+      ),
+      boxShadow: elevated
+          ? <BoxShadow>[
+              const BoxShadow(
+                color: AppColors.shadowSoft,
+                blurRadius: 10,
+                offset: Offset(0, 2),
+              ),
+            ]
+          : const <BoxShadow>[],
+    );
+  }
+
+  Widget _buildCoverImageCard() {
+    return Container(
+      decoration: _buildSurfaceDecoration(
+        color: AppColors.bgCard,
+        radius: _sectionCornerRadius,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: SizedBox(height: 230, child: _buildImage(offer.coverImageUrl)),
+    );
+  }
+
+  Widget _buildSectionCard({required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      decoration: _buildSurfaceDecoration(color: AppColors.bgCard, radius: 24),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(title, style: AppTextStyles.bodyPrimaryHeavy),
+            const SizedBox(height: AppSpacing.s10),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInsetPanel({
+    required Widget child,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
+    Color backgroundColor = AppColors.bgSecondary,
+    bool elevated = false,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: _buildSurfaceDecoration(
+        color: backgroundColor,
+        radius: _panelCornerRadius,
+        elevated: elevated,
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildBottomActionBar({required Widget child}) {
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.pageHorizontal,
+          AppSpacing.s10,
+          AppSpacing.pageHorizontal,
+          AppSpacing.s12,
+        ),
+        child: child,
+      ),
+    );
+  }
+
   Widget _buildOfferOverviewCard(WidgetRef ref, MarketOffer currentOffer) {
     final ownerUid = currentOffer.ownerUid.trim();
     final islandsAsync = ownerUid.isEmpty
@@ -324,23 +356,33 @@ class MarketOfferDetailPage extends ConsumerWidget {
       label: '거래 요약 카드',
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: _buildSurfaceDecoration(
           color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.borderDefault),
-          boxShadow: const <BoxShadow>[
-            BoxShadow(
-              color: AppColors.shadowSoft,
-              blurRadius: 12,
-              offset: Offset(0, 4),
-            ),
-          ],
+          radius: _sectionCornerRadius,
         ),
         child: Column(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-              child: _buildTradeSummaryCard(embedded: true),
+              padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // Wrap(
+                  //   spacing: AppSpacing.s8,
+                  //   runSpacing: AppSpacing.s8,
+                  //   children: <Widget>[
+                  //     _buildOfferMetaBadge(
+                  //       label: _resolveOfferPhaseLabel(currentOffer),
+                  //       backgroundColor: _resolveOfferPhaseBackground(
+                  //         currentOffer,
+                  //       ),
+                  //       textColor: _resolveOfferPhaseTextColor(currentOffer),
+                  //     ),
+                  //   ],
+                  // ),
+                  _buildTradeSummaryCard(embedded: true),
+                ],
+              ),
             ),
             _buildOfferOwnerFooter(
               displayName: displayName,
@@ -360,10 +402,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 16, 14, 16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
       decoration: BoxDecoration(
         color: AppColors.bgSecondary,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(21)),
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(_sectionCornerRadius - 1),
+        ),
         border: Border(
           top: BorderSide(
             color: AppColors.borderDefault.withValues(alpha: 0.6),
@@ -374,10 +418,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           ClipOval(
-            child: Container(
-              width: 42,
-              height: 42,
-              color: AppColors.catalogChipBg,
+            child: SizedBox(
+              width: 48,
+              height: 48,
               child: avatarUrl.isEmpty
                   ? Image.asset(
                       'assets/images/icon_raccoon_character.png',
@@ -386,7 +429,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   : _buildImage(avatarUrl),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: AppSpacing.s12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,12 +443,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.s6),
                 Text(
                   secondaryText,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.captionMuted,
+                  style: AppTextStyles.captionSecondary,
                 ),
               ],
             ),
@@ -413,6 +456,90 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildOfferMetaBadge({
+    required String label,
+    required Color backgroundColor,
+    required Color textColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: AppTextStyles.captionWithColor(
+          textColor,
+          weight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
+  String _resolveOfferPhaseLabel(MarketOffer target) {
+    if (_isCancelledOffer(target)) {
+      return '거래 취소';
+    }
+    if (_isCompletedOfferByStatus(target)) {
+      return '거래 완료';
+    }
+    switch (target.status) {
+      case MarketOfferStatus.open:
+        return '제안 받는 중';
+      case MarketOfferStatus.waiting:
+        return '상대 응답 대기';
+      case MarketOfferStatus.closed:
+        return '거래 마감';
+      case MarketOfferStatus.offline:
+        return '오프라인';
+      case MarketOfferStatus.trading:
+        return '거래 진행 중';
+    }
+  }
+
+  Color _resolveOfferPhaseBackground(MarketOffer target) {
+    if (_isCancelledOffer(target)) {
+      return AppColors.badgeRedBg;
+    }
+    if (_isCompletedOfferByStatus(target)) {
+      return AppColors.catalogSuccessBg;
+    }
+    switch (target.status) {
+      case MarketOfferStatus.open:
+        return AppColors.badgeMintBg;
+      case MarketOfferStatus.waiting:
+        return AppColors.badgeYellowBg;
+      case MarketOfferStatus.closed:
+        return AppColors.badgeBeigeBg;
+      case MarketOfferStatus.offline:
+        return AppColors.catalogChipBg;
+      case MarketOfferStatus.trading:
+        return AppColors.badgeBlueBg;
+    }
+  }
+
+  Color _resolveOfferPhaseTextColor(MarketOffer target) {
+    if (_isCancelledOffer(target)) {
+      return AppColors.badgeRedText;
+    }
+    if (_isCompletedOfferByStatus(target)) {
+      return AppColors.catalogSuccessText;
+    }
+    switch (target.status) {
+      case MarketOfferStatus.open:
+        return AppColors.badgeMintText;
+      case MarketOfferStatus.waiting:
+        return AppColors.badgeYellowText;
+      case MarketOfferStatus.closed:
+        return AppColors.badgeBeigeText;
+      case MarketOfferStatus.offline:
+        return AppColors.textMuted;
+      case MarketOfferStatus.trading:
+        return AppColors.badgeBlueText;
+    }
   }
 
   String _buildOfferOwnerInfoLine({
@@ -473,30 +600,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          FilledButton(
+          _buildPrimaryBottomButton(
+            label: title,
             onPressed: null,
-            style: FilledButton.styleFrom(
-              overlayColor: Colors.transparent,
-              splashFactory: NoSplash.splashFactory,
-              backgroundColor: AppColors.catalogChipBg,
-              disabledBackgroundColor: AppColors.catalogChipBg,
-              minimumSize: const Size.fromHeight(58),
-            ),
-            child: Text(title, style: AppTextStyles.buttonPrimary),
+            backgroundColor: AppColors.catalogChipBg,
           ),
-          const SizedBox(height: 10),
-          OutlinedButton(
+          const SizedBox(height: AppSpacing.s10),
+          _buildSecondaryBottomButton(
+            label: '닫기',
             onPressed: () => Navigator.of(context).pop(),
-            style: OutlinedButton.styleFrom(
-              overlayColor: Colors.transparent,
-              splashFactory: NoSplash.splashFactory,
-              minimumSize: const Size.fromHeight(56),
-              side: const BorderSide(color: AppColors.borderDefault, width: 2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-            ),
-            child: Text('닫기', style: AppTextStyles.buttonSecondary),
           ),
         ],
       );
@@ -593,29 +705,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        FilledButton(
+        _buildPrimaryBottomButton(
+          label: primaryLabel,
           onPressed: primaryOnPressed,
-          style: FilledButton.styleFrom(
-            overlayColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            backgroundColor: primaryBackground,
-            minimumSize: const Size.fromHeight(58),
-          ),
-          child: Text(primaryLabel, style: AppTextStyles.buttonPrimary),
+          backgroundColor: primaryBackground,
         ),
-        const SizedBox(height: 10),
-        OutlinedButton(
+        const SizedBox(height: AppSpacing.s10),
+        _buildSecondaryBottomButton(
+          label: secondaryLabel,
           onPressed: secondaryOnPressed,
-          style: OutlinedButton.styleFrom(
-            overlayColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            minimumSize: const Size.fromHeight(56),
-            side: const BorderSide(color: AppColors.borderDefault, width: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-          ),
-          child: Text(secondaryLabel, style: AppTextStyles.buttonSecondary),
         ),
       ],
     );
@@ -643,52 +741,75 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        FilledButton(
+        _buildPrimaryBottomButton(
+          label: '거래 완료할게요!',
           onPressed: canCompleteTrade
               ? () => _completeMyOffer(context, ref)
               : null,
-          style: FilledButton.styleFrom(
-            overlayColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            backgroundColor: AppColors.accentDeepOrange,
-            disabledBackgroundColor: AppColors.catalogChipBg,
-            minimumSize: const Size.fromHeight(58),
-          ),
-          child: Text('거래 완료할게요!', style: AppTextStyles.buttonPrimary),
+          backgroundColor: AppColors.accentDeepOrange,
         ),
-        const SizedBox(height: 10),
-        OutlinedButton(
+        const SizedBox(height: AppSpacing.s10),
+        _buildSecondaryBottomButton(
+          label: canCancelTrade ? '거래 취소' : '거래 삭제',
           onPressed: canCancelTrade
               ? () => _cancelTradeAsOwner(context, ref)
               : () => _deleteMyOffer(context, ref),
-          style: OutlinedButton.styleFrom(
-            overlayColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            minimumSize: const Size.fromHeight(56),
-            side: const BorderSide(color: AppColors.borderDefault, width: 2),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-          ),
-          child: Text(
-            canCancelTrade ? '거래 취소' : '거래 삭제',
-            style: AppTextStyles.buttonSecondary,
-          ),
         ),
       ],
     );
   }
 
+  Widget _buildPrimaryBottomButton({
+    required String label,
+    required VoidCallback? onPressed,
+    required Color backgroundColor,
+  }) {
+    return FilledButton(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        overlayColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+        backgroundColor: backgroundColor,
+        disabledBackgroundColor: AppColors.catalogChipBg,
+        minimumSize: const Size.fromHeight(60),
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      child: Text(
+        label,
+        style: onPressed == null
+            ? AppTextStyles.buttonSecondary
+            : AppTextStyles.buttonPrimary,
+      ),
+    );
+  }
+
+  Widget _buildSecondaryBottomButton({
+    required String label,
+    required VoidCallback? onPressed,
+  }) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        overlayColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+        backgroundColor: AppColors.bgCard.withValues(alpha: 0.96),
+        minimumSize: const Size.fromHeight(58),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        side: BorderSide(
+          color: AppColors.borderDefault.withValues(alpha: 0.9),
+          width: 1.6,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      child: Text(label, style: AppTextStyles.buttonOutline),
+    );
+  }
+
   Widget _buildMyProposalStatusSection(WidgetRef ref, String currentUid) {
     if (currentUid.trim().isEmpty) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault),
-        ),
+      return _buildInsetPanel(
         child: Text(
           '로그인 후 거래 제안을 보낼 수 있어요.',
           style: AppTextStyles.captionMuted,
@@ -703,14 +824,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
       )),
     );
     return myProposalAsync.when(
-      loading: () => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault),
-        ),
+      loading: () => _buildInsetPanel(
         child: Row(
           children: <Widget>[
             const SizedBox(
@@ -718,55 +832,34 @@ class MarketOfferDetailPage extends ConsumerWidget {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.s10),
             Text('내 제안 상태를 확인하는 중...', style: AppTextStyles.captionMuted),
           ],
         ),
       ),
-      error: (error, stackTrace) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault),
-        ),
+      error: (error, stackTrace) => _buildInsetPanel(
         child: Text('제안 상태를 불러오지 못했어요.', style: AppTextStyles.captionHint),
       ),
       data: (proposal) {
         if (proposal == null) {
-          return Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
+          return _buildInsetPanel(
             child: Text(
               '아직 이 거래에 보낸 제안이 없어요.',
               style: AppTextStyles.captionMuted,
             ),
           );
         }
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.bgCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.borderDefault),
-          ),
+        return _buildInsetPanel(
           child: Row(
             children: <Widget>[
               _buildProposalStatusBadge(
                 proposal.status,
                 isOfferCompleted: _isCompletedOffer,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.s8),
               Expanded(
                 child: Text(
-                  '업데이트: ${formatRelativeTime(proposal.updatedAt)}',
+                  '업데이트 ${formatRelativeTime(proposal.updatedAt)}',
                   style: AppTextStyles.captionMuted,
                 ),
               ),
@@ -784,14 +877,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }) {
     final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
     return proposalsAsync.when(
-      loading: () => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault),
-        ),
+      loading: () => _buildInsetPanel(
         child: Row(
           children: <Widget>[
             const SizedBox(
@@ -799,30 +885,23 @@ class MarketOfferDetailPage extends ConsumerWidget {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.s10),
             Text('거래 제안 목록을 불러오는 중...', style: AppTextStyles.captionMuted),
           ],
         ),
       ),
-      error: (error, stackTrace) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.borderDefault),
-        ),
+      error: (error, stackTrace) => _buildInsetPanel(
         child: Text('제안 목록을 불러오지 못했어요.', style: AppTextStyles.captionHint),
       ),
       data: (proposals) {
-        return Container(
-          width: double.infinity,
+        if (proposals.isEmpty) {
+          return _buildInsetPanel(
+            child: Text('아직 받은 거래 제안이 없어요.', style: AppTextStyles.captionMuted),
+          );
+        }
+
+        return _buildInsetPanel(
           padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.bgCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.borderDefault),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -830,122 +909,133 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 '대기열 제안 ${proposals.length}건',
                 style: AppTextStyles.bodySecondaryStrong,
               ),
-              const SizedBox(height: 10),
-              if (proposals.isEmpty)
-                Text('아직 받은 거래 제안이 없어요.', style: AppTextStyles.captionMuted)
-              else
-                ...proposals.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final proposal = entry.value;
-                  final canAccept =
-                      !_isInactiveOffer(currentOffer) &&
-                      proposal.status == MarketTradeProposalStatus.pending;
-                  final canOpenCode =
-                      !_isInactiveOffer(currentOffer) &&
-                      proposal.status == MarketTradeProposalStatus.accepted;
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index == proposals.length - 1 ? 0 : 8,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.bgSecondary,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.borderDefault),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          ClipOval(
-                            child: SizedBox(
-                              width: 34,
-                              height: 34,
-                              child: _buildImage(proposal.proposerAvatarUrl),
+              const SizedBox(height: AppSpacing.s10),
+              ...proposals.asMap().entries.map((entry) {
+                final index = entry.key;
+                final proposal = entry.value;
+                final canAccept =
+                    !_isInactiveOffer(currentOffer) &&
+                    proposal.status == MarketTradeProposalStatus.pending;
+                final canOpenCode =
+                    !_isInactiveOffer(currentOffer) &&
+                    proposal.status == MarketTradeProposalStatus.accepted;
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == proposals.length - 1 ? 0 : AppSpacing.s10,
+                  ),
+                  child: _buildInsetPanel(
+                    backgroundColor: AppColors.bgSecondary,
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: <Widget>[
+                        ClipOval(
+                          child: SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: proposal.proposerAvatarUrl.trim().isEmpty
+                                ? Image.asset(
+                                    'assets/images/icon_raccoon_character.png',
+                                    fit: BoxFit.cover,
+                                  )
+                                : _buildImage(proposal.proposerAvatarUrl),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.s10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                proposal.proposerName.trim().isEmpty
+                                    ? '이름 없는 유저'
+                                    : proposal.proposerName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.s6),
+                              Wrap(
+                                spacing: AppSpacing.s6,
+                                runSpacing: AppSpacing.s6,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: <Widget>[
+                                  _buildProposalStatusBadge(
+                                    proposal.status,
+                                    isOfferCompleted: _isCompletedOffer,
+                                  ),
+                                  Text(
+                                    formatRelativeTime(proposal.updatedAt),
+                                    style: AppTextStyles.captionMuted,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.s10),
+                        if (canAccept)
+                          FilledButton(
+                            onPressed: () =>
+                                _acceptProposal(context, ref, proposal),
+                            style: FilledButton.styleFrom(
+                              overlayColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
+                              backgroundColor: AppColors.accentDeepOrange,
+                              minimumSize: const Size(80, 40),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              '승낙',
+                              style: AppTextStyles.captionWithColor(
+                                AppColors.white,
+                                weight: FontWeight.w800,
+                              ),
+                            ),
+                          )
+                        else if (canOpenCode)
+                          OutlinedButton(
+                            onPressed: () => _openTradeCodePage(
+                              context,
+                              ref,
+                              currentOffer: currentOffer,
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              overlayColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
+                              backgroundColor: AppColors.bgSecondary,
+                              minimumSize: const Size(84, 40),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              side: BorderSide(
+                                color: AppColors.borderStrong.withValues(
+                                  alpha: 0.8,
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Text(
+                              '코드',
+                              style: AppTextStyles.captionWithColor(
+                                AppColors.textPrimary,
+                                weight: FontWeight.w800,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  proposal.proposerName.trim().isEmpty
-                                      ? '이름 없는 유저'
-                                      : proposal.proposerName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.bodyPrimaryHeavy,
-                                ),
-                                const SizedBox(height: 3),
-                                Row(
-                                  children: <Widget>[
-                                    _buildProposalStatusBadge(
-                                      proposal.status,
-                                      isOfferCompleted: _isCompletedOffer,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      formatRelativeTime(proposal.updatedAt),
-                                      style: AppTextStyles.captionMuted,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          if (canAccept)
-                            FilledButton(
-                              onPressed: () =>
-                                  _acceptProposal(context, ref, proposal),
-                              style: FilledButton.styleFrom(
-                                overlayColor: Colors.transparent,
-                                splashFactory: NoSplash.splashFactory,
-                                backgroundColor: AppColors.accentDeepOrange,
-                                minimumSize: const Size(72, 38),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                              ),
-                              child: Text(
-                                '승낙',
-                                style: AppTextStyles.captionWithColor(
-                                  AppColors.white,
-                                  weight: FontWeight.w800,
-                                ),
-                              ),
-                            )
-                          else if (canOpenCode)
-                            OutlinedButton(
-                              onPressed: () => _openTradeCodePage(
-                                context,
-                                ref,
-                                currentOffer: currentOffer,
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                overlayColor: Colors.transparent,
-                                splashFactory: NoSplash.splashFactory,
-                                minimumSize: const Size(84, 38),
-                                side: const BorderSide(
-                                  color: AppColors.borderStrong,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                              ),
-                              child: Text(
-                                '코드',
-                                style: AppTextStyles.captionWithColor(
-                                  AppColors.textPrimary,
-                                  weight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                      ],
                     ),
-                  );
-                }),
+                  ),
+                );
+              }),
             ],
           ),
         );
@@ -982,7 +1072,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
       }
     }
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(999),
@@ -1003,49 +1093,47 @@ class MarketOfferDetailPage extends ConsumerWidget {
     }
     final Widget content = offer.oneWayOffer
         ? _buildSingleTradeSummaryContent(embedded: embedded)
-        : Row(
+        : Stack(
+            alignment: Alignment.center,
             children: <Widget>[
-              Expanded(
-                child: _buildItemMiniCard(
-                  header: offer.offerHeaderLabel,
-                  defaultHeader: '드려요',
-                  headerColor: AppColors.primaryDefault,
-                  imageUrl: offer.offerItemImageUrl,
-                  title: offer.offerItemName,
-                  quantity: offer.offerItemQuantity,
-                  categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
-                  imageSize: embedded ? 106 : 74,
-                  imageBorderRadius: embedded ? 22 : 16,
-                ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: _buildItemMiniCard(
+                      header: offer.offerHeaderLabel,
+                      defaultHeader: '드려요',
+                      headerColor: AppColors.primaryDefault,
+                      imageUrl: offer.offerItemImageUrl,
+                      title: offer.offerItemName,
+                      quantity: offer.offerItemQuantity,
+                      categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
+                      imageSize: embedded ? 104 : 74,
+                      imageBorderRadius: embedded ? 22 : 16,
+                    ),
+                  ),
+                  const SizedBox(width: 22),
+                  Expanded(
+                    child: _buildItemMiniCard(
+                      header: offer.wantHeaderLabel,
+                      defaultHeader: '받아요',
+                      headerColor: AppColors.accentDeepOrange,
+                      imageUrl: offer.wantItemImageUrl,
+                      title: offer.wantItemName,
+                      quantity: offer.wantItemQuantity,
+                      categoryLabel: _resolveItemTypeLabel(isOfferSide: false),
+                      imageSize: embedded ? 104 : 74,
+                      imageBorderRadius: embedded ? 22 : 16,
+                    ),
+                  ),
+                ],
               ),
               _buildTradeDirectionIndicator(),
-              Expanded(
-                child: _buildItemMiniCard(
-                  header: offer.wantHeaderLabel,
-                  defaultHeader: '받아요',
-                  headerColor: AppColors.accentDeepOrange,
-                  imageUrl: offer.wantItemImageUrl,
-                  title: offer.wantItemName,
-                  quantity: offer.wantItemQuantity,
-                  categoryLabel: _resolveItemTypeLabel(isOfferSide: false),
-                  imageSize: embedded ? 106 : 74,
-                  imageBorderRadius: embedded ? 22 : 16,
-                ),
-              ),
             ],
           );
     if (embedded) {
       return content;
     }
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: content,
-    );
+    return _buildInsetPanel(child: content);
   }
 
   Widget _buildSingleTradeSummaryContent({bool embedded = false}) {
@@ -1069,48 +1157,48 @@ class MarketOfferDetailPage extends ConsumerWidget {
     final touchingCount = touchingTags.length;
     final Widget content = Column(
       children: <Widget>[
-        Row(
+        Stack(
+          alignment: Alignment.center,
           children: <Widget>[
-            Expanded(
-              child: _buildItemMiniCard(
-                header: '입장료',
-                defaultHeader: '입장료',
-                headerColor: AppColors.primaryDefault,
-                imageUrl: offer.offerItemImageUrl,
-                title: offer.offerItemName,
-                quantity: offer.offerItemQuantity,
-                categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
-                imageSize: embedded ? 106 : 74,
-                imageBorderRadius: embedded ? 22 : 16,
-              ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _buildItemMiniCard(
+                    header: '입장료',
+                    defaultHeader: '입장료',
+                    headerColor: AppColors.primaryDefault,
+                    imageUrl: offer.offerItemImageUrl,
+                    title: offer.offerItemName,
+                    quantity: offer.offerItemQuantity,
+                    categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
+                    imageSize: embedded ? 104 : 74,
+                    imageBorderRadius: embedded ? 22 : 16,
+                  ),
+                ),
+                const SizedBox(width: 22),
+                Expanded(
+                  child: _buildItemMiniCard(
+                    header: '만지작',
+                    defaultHeader: '만지작',
+                    headerColor: AppColors.badgePurpleText,
+                    imageUrl: '',
+                    title: touchingCount > 0 ? '만지작 $touchingCount개' : '만지작',
+                    quantity: 0,
+                    categoryLabel: '만지작',
+                    emptyImageIcon: Icons.touch_app_rounded,
+                    imageSize: embedded ? 104 : 74,
+                    imageBorderRadius: embedded ? 22 : 16,
+                  ),
+                ),
+              ],
             ),
             _buildTradeDirectionIndicator(),
-            Expanded(
-              child: _buildItemMiniCard(
-                header: '만지작',
-                defaultHeader: '만지작',
-                headerColor: AppColors.badgePurpleText,
-                imageUrl: '',
-                title: touchingCount > 0 ? '만지작 $touchingCount개' : '만지작',
-                quantity: 0,
-                categoryLabel: '만지작',
-                emptyImageIcon: Icons.touch_app_rounded,
-                imageSize: embedded ? 106 : 74,
-                imageBorderRadius: embedded ? 22 : 16,
-              ),
-            ),
           ],
         ),
         if (touchingTags.isNotEmpty) ...<Widget>[
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.bgSecondary,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
+          const SizedBox(height: AppSpacing.s12),
+          _buildInsetPanel(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
               children: <Widget>[
                 const Icon(
@@ -1136,15 +1224,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     if (embedded) {
       return content;
     }
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: content,
-    );
+    return _buildInsetPanel(child: content);
   }
 
   String _buildFoldedTouchingSummaryText(List<String> touchingTags) {
@@ -1161,11 +1241,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Widget _buildTradeDirectionIndicator() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 6),
       child: Icon(
-        Icons.sync_alt_outlined,
-        size: 30,
+        Icons.sync_alt_rounded,
+        size: 28,
         color: AppColors.textAccent,
       ),
     );
@@ -1199,7 +1279,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
             weight: FontWeight.w800,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: AppSpacing.s6),
         Container(
           width: imageSize,
           height: imageSize,
@@ -1213,7 +1293,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ? Icon(emptyImageIcon, color: AppColors.textHint, size: 30)
               : _buildImage(imageUrl),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.s8),
         Text(
           displayName,
           maxLines: 1,
@@ -1221,10 +1301,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 14),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.s8),
         _buildItemTypeBadge(categoryLabel),
         if (displayQuantity > 1) ...<Widget>[
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.s4),
           Text('X$displayQuantity', style: AppTextStyles.bodyPrimaryHeavy),
         ],
       ],
@@ -1284,6 +1364,54 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoveTypePanel() {
+    final isHost = offer.moveType == MarketMoveType.host;
+    return _buildInsetPanel(
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: AppColors.catalogChipBg,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Icon(
+              isHost ? Icons.home_rounded : Icons.flight_takeoff_rounded,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.s12),
+          Expanded(
+            child: Text(
+              offer.moveType.label,
+              style: AppTextStyles.bodyPrimaryHeavy,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVisitorGuidePanel() {
+    final description = offer.description.trim();
+    if (description.isEmpty) {
+      return _buildInsetPanel(
+        child: Text('상세 안내가 없어요.', style: AppTextStyles.bodySecondaryStrong),
+      );
+    }
+    return _buildInsetPanel(
+      child: Text(
+        description,
+        style: AppTextStyles.labelWithColor(
+          AppColors.textPrimary,
+          weight: FontWeight.w700,
+          height: 1.42,
         ),
       ),
     );
