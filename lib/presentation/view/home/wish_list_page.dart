@@ -10,6 +10,7 @@ import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 final wishListCatalogProvider = FutureProvider.autoDispose
@@ -109,7 +110,7 @@ class _WishListPageState extends ConsumerState<WishListPage> {
                   : itemsAsync.hasError
                   ? _buildInfoText('위시 리스트를 불러오지 못했어요.')
                   : filtered.isEmpty
-                  ? _buildInfoText('선택한 카테고리의 위시 아이템이 없어요.')
+                  ? _buildEmptyState()
                   : ListView.separated(
                       itemCount: filtered.length,
                       separatorBuilder: (_, unused) =>
@@ -326,6 +327,16 @@ class _WishListPageState extends ConsumerState<WishListPage> {
           weight: FontWeight.w700,
           height: 1.4,
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Center(
+      child: AppOwlEmptyState(
+        useCard: false,
+        title: '선택한 카테고리의 위시 아이템이 없어요.',
+        subtitle: '다른 카테고리를 선택하거나 위시를 추가해보세요.',
       ),
     );
   }

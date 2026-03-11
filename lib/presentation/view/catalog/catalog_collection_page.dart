@@ -15,6 +15,7 @@ import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_badge_palette.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 
 class CatalogCollectionPage extends ConsumerStatefulWidget {
   const CatalogCollectionPage({
@@ -500,19 +501,12 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   }
 
   Widget _buildEmptyView() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Image.asset(
-            'assets/images/no_data_image.png',
-            width: 160,
-            height: 160,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(height: 8),
-          Text('아직 데이터가 없어요...', style: AppTextStyles.headingH2Secondary),
-        ],
+    return const Center(
+      child: AppOwlEmptyState(
+        useCard: false,
+        imageSize: 120,
+        title: '아직 데이터가 없어요.',
+        subtitle: '조건에 맞는 항목이 아직 없어요.',
       ),
     );
   }

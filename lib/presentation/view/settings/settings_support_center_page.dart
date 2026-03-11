@@ -8,6 +8,7 @@ import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_faq_item.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_inquiry_form_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_inquiry_list_page.dart';
@@ -179,10 +180,11 @@ class _SettingsSupportCenterPageState
     }
 
     if (categories.isEmpty) {
-      return <Widget>[
-        _faqStatusCard(
-          title: '등록된 FAQ가 없습니다.',
-          body: 'app_config/faqs 의 active 항목을 표시합니다.',
+      return const <Widget>[
+        AppOwlEmptyState(
+          imageSize: 76,
+          title: '등록된 FAQ가 없어요.',
+          subtitle: '활성화된 FAQ가 추가되면 여기에 표시돼요.',
         ),
       ];
     }

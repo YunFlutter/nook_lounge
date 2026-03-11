@@ -20,6 +20,7 @@ import 'package:nook_lounge_app/presentation/view/catalog/catalog_collection_pag
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
 import 'package:nook_lounge_app/presentation/view/airport/widgets/airport_gate_pill_toggle.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/home/wish_list_page.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_legend_dot.dart';
 import 'package:nook_lounge_app/presentation/view/turnip/turnip_prediction_chart.dart';
@@ -82,7 +83,6 @@ class HomeDashboardTab extends ConsumerWidget {
   static const Color _turnipEmptyCtaColor = Color(0xFF72D7B2);
   static const Color _turnipEmptyCtaShadowColor = Color(0x1A000000);
   static const double _turnipEmptyMinHeight = 300;
-  static const double _turnipEmptyImageSize = 88;
   static const double _turnipEmptyButtonWidth = 288;
   static const double _turnipEmptyButtonHeight = 56;
   static const double _turnipEmptyButtonRadius = 30;
@@ -214,13 +214,11 @@ class HomeDashboardTab extends ConsumerWidget {
         : hasError
         ? Text('섬 정보를 불러오지 못했어요.', style: AppTextStyles.bodySecondaryStrong)
         : selectedIsland == null
-        ? Text(
-            '등록된 섬이 없어요.\n새 섬을 추가해서 시작해보세요.',
-            style: AppTextStyles.labelWithColor(
-              AppColors.textSecondary,
-              weight: FontWeight.w700,
-              height: 1.4,
-            ),
+        ? const AppOwlEmptyState(
+            useCard: false,
+            imageSize: 72,
+            title: '등록된 섬이 없어요.',
+            subtitle: '새 섬을 추가해서 시작해보세요.',
           )
         : _buildIslandHeroContent(
             context: context,
@@ -614,38 +612,12 @@ class HomeDashboardTab extends ConsumerWidget {
             ),
           ],
           const SizedBox(height: AppSpacing.s24),
-          Center(
-            child: Column(
-              children: <Widget>[
-                Semantics(
-                  label: '무주식 데이터 없음 이미지',
-                  image: true,
-                  child: Image.asset(
-                    _noDataImageAssetPath,
-                    width: _turnipEmptyImageSize,
-                    height: _turnipEmptyImageSize,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.s12),
-                Text(
-                  '데이터가 없어요.',
-                  style: AppTextStyles.bodyWithSize(
-                    18,
-                    color: AppColors.textPrimary,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.s12),
-                Text(
-                  '무 가격을 입력하고 계산해 주세요.',
-                  style: AppTextStyles.bodyWithSize(
-                    14,
-                    color: AppColors.textMuted,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-              ],
+          const Center(
+            child: AppOwlEmptyState(
+              useCard: false,
+              title: '데이터가 없어요.',
+              subtitle: '무 가격을 입력하고 계산해 주세요.',
+              imageSemanticLabel: '무주식 데이터 없음 이미지',
             ),
           ),
           const SizedBox(height: AppSpacing.s24),

@@ -5,6 +5,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/island_profile_options.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 
 class SettingsIslandListSheet extends StatelessWidget {
   const SettingsIslandListSheet({
@@ -148,8 +149,13 @@ class SettingsIslandListSheet extends StatelessWidget {
   }
 
   Widget _emptyView() {
-    return Center(
-      child: Text('등록된 섬이 없어요.', style: AppTextStyles.bodyMutedStrong),
+    return const Center(
+      child: AppOwlEmptyState(
+        useCard: false,
+        imageSize: 76,
+        title: '등록된 섬이 없어요.',
+        subtitle: '섬을 추가하면 여기에서 선택할 수 있어요.',
+      ),
     );
   }
 

@@ -357,18 +357,77 @@ class AirportFirestoreDataSource {
       return;
     }
 
-    await _firestore
-        .doc(
-          FirestorePaths.airportRequest(
-            normalizedIslandId,
-            normalizedRequestId,
-          ),
-        )
-        .set(<String, dynamic>{
-          'status': AirportVisitRequestStatus.cancelled.name,
-          'cancelByUid': normalizedCancelByUid,
-          'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+    final requestRef = _firestore.doc(
+      FirestorePaths.airportRequest(normalizedIslandId, normalizedRequestId),
+    );
+    final requestSnapshot = await requestRef.get();
+    final requestData = requestSnapshot.data() ?? const <String, dynamic>{};
+    final sourceOfferId = _resolveTradeSourceOfferId(
+      requestId: normalizedRequestId,
+      sourceType: (requestData['sourceType'] as String?)?.trim() ?? '',
+      sourceOfferId: (requestData['sourceOfferId'] as String?)?.trim() ?? '',
+    );
+
+    final targetRefs = <DocumentReference<Map<String, dynamic>>>[];
+    if (sourceOfferId.isNotEmpty) {
+      try {
+        final relatedDocs = await _findTradeLinkedRequestDocsByOfferId(
+          sourceOfferId,
+        );
+        for (final doc in relatedDocs) {
+          final statusName = (doc.data()['status'] as String?)?.trim() ?? '';
+          if (!_isActiveRequestStatusName(statusName)) {
+            continue;
+          }
+          targetRefs.add(doc.reference);
+        }
+      } catch (_) {}
+    }
+    if (targetRefs.every((ref) => ref.path != requestRef.path)) {
+      targetRefs.add(requestRef);
+    }
+
+    final sameIslandRefs = <DocumentReference<Map<String, dynamic>>>[];
+    final crossIslandRefs = <DocumentReference<Map<String, dynamic>>>[];
+    final seenPaths = <String>{};
+    for (final ref in targetRefs) {
+      if (!seenPaths.add(ref.path)) {
+        continue;
+      }
+      final refIslandId = _extractIslandIdFromRequestRefPath(ref.path);
+      if (refIslandId == normalizedIslandId) {
+        sameIslandRefs.add(ref);
+      } else {
+        crossIslandRefs.add(ref);
+      }
+    }
+    if (sameIslandRefs.isEmpty) {
+      sameIslandRefs.add(requestRef);
+    }
+
+    final payload = <String, dynamic>{
+      'status': AirportVisitRequestStatus.cancelled.name,
+      'cancelByUid': normalizedCancelByUid,
+      'inviteCode': FieldValue.delete(),
+      'invitedAt': FieldValue.delete(),
+      'arrivedAt': FieldValue.delete(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+    final batch = _firestore.batch();
+    for (final ref in sameIslandRefs) {
+      batch.set(ref, payload, SetOptions(merge: true));
+    }
+    await batch.commit();
+
+    for (final ref in crossIslandRefs) {
+      try {
+        await ref.set(payload, SetOptions(merge: true));
+      } catch (_) {
+        // 유지보수 포인트:
+        // 거래 연동 방문 취소는 다른 섬 큐에도 문서가 남을 수 있어
+        // 현재 섬 요청은 우선 취소하고 교차 섬 정리는 가능 범위에서 이어갑니다.
+      }
+    }
   }
 
   Future<void> inviteRequests({

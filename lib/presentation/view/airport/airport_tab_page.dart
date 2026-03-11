@@ -20,6 +20,7 @@ import 'package:nook_lounge_app/presentation/view/airport/airport_dodo_code_inpu
 import 'package:nook_lounge_app/presentation/view/airport/airport_request_list_page.dart';
 import 'package:nook_lounge_app/presentation/view/airport/airport_visitor_manifest_page.dart';
 import 'package:nook_lounge_app/presentation/view/airport/widgets/airport_gate_pill_toggle.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/airport_view_model.dart';
 
@@ -504,19 +505,10 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             ),
           )
         else if (requests.isEmpty)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
-            child: Text(
-              '아직 대기 중인 섬이 없어요.',
-              style: AppTextStyles.bodySecondaryStrong,
-              textAlign: TextAlign.center,
-            ),
+          const AppOwlEmptyState(
+            imageSize: 72,
+            title: '아직 대기 중인 섬이 없어요.',
+            subtitle: '다른 섬에 방문 신청하면 여기에 표시돼요.',
           )
         else
           ...requests.take(2).map((request) {
@@ -593,7 +585,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${request.hostIslandName} · ${request.purpose.label}',
+                            request.hostIslandName,
                             style: AppTextStyles.captionMuted,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -676,19 +668,10 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
         ),
         const SizedBox(height: 8),
         if (requests.isEmpty)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
-            child: Text(
-              '대기 중인 손님이 없어요.',
-              style: AppTextStyles.bodySecondaryStrong,
-              textAlign: TextAlign.center,
-            ),
+          const AppOwlEmptyState(
+            imageSize: 72,
+            title: '대기 중인 손님이 없어요.',
+            subtitle: '새 방문 신청이 들어오면 여기에 표시돼요.',
           )
         else
           ...requests.take(3).map((request) {
@@ -754,7 +737,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '목적: ${request.purpose.label}',
+                                request.requesterIslandName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.captionMuted,
@@ -1025,10 +1008,11 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Text(
-                '대기 중인 손님이 없어요.',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.bodySecondaryStrong,
+              child: AppOwlEmptyState(
+                useCard: false,
+                imageSize: 72,
+                title: '대기 중인 손님이 없어요.',
+                subtitle: '새 신청이 들어오면 다시 확인해 주세요.',
               ),
             ),
           );
@@ -1070,7 +1054,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                   style: AppTextStyles.bodyPrimaryStrong,
                 ),
                 subtitle: Text(
-                  '${request.requesterIslandName} · ${request.purpose.label}',
+                  request.requesterIslandName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.captionMuted,

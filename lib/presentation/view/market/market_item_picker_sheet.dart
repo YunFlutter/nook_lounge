@@ -6,6 +6,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 
 class MarketItemPickerSheet extends ConsumerStatefulWidget {
   const MarketItemPickerSheet({
@@ -171,10 +172,12 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                   final items = _filterItems(snapshot.data!);
                   _allItems = snapshot.data!;
                   if (items.isEmpty) {
-                    return Center(
-                      child: Text(
-                        '검색 결과가 없어요.',
-                        style: AppTextStyles.bodySecondaryStrong,
+                    return const Center(
+                      child: AppOwlEmptyState(
+                        useCard: false,
+                        imageSize: 76,
+                        title: '검색 결과가 없어요.',
+                        subtitle: '검색어 또는 카테고리를 바꿔보세요.',
                       ),
                     );
                   }

@@ -6,6 +6,7 @@ import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/airport_view_model.dart';
 
@@ -112,21 +113,10 @@ class AirportVisitorManifestPage extends ConsumerWidget {
             ),
             const SizedBox(height: 14),
             if (visitors.isEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.bgCard,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: AppColors.borderDefault),
-                ),
-                child: Text(
-                  '현재 방문객이 없어요.',
-                  style: AppTextStyles.bodySecondaryStrong,
-                  textAlign: TextAlign.center,
-                ),
+              const AppOwlEmptyState(
+                imageSize: 76,
+                title: '현재 방문객이 없어요.',
+                subtitle: '초대한 손님이 입장하면 여기에 표시돼요.',
               )
             else
               ...visitors.asMap().entries.map((entry) {
@@ -186,7 +176,7 @@ class AirportVisitorManifestPage extends ConsumerWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '목적: ${visitor.purpose.label}',
+                                visitor.requesterIslandName,
                                 style: AppTextStyles.captionMuted,
                               ),
                             ],
@@ -352,7 +342,21 @@ class AirportVisitorManifestPage extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('거래 처리 선택', style: AppTextStyles.dialogTitleCompact),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        '거래 처리 선택',
+                        style: AppTextStyles.dialogTitleCompact,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      icon: const Icon(Icons.close_rounded),
+                      tooltip: '닫기',
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 10),
                 Text(
                   '방문객이 퇴장했어요.\n연결된 거래를 완료할지 취소할지 선택해 주세요.',
@@ -407,13 +411,6 @@ class AirportVisitorManifestPage extends ConsumerWidget {
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 10),
-                Center(
-                  child: TextButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: Text('닫기', style: AppTextStyles.captionSecondary),
-                  ),
                 ),
               ],
             ),

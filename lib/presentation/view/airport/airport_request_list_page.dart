@@ -5,6 +5,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 class AirportRequestListPage extends StatefulWidget {
@@ -235,7 +236,7 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${request.requesterIslandName} · ${request.purpose.label}',
+                                        request.requesterIslandName,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: AppTextStyles.captionMuted,
@@ -264,21 +265,11 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                       },
                     )
                   : Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            '대기 중인 손님이 없어요.',
-                            style: AppTextStyles.headingH2,
-                          ),
-                          const SizedBox(height: 12),
-                          Image.asset(
-                            'assets/images/no_data_image.png',
-                            width: 200,
-                            height: 200,
-                            fit: BoxFit.contain,
-                          ),
-                        ],
+                      child: AppOwlEmptyState(
+                        useCard: false,
+                        imageSize: 160,
+                        title: '대기 중인 손님이 없어요.',
+                        subtitle: '새 신청이 들어오면 여기에서 한 번에 초대할 수 있어요.',
                       ),
                     ),
             ),

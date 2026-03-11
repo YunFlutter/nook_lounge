@@ -1966,10 +1966,6 @@ class MarketFirestoreDataSource {
       }
     }
 
-    if (refs.isNotEmpty) {
-      return refs;
-    }
-
     // 유지보수 포인트:
     // 레거시 문서 중 sourceOfferId/sourceType이 비어 있는 경우를 대비해
     // trade_{offerId} 요청 문서 ID 패턴으로 fallback 조회합니다.

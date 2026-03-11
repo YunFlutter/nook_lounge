@@ -17,6 +17,7 @@ import 'package:nook_lounge_app/presentation/view/market/market_my_trades_page.d
 import 'package:nook_lounge_app/presentation/view/market/market_offer_card.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_register_page.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/market_view_model.dart';
 
 class MarketTabPage extends ConsumerStatefulWidget {
@@ -351,29 +352,9 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
   }
 
   Widget _buildEmptyCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.s20,
-        vertical: AppSpacing.s28,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Column(
-        children: <Widget>[
-          const Icon(
-            Icons.storefront_outlined,
-            size: 42,
-            color: AppColors.textHint,
-          ),
-          const SizedBox(height: AppSpacing.s8),
-          Text('등록된 거래가 없어요.', style: AppTextStyles.bodySecondaryStrong),
-          const SizedBox(height: AppSpacing.s4),
-          Text('플러스 버튼으로 첫 거래를 등록해보세요.', style: AppTextStyles.bodyHintStrong),
-        ],
-      ),
+    return const AppOwlEmptyState(
+      title: '등록된 거래가 없어요.',
+      subtitle: '플러스 버튼으로 첫 거래를 등록해보세요.',
     );
   }
 

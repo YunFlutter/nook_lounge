@@ -9,6 +9,7 @@ import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_pinned_badge.dart';
 
@@ -28,9 +29,7 @@ class SettingsNoticeListPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: Text('공지사항', style: TextStyle(
-          color: AppColors.textSecondary
-        ),),
+        title: Text('공지사항', style: TextStyle(color: AppColors.textSecondary)),
       ),
       body: noticesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -43,10 +42,11 @@ class SettingsNoticeListPage extends ConsumerWidget {
         ),
         data: (notices) {
           if (notices.isEmpty) {
-            return Center(
-              child: Text(
-                '등록된 공지사항이 없어요.',
-                style: AppTextStyles.bodyMutedStrong,
+            return const Center(
+              child: AppOwlEmptyState(
+                useCard: false,
+                title: '등록된 공지사항이 없어요.',
+                subtitle: '새 공지사항이 등록되면 여기에 표시돼요.',
               ),
             );
           }

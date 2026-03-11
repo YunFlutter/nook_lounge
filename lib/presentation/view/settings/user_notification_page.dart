@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/settings/user_notification_list_tile.dart';
 
 class UserNotificationPage extends ConsumerStatefulWidget {
@@ -73,8 +74,12 @@ class _UserNotificationPageState extends ConsumerState<UserNotificationPage> {
         ),
         data: (notifications) {
           if (notifications.isEmpty) {
-            return Center(
-              child: Text('도착한 알림이 없어요.', style: AppTextStyles.bodyMutedStrong),
+            return const Center(
+              child: AppOwlEmptyState(
+                useCard: false,
+                title: '도착한 알림이 없어요.',
+                subtitle: '새 알림이 오면 여기에 표시돼요.',
+              ),
             );
           }
 

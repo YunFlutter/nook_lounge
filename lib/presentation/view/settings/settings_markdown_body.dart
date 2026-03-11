@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 
 class SettingsMarkdownBody extends StatelessWidget {
   const SettingsMarkdownBody({required this.data, super.key});
@@ -18,14 +19,10 @@ class SettingsMarkdownBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final trimmedData = data.trim();
     if (trimmedData.isEmpty) {
-      return Text(
-        '등록된 내용이 없어요.',
-        style: AppTextStyles.bodyWithSize(
-          _bodyFontSize,
-          color: AppColors.textMuted,
-          weight: FontWeight.w700,
-          height: 1.5,
-        ),
+      return const AppOwlEmptyState(
+        imageSize: 72,
+        title: '등록된 내용이 없어요.',
+        subtitle: '관리자 등록 후 여기에 표시돼요.',
       );
     }
 

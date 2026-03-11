@@ -6,6 +6,7 @@ import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/blocked_user_summary.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 
 class SettingsBlockedUsersPage extends ConsumerStatefulWidget {
@@ -92,9 +93,7 @@ class _SettingsBlockedUsersPageState
           const SizedBox(height: 16),
           Text(
             '차단한 유저는 마켓 게시물과 방문 요청에서 서로 보이지 않아요.',
-            style: AppTextStyles.bodySecondaryStrong.copyWith(
-              height: 1.5
-            ),
+            style: AppTextStyles.bodySecondaryStrong.copyWith(height: 1.5),
           ),
         ],
       ),
@@ -144,31 +143,9 @@ class _SettingsBlockedUsersPageState
   }
 
   Widget _emptyCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 26),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(SettingsUiTokens.cardRadius),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Column(
-        children: <Widget>[
-          const Icon(
-            Icons.block_outlined,
-            color: AppColors.textMuted,
-            size: 32,
-          ),
-          const SizedBox(height: 10),
-          Text('차단한 유저가 없어요.', style: AppTextStyles.headingH3),
-          const SizedBox(height: 16),
-          Text(
-            '마켓이나 비행장에서 차단한 유저가 여기에 표시됩니다.',
-            style: AppTextStyles.bodySecondaryStrong,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+    return const AppOwlEmptyState(
+      title: '차단한 유저가 없어요.',
+      subtitle: '마켓이나 비행장에서 차단한 유저가 여기에 표시됩니다.',
     );
   }
 

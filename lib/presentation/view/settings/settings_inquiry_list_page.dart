@@ -10,6 +10,7 @@ import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_inquiry_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_inquiry_form_page.dart';
@@ -117,10 +118,12 @@ class SettingsInquiryListPage extends ConsumerWidget {
               if (visibleInquiries.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    blockedAccessMode ? '이의 신청 내역이 없어요.' : '문의 내역이 없어요.',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyMutedStrong,
+                  child: AppOwlEmptyState(
+                    imageSize: 76,
+                    title: blockedAccessMode ? '이의 신청 내역이 없어요.' : '문의 내역이 없어요.',
+                    subtitle: blockedAccessMode
+                        ? '접수된 이의 신청이 생기면 여기에 표시돼요.'
+                        : '작성한 문의가 생기면 여기에 표시돼요.',
                   ),
                 ),
               ...visibleInquiries.map(

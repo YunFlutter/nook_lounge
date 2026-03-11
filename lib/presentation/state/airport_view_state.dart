@@ -2,6 +2,7 @@ import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 
 const _airportNoValue = Object();
+const _tradeRequestIdPrefix = 'trade_';
 
 class AirportViewState {
   const AirportViewState({
@@ -50,35 +51,91 @@ class AirportViewState {
   // 거래 연동(`sourceType == market_trade`) 요청은
   // 상태가 대기/초대/방문중(active)일 때 "내 섬에 방문 대기 중인 손님"으로 모읍니다.
   List<AirportVisitRequest> get waitingGuests {
-    final guests = incomingRequests
-        .where((request) {
-          if (!_isTradeLinked(request)) {
-            return false;
-          }
-          return request.status == AirportVisitRequestStatus.pending ||
-              request.status == AirportVisitRequestStatus.invited ||
-              request.status == AirportVisitRequestStatus.arrived;
-        })
-        .toList(growable: false);
+    final guests = _dedupeTradeLinkedRequests(
+      incomingRequests.where((request) {
+        if (!_isTradeLinked(request)) {
+          return false;
+        }
+        return request.status == AirportVisitRequestStatus.pending ||
+            request.status == AirportVisitRequestStatus.invited ||
+            request.status == AirportVisitRequestStatus.arrived;
+      }),
+    ).toList(growable: false);
 
     guests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return guests;
   }
 
   List<AirportVisitRequest> get activeVisitors {
-    final visitors = incomingRequests
-        .where((request) {
-          return request.status == AirportVisitRequestStatus.arrived;
-        })
-        .toList(growable: false);
+    final visitors = _dedupeTradeLinkedRequests(
+      incomingRequests.where((request) {
+        return request.status == AirportVisitRequestStatus.arrived;
+      }),
+    ).toList(growable: false);
     visitors.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return visitors;
   }
 
   List<AirportVisitRequest> get myActiveRequests {
-    return myRequests
-        .where((request) => request.isActive)
-        .toList(growable: false);
+    return _dedupeTradeLinkedRequests(
+      myRequests.where((request) => request.isActive),
+    ).toList(growable: false);
+  }
+
+  Iterable<AirportVisitRequest> _dedupeTradeLinkedRequests(
+    Iterable<AirportVisitRequest> requests,
+  ) {
+    final requestsByKey = <String, AirportVisitRequest>{};
+    for (final request in requests) {
+      final key = _tradeRequestKey(request);
+      final existing = requestsByKey[key];
+      if (existing == null || _shouldReplaceTradeRequest(existing, request)) {
+        requestsByKey[key] = request;
+      }
+    }
+    return requestsByKey.values;
+  }
+
+  String _tradeRequestKey(AirportVisitRequest request) {
+    if (!_isTradeLinked(request)) {
+      return request.id;
+    }
+    final sourceOfferId = request.sourceOfferId?.trim() ?? '';
+    if (sourceOfferId.isNotEmpty) {
+      return 'trade:$sourceOfferId';
+    }
+    final requestId = request.id.trim();
+    if (requestId.startsWith(_tradeRequestIdPrefix)) {
+      return 'trade:${requestId.substring(_tradeRequestIdPrefix.length)}';
+    }
+    return requestId;
+  }
+
+  bool _shouldReplaceTradeRequest(
+    AirportVisitRequest current,
+    AirportVisitRequest next,
+  ) {
+    final currentRank = _tradeRequestStatusRank(current.status);
+    final nextRank = _tradeRequestStatusRank(next.status);
+    if (nextRank != currentRank) {
+      return nextRank < currentRank;
+    }
+    return next.updatedAt.isAfter(current.updatedAt);
+  }
+
+  int _tradeRequestStatusRank(AirportVisitRequestStatus status) {
+    switch (status) {
+      case AirportVisitRequestStatus.arrived:
+        return 0;
+      case AirportVisitRequestStatus.invited:
+        return 1;
+      case AirportVisitRequestStatus.pending:
+        return 2;
+      case AirportVisitRequestStatus.cancelled:
+        return 3;
+      case AirportVisitRequestStatus.completed:
+        return 4;
+    }
   }
 
   AirportViewState copyWith({

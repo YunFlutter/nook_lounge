@@ -15,6 +15,7 @@ class MarketOfferCard extends StatelessWidget {
     this.onEditTap,
     this.onDeleteTap,
     this.onCompleteTap,
+    this.showActionArea = true,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class MarketOfferCard extends StatelessWidget {
   final VoidCallback? onEditTap;
   final VoidCallback? onDeleteTap;
   final VoidCallback? onCompleteTap;
+  final bool showActionArea;
 
   static const List<double> _grayscaleMatrix = <double>[
     0.2126,
@@ -144,8 +146,10 @@ class MarketOfferCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              _buildActionArea(),
+              if (showActionArea) ...<Widget>[
+                const SizedBox(width: 8),
+                _buildActionArea(),
+              ],
             ],
           ),
         ),
@@ -197,9 +201,7 @@ class MarketOfferCard extends StatelessWidget {
           offer.offerItemName,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: AppTextStyles.bodyPrimaryHeavy.copyWith(
-            fontSize: 14
-          ),
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 14),
         ),
         const SizedBox(height: 10),
         _buildItemTypeBadge(_resolveItemTypeLabel(isOfferSide: true)),
@@ -229,7 +231,11 @@ class MarketOfferCard extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Icon(Icons.sync_alt_outlined, size: 30, color: AppColors.textAccent,),
+          child: Icon(
+            Icons.sync_alt_outlined,
+            size: 30,
+            color: AppColors.textAccent,
+          ),
         ),
         Expanded(
           child: _buildOfferColumn(
@@ -279,9 +285,7 @@ class MarketOfferCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyPrimaryHeavy.copyWith(
-            fontSize: 14
-          ),
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 14),
         ),
         const SizedBox(height: 10),
         _buildItemTypeBadge(categoryLabel),
@@ -382,10 +386,11 @@ class MarketOfferCard extends StatelessWidget {
                 ),
               ),
               Expanded(child: Container()),
-              Align(
-                alignment: Alignment.centerRight,
-                child: _buildActionArea(),
-              ),
+              if (showActionArea)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _buildActionArea(),
+                ),
             ],
           ),
         ],

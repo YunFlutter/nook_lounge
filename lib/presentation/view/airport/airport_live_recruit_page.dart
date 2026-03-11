@@ -5,6 +5,7 @@ import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 class AirportLiveRecruitPage extends StatefulWidget {
@@ -194,10 +195,11 @@ class _AirportLiveRecruitPageState extends State<AirportLiveRecruitPage> {
             const SizedBox(height: 10),
             Expanded(
               child: filteredSessions.isEmpty
-                  ? Center(
-                      child: Text(
-                        '지금은 열려있는 비행장이 없어요.',
-                        style: AppTextStyles.bodySecondaryStrong,
+                  ? const Center(
+                      child: AppOwlEmptyState(
+                        useCard: false,
+                        title: '지금은 열려있는 비행장이 없어요.',
+                        subtitle: '잠시 후 다시 확인하거나 검색 조건을 바꿔보세요.',
                       ),
                     )
                   : ListView.separated(

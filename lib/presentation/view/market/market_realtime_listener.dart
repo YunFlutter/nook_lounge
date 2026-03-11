@@ -10,9 +10,11 @@ import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
 import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
+import 'package:nook_lounge_app/presentation/view/market/market_trade_proposal_decision_dialog.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
 
@@ -228,14 +230,46 @@ class _MarketRealtimeListenerState
   Future<void> _showProposalNotificationDialog(
     MarketUserNotification notification,
   ) async {
-    final action = await _showRealtimeDialog(
-      title: notification.title.isEmpty ? '새 거래 제안' : notification.title,
-      message: notification.body.isEmpty
-          ? '거래 제안이 도착했어요. 확인해 보세요.'
-          : notification.body,
-      confirmLabel: '바로 승낙',
-      cancelLabel: '대기열 확인',
+    final offer = await ref
+        .read(marketRepositoryProvider)
+        .fetchOfferById(notification.offerId);
+    final proposal = await _fetchTradeProposal(
+      offerId: notification.offerId,
+      proposerUid: notification.senderUid,
     );
+    if (!mounted) {
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    final dialogContext = context;
+
+    final bool? action;
+    if (offer == null || proposal == null) {
+      action = await _showRealtimeDialog(
+        title: notification.title.isEmpty ? '새 거래 제안' : notification.title,
+        message: notification.body.isEmpty
+            ? '거래 제안이 도착했어요. 확인해 보세요.'
+            : notification.body,
+        confirmLabel: '바로 승낙',
+        cancelLabel: '대기열 확인',
+      );
+    } else {
+      // ignore: use_build_context_synchronously
+      action = await showMarketTradeProposalDecisionDialog(
+        dialogContext,
+        offer: offer,
+        participantLabel: '제안자',
+        participantName: proposal.proposerName.trim().isEmpty
+            ? '이름 없는 유저'
+            : proposal.proposerName.trim(),
+        badgeLabel: '도착한 제안',
+        primaryLabel: '바로 승낙할게요!',
+        secondaryLabel: '대기열에서 볼게요',
+        perspective: MarketTradeProposalDecisionDialogPerspective.owner,
+      );
+    }
     if (action == null || !mounted) {
       return;
     }
@@ -249,6 +283,28 @@ class _MarketRealtimeListenerState
     }
 
     await _acceptFromRealtimeProposal(notification);
+  }
+
+  Future<MarketTradeProposal?> _fetchTradeProposal({
+    required String offerId,
+    required String proposerUid,
+  }) async {
+    final normalizedOfferId = offerId.trim();
+    final normalizedProposerUid = proposerUid.trim();
+    if (normalizedOfferId.isEmpty || normalizedProposerUid.isEmpty) {
+      return null;
+    }
+
+    final proposals = await ref
+        .read(marketRepositoryProvider)
+        .watchTradeProposals(normalizedOfferId)
+        .first;
+    for (final proposal in proposals) {
+      if (proposal.proposerUid.trim() == normalizedProposerUid) {
+        return proposal;
+      }
+    }
+    return null;
   }
 
   Future<void> _acceptFromRealtimeProposal(

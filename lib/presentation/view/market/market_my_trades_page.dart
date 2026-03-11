@@ -11,6 +11,7 @@ import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_register_page.dart';
@@ -769,15 +770,10 @@ class MarketMyTradesPage extends ConsumerWidget {
   }
 
   Widget _buildEmpty({required String message}) {
-    return Container(
-      height: 240,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Text(message, style: AppTextStyles.bodySecondaryStrong),
+    return AppOwlEmptyState(
+      minHeight: 240,
+      title: message,
+      subtitle: '새 거래가 생기면 여기에 표시돼요.',
     );
   }
 

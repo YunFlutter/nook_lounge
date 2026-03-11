@@ -47,6 +47,7 @@ import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/domain/model/app_update_status.dart';
 import 'package:nook_lounge_app/domain/model/blocked_user_summary.dart';
+import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
@@ -379,6 +380,174 @@ final marketTradeRuleAgreementProvider =
             receiverUid: args.receiverUid,
           );
     });
+
+final airportTradeVisitRequestProvider =
+    StreamProvider.family<AirportVisitRequest?, ({String offerId, String uid})>(
+      (ref, args) {
+        final normalizedOfferId = args.offerId.trim();
+        if (normalizedOfferId.isEmpty) {
+          return Stream<AirportVisitRequest?>.value(null);
+        }
+
+        final firestore = ref.watch(firestoreProvider);
+        final sourceQuery = firestore
+            .collectionGroup('requests')
+            .where('sourceOfferId', isEqualTo: normalizedOfferId);
+        final legacyQuery = firestore
+            .collectionGroup('requests')
+            .where(FieldPath.documentId, isEqualTo: 'trade_$normalizedOfferId');
+
+        return Stream<AirportVisitRequest?>.multi((controller) {
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> sourceDocs =
+              const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> legacyDocs =
+              const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+
+          void emit() {
+            controller.add(
+              _findActiveTradeVisitRequest(
+                docs: <QueryDocumentSnapshot<Map<String, dynamic>>>[
+                  ...sourceDocs,
+                  ...legacyDocs,
+                ],
+                offerId: normalizedOfferId,
+              ),
+            );
+          }
+
+          final sourceSubscription = sourceQuery.snapshots().listen((snapshot) {
+            sourceDocs = snapshot.docs;
+            emit();
+          }, onError: controller.addError);
+          final legacySubscription = legacyQuery.snapshots().listen((snapshot) {
+            legacyDocs = snapshot.docs;
+            emit();
+          }, onError: controller.addError);
+
+          controller.onCancel = () async {
+            await sourceSubscription.cancel();
+            await legacySubscription.cancel();
+          };
+        });
+      },
+    );
+
+// 유지보수 포인트:
+// top-level provider family 제네릭을 여러 번 변경한 뒤 핫리로드가 누적되면
+// 동일 심볼 이름이 이전 런타임 타입을 붙잡는 경우가 있어 새 이름으로 분리합니다.
+final airportTradeVisitLookupProvider =
+    StreamProvider.family<AirportVisitRequest?, ({String offerId, String uid})>(
+      (ref, args) {
+        final normalizedOfferId = args.offerId.trim();
+        if (normalizedOfferId.isEmpty) {
+          return Stream<AirportVisitRequest?>.value(null);
+        }
+
+        final firestore = ref.watch(firestoreProvider);
+        final sourceQuery = firestore
+            .collectionGroup('requests')
+            .where('sourceOfferId', isEqualTo: normalizedOfferId);
+        final legacyQuery = firestore
+            .collectionGroup('requests')
+            .where(FieldPath.documentId, isEqualTo: 'trade_$normalizedOfferId');
+
+        return Stream<AirportVisitRequest?>.multi((controller) {
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> sourceDocs =
+              const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> legacyDocs =
+              const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+
+          void emit() {
+            controller.add(
+              _findActiveTradeVisitRequest(
+                docs: <QueryDocumentSnapshot<Map<String, dynamic>>>[
+                  ...sourceDocs,
+                  ...legacyDocs,
+                ],
+                offerId: normalizedOfferId,
+              ),
+            );
+          }
+
+          final sourceSubscription = sourceQuery.snapshots().listen((snapshot) {
+            sourceDocs = snapshot.docs;
+            emit();
+          }, onError: controller.addError);
+          final legacySubscription = legacyQuery.snapshots().listen((snapshot) {
+            legacyDocs = snapshot.docs;
+            emit();
+          }, onError: controller.addError);
+
+          controller.onCancel = () async {
+            await sourceSubscription.cancel();
+            await legacySubscription.cancel();
+          };
+        });
+      },
+    );
+
+AirportVisitRequest? _findActiveTradeVisitRequest({
+  required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  required String offerId,
+}) {
+  final requestsByPath = <String, AirportVisitRequest>{};
+  for (final doc in docs) {
+    final islandId = _extractAirportIslandId(doc.reference.path);
+    if (islandId.isEmpty) {
+      continue;
+    }
+    requestsByPath[doc.reference.path] = AirportVisitRequest.fromMap(
+      id: doc.id,
+      islandId: islandId,
+      data: doc.data(),
+    );
+  }
+
+  final matched = requestsByPath.values
+      .where((request) {
+        if (!request.isActive) {
+          return false;
+        }
+        return _resolveTradeOfferIdFromRequest(request) == offerId;
+      })
+      .toList(growable: false);
+  if (matched.isEmpty) {
+    return null;
+  }
+
+  matched.sort((left, right) => right.updatedAt.compareTo(left.updatedAt));
+  return matched.first;
+}
+
+String _extractAirportIslandId(String path) {
+  final segments = path.split('/');
+  if (segments.length < 4) {
+    return '';
+  }
+  if (segments[0] != 'airportQueues' || segments[2] != 'requests') {
+    return '';
+  }
+  return segments[1];
+}
+
+String _resolveTradeOfferIdFromRequest(AirportVisitRequest request) {
+  final normalizedSourceOfferId = request.sourceOfferId?.trim() ?? '';
+  if (normalizedSourceOfferId.isNotEmpty) {
+    return normalizedSourceOfferId;
+  }
+
+  final normalizedSourceType = request.sourceType?.trim() ?? '';
+  if (normalizedSourceType.isNotEmpty &&
+      normalizedSourceType != 'market_trade') {
+    return '';
+  }
+
+  final normalizedRequestId = request.id.trim();
+  if (!normalizedRequestId.startsWith('trade_')) {
+    return '';
+  }
+  return normalizedRequestId.substring('trade_'.length).trim();
+}
 
 final marketTradeProposalsProvider =
     StreamProvider.family<List<MarketTradeProposal>, String>((ref, offerId) {
