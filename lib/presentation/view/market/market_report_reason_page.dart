@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 
 typedef MarketReportDraft = ({String reason, String detail});
@@ -21,7 +24,8 @@ class MarketReportReasonPage extends StatefulWidget {
 
   static Future<MarketReportDraft?> show(BuildContext context) {
     return Navigator.of(context).push<MarketReportDraft>(
-      MaterialPageRoute<MarketReportDraft>(
+      AppPageRoute<MarketReportDraft>(
+        screenName: AppScreenNames.marketReportReason,
         builder: (_) => const MarketReportReasonPage(),
       ),
     );
@@ -211,6 +215,8 @@ class _MarketReportReasonPageState extends State<MarketReportReasonPage> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           backgroundColor: AppColors.bgSecondary,
                           side: const BorderSide(
                             color: AppColors.borderDefault,
@@ -231,6 +237,8 @@ class _MarketReportReasonPageState extends State<MarketReportReasonPage> {
                         child: FilledButton(
                           onPressed: _canSubmit ? _onTapPrimary : null,
                           style: FilledButton.styleFrom(
+                            overlayColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
                             backgroundColor: AppColors.settingsPrimaryButton,
                             disabledBackgroundColor: AppColors.borderDefault,
                             shape: RoundedRectangleBorder(
@@ -352,7 +360,7 @@ class _ReportSelectableTile extends StatelessWidget {
       label: label,
       child: Material(
         color: AppColors.transparent,
-        child: InkWell(
+        child: AppInkWell(
           borderRadius: BorderRadius.circular(22),
           onTap: onTap,
           child: AnimatedContainer(

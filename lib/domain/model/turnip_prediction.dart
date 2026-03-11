@@ -92,13 +92,28 @@ sealed class TurnipPrediction with _$TurnipPrediction {
 
     final result = <List<int>>[];
     for (final point in source) {
-      if (point is! List) {
+      if (point is List) {
+        if (point.length < 2) {
+          continue;
+        }
+        result.add(<int>[_parseInt(point[0]), _parseInt(point[1])]);
         continue;
       }
-      if (point.length < 2) {
+
+      if (point is Map) {
+        final rawMap = Map<Object?, Object?>.from(point);
+        final minValue = rawMap.containsKey('min')
+            ? rawMap['min']
+            : rawMap['low'];
+        final maxValue = rawMap.containsKey('max')
+            ? rawMap['max']
+            : rawMap['high'];
+        if (minValue == null || maxValue == null) {
+          continue;
+        }
+        result.add(<int>[_parseInt(minValue), _parseInt(maxValue)]);
         continue;
       }
-      result.add(<int>[_parseInt(point[0]), _parseInt(point[1])]);
     }
     return result;
   }

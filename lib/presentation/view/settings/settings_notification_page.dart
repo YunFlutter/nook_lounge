@@ -6,14 +6,40 @@ import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_notification_preferences.dart';
 
-class SettingsNotificationPage extends ConsumerWidget {
+class SettingsNotificationPage extends ConsumerStatefulWidget {
   const SettingsNotificationPage({required this.uid, super.key});
 
   final String uid;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final prefsAsync = ref.watch(settingsNotificationPreferencesProvider(uid));
+  ConsumerState<SettingsNotificationPage> createState() =>
+      _SettingsNotificationPageState();
+}
+
+class _SettingsNotificationPageState
+    extends ConsumerState<SettingsNotificationPage> {
+  SettingsNotificationPreferences? _optimisticPrefs;
+
+  @override
+  Widget build(BuildContext context) {
+    final prefsProvider = settingsNotificationPreferencesProvider(widget.uid);
+    ref.listen<AsyncValue<SettingsNotificationPreferences>>(prefsProvider, (
+      previous,
+      next,
+    ) {
+      next.whenData((prefs) {
+        final optimisticPrefs = _optimisticPrefs;
+        if (!mounted || optimisticPrefs == null) {
+          return;
+        }
+        if (_samePreferences(optimisticPrefs, prefs)) {
+          setState(() {
+            _optimisticPrefs = null;
+          });
+        }
+      });
+    });
+    final prefsAsync = ref.watch(prefsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,6 +67,7 @@ class SettingsNotificationPage extends ConsumerWidget {
             ),
           ),
           data: (prefs) {
+            final effectivePrefs = _optimisticPrefs ?? prefs;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -48,30 +75,30 @@ class SettingsNotificationPage extends ConsumerWidget {
                 const SizedBox(height: SettingsUiTokens.sectionGap),
                 _switchTile(
                   title: '내글에 거래 제안 알림',
-                  value: prefs.tradeOfferEnabled,
+                  value: effectivePrefs.tradeOfferEnabled,
                   onChanged: (enabled) => _updatePreference(
                     context: context,
-                    ref: ref,
+                    currentPrefs: effectivePrefs,
                     type: SettingsNotificationType.tradeOffer,
                     enabled: enabled,
                   ),
                 ),
                 _switchTile(
                   title: '도도코드 초대 알림',
-                  value: prefs.dodoCodeInviteEnabled,
+                  value: effectivePrefs.dodoCodeInviteEnabled,
                   onChanged: (enabled) => _updatePreference(
                     context: context,
-                    ref: ref,
+                    currentPrefs: effectivePrefs,
                     type: SettingsNotificationType.dodoCodeInvite,
                     enabled: enabled,
                   ),
                 ),
                 _switchTile(
                   title: '내 방문 모집글에 대기열 추가 알림',
-                  value: prefs.airportQueueStandbyEnabled,
+                  value: effectivePrefs.airportQueueStandbyEnabled,
                   onChanged: (enabled) => _updatePreference(
                     context: context,
-                    ref: ref,
+                    currentPrefs: effectivePrefs,
                     type: SettingsNotificationType.airportQueueStandby,
                     enabled: enabled,
                   ),
@@ -86,15 +113,33 @@ class SettingsNotificationPage extends ConsumerWidget {
 
   Future<void> _updatePreference({
     required BuildContext context,
-    required WidgetRef ref,
+    required SettingsNotificationPreferences currentPrefs,
     required SettingsNotificationType type,
     required bool enabled,
   }) async {
+    final nextPrefs = _patchPreferences(
+      currentPrefs: currentPrefs,
+      type: type,
+      enabled: enabled,
+    );
+    setState(() {
+      _optimisticPrefs = nextPrefs;
+    });
+
     try {
       await ref
           .read(settingsRepositoryProvider)
-          .updateNotificationPreference(uid: uid, type: type, enabled: enabled);
+          .updateNotificationPreference(
+            uid: widget.uid,
+            type: type,
+            enabled: enabled,
+          );
     } catch (error) {
+      if (mounted) {
+        setState(() {
+          _optimisticPrefs = null;
+        });
+      }
       if (!context.mounted) {
         return;
       }
@@ -102,6 +147,30 @@ class SettingsNotificationPage extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text('알림 설정 저장에 실패했어요.\n$error')));
     }
+  }
+
+  SettingsNotificationPreferences _patchPreferences({
+    required SettingsNotificationPreferences currentPrefs,
+    required SettingsNotificationType type,
+    required bool enabled,
+  }) {
+    switch (type) {
+      case SettingsNotificationType.tradeOffer:
+        return currentPrefs.copyWith(tradeOfferEnabled: enabled);
+      case SettingsNotificationType.dodoCodeInvite:
+        return currentPrefs.copyWith(dodoCodeInviteEnabled: enabled);
+      case SettingsNotificationType.airportQueueStandby:
+        return currentPrefs.copyWith(airportQueueStandbyEnabled: enabled);
+    }
+  }
+
+  bool _samePreferences(
+    SettingsNotificationPreferences left,
+    SettingsNotificationPreferences right,
+  ) {
+    return left.tradeOfferEnabled == right.tradeOfferEnabled &&
+        left.dodoCodeInviteEnabled == right.dodoCodeInviteEnabled &&
+        left.airportQueueStandbyEnabled == right.airportQueueStandbyEnabled;
   }
 
   Widget _switchTile({

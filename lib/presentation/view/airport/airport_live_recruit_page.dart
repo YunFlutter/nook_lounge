@@ -350,6 +350,9 @@ class _AirportLiveRecruitPageState extends State<AirportLiveRecruitPage> {
                                             onPressed: () =>
                                                 _onTapCancelRequest(myRequest),
                                             style: OutlinedButton.styleFrom(
+                                              overlayColor: Colors.transparent,
+                                              splashFactory:
+                                                  NoSplash.splashFactory,
                                               side: const BorderSide(
                                                 color: AppColors.borderDefault,
                                               ),
@@ -364,6 +367,9 @@ class _AirportLiveRecruitPageState extends State<AirportLiveRecruitPage> {
                                             onPressed: () =>
                                                 _onTapRequest(session),
                                             style: FilledButton.styleFrom(
+                                              overlayColor: Colors.transparent,
+                                              splashFactory:
+                                                  NoSplash.splashFactory,
                                               backgroundColor:
                                                   AppColors.badgeBlueText,
                                               foregroundColor:
@@ -467,7 +473,9 @@ class _AirportLiveRecruitPageState extends State<AirportLiveRecruitPage> {
                         ));
                       },
                       style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.badgeBlueText,
+                        overlayColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory,
+                        backgroundColor: AppColors.modalPrimaryAction,
                         foregroundColor: AppColors.textInverse,
                       ),
                       child: const Text('신청'),

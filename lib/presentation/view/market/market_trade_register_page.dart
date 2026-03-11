@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -300,6 +301,8 @@ class _MarketTradeRegisterPageState
                     child: OutlinedButton(
                       onPressed: onPreviousPressed,
                       style: OutlinedButton.styleFrom(
+                        overlayColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory,
                         backgroundColor: AppColors.navBackground,
                         foregroundColor: AppColors.textMuted,
                         side: const BorderSide(color: AppColors.borderDefault),
@@ -316,6 +319,8 @@ class _MarketTradeRegisterPageState
                     child: FilledButton(
                       onPressed: onPrimaryPressed,
                       style: FilledButton.styleFrom(
+                        overlayColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory,
                         backgroundColor: AppColors.accentDeepOrange,
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
@@ -330,6 +335,8 @@ class _MarketTradeRegisterPageState
             : FilledButton(
                 onPressed: onPrimaryPressed,
                 style: FilledButton.styleFrom(
+                  overlayColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
                   backgroundColor: AppColors.accentDeepOrange,
                   minimumSize: const Size.fromHeight(56),
                   shape: RoundedRectangleBorder(
@@ -591,7 +598,7 @@ class _MarketTradeRegisterPageState
           spacing: 8,
           children: _touchingPickerCategories
               .map(
-                (entry) => InkWell(
+                (entry) => AppInkWell(
                   borderRadius: BorderRadius.circular(999),
                   onTap: () =>
                       _openTouchingItemPicker(initialCategoryKey: entry.key),
@@ -614,7 +621,7 @@ class _MarketTradeRegisterPageState
               .toList(growable: false),
         ),
         const SizedBox(height: 14),
-        InkWell(
+        AppInkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: _openTouchingItemPicker,
           child: Container(
@@ -808,7 +815,7 @@ class _MarketTradeRegisterPageState
                       right: moveType == MarketMoveType.visitor ? 8 : 0,
                       left: moveType == MarketMoveType.host ? 8 : 0,
                     ),
-                    child: InkWell(
+                    child: AppInkWell(
                       borderRadius: BorderRadius.circular(22),
                       onTap: () => setState(() => _moveType = moveType),
                       child: AnimatedContainer(
@@ -882,7 +889,7 @@ class _MarketTradeRegisterPageState
 
   Widget _buildTradeTypeTile(MarketTradeType type) {
     final selected = _tradeType == type;
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () => setState(() {
         _tradeType = type;
@@ -1008,7 +1015,7 @@ class _MarketTradeRegisterPageState
                 }),
               ),
               Expanded(
-                child: InkWell(
+                child: AppInkWell(
                   borderRadius: BorderRadius.circular(8),
                   onTap: () async {
                     final directInput = await _showNumberInputDialog(
@@ -1050,7 +1057,7 @@ class _MarketTradeRegisterPageState
 
   Widget _buildOfferQuickCurrency(String label, IconData icon) {
     final selected = _offerCurrencyLabel == label;
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(26),
       onTap: () => setState(() => _offerCurrencyLabel = label),
       child: AnimatedContainer(
@@ -1169,7 +1176,7 @@ class _MarketTradeRegisterPageState
       label: label,
       child: Material(
         color: AppColors.transparent,
-        child: InkWell(
+        child: AppInkWell(
           borderRadius: BorderRadius.circular(999),
           splashFactory: NoSplash.splashFactory,
           highlightColor: AppColors.transparent,
@@ -1223,7 +1230,7 @@ class _MarketTradeRegisterPageState
                 }),
               ),
               Expanded(
-                child: InkWell(
+                child: AppInkWell(
                   borderRadius: BorderRadius.circular(8),
                   onTap: () async {
                     final directInput = await _showNumberInputDialog(
@@ -1262,7 +1269,7 @@ class _MarketTradeRegisterPageState
 
   Widget _buildQuickCurrency(String label, IconData icon) {
     final selected = _currencyLabel == label;
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(26),
       onTap: () => setState(() => _currencyLabel = label),
       child: AnimatedContainer(
@@ -1472,7 +1479,7 @@ class _MarketTradeRegisterPageState
   }) {
     final hasItem = selectedItem != null;
 
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,
       child: Container(
@@ -1686,7 +1693,7 @@ class _MarketTradeRegisterPageState
             child: Row(
               children: <Widget>[
                 _buildCircleButton(icon: Icons.remove_rounded, onTap: onMinus),
-                InkWell(
+                AppInkWell(
                   borderRadius: BorderRadius.circular(8),
                   onTap: () async {
                     final directInput = await _showNumberInputDialog(
@@ -1727,7 +1734,7 @@ class _MarketTradeRegisterPageState
     required String value,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,
       child: Container(
@@ -1769,7 +1776,7 @@ class _MarketTradeRegisterPageState
 
   Widget _buildProofImageBox() {
     final source = _proofImagePath.trim();
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: _pickProofImage,
       child: Container(
@@ -1837,7 +1844,7 @@ class _MarketTradeRegisterPageState
     required VoidCallback onTap,
     bool isAccent = false,
   }) {
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
       child: Container(
@@ -1988,6 +1995,8 @@ class _MarketTradeRegisterPageState
                           child: OutlinedButton(
                             onPressed: () => Navigator.of(dialogContext).pop(),
                             style: OutlinedButton.styleFrom(
+                              overlayColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
                               minimumSize: const Size.fromHeight(54),
                               side: const BorderSide(
                                 color: AppColors.borderStrong,
@@ -2007,7 +2016,9 @@ class _MarketTradeRegisterPageState
                           child: FilledButton(
                             onPressed: () => submit(setModalState),
                             style: FilledButton.styleFrom(
-                              backgroundColor: AppColors.accentDeepOrange,
+                              overlayColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
+                              backgroundColor: AppColors.modalPrimaryAction,
                               minimumSize: const Size.fromHeight(54),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),

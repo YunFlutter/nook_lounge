@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/app/app_telemetry_scope.dart';
 import 'package:nook_lounge_app/app/router/app_router_provider.dart';
 import 'package:nook_lounge_app/app/theme/app_theme.dart';
+import 'package:nook_lounge_app/presentation/view/app_update_guard.dart';
 
 class NookLoungeApp extends ConsumerWidget {
   const NookLoungeApp({super.key});
@@ -46,7 +48,9 @@ class NookLoungeApp extends ConsumerWidget {
       builder: (context, child) {
         final scaffoldBackground = Theme.of(context).scaffoldBackgroundColor;
         final platform = Theme.of(context).platform;
-        final appChild = child ?? const SizedBox.shrink();
+        final appChild = AppUpdateGuard(
+          child: AppTelemetryScope(child: child ?? const SizedBox.shrink()),
+        );
 
         // 유지보수 포인트:
         // 전역 하단 SafeArea는 안드로이드 시스템 네비게이션 바 대응 용도입니다.

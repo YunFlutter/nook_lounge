@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_detail_page.dart';
@@ -69,10 +72,11 @@ class SettingsNoticeListPage extends ConsumerWidget {
     return Semantics(
       button: true,
       label: notice.title,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(SettingsUiTokens.tileRadius),
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(
+          AppPageRoute<void>(
+            screenName: AppScreenNames.settingsNoticeDetail,
             builder: (_) => SettingsNoticeDetailPage(notice: notice),
           ),
         ),

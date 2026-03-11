@@ -50,13 +50,23 @@ sealed class TurnipSavedData with _$TurnipSavedData {
       if (prediction != null)
         'prediction': <String, dynamic>{
           'filter': prediction!.filter,
-          'minMaxPattern': prediction!.minMaxPattern,
+          // 유지보수 포인트:
+          // Firestore는 중첩 배열(List<List<int>>) 저장을 허용하지 않으므로
+          // 최소/최대 쌍은 배열 안의 맵 형태로 직렬화해야 합니다.
+          'minMaxPattern': _serializeMinMaxPattern(prediction!.minMaxPattern),
           'avgPattern': prediction!.avgPattern,
           'minWeekValue': prediction!.minWeekValue,
           'preview': prediction!.previewUrl,
         },
     };
   }
+}
+
+List<Map<String, int>> _serializeMinMaxPattern(List<List<int>> source) {
+  return source
+      .where((point) => point.length >= 2)
+      .map((point) => <String, int>{'min': point[0], 'max': point[1]})
+      .toList(growable: false);
 }
 
 int? _parseInt(Object? value) {

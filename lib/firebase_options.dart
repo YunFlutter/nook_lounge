@@ -63,6 +63,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '390339232656',
     projectId: 'nookloungeapp',
     storageBucket: 'nookloungeapp.firebasestorage.app',
+    androidClientId: '390339232656-p8p35l2umfkad91bjdtfnmig30r830ts.apps.googleusercontent.com',
+    iosClientId: '390339232656-ccus897ar40f0cnsvofe9daveeo8o63k.apps.googleusercontent.com',
     iosBundleId: 'com.community.nookLoungeApp',
   );
+
 }

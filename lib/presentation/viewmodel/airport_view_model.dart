@@ -78,11 +78,25 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
     if (!hasIsland) {
       return;
     }
-    await _runAction(
+
+    final previousSession = state.session;
+    if (previousSession != null) {
+      state = state.copyWith(
+        session: previousSession.copyWith(
+          gateOpen: gateOpen,
+          updatedAt: DateTime.now(),
+        ),
+      );
+    }
+
+    final succeeded = await _runAction(
       action: () =>
           _repository.setGateOpen(islandId: _islandId, gateOpen: gateOpen),
       fallbackErrorMessage: '게이트 상태 변경에 실패했어요.',
     );
+    if (!succeeded && previousSession != null) {
+      state = state.copyWith(session: previousSession);
+    }
   }
 
   Future<void> updatePurposeAndIntro({

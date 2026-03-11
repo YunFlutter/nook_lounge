@@ -73,7 +73,9 @@ class MarketReportResultDialogs {
                   child: FilledButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.settingsPrimaryButton,
+                      overlayColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      backgroundColor: AppColors.modalPrimaryAction,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                           SettingsUiTokens.actionButtonRadius,

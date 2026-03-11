@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
@@ -75,63 +79,70 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const HomeStyleAppBarTitle('비회원 둘러보기'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () async {
-              ref.read(sessionViewModelProvider.notifier).exitGuestBrowseMode();
-            },
-            child: Text(
-              '로그인하기',
-              style: AppTextStyles.bodyWithSize(
-                14,
-                color: AppColors.textPrimary,
-                weight: FontWeight.w800,
+    return AppScreenView(
+      screenName: AppScreenNames.guestBrowse,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const HomeStyleAppBarTitle('비회원 둘러보기'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                ref
+                    .read(sessionViewModelProvider.notifier)
+                    .exitGuestBrowseMode();
+              },
+              child: Text(
+                '로그인하기',
+                style: AppTextStyles.bodyWithSize(
+                  14,
+                  color: AppColors.textPrimary,
+                  weight: FontWeight.w800,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.s6),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: _loadCatalog,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.pageHorizontal,
-            AppSpacing.s10,
-            AppSpacing.pageHorizontal,
-            AppSpacing.s10 * 2,
-          ),
-          children: <Widget>[
-            const AnimatedFadeSlide(child: _GuestIntroCard()),
-            const SizedBox(height: AppSpacing.s10 * 2),
-            if (_isLoading)
-              const SizedBox(
-                height: 180,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-              )
-            else if (_errorMessage != null)
-              Text(_errorMessage!, style: AppTextStyles.bodySecondaryStrong)
-            else ...<Widget>[
-              AnimatedFadeSlide(
-                delay: const Duration(milliseconds: 40),
-                child: _buildCategorySection(
-                  title: '박물관 도감',
-                  categories: _museumCategories,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.s10 * 2),
-              AnimatedFadeSlide(
-                delay: const Duration(milliseconds: 80),
-                child: _buildCategorySection(
-                  title: '수집 도감',
-                  categories: _collectionCategories,
-                ),
-              ),
-            ],
+            const SizedBox(width: AppSpacing.s6),
           ],
+        ),
+        body: RefreshIndicator(
+          onRefresh: _loadCatalog,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.pageHorizontal,
+              AppSpacing.s10,
+              AppSpacing.pageHorizontal,
+              AppSpacing.s10 * 2,
+            ),
+            children: <Widget>[
+              const AnimatedFadeSlide(child: _GuestIntroCard()),
+              const SizedBox(height: AppSpacing.s10 * 2),
+              if (_isLoading)
+                const SizedBox(
+                  height: 180,
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              else if (_errorMessage != null)
+                Text(_errorMessage!, style: AppTextStyles.bodySecondaryStrong)
+              else ...<Widget>[
+                AnimatedFadeSlide(
+                  delay: const Duration(milliseconds: 40),
+                  child: _buildCategorySection(
+                    title: '박물관 도감',
+                    categories: _museumCategories,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s10 * 2),
+                AnimatedFadeSlide(
+                  delay: const Duration(milliseconds: 80),
+                  child: _buildCategorySection(
+                    title: '수집 도감',
+                    categories: _collectionCategories,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -165,7 +176,7 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
             ),
             child: AnimatedFadeSlide(
               delay: Duration(milliseconds: 20 + (index * 24)),
-              child: InkWell(
+              child: AppInkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: () => _openCategory(category),
                 child: Container(
@@ -224,7 +235,8 @@ class _GuestBrowsePageState extends ConsumerState<GuestBrowsePage> {
 
   void _openCategory(String category) {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.catalogCollection,
         builder: (_) => CatalogCollectionPage(
           uid: widget.uid,
           islandId: _guestIslandId,

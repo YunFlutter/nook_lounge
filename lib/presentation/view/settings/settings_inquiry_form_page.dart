@@ -156,6 +156,8 @@ class _SettingsInquiryFormPageState
                 child: FilledButton(
                   onPressed: _submitting ? null : _submit,
                   style: FilledButton.styleFrom(
+                    overlayColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
                     backgroundColor: AppColors.settingsPrimaryButton,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(26),

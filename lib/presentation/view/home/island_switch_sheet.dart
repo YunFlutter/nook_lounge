@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
@@ -76,7 +77,7 @@ class IslandSwitchSheet extends StatelessWidget {
                 final fruitEmoji =
                     _fruitEmojiByName[island.nativeFruit] ?? '🍑';
 
-                return InkWell(
+                return AppInkWell(
                   borderRadius: BorderRadius.circular(18),
                   onTap: () => onSelectIsland(island.id),
                   child: AnimatedContainer(
@@ -185,7 +186,7 @@ class IslandSwitchSheet extends StatelessWidget {
   }
 
   Widget _buildAddTile(BuildContext context) {
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: onAddIsland,
       child: Container(

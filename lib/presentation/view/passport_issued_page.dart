@@ -119,7 +119,7 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                   weight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: AppSpacing.s10*5),
+              const SizedBox(height: AppSpacing.s10 * 5),
               // Expanded(child: SizedBox()),
               Container(
                 decoration: BoxDecoration(
@@ -164,6 +164,8 @@ class _PassportIssuedPageState extends State<PassportIssuedPage>
                           }
                         },
                   style: FilledButton.styleFrom(
+                    overlayColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
                     minimumSize: const Size.fromHeight(60),
                     backgroundColor: PassportPalette.actionGreen,
                     shape: RoundedRectangleBorder(

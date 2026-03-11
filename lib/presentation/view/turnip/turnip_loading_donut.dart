@@ -50,7 +50,7 @@ class _TurnipLoadingDonutPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final progressPaint = Paint()
-      ..color = AppColors.primaryDefault
+      ..color = AppColors.turnipAccent
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;

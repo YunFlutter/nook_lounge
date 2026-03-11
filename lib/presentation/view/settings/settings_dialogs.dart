@@ -216,7 +216,7 @@ class SettingsDialogs {
                       flex: 2,
                       child: _dialogPrimaryButton(
                         label: primaryLabel,
-                        backgroundColor: AppColors.settingsWarning,
+                        backgroundColor: AppColors.modalPrimaryAction,
                         onPressed: () => Navigator.of(context).pop(true),
                       ),
                     ),
@@ -302,7 +302,7 @@ class SettingsDialogs {
 
   static Widget _dialogPrimaryButton({
     required String label,
-    Color backgroundColor = AppColors.settingsPrimaryButton,
+    Color backgroundColor = AppColors.modalPrimaryAction,
     required VoidCallback onPressed,
   }) {
     return SizedBox(
@@ -310,6 +310,8 @@ class SettingsDialogs {
       child: FilledButton(
         onPressed: onPressed,
         style: FilledButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
           backgroundColor: backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
@@ -331,6 +333,8 @@ class SettingsDialogs {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
           side: const BorderSide(color: AppColors.borderDefault),
           backgroundColor: AppColors.bgSecondary,
           shape: RoundedRectangleBorder(

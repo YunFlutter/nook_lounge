@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_segmented_control.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
@@ -10,6 +12,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
+import 'package:nook_lounge_app/presentation/view/catalog/catalog_badge_palette.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_completion_resolver.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_item_detail_sheet.dart';
 
@@ -263,51 +266,28 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   }
 
   Widget _buildCompletionSegment({required bool donationMode}) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.catalogSegmentBg,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: _CatalogCompletionFilter.values
-            .map((filter) {
-              final selected = _completionFilter == filter;
-              final label = filter.label(donationMode: donationMode);
-              return Expanded(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => setState(() => _completionFilter = filter),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: selected ? AppColors.white : AppColors.transparent,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: selected
-                          ? const <BoxShadow>[
-                              BoxShadow(
-                                color: AppColors.shadowSoft,
-                                blurRadius: 8,
-                                offset: Offset(0, 3),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      style: selected
-                          ? AppTextStyles.bodyPrimaryHeavy
-                          : AppTextStyles.bodyMutedStrong,
-                    ),
-                  ),
-                ),
-              );
-            })
-            .toList(growable: false),
-      ),
+    return AppSegmentedControl<_CatalogCompletionFilter>(
+      value: _completionFilter,
+      items: _CatalogCompletionFilter.values
+          .map(
+            (filter) => (
+              value: filter,
+              label: filter.label(donationMode: donationMode),
+              icon: null,
+              selectedColor: AppColors.textPrimary,
+              semanticsLabel: filter.label(donationMode: donationMode),
+            ),
+          )
+          .toList(growable: false),
+      // 유지보수 포인트:
+      // 도감 상단 필터는 선택 패널만 슬라이드하고 텍스트는 즉시 전환해서
+      // 빠르게 탭할 때 양쪽이 함께 번쩍이는 느낌을 줄입니다.
+      textStyleBuilder: (context, item, foregroundColor, selected) {
+        return selected
+            ? AppTextStyles.bodyPrimaryHeavy
+            : AppTextStyles.bodyMutedStrong;
+      },
+      onChanged: (filter) => setState(() => _completionFilter = filter),
     );
   }
 
@@ -327,50 +307,25 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
   }
 
   Widget _buildVillagerResidentSegment() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.catalogSegmentBg,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: _VillagerResidentFilter.values
-            .map((filter) {
-              final selected = _villagerResidentFilter == filter;
-              return Expanded(
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => setState(() => _villagerResidentFilter = filter),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: selected ? AppColors.white : AppColors.transparent,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: selected
-                          ? const <BoxShadow>[
-                              BoxShadow(
-                                color: AppColors.shadowSoft,
-                                blurRadius: 8,
-                                offset: Offset(0, 3),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Text(
-                      filter.label,
-                      textAlign: TextAlign.center,
-                      style: selected
-                          ? AppTextStyles.bodyPrimaryHeavy
-                          : AppTextStyles.bodyMutedStrong,
-                    ),
-                  ),
-                ),
-              );
-            })
-            .toList(growable: false),
-      ),
+    return AppSegmentedControl<_VillagerResidentFilter>(
+      value: _villagerResidentFilter,
+      items: _VillagerResidentFilter.values
+          .map(
+            (filter) => (
+              value: filter,
+              label: filter.label,
+              icon: null,
+              selectedColor: AppColors.textPrimary,
+              semanticsLabel: filter.label,
+            ),
+          )
+          .toList(growable: false),
+      textStyleBuilder: (context, item, foregroundColor, selected) {
+        return selected
+            ? AppTextStyles.bodyPrimaryHeavy
+            : AppTextStyles.bodyMutedStrong;
+      },
+      onChanged: (filter) => setState(() => _villagerResidentFilter = filter),
     );
   }
 
@@ -750,7 +705,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
             if (!mounted) {
               return;
             }
-            _showToast(value ? '선호 주민으로 등록했어요.' : '선호 주민 해제했어요.');
+            _showToast(_favoriteToastMessage(item: item, favorite: value));
           },
         );
       },
@@ -804,7 +759,7 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
     if (!mounted) {
       return;
     }
-    _showToast(next ? '선호 주민으로 등록했어요.' : '선호 주민 해제했어요.');
+    _showToast(_favoriteToastMessage(item: item, favorite: next));
   }
 
   void _showToast(String message) {
@@ -823,6 +778,16 @@ class _CatalogCollectionPageState extends ConsumerState<CatalogCollectionPage> {
       return error.message;
     }
     return '처리 중 오류가 발생했어요. 다시 시도해주세요.';
+  }
+
+  String _favoriteToastMessage({
+    required CatalogItem item,
+    required bool favorite,
+  }) {
+    if (item.category == '주민') {
+      return favorite ? '선호 주민으로 등록했어요.' : '선호 주민 해제했어요.';
+    }
+    return favorite ? '위시 리스트에 추가했어요.' : '위시 리스트에서 제거했어요.';
   }
 }
 
@@ -865,22 +830,22 @@ class _CatalogItemCard extends StatelessWidget {
     final habitatBadgeStyle =
         habitatLabel == null || habitatLabel != speciesLabel
         ? null
-        : _HabitatBadgeStyle.resolve(habitatLabel);
+        : CatalogBadgePalette.resolveHabitat(habitatLabel);
     final personality = isVillager
         ? _extractPrefixedTagValue(item.tags, '성격')
         : null;
     final artAuthenticity = item.category == '미술품'
-        ? _ArtAuthenticityBadge.resolve(item.tags)
+        ? CatalogBadgePalette.resolveArtAuthenticity(item.tags)
         : null;
     final personalityBadgeStyle = personality == null
         ? null
-        : _PersonalityBadgeStyle.resolve(personality);
+        : CatalogBadgePalette.resolveVillagerPersonality(personality);
     final statusStyle = _StatusStyle.resolve(
       completed: completed,
       donationMode: donationMode,
     );
 
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: onTap,
       child: Container(
@@ -1133,6 +1098,8 @@ class _QuickIconToggleButton extends StatelessWidget {
         tooltip: semanticLabel,
         icon: Icon(icon, size: 18),
         style: IconButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
           foregroundColor: selected ? selectedForeground : AppColors.textMuted,
           backgroundColor: selected
               ? selectedBackground
@@ -1171,7 +1138,7 @@ class _CatalogDropdownFilter extends StatelessWidget {
       child: Material(
         color: AppColors.catalogChipBg,
         borderRadius: BorderRadius.circular(999),
-        child: InkWell(
+        child: AppInkWell(
           borderRadius: BorderRadius.circular(999),
           onTap: onTap,
           child: Padding(
@@ -1236,211 +1203,6 @@ class _StatusStyle {
             background: AppColors.badgeBeigeBg,
             foreground: AppColors.badgeBeigeText,
           );
-  }
-}
-
-class _HabitatBadgeStyle {
-  const _HabitatBadgeStyle({
-    required this.background,
-    required this.foreground,
-  });
-
-  final Color background;
-  final Color foreground;
-
-  static const _HabitatBadgeStyle _waterStyle = _HabitatBadgeStyle(
-    background: Color(0xffE8F3FF),
-    foreground: Color(0xff2C6BCF),
-  );
-  static const _HabitatBadgeStyle _flowerStyle = _HabitatBadgeStyle(
-    background: Color(0xffFFF6CC),
-    foreground: Color(0xffC29B1E),
-  );
-  static const _HabitatBadgeStyle _treeStyle = _HabitatBadgeStyle(
-    background: Color(0xffFFF4E5),
-    foreground: Color(0xffC57A1F),
-  );
-  static const _HabitatBadgeStyle _rockStyle = _HabitatBadgeStyle(
-    background: Color(0xffF0F0F0),
-    foreground: Color(0xff6A6A6A),
-  );
-  static const _HabitatBadgeStyle _groundStyle = _HabitatBadgeStyle(
-    background: Color(0xffF1E39C),
-    foreground: AppColors.textPrimary,
-  );
-  static const _HabitatBadgeStyle _airStyle = _HabitatBadgeStyle(
-    background: Color(0xffF8D7FF),
-    foreground: Color(0xffC24AE9),
-  );
-  static const _HabitatBadgeStyle _specialStyle = _HabitatBadgeStyle(
-    background: Color(0xffEDE7FF),
-    foreground: Color(0xff6C63C9),
-  );
-  static const _HabitatBadgeStyle _neutralStyle = _HabitatBadgeStyle(
-    background: AppColors.navActiveBg,
-    foreground: AppColors.textSecondary,
-  );
-  static const List<_HabitatBadgeStyle> _fallbackPalette = <_HabitatBadgeStyle>[
-    _waterStyle,
-    _flowerStyle,
-    _treeStyle,
-    _rockStyle,
-    _groundStyle,
-    _airStyle,
-    _specialStyle,
-    _neutralStyle,
-  ];
-
-  static _HabitatBadgeStyle resolve(String habitat) {
-    final normalized = habitat.trim();
-    if (normalized.isEmpty) {
-      return _waterStyle;
-    }
-    if (_containsAny(normalized, <String>[
-      '바다',
-      '강',
-      '연못',
-      '물가',
-      '부둣가',
-      '해안',
-    ])) {
-      return _waterStyle;
-    }
-    if (_containsAny(normalized, <String>['꽃'])) {
-      return _flowerStyle;
-    }
-    if (_containsAny(normalized, <String>['나무', '야자수', '그루터기', '열매'])) {
-      return _treeStyle;
-    }
-    if (_containsAny(normalized, <String>['바위', '절벽'])) {
-      return _rockStyle;
-    }
-    if (_containsAny(normalized, <String>[
-      '지면',
-      '언더그라운드',
-      '쓰레기',
-      '썩은',
-      '눈덩이',
-    ])) {
-      return _groundStyle;
-    }
-    if (_containsAny(normalized, <String>['비행', '광원'])) {
-      return _airStyle;
-    }
-    if (_containsAny(normalized, <String>['위장', '주민'])) {
-      return _specialStyle;
-    }
-
-    // 유지보수 포인트:
-    // 새 서식처 문자열이 들어와도 한 가지 색으로 고정되지 않도록
-    // 해시 버킷으로 팔레트에 분산해 카드 시각 균형을 유지합니다.
-    final bucket = normalized.runes.fold<int>(0, (sum, rune) => sum + rune);
-    return _fallbackPalette[bucket % _fallbackPalette.length];
-  }
-
-  static bool _containsAny(String source, List<String> keywords) {
-    for (final keyword in keywords) {
-      if (source.contains(keyword)) {
-        return true;
-      }
-    }
-    return false;
-  }
-}
-
-class _ArtAuthenticityBadge {
-  const _ArtAuthenticityBadge({
-    required this.label,
-    required this.background,
-    required this.foreground,
-  });
-
-  final String label;
-  final Color background;
-  final Color foreground;
-
-  static _ArtAuthenticityBadge? resolve(List<String> tags) {
-    // 유지보수 포인트:
-    // 로컬 데이터 소스의 has_fake(bool) 값이 '가품:있음/없음' 태그로 주입됩니다.
-    // 라벨 정책을 바꾸려면 아래 두 분기만 수정하면 카드/필터 문구를 쉽게 맞출 수 있습니다.
-    if (tags.any((tag) => tag == '가품:있음')) {
-      return const _ArtAuthenticityBadge(
-        label: '가품 있음',
-        background: AppColors.badgeRedBg,
-        foreground: AppColors.badgeRedText,
-      );
-    }
-    if (tags.any((tag) => tag == '가품:없음')) {
-      return const _ArtAuthenticityBadge(
-        label: '가품 없음',
-        background: AppColors.badgeBlueBg,
-        foreground: AppColors.badgeBlueText,
-      );
-    }
-    return null;
-  }
-}
-
-class _PersonalityBadgeStyle {
-  const _PersonalityBadgeStyle({
-    required this.background,
-    required this.foreground,
-  });
-
-  final Color background;
-  final Color foreground;
-
-  static _PersonalityBadgeStyle resolve(String personality) {
-    switch (personality.trim()) {
-      case '운동광':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffE8F3FF),
-          foreground: Color(0xff2C6BCF),
-        );
-      case '단순활발':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffFFF6CC),
-          foreground: Color(0xffC29B1E),
-        );
-      case '먹보':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffFFF4E5),
-          foreground: Color(0xffC57A1F),
-        );
-      case '무뚝뚝':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffF0F0F0),
-          foreground: Color(0xff6A6A6A),
-        );
-      case '보통':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffF1E39C),
-          foreground: AppColors.textPrimary,
-        );
-      case '스누티':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffF8D7FF),
-          foreground: Color(0xffC24AE9),
-        );
-      case '아이돌':
-        return const _PersonalityBadgeStyle(
-          background: Color(0xffEDE7FF),
-          foreground: Color(0xff6C63C9),
-        );
-      case '느끼함':
-        return const _PersonalityBadgeStyle(
-          background: AppColors.navActiveBg,
-          foreground: AppColors.textSecondary,
-        );
-      default:
-        // 유지보수 포인트:
-        // 데이터셋에 새로운 성격이 추가되면 기본값(블루)으로 우선 노출됩니다.
-        // 필요 시 switch 케이스만 추가해 성격별 색상을 확장해 주세요.
-        return const _PersonalityBadgeStyle(
-          background: AppColors.badgeBlueBg,
-          foreground: AppColors.badgeBlueText,
-        );
-    }
   }
 }
 

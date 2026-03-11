@@ -68,17 +68,118 @@ void main() {
       expect(viewModel.state.errorMessage, '차단된 유저와는 거래 제안을 할 수 없어요.');
       expect(marketRepository.sendTradeProposalCallCount, 0);
     });
+
+    test('내가 제안 중인 거래는 거래 제안중 목록에 포함한다', () async {
+      viewModel.ensureProposalTracking();
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.activeProposalOfferIdsController.add(const <String>{
+        'proposal',
+      });
+      marketRepository.offersController.add(<MarketOffer>[
+        _buildOffer(id: 'mine', ownerUid: 'me'),
+        _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+        _buildOffer(
+          id: 'completed-proposal',
+          ownerUid: 'other-user',
+          lifecycle: MarketLifecycleTab.completed,
+        ),
+        _buildOffer(id: 'other', ownerUid: 'someone-else'),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(viewModel.myOffers.map((offer) => offer.id), <String>['mine']);
+      expect(viewModel.proposalOffers.map((offer) => offer.id), <String>[
+        'proposal',
+      ]);
+    });
+
+    test('진행중 거래 목록은 내 거래와 제안중 거래를 함께 포함한다', () async {
+      viewModel.ensureProposalTracking();
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.activeProposalOfferIdsController.add(const <String>{
+        'proposal',
+      });
+      marketRepository.offersController.add(<MarketOffer>[
+        _buildOffer(id: 'mine', ownerUid: 'me'),
+        _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+        _buildOffer(
+          id: 'cancelled',
+          ownerUid: 'me',
+          lifecycle: MarketLifecycleTab.cancelled,
+        ),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(viewModel.ongoingTradeCount, 2);
+      expect(
+        viewModel.ongoingTradeOffers.map((offer) => offer.id).toSet(),
+        <String>{'mine', 'proposal'},
+      );
+    });
+
+    test('거래 제안을 보내면 제안중 목록에 즉시 반영한다', () async {
+      viewModel.ensureProposalTracking();
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.offersController.add(<MarketOffer>[
+        _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(viewModel.proposalOffers, isEmpty);
+
+      await viewModel.sendTradeProposal(
+        offer: _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+      );
+
+      expect(viewModel.proposalOffers.map((offer) => offer.id), <String>[
+        'proposal',
+      ]);
+    });
+
+    test('내 제안을 취소하면 제안중 목록에서 즉시 빠진다', () async {
+      viewModel.ensureProposalTracking();
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.activeProposalOfferIdsController.add(const <String>{
+        'proposal',
+      });
+      marketRepository.offersController.add(<MarketOffer>[
+        _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(viewModel.proposalOffers.map((offer) => offer.id), <String>[
+        'proposal',
+      ]);
+
+      await viewModel.cancelTrade(
+        offer: _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+      );
+
+      expect(viewModel.proposalOffers, isEmpty);
+    });
   });
 }
 
-MarketOffer _buildOffer({required String id, required String ownerUid}) {
+MarketOffer _buildOffer({
+  required String id,
+  required String ownerUid,
+  MarketLifecycleTab lifecycle = MarketLifecycleTab.ongoing,
+}) {
   final now = DateTime(2026, 3, 10, 12);
   return MarketOffer(
     id: id,
     ownerUid: ownerUid,
     category: MarketFilterCategory.item,
     boardType: MarketBoardType.exchange,
-    lifecycle: MarketLifecycleTab.ongoing,
+    lifecycle: lifecycle,
     status: MarketOfferStatus.open,
     ownerName: ownerUid,
     ownerAvatarUrl: '',
@@ -106,11 +207,14 @@ class _FakeMarketRepository implements MarketRepository {
       StreamController<List<MarketOffer>>.broadcast();
   final StreamController<Set<String>> hiddenOfferIdsController =
       StreamController<Set<String>>.broadcast();
+  final StreamController<Set<String>> activeProposalOfferIdsController =
+      StreamController<Set<String>>.broadcast();
   int sendTradeProposalCallCount = 0;
 
   Future<void> dispose() async {
     await offersController.close();
     await hiddenOfferIdsController.close();
+    await activeProposalOfferIdsController.close();
   }
 
   @override
@@ -122,6 +226,11 @@ class _FakeMarketRepository implements MarketRepository {
   }
 
   @override
+  Stream<Set<String>> watchMyActiveProposalOfferIds(String proposerUid) {
+    return activeProposalOfferIdsController.stream;
+  }
+
+  @override
   Future<void> sendTradeProposalNotification({
     required String offerId,
     required String ownerUid,
@@ -130,6 +239,14 @@ class _FakeMarketRepository implements MarketRepository {
   }) async {
     sendTradeProposalCallCount += 1;
   }
+
+  @override
+  Future<void> cancelTrade({
+    required String offerId,
+    required String ownerUid,
+    required String requesterUid,
+    required String offerTitle,
+  }) async {}
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

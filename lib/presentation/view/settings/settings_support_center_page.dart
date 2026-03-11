@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/settings_faq_item.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
@@ -82,10 +85,11 @@ class _SettingsSupportCenterPageState
             child: Semantics(
               button: true,
               label: '나의 문의 내역',
-              child: InkWell(
+              child: AppInkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
+                  AppPageRoute<void>(
+                    screenName: AppScreenNames.settingsInquiryList,
                     builder: (_) => SettingsInquiryListPage(uid: widget.uid),
                   ),
                 ),
@@ -108,6 +112,8 @@ class _SettingsSupportCenterPageState
             child: OutlinedButton(
               onPressed: _openInquiryForm,
               style: OutlinedButton.styleFrom(
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
                 side: const BorderSide(color: AppColors.borderDefault),
                 backgroundColor: AppColors.bgCard,
                 shape: RoundedRectangleBorder(
@@ -274,7 +280,7 @@ class _SettingsSupportCenterPageState
 
     return Column(
       children: <Widget>[
-        InkWell(
+        AppInkWell(
           onTap: () {
             setState(() {
               _expandedFaqId = expanded ? null : item.id;
@@ -328,7 +334,8 @@ class _SettingsSupportCenterPageState
 
   Future<void> _openInquiryForm() async {
     final submitted = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
+      AppPageRoute<bool>(
+        screenName: AppScreenNames.settingsInquiryForm,
         builder: (_) => SettingsInquiryFormPage(uid: widget.uid),
       ),
     );

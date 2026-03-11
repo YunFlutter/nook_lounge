@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
@@ -152,7 +153,7 @@ class _WishListPageState extends ConsumerState<WishListPage> {
           final key = _categoryKeys[index];
           final selected = _selectedCategory == key;
           final count = counts[key] ?? 0;
-          return InkWell(
+          return AppInkWell(
             borderRadius: BorderRadius.circular(999),
             onTap: () => setState(() => _selectedCategory = key),
             child: AnimatedContainer(
@@ -207,7 +208,7 @@ class _WishListPageState extends ConsumerState<WishListPage> {
 
     return Material(
       color: AppColors.transparent,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(18),
         onTap: () => _openDetailSheet(item: item),
         child: Container(

@@ -15,6 +15,9 @@ class TurnipPredictionTable extends StatelessWidget {
   final List<int> avgValues;
 
   static const List<String> _dayLabels = <String>['월', '화', '수', '목', '금', '토'];
+  static const double _leadingLabelWidth = 44;
+  static const double _leadingLabelStartPadding = 10;
+  static const double _rowVerticalPadding = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -43,21 +46,18 @@ class TurnipPredictionTable extends StatelessWidget {
 
   Widget _buildHeaderRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: _rowVerticalPadding),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.borderDefault)),
       ),
       child: Row(
         children: <Widget>[
-          SizedBox(
-            width: 46,
-            child: Text(
-              '구분',
-              style: AppTextStyles.bodyWithSize(
-                13,
-                color: AppColors.textSecondary,
-                weight: FontWeight.w800,
-              ),
+          _buildLeadingCell(
+            '구분',
+            style: AppTextStyles.bodyWithSize(
+              13,
+              color: AppColors.textSecondary,
+              weight: FontWeight.w800,
             ),
           ),
           ..._dayLabels.map(
@@ -84,7 +84,7 @@ class TurnipPredictionTable extends StatelessWidget {
     bool isLast = false,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: _rowVerticalPadding),
       decoration: isLast
           ? null
           : const BoxDecoration(
@@ -94,15 +94,12 @@ class TurnipPredictionTable extends StatelessWidget {
             ),
       child: Row(
         children: <Widget>[
-          SizedBox(
-            width: 46,
-            child: Text(
-              label,
-              style: AppTextStyles.bodyWithSize(
-                14,
-                color: AppColors.textPrimary,
-                weight: FontWeight.w800,
-              ),
+          _buildLeadingCell(
+            label,
+            style: AppTextStyles.bodyWithSize(
+              14,
+              color: AppColors.textPrimary,
+              weight: FontWeight.w800,
             ),
           ),
           ...values.map(
@@ -119,6 +116,19 @@ class TurnipPredictionTable extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLeadingCell(String label, {required TextStyle style}) {
+    return SizedBox(
+      width: _leadingLabelWidth,
+      child: Padding(
+        // 유지보수 포인트:
+        // 첫 열 폭은 차트의 y축(34) + 간격(10)과 맞춰야
+        // x축 요일 라벨과 표의 월~토 열 중심이 같은 기준선에 맞습니다.
+        padding: const EdgeInsets.only(left: _leadingLabelStartPadding),
+        child: Text(label, style: style),
       ),
     );
   }

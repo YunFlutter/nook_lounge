@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
@@ -11,6 +14,21 @@ import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_titl
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_register_page.dart';
+
+enum _MarketMyTradeTab {
+  ongoing('진행중'),
+  cancelled('거래취소'),
+  completed('완료');
+
+  const _MarketMyTradeTab(this.label);
+  final String label;
+}
+
+final _marketMyTradeTabProvider = StateProvider.autoDispose<_MarketMyTradeTab>((
+  ref,
+) {
+  return _MarketMyTradeTab.ongoing;
+});
 
 class MarketMyTradesPage extends ConsumerWidget {
   const MarketMyTradesPage({super.key});
@@ -42,7 +60,23 @@ class MarketMyTradesPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(marketViewModelProvider);
     final viewModel = ref.read(marketViewModelProvider.notifier);
-    final offers = viewModel.myOffers;
+    final selectedTab = ref.watch(_marketMyTradeTabProvider);
+    final counts = <_MarketMyTradeTab, int>{
+      _MarketMyTradeTab.ongoing: viewModel.ongoingTradeCount,
+      _MarketMyTradeTab.cancelled:
+          viewModel.myOfferCounts[MarketLifecycleTab.cancelled] ?? 0,
+      _MarketMyTradeTab.completed:
+          viewModel.myOfferCounts[MarketLifecycleTab.completed] ?? 0,
+    };
+    final offers = switch (selectedTab) {
+      _MarketMyTradeTab.ongoing => viewModel.ongoingTradeOffers,
+      _MarketMyTradeTab.cancelled => viewModel.ownedOffersByLifecycle(
+        MarketLifecycleTab.cancelled,
+      ),
+      _MarketMyTradeTab.completed => viewModel.ownedOffersByLifecycle(
+        MarketLifecycleTab.completed,
+      ),
+    };
     final bottomInset = MediaQuery.viewPaddingOf(context).bottom;
     final bottomSpacing =
         AppSpacing.pageHorizontal +
@@ -60,14 +94,31 @@ class MarketMyTradesPage extends ConsumerWidget {
         children: <Widget>[
           AnimatedFadeSlide(
             child: _buildLifecycleTabs(
-              selected: state.selectedLifecycle,
-              counts: _buildCounts(state.offers),
-              onSelect: viewModel.setLifecycle,
+              selected: selectedTab,
+              counts: counts,
+              onSelect: (tab) {
+                ref.read(_marketMyTradeTabProvider.notifier).state = tab;
+              },
             ),
           ),
           const SizedBox(height: 12),
+          if (selectedTab == _MarketMyTradeTab.ongoing &&
+              state.proposalErrorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.s10),
+              child: Text(
+                state.proposalErrorMessage!,
+                style: AppTextStyles.captionWithColor(AppColors.badgeRedText),
+              ),
+            ),
           if (offers.isEmpty)
-            _buildEmpty()
+            _buildEmpty(
+              message: switch (selectedTab) {
+                _MarketMyTradeTab.ongoing => '진행중인 거래가 없어요.',
+                _MarketMyTradeTab.cancelled => '취소된 거래가 없어요.',
+                _MarketMyTradeTab.completed => '완료된 거래가 없어요.',
+              },
+            )
           else
             ...offers.asMap().entries.map((entry) {
               final index = entry.key;
@@ -87,25 +138,10 @@ class MarketMyTradesPage extends ConsumerWidget {
     );
   }
 
-  Map<MarketLifecycleTab, int> _buildCounts(List<MarketOffer> offers) {
-    final counts = <MarketLifecycleTab, int>{
-      MarketLifecycleTab.ongoing: 0,
-      MarketLifecycleTab.cancelled: 0,
-      MarketLifecycleTab.completed: 0,
-    };
-    for (final offer in offers) {
-      if (!offer.isMine) {
-        continue;
-      }
-      counts[offer.lifecycle] = (counts[offer.lifecycle] ?? 0) + 1;
-    }
-    return counts;
-  }
-
   Widget _buildLifecycleTabs({
-    required MarketLifecycleTab selected,
-    required Map<MarketLifecycleTab, int> counts,
-    required ValueChanged<MarketLifecycleTab> onSelect,
+    required _MarketMyTradeTab selected,
+    required Map<_MarketMyTradeTab, int> counts,
+    required ValueChanged<_MarketMyTradeTab> onSelect,
   }) {
     return Container(
       padding: const EdgeInsets.all(4),
@@ -114,7 +150,7 @@ class MarketMyTradesPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
-        children: MarketLifecycleTab.values
+        children: _MarketMyTradeTab.values
             .map((tab) {
               final selectedTab = tab == selected;
               return Expanded(
@@ -162,15 +198,27 @@ class MarketMyTradesPage extends ConsumerWidget {
     MarketOffer offer,
   ) {
     final viewModel = ref.read(marketViewModelProvider.notifier);
+    final currentUserId = viewModel.currentUserId.trim();
+    final isOwnerView = offer.isMine;
     final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
     final codeSessionAsync = ref.watch(
       marketTradeCodeSessionProvider(offer.id),
     );
-    final pendingProposalCount =
+    final myProposalAsync = !isOwnerView && currentUserId.isNotEmpty
+        ? ref.watch(
+            marketMyTradeProposalProvider((
+              offerId: offer.id,
+              proposerUid: currentUserId,
+            )),
+          )
+        : const AsyncValue<MarketTradeProposal?>.data(null);
+    final myProposal = myProposalAsync.valueOrNull;
+    final activeProposalCount =
         proposalsAsync.valueOrNull
             ?.where(
               (proposal) =>
-                  proposal.status == MarketTradeProposalStatus.pending,
+                  proposal.status == MarketTradeProposalStatus.pending ||
+                  proposal.status == MarketTradeProposalStatus.accepted,
             )
             .length ??
         0;
@@ -183,8 +231,11 @@ class MarketMyTradesPage extends ConsumerWidget {
     final isCompletedStyle =
         offer.lifecycle == MarketLifecycleTab.completed ||
         offer.status == MarketOfferStatus.closed;
+    final hasAcceptedMyProposal =
+        myProposal?.status == MarketTradeProposalStatus.accepted;
     final canOpenCode =
-        !isCompletedStyle && (hasCodeSession || hasAcceptedProposal);
+        !isCompletedStyle &&
+        (hasCodeSession || hasAcceptedProposal || hasAcceptedMyProposal);
     final offerDisplayName = _resolvedDisplayName(
       offer.offerItemName,
       offer.offerItemQuantity,
@@ -201,10 +252,26 @@ class MarketMyTradesPage extends ConsumerWidget {
       offer.wantItemName,
       offer.wantItemQuantity,
     );
+    final myDisplayName = isOwnerView ? offerDisplayName : wantDisplayName;
+    final myDisplayQuantity = isOwnerView
+        ? offerDisplayQuantity
+        : wantDisplayQuantity;
+    final myImageUrl = isOwnerView
+        ? offer.offerItemImageUrl
+        : offer.wantItemImageUrl;
+    final counterpartDisplayName = isOwnerView
+        ? wantDisplayName
+        : offerDisplayName;
+    final counterpartDisplayQuantity = isOwnerView
+        ? wantDisplayQuantity
+        : offerDisplayQuantity;
+    final counterpartImageUrl = isOwnerView
+        ? offer.wantItemImageUrl
+        : offer.offerItemImageUrl;
 
     final card = Material(
       color: AppColors.transparent,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(18),
         onTap: () => _openOfferDetail(context, offer),
         child: Container(
@@ -224,17 +291,17 @@ class MarketMyTradesPage extends ConsumerWidget {
                         children: <Widget>[
                           Text('나', style: AppTextStyles.bodySecondaryStrong),
                           const SizedBox(height: 8),
-                          _buildSquareItemImage(offer.offerItemImageUrl),
+                          _buildSquareItemImage(myImageUrl),
                           const SizedBox(height: 6),
                           Text(
-                            offerDisplayName,
+                            myDisplayName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.bodyPrimaryHeavy,
                           ),
-                          if (offerDisplayQuantity > 1)
+                          if (myDisplayQuantity > 1)
                             Text(
-                              'X$offerDisplayQuantity',
+                              'X$myDisplayQuantity',
                               style: AppTextStyles.bodyPrimaryHeavy,
                             ),
                         ],
@@ -260,17 +327,17 @@ class MarketMyTradesPage extends ConsumerWidget {
                         children: <Widget>[
                           Text('상대', style: AppTextStyles.bodySecondaryStrong),
                           const SizedBox(height: 8),
-                          _buildSquareItemImage(offer.wantItemImageUrl),
+                          _buildSquareItemImage(counterpartImageUrl),
                           const SizedBox(height: 6),
                           Text(
-                            wantDisplayName,
+                            counterpartDisplayName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: AppTextStyles.bodyPrimaryHeavy,
                           ),
-                          if (wantDisplayQuantity > 1)
+                          if (counterpartDisplayQuantity > 1)
                             Text(
-                              'X$wantDisplayQuantity',
+                              'X$counterpartDisplayQuantity',
                               style: AppTextStyles.bodyPrimaryHeavy,
                             ),
                         ],
@@ -281,106 +348,149 @@ class MarketMyTradesPage extends ConsumerWidget {
               ),
               if (offer.lifecycle == MarketLifecycleTab.ongoing) ...<Widget>[
                 const Divider(height: 1, color: AppColors.borderDefault),
-                _buildQueueStatusRow(
-                  pendingCount: pendingProposalCount,
-                  canOpenCode: canOpenCode,
-                  onOpenQueue: () => _openOfferDetail(context, offer),
-                  onOpenCode: canOpenCode
-                      ? () => _openTradeCodePage(context, offer)
-                      : null,
-                ),
+                isOwnerView
+                    ? _buildQueueStatusRow(
+                        activeProposalCount: activeProposalCount,
+                        canOpenCode: canOpenCode,
+                        onOpenQueue: () => _openOfferDetail(context, offer),
+                        onOpenCode: canOpenCode
+                            ? () => _openTradeCodePage(context, offer)
+                            : null,
+                      )
+                    : _buildMyProposalStatusRow(
+                        proposalStatus: myProposal?.status,
+                        canOpenCode: canOpenCode,
+                        onOpenDetail: () => _openOfferDetail(context, offer),
+                        onOpenCode: canOpenCode
+                            ? () => _openTradeCodePage(context, offer)
+                            : null,
+                      ),
               ],
               const Divider(height: 1, color: AppColors.borderDefault),
               if (offer.lifecycle == MarketLifecycleTab.ongoing)
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: _buildBottomAction(
-                        icon: Icons.edit_rounded,
-                        label: '수정',
-                        onTap: () => _openEditForm(context, offer),
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildBottomAction(
-                        icon: Icons.schedule_rounded,
-                        label: '거래취소',
+                isOwnerView
+                    ? Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: _buildBottomAction(
+                              icon: Icons.edit_rounded,
+                              label: '수정',
+                              onTap: () => _openEditForm(context, offer),
+                            ),
+                          ),
+                          Expanded(
+                            child: _buildBottomAction(
+                              icon: Icons.schedule_rounded,
+                              label: '거래취소',
+                              onTap: () async {
+                                final shouldCancel = await _showConfirmDialog(
+                                  context: context,
+                                  title: '거래 취소',
+                                  message: '현재 진행 제안을 취소하고 거래글을 다시 열까요?',
+                                  confirmLabel: '취소',
+                                );
+                                if (shouldCancel != true) {
+                                  return;
+                                }
+                                await viewModel.cancelTrade(offer: offer);
+                                if (context.mounted) {
+                                  _showInfo(context, '거래를 취소하고 다시 열었어요.');
+                                }
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: _buildBottomAction(
+                              icon: Icons.check_circle_rounded,
+                              label: '완료',
+                              onTap: hasAcceptedProposal
+                                  ? () async {
+                                      final shouldComplete =
+                                          await _showConfirmDialog(
+                                            context: context,
+                                            title: '거래 완료 처리',
+                                            message: '이 거래를 완료 상태로 변경할까요?',
+                                            confirmLabel: '완료',
+                                          );
+                                      if (shouldComplete != true) {
+                                        return;
+                                      }
+                                      try {
+                                        await viewModel.completeTrade(
+                                          offer: offer,
+                                        );
+                                      } catch (_) {
+                                        if (!context.mounted) {
+                                          return;
+                                        }
+                                        final errorMessage =
+                                            ref
+                                                .read(marketViewModelProvider)
+                                                .errorMessage ??
+                                            '거래 완료에 실패했어요. 다시 시도해 주세요.';
+                                        _showInfo(context, errorMessage);
+                                        return;
+                                      }
+                                      if (context.mounted) {
+                                        _showInfo(context, '거래를 완료로 변경했어요.');
+                                      }
+                                    }
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      )
+                    : _buildParticipantActionRow(
+                        onOpenDetail: () => _openOfferDetail(context, offer),
+                        onCancelTrade: myProposal == null
+                            ? null
+                            : () async {
+                                final shouldCancel = await _showConfirmDialog(
+                                  context: context,
+                                  title: '거래 제안 취소',
+                                  message: '보낸 거래 제안을 취소할까요?',
+                                  confirmLabel: '취소',
+                                );
+                                if (shouldCancel != true) {
+                                  return;
+                                }
+                                await viewModel.cancelTrade(offer: offer);
+                                if (context.mounted) {
+                                  _showInfo(context, '거래 제안을 취소했어요.');
+                                }
+                              },
+                        onOpenCode: canOpenCode
+                            ? () => _openTradeCodePage(context, offer)
+                            : null,
+                      )
+              else
+                offer.isMine
+                    ? _buildBottomAction(
+                        icon: Icons.delete_outline_rounded,
+                        label: '삭제',
                         onTap: () async {
-                          final shouldCancel = await _showConfirmDialog(
+                          final shouldDelete = await _showConfirmDialog(
                             context: context,
-                            title: '거래 취소',
-                            message: '현재 진행 제안을 취소하고 거래글을 다시 열까요?',
-                            confirmLabel: '취소',
+                            title: '거래 글 삭제',
+                            message: '정말 이 거래 글을 삭제할까요?',
+                            confirmLabel: '삭제',
                           );
-                          if (shouldCancel != true) {
+                          if (shouldDelete != true) {
                             return;
                           }
-                          await viewModel.cancelTrade(offer: offer);
+                          await viewModel.deleteOffer(offer.id);
                           if (context.mounted) {
-                            _showInfo(context, '거래를 취소하고 다시 열었어요.');
+                            _showInfo(context, '거래 글을 삭제했어요.');
                           }
                         },
+                        expand: false,
+                      )
+                    : _buildBottomAction(
+                        icon: Icons.open_in_new_rounded,
+                        label: '상세',
+                        onTap: () => _openOfferDetail(context, offer),
+                        expand: false,
                       ),
-                    ),
-                    Expanded(
-                      child: _buildBottomAction(
-                        icon: Icons.check_circle_rounded,
-                        label: '완료',
-                        onTap: hasAcceptedProposal
-                            ? () async {
-                                final shouldComplete = await _showConfirmDialog(
-                                  context: context,
-                                  title: '거래 완료 처리',
-                                  message: '이 거래를 완료 상태로 변경할까요?',
-                                  confirmLabel: '완료',
-                                );
-                                if (shouldComplete != true) {
-                                  return;
-                                }
-                                try {
-                                  await viewModel.completeTrade(offer: offer);
-                                } catch (_) {
-                                  if (!context.mounted) {
-                                    return;
-                                  }
-                                  final errorMessage =
-                                      ref
-                                          .read(marketViewModelProvider)
-                                          .errorMessage ??
-                                      '거래 완료에 실패했어요. 다시 시도해 주세요.';
-                                  _showInfo(context, errorMessage);
-                                  return;
-                                }
-                                if (context.mounted) {
-                                  _showInfo(context, '거래를 완료로 변경했어요.');
-                                }
-                              }
-                            : null,
-                      ),
-                    ),
-                  ],
-                )
-              else
-                _buildBottomAction(
-                  icon: Icons.delete_outline_rounded,
-                  label: '삭제',
-                  onTap: () async {
-                    final shouldDelete = await _showConfirmDialog(
-                      context: context,
-                      title: '거래 글 삭제',
-                      message: '정말 이 거래 글을 삭제할까요?',
-                      confirmLabel: '삭제',
-                    );
-                    if (shouldDelete != true) {
-                      return;
-                    }
-                    await viewModel.deleteOffer(offer.id);
-                    if (context.mounted) {
-                      _showInfo(context, '거래 글을 삭제했어요.');
-                    }
-                  },
-                  expand: false,
-                ),
             ],
           ),
         ),
@@ -401,7 +511,7 @@ class MarketMyTradesPage extends ConsumerWidget {
   }
 
   Widget _buildQueueStatusRow({
-    required int pendingCount,
+    required int activeProposalCount,
     required bool canOpenCode,
     required VoidCallback onOpenQueue,
     required VoidCallback? onOpenCode,
@@ -412,7 +522,9 @@ class MarketMyTradesPage extends ConsumerWidget {
         children: <Widget>[
           Expanded(
             child: Text(
-              pendingCount > 0 ? '대기중 제안 $pendingCount건' : '아직 받은 제안이 없어요',
+              activeProposalCount > 0
+                  ? '받은 제안 $activeProposalCount건'
+                  : '아직 받은 제안이 없어요',
               style: AppTextStyles.captionMuted,
             ),
           ),
@@ -427,6 +539,8 @@ class MarketMyTradesPage extends ConsumerWidget {
               ),
             ),
             style: TextButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               foregroundColor: AppColors.badgeBlueText,
               visualDensity: VisualDensity.compact,
             ),
@@ -443,6 +557,8 @@ class MarketMyTradesPage extends ConsumerWidget {
               ),
             ),
             style: TextButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               foregroundColor: canOpenCode
                   ? AppColors.textPrimary
                   : AppColors.textHint,
@@ -454,6 +570,99 @@ class MarketMyTradesPage extends ConsumerWidget {
     );
   }
 
+  Widget _buildMyProposalStatusRow({
+    required MarketTradeProposalStatus? proposalStatus,
+    required bool canOpenCode,
+    required VoidCallback onOpenDetail,
+    required VoidCallback? onOpenCode,
+  }) {
+    final message = switch (proposalStatus) {
+      MarketTradeProposalStatus.accepted => '거래가 승낙되었어요',
+      MarketTradeProposalStatus.pending => '내 제안이 대기 중이에요',
+      MarketTradeProposalStatus.rejected => '내 제안이 거절되었어요',
+      MarketTradeProposalStatus.cancelled => '내 제안이 취소되었어요',
+      null => '내 제안 상태를 확인하는 중이에요',
+    };
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+      child: Row(
+        children: <Widget>[
+          Expanded(child: Text(message, style: AppTextStyles.captionMuted)),
+          TextButton.icon(
+            onPressed: onOpenDetail,
+            icon: const Icon(Icons.receipt_long_rounded, size: 16),
+            label: Text(
+              '상세 보기',
+              style: AppTextStyles.captionWithColor(
+                AppColors.badgeBlueText,
+                weight: FontWeight.w800,
+              ),
+            ),
+            style: TextButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
+              foregroundColor: AppColors.badgeBlueText,
+              visualDensity: VisualDensity.compact,
+            ),
+          ),
+          const SizedBox(width: 2),
+          TextButton.icon(
+            onPressed: onOpenCode,
+            icon: const Icon(Icons.pin_outlined, size: 16),
+            label: Text(
+              '코드 확인',
+              style: AppTextStyles.captionWithColor(
+                canOpenCode ? AppColors.textPrimary : AppColors.textHint,
+                weight: FontWeight.w800,
+              ),
+            ),
+            style: TextButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
+              foregroundColor: canOpenCode
+                  ? AppColors.textPrimary
+                  : AppColors.textHint,
+              visualDensity: VisualDensity.compact,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParticipantActionRow({
+    required VoidCallback onOpenDetail,
+    required VoidCallback? onCancelTrade,
+    required VoidCallback? onOpenCode,
+  }) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: _buildBottomAction(
+            icon: Icons.open_in_new_rounded,
+            label: '상세',
+            onTap: onOpenDetail,
+          ),
+        ),
+        Expanded(
+          child: _buildBottomAction(
+            icon: Icons.schedule_rounded,
+            label: '거래취소',
+            onTap: onCancelTrade,
+          ),
+        ),
+        Expanded(
+          child: _buildBottomAction(
+            icon: Icons.pin_outlined,
+            label: '코드확인',
+            onTap: onOpenCode,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBottomAction({
     required IconData icon,
     required String label,
@@ -461,7 +670,7 @@ class MarketMyTradesPage extends ConsumerWidget {
     bool expand = true,
   }) {
     final isEnabled = onTap != null;
-    final button = InkWell(
+    final button = AppInkWell(
       onTap: onTap,
       child: Container(
         height: 56,
@@ -501,7 +710,8 @@ class MarketMyTradesPage extends ConsumerWidget {
 
   Future<void> _openOfferDetail(BuildContext context, MarketOffer offer) async {
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );
@@ -520,7 +730,8 @@ class MarketMyTradesPage extends ConsumerWidget {
     }
 
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketTradeCodeView,
         builder: (_) => MarketTradeCodeViewPage(offer: offer),
       ),
     );
@@ -557,7 +768,7 @@ class MarketMyTradesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmpty() {
+  Widget _buildEmpty({required String message}) {
     return Container(
       height: 240,
       alignment: Alignment.center,
@@ -566,7 +777,7 @@ class MarketMyTradesPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.borderDefault),
       ),
-      child: Text('해당 탭의 거래가 없어요.', style: AppTextStyles.bodySecondaryStrong),
+      child: Text(message, style: AppTextStyles.bodySecondaryStrong),
     );
   }
 
@@ -616,6 +827,8 @@ class MarketMyTradesPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -635,7 +848,9 @@ class MarketMyTradesPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -687,7 +902,8 @@ class MarketMyTradesPage extends ConsumerWidget {
 
   Future<void> _openEditForm(BuildContext context, MarketOffer offer) async {
     final updated = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
+      AppPageRoute<bool>(
+        screenName: AppScreenNames.marketTradeRegister,
         builder: (_) => MarketTradeRegisterPage(initialOffer: offer),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/support_inquiry.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_inquiry_status_badge.dart';
 
 class SettingsInquiryDetailPage extends ConsumerStatefulWidget {
   const SettingsInquiryDetailPage({
@@ -69,6 +70,8 @@ class _SettingsInquiryDetailPageState
             _dateFormat.format(inquiry.createdAt),
             style: AppTextStyles.captionMuted,
           ),
+          const SizedBox(height: 10),
+          SettingsInquiryStatusBadge(status: inquiry.status),
           const SizedBox(height: 14),
           const Divider(height: 1),
           const SizedBox(height: 14),

@@ -6,6 +6,16 @@ import 'package:nook_lounge_app/app/theme/app_typography.dart';
 class AppTheme {
   const AppTheme._();
 
+  static const WidgetStateProperty<Color?> _transparentInteractiveOverlay =
+      WidgetStatePropertyAll<Color?>(AppColors.transparent);
+
+  static ButtonStyle _buttonStyleWithoutBlink([ButtonStyle? baseStyle]) {
+    return (baseStyle ?? const ButtonStyle()).copyWith(
+      overlayColor: _transparentInteractiveOverlay,
+      splashFactory: NoSplash.splashFactory,
+    );
+  }
+
   static ThemeData light() {
     const textColor = AppColors.textPrimary;
     final colorScheme =
@@ -31,6 +41,18 @@ class AppTheme {
           outlineVariant: AppColors.navBorder,
         );
 
+    final filledButtonStyle = _buttonStyleWithoutBlink(
+      FilledButton.styleFrom(
+        overlayColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+        minimumSize: const Size.fromHeight(56),
+        backgroundColor: AppColors.primaryDefault,
+        foregroundColor: AppColors.textInverse,
+        textStyle: AppTypography.headingH2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+    );
+
     return ThemeData(
       useMaterial3: true,
       fontFamily: AppTypography.fontFamily,
@@ -38,6 +60,10 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.bgPrimary,
       cardColor: AppColors.bgCard,
       dividerColor: AppColors.borderDefault,
+      splashFactory: NoSplash.splashFactory,
+      splashColor: AppColors.transparent,
+      highlightColor: AppColors.transparent,
+      hoverColor: AppColors.transparent,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: AppColors.bgPrimary,
@@ -58,16 +84,20 @@ class AppTheme {
         bodySmall: AppTypography.bodySmall.copyWith(color: textColor),
         labelSmall: AppTypography.caption.copyWith(color: textColor),
       ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(56),
-          backgroundColor: AppColors.primaryDefault,
-          foregroundColor: AppColors.textInverse,
-          textStyle: AppTypography.headingH2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
+      // 유지보수 포인트:
+      // 앱 전역 터치 피드백은 잉크 번짐 대신 색/레이아웃 변화로 표현합니다.
+      // 특정 화면에서 눌림 오버레이가 꼭 필요하면 개별 스타일에서 다시 켜면 됩니다.
+      textButtonTheme: TextButtonThemeData(style: _buttonStyleWithoutBlink()),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: _buttonStyleWithoutBlink(),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: _buttonStyleWithoutBlink(),
+      ),
+      filledButtonTheme: FilledButtonThemeData(style: filledButtonStyle),
+      iconButtonTheme: IconButtonThemeData(style: _buttonStyleWithoutBlink()),
+      navigationBarTheme: const NavigationBarThemeData(
+        overlayColor: _transparentInteractiveOverlay,
       ),
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: AppColors.borderFocus,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
@@ -115,7 +116,7 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                       vertical: 7,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xffbbeaff).withOpacity(0.3),
+                      color: const Color(0xffbbeaff).withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
@@ -130,6 +131,8 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                   TextButton(
                     onPressed: hasRequests ? _selectAll : null,
                     style: TextButton.styleFrom(
+                      overlayColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
                       foregroundColor: AppColors.textSecondary,
                       textStyle: AppTextStyles.captionSecondary,
                     ),
@@ -168,7 +171,7 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                       itemBuilder: (context, index) {
                         final request = widget.pendingRequests[index];
                         final selected = _selectedIds.contains(request.id);
-                        return InkWell(
+                        return AppInkWell(
                           borderRadius: BorderRadius.circular(18),
                           onTap: () => _toggleSelection(request.id),
                           child: Container(
@@ -297,6 +300,8 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
               child: OutlinedButton(
                 onPressed: () => Navigator.of(context).maybePop(),
                 style: OutlinedButton.styleFrom(
+                  overlayColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
                   minimumSize: const Size.fromHeight(56),
                   side: const BorderSide(
                     color: AppColors.borderDefault,
@@ -317,6 +322,8 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
               child: FilledButton(
                 onPressed: hasRequests ? _onInvite : null,
                 style: FilledButton.styleFrom(
+                  overlayColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
                   backgroundColor: AppColors.badgeBlueText,
                   foregroundColor: AppColors.textInverse,
                   minimumSize: const Size.fromHeight(56),

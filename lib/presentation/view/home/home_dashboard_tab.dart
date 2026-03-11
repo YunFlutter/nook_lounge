@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
@@ -106,75 +110,80 @@ class HomeDashboardTab extends ConsumerWidget {
     );
     final items = catalogAsync.valueOrNull ?? const <CatalogItem>[];
 
-    return RefreshIndicator(
-      onRefresh: () => _refresh(ref),
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.pageHorizontal,
-          AppSpacing.s10,
-          AppSpacing.pageHorizontal,
-          AppSpacing.s10 * 2,
+    return AppScreenView(
+      screenName: AppScreenNames.homeDashboard,
+      child: RefreshIndicator(
+        onRefresh: () => _refresh(ref),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.pageHorizontal,
+            AppSpacing.s10,
+            AppSpacing.pageHorizontal,
+            AppSpacing.s10 * 2,
+          ),
+          children: <Widget>[
+            AnimatedFadeSlide(
+              child: _buildIslandHeroCard(
+                context: context,
+                ref: ref,
+                selectedIsland: selectedIsland,
+                loading:
+                    islandsAsync.isLoading || primaryIslandIdAsync.isLoading,
+                hasError:
+                    islandsAsync.hasError || primaryIslandIdAsync.hasError,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s10 * 2),
+            AnimatedFadeSlide(
+              delay: const Duration(milliseconds: 40),
+              child: _buildResidentSection(
+                context: context,
+                ref: ref,
+                currentIslandId: currentIslandId,
+                items: items,
+                userStates: userStates,
+                loading: catalogAsync.isLoading,
+                hasError: catalogAsync.hasError,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s10 * 2),
+            AnimatedFadeSlide(
+              delay: const Duration(milliseconds: 80),
+              child: _buildTurnipSection(
+                context: context,
+                ref: ref,
+                turnipState: turnipState,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s10 * 2),
+            AnimatedFadeSlide(
+              delay: const Duration(milliseconds: 120),
+              child: _buildCatalogProgressSection(
+                context: context,
+                ref: ref,
+                currentIslandId: currentIslandId,
+                items: items,
+                userStates: userStates,
+                loading: catalogAsync.isLoading,
+                hasError: catalogAsync.hasError,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.s10 * 2),
+            AnimatedFadeSlide(
+              delay: const Duration(milliseconds: 160),
+              child: _buildWishListSection(
+                context: context,
+                ref: ref,
+                currentIslandId: currentIslandId,
+                items: items,
+                userStates: userStates,
+                loading: catalogAsync.isLoading,
+                hasError: catalogAsync.hasError,
+              ),
+            ),
+          ],
         ),
-        children: <Widget>[
-          AnimatedFadeSlide(
-            child: _buildIslandHeroCard(
-              context: context,
-              ref: ref,
-              selectedIsland: selectedIsland,
-              loading: islandsAsync.isLoading || primaryIslandIdAsync.isLoading,
-              hasError: islandsAsync.hasError || primaryIslandIdAsync.hasError,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s10 * 2),
-          AnimatedFadeSlide(
-            delay: const Duration(milliseconds: 40),
-            child: _buildResidentSection(
-              context: context,
-              ref: ref,
-              currentIslandId: currentIslandId,
-              items: items,
-              userStates: userStates,
-              loading: catalogAsync.isLoading,
-              hasError: catalogAsync.hasError,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s10 * 2),
-          AnimatedFadeSlide(
-            delay: const Duration(milliseconds: 80),
-            child: _buildTurnipSection(
-              context: context,
-              ref: ref,
-              turnipState: turnipState,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s10 * 2),
-          AnimatedFadeSlide(
-            delay: const Duration(milliseconds: 120),
-            child: _buildCatalogProgressSection(
-              context: context,
-              ref: ref,
-              currentIslandId: currentIslandId,
-              items: items,
-              userStates: userStates,
-              loading: catalogAsync.isLoading,
-              hasError: catalogAsync.hasError,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s10 * 2),
-          AnimatedFadeSlide(
-            delay: const Duration(milliseconds: 160),
-            child: _buildWishListSection(
-              context: context,
-              ref: ref,
-              currentIslandId: currentIslandId,
-              items: items,
-              userStates: userStates,
-              loading: catalogAsync.isLoading,
-              hasError: catalogAsync.hasError,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -668,6 +677,8 @@ class HomeDashboardTab extends ConsumerWidget {
                           .read(homeShellViewModelProvider.notifier)
                           .changeTab(4),
                       style: ElevatedButton.styleFrom(
+                        overlayColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory,
                         backgroundColor: _turnipEmptyCtaColor,
                         foregroundColor: AppColors.textInverse,
                         elevation: 0,
@@ -809,16 +820,10 @@ class HomeDashboardTab extends ConsumerWidget {
       '미술품',
       '아이템',
     ];
-    final orderedKeys = categoryOrder
-        .where((key) {
-          // 유지보수 포인트:
-          // 위시가 비어도 기존 카드형 UI를 유지해 카테고리별 0개 상태를 노출합니다.
-          if (favorites.isEmpty) {
-            return true;
-          }
-          return grouped[key]?.isNotEmpty ?? false;
-        })
-        .toList(growable: false);
+    // 유지보수 포인트:
+    // 홈 위시 리스트는 일부 카테고리에만 데이터가 있어도 전체 카테고리 박스를
+    // 같은 순서로 유지해야 사용자가 빈 카테고리도 바로 진입할 수 있습니다.
+    final orderedKeys = List<String>.unmodifiable(categoryOrder);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -857,7 +862,7 @@ class HomeDashboardTab extends ConsumerWidget {
                   delay: Duration(milliseconds: 25 + (index * 20)),
                   child: Material(
                     color: AppColors.transparent,
-                    child: InkWell(
+                    child: AppInkWell(
                       borderRadius: BorderRadius.circular(16),
                       onTap: () => _openWishListPage(
                         context: context,
@@ -938,11 +943,12 @@ class HomeDashboardTab extends ConsumerWidget {
       delay: delay,
       child: Material(
         color: AppColors.transparent,
-        child: InkWell(
+        child: AppInkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () async {
             await Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.catalogCollection,
                 builder: (_) => CatalogCollectionPage(
                   uid: uid,
                   islandId: islandId,
@@ -1064,6 +1070,8 @@ class HomeDashboardTab extends ConsumerWidget {
         TextButton(
           onPressed: onTap,
           style: TextButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             foregroundColor: AppColors.primaryDefault,
             textStyle: AppTextStyles.bodyPrimaryHeavy,
           ),
@@ -1080,7 +1088,8 @@ class HomeDashboardTab extends ConsumerWidget {
     required String initialCategory,
   }) async {
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.wishList,
         builder: (_) => WishListPage(
           uid: uid,
           islandId: islandId,
@@ -1101,7 +1110,7 @@ class HomeDashboardTab extends ConsumerWidget {
     return Semantics(
       label: '주민 슬롯 ${slotIndex + 1}: ${item.name}',
       button: true,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () => _openResidentDetailSheet(
           context: context,
@@ -1155,7 +1164,7 @@ class HomeDashboardTab extends ConsumerWidget {
       button: canOpenCollection,
       child: Material(
         color: AppColors.transparent,
-        child: InkWell(
+        child: AppInkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: canOpenCollection
               ? () async {
@@ -1210,7 +1219,8 @@ class HomeDashboardTab extends ConsumerWidget {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.catalogCollection,
         builder: (_) => CatalogCollectionPage(
           uid: uid,
           islandId: islandId,

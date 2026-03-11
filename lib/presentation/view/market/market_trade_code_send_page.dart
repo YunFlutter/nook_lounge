@@ -8,6 +8,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -86,9 +88,7 @@ class _MarketTradeCodeSendPageState
     final bool isSender = widget.session.isCodeSender(currentUid);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const HomeStyleAppBarTitle('도도 코드 보내기'),
-      ),
+      appBar: AppBar(title: const HomeStyleAppBarTitle('도도 코드 보내기')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.pageHorizontal,
@@ -255,6 +255,8 @@ class _MarketTradeCodeSendPageState
                 ? null
                 : () => _sendCode(context, ref),
             style: FilledButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               minimumSize: const Size.fromHeight(58),
               backgroundColor: AppColors.accentDeepOrange,
               disabledBackgroundColor: AppColors.catalogChipBg,
@@ -323,10 +325,7 @@ class _MarketTradeCodeSendPageState
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(
-            content: Text(message),
-            behavior: SnackBarBehavior.floating,
-          ),
+          SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
         );
       setState(() => _isSending = false);
       return;
@@ -337,7 +336,8 @@ class _MarketTradeCodeSendPageState
     }
     setState(() => _isSending = false);
     await Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketTradeCodeView,
         builder: (_) => MarketTradeCodeViewPage(offer: widget.offer),
       ),
     );

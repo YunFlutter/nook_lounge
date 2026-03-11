@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -305,7 +307,8 @@ class _MarketRealtimeListenerState
 
     if (shouldSendCode) {
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(
+        AppPageRoute<void>(
+          screenName: AppScreenNames.marketTradeCodeSend,
           builder: (_) =>
               MarketTradeCodeSendPage(offer: offer, session: session),
         ),
@@ -314,7 +317,8 @@ class _MarketRealtimeListenerState
     }
 
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketTradeCodeView,
         builder: (_) => MarketTradeCodeViewPage(offer: offer),
       ),
     );
@@ -346,7 +350,8 @@ class _MarketRealtimeListenerState
 
     if (shouldInputCode && session != null) {
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(
+        AppPageRoute<void>(
+          screenName: AppScreenNames.marketTradeCodeSend,
           builder: (_) =>
               MarketTradeCodeSendPage(offer: offer, session: session),
         ),
@@ -356,7 +361,8 @@ class _MarketRealtimeListenerState
 
     if (session != null) {
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(
+        AppPageRoute<void>(
+          screenName: AppScreenNames.marketTradeCodeView,
           builder: (_) => MarketTradeCodeViewPage(offer: offer),
         ),
       );
@@ -364,7 +370,8 @@ class _MarketRealtimeListenerState
     }
 
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );
@@ -386,7 +393,8 @@ class _MarketRealtimeListenerState
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );
@@ -404,7 +412,8 @@ class _MarketRealtimeListenerState
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );
@@ -553,6 +562,8 @@ class _MarketRealtimeListenerState
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -572,10 +583,12 @@ class _MarketRealtimeListenerState
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
-                          backgroundColor: AppColors.accentDeepOrange,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),

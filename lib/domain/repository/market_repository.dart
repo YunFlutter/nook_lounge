@@ -46,6 +46,8 @@ abstract class MarketRepository {
     required String proposerUid,
   });
 
+  Stream<Set<String>> watchMyActiveProposalOfferIds(String proposerUid);
+
   Future<MarketTradeCodeSession> acceptTradeProposal({
     required String offerId,
     required String ownerUid,

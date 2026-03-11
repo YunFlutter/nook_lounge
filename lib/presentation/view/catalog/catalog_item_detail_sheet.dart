@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_segmented_control.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
+import 'package:nook_lounge_app/presentation/view/catalog/catalog_badge_palette.dart';
 
 class CatalogItemDetailSheet extends StatefulWidget {
   const CatalogItemDetailSheet({
@@ -135,10 +138,56 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
     final habitat = _isVillager ? null : _extractPrefixedTagValue('서식처');
     final habitatBadgeStyle = habitat == null
         ? null
-        : _HabitatBadgeStyle.resolve(habitat);
+        : CatalogBadgePalette.resolveHabitat(habitat);
     final personalityBadgeStyle = personality == null
         ? null
-        : _VillagerPersonalityBadgeStyle.resolve(personality);
+        : CatalogBadgePalette.resolveVillagerPersonality(personality);
+    final artAuthenticity = widget.item.category == '미술품'
+        ? CatalogBadgePalette.resolveArtAuthenticity(widget.item.tags)
+        : null;
+    final detailBadgeChips = <Widget>[
+      if (artAuthenticity != null)
+        _InfoChip(
+          label: artAuthenticity.label,
+          background: artAuthenticity.background,
+          foreground: artAuthenticity.foreground,
+        ),
+      ..._displayTags.map((tag) {
+        final isPersonalityTag =
+            _isVillager &&
+            personality != null &&
+            tag == personality &&
+            personalityBadgeStyle != null;
+        final isHabitatTag =
+            !_isVillager &&
+            habitat != null &&
+            tag == habitat &&
+            habitatBadgeStyle != null;
+        final isRareTag = _isRareBadgeTag(tag);
+        if (isRareTag) {
+          return _InfoChip(
+            label: tag,
+            background: AppColors.badgeRedBg,
+            foreground: AppColors.badgeRedText,
+          );
+        }
+        if (isHabitatTag) {
+          return _InfoChip(
+            label: tag,
+            background: habitatBadgeStyle.background,
+            foreground: habitatBadgeStyle.foreground,
+          );
+        }
+        if (!isPersonalityTag) {
+          return _InfoChip(label: tag);
+        }
+        return _InfoChip(
+          label: tag,
+          background: personalityBadgeStyle.background,
+          foreground: personalityBadgeStyle.foreground,
+        );
+      }),
+    ];
     final optionDrivenImageUrl =
         _selectedDetailImageUrl ??
         ((_isOptionCategory && detailImages.isNotEmpty)
@@ -203,73 +252,27 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
                               style: AppTextStyles.headingH2,
                             ),
                           ),
-                          // IconButton(
-                          //   onPressed: widget.readOnly
-                          //       ? null
-                          //       : () async {
-                          //           final next = !_isFavorite;
-                          //           setState(() => _isFavorite = next);
-                          //           try {
-                          //             await widget.onFavoriteChanged(next);
-                          //           } catch (_) {
-                          //             if (!mounted) {
-                          //               return;
-                          //             }
-                          //             setState(() => _isFavorite = !next);
-                          //           }
-                          //         },
-                          //   icon: Icon(
-                          //     _isFavorite
-                          //         ? Icons.favorite
-                          //         : Icons.favorite_border,
-                          //     color: _isFavorite
-                          //         ? AppColors.badgeRedText
-                          //         : AppColors.textHint,
-                          //   ),
-                          // ),
+                          // 유지보수 포인트:
+                          // 좋아요는 주민/일반 도감 모두 공통 액션이라 헤더에서 동일하게 노출합니다.
+                          IconButton(
+                            onPressed: widget.readOnly ? null : _toggleFavorite,
+                            tooltip: _isFavorite ? '좋아요 해제' : '좋아요 추가',
+                            icon: Icon(
+                              _isFavorite
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              color: _isFavorite
+                                  ? AppColors.badgeRedText
+                                  : AppColors.textHint,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: AppSpacing.s10),
                       Wrap(
                         spacing: 6,
                         runSpacing: 6,
-                        children: _displayTags
-                            .map((tag) {
-                              final isPersonalityTag =
-                                  _isVillager &&
-                                  personality != null &&
-                                  tag == personality &&
-                                  personalityBadgeStyle != null;
-                              final isHabitatTag =
-                                  !_isVillager &&
-                                  habitat != null &&
-                                  tag == habitat &&
-                                  habitatBadgeStyle != null;
-                              final isRareTag = _isRareBadgeTag(tag);
-                              if (isRareTag) {
-                                return _InfoChip(
-                                  label: tag,
-                                  background: AppColors.badgeRedBg,
-                                  foreground: AppColors.badgeRedText,
-                                );
-                              }
-                              if (isHabitatTag) {
-                                return _InfoChip(
-                                  label: tag,
-                                  background: habitatBadgeStyle.background,
-                                  foreground: habitatBadgeStyle.foreground,
-                                );
-                              }
-                              if (!isPersonalityTag) {
-                                return _InfoChip(label: tag);
-                              }
-                              return _InfoChip(
-                                label: tag,
-                                background: personalityBadgeStyle.background,
-                                foreground: personalityBadgeStyle.foreground,
-                              );
-                            })
-                            .toList(growable: false),
+                        children: detailBadgeChips,
                       ),
                       const SizedBox(height: AppSpacing.s20 * 2),
                       ...detailRows.map(
@@ -552,7 +555,7 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
                             width: selected ? 2 : 1,
                           ),
                         ),
-                        child: InkWell(
+                        child: AppInkWell(
                           borderRadius: BorderRadius.circular(12),
                           onTap: () {
                             if (_isOptionCategory && !selected) {
@@ -735,19 +738,49 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
     return <Widget>[
       Text(title, style: AppTextStyles.headingH2),
       const SizedBox(height: AppSpacing.s10),
-      _SegmentStatusToggle(
+      AppSegmentedControl<bool>(
         value: _isCompleted,
-        offLabel: offLabel,
-        onLabel: onLabel,
-        offIcon: widget.isDonationMode
-            ? Icons.radio_button_unchecked_rounded
-            : Icons.inventory_2_outlined,
-        onIcon: widget.isDonationMode
-            ? Icons.account_balance_rounded
-            : Icons.check_circle_rounded,
-        onSelectedColor: widget.isDonationMode
-            ? AppColors.catalogProgressAccent
-            : AppColors.catalogSuccessText,
+        outerRadius: 14,
+        innerRadius: 10,
+        selectedShadow: const <BoxShadow>[
+          BoxShadow(
+            color: AppColors.shadowSoft,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+        items: <AppSegmentedControlItem<bool>>[
+          (
+            value: false,
+            label: offLabel,
+            icon: widget.isDonationMode
+                ? Icons.radio_button_unchecked_rounded
+                : Icons.inventory_2_outlined,
+            selectedColor: AppColors.textSecondary,
+            semanticsLabel: offLabel,
+          ),
+          (
+            value: true,
+            label: onLabel,
+            icon: widget.isDonationMode
+                ? Icons.account_balance_rounded
+                : Icons.check_circle_rounded,
+            selectedColor: widget.isDonationMode
+                ? AppColors.catalogProgressAccent
+                : AppColors.catalogSuccessText,
+            semanticsLabel: onLabel,
+          ),
+        ],
+        // 유지보수 포인트:
+        // 세그먼트 내부 텍스트/아이콘은 즉시 전환하고,
+        // 선택 배경만 이동시켜 좌우 항목이 함께 깜빡이는 체감을 줄입니다.
+        textStyleBuilder: (context, item, foregroundColor, selected) {
+          return AppTextStyles.bodyWithSize(
+            14,
+            color: foregroundColor,
+            weight: FontWeight.w800,
+          );
+        },
         onChanged: (value) async {
           final previous = _isCompleted;
           setState(() => _isCompleted = value);
@@ -774,13 +807,40 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
         style: AppTextStyles.bodyWithSize(14, color: AppColors.textMuted),
       ),
       const SizedBox(height: 6),
-      _SegmentStatusToggle(
+      AppSegmentedControl<bool>(
         value: _isCompleted,
-        offLabel: '미거주',
-        onLabel: '거주중',
-        offIcon: Icons.home_outlined,
-        onIcon: Icons.home_rounded,
-        onSelectedColor: AppColors.textPrimary,
+        outerRadius: 14,
+        innerRadius: 10,
+        selectedShadow: const <BoxShadow>[
+          BoxShadow(
+            color: AppColors.shadowSoft,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
+        items: const <AppSegmentedControlItem<bool>>[
+          (
+            value: false,
+            label: '미거주',
+            icon: Icons.home_outlined,
+            selectedColor: AppColors.textSecondary,
+            semanticsLabel: '미거주',
+          ),
+          (
+            value: true,
+            label: '거주중',
+            icon: Icons.home_rounded,
+            selectedColor: AppColors.textPrimary,
+            semanticsLabel: '거주중',
+          ),
+        ],
+        textStyleBuilder: (context, item, foregroundColor, selected) {
+          return AppTextStyles.bodyWithSize(
+            14,
+            color: foregroundColor,
+            weight: FontWeight.w800,
+          );
+        },
         onChanged: (value) async {
           final previous = _isCompleted;
           setState(() => _isCompleted = value);
@@ -795,34 +855,24 @@ class _CatalogItemDetailSheetState extends State<CatalogItemDetailSheet>
           }
         },
       ),
-      const SizedBox(height: AppSpacing.s20),
-      Text(
-        '선호',
-        style: AppTextStyles.bodyWithSize(14, color: AppColors.textMuted),
-      ),
-      const SizedBox(height: 6),
-      _SegmentStatusToggle(
-        value: _isFavorite,
-        offLabel: '일반',
-        onLabel: '선호',
-        offIcon: Icons.favorite_border_rounded,
-        onIcon: Icons.favorite_rounded,
-        onSelectedColor: Colors.red,
-        onChanged: (value) async {
-          final previous = _isFavorite;
-          setState(() => _isFavorite = value);
-          try {
-            await widget.onFavoriteChanged(value);
-          } catch (error) {
-            if (!mounted) {
-              return;
-            }
-            setState(() => _isFavorite = previous);
-            _showActionError(error);
-          }
-        },
-      ),
     ];
+  }
+
+  Future<void> _toggleFavorite() async {
+    final previous = _isFavorite;
+    final next = !previous;
+
+    setState(() => _isFavorite = next);
+
+    try {
+      await widget.onFavoriteChanged(next);
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isFavorite = previous);
+      _showActionError(error);
+    }
   }
 
   Widget _buildVillagerMemoSection() {
@@ -1061,301 +1111,6 @@ class _InfoChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(label, style: AppTextStyles.captionWithColor(foreground)),
-    );
-  }
-}
-
-class _HabitatBadgeStyle {
-  const _HabitatBadgeStyle({
-    required this.background,
-    required this.foreground,
-  });
-
-  final Color background;
-  final Color foreground;
-
-  static const _HabitatBadgeStyle _waterStyle = _HabitatBadgeStyle(
-    background: Color(0xffE8F3FF),
-    foreground: Color(0xff2C6BCF),
-  );
-  static const _HabitatBadgeStyle _flowerStyle = _HabitatBadgeStyle(
-    background: Color(0xffFFF6CC),
-    foreground: Color(0xffC29B1E),
-  );
-  static const _HabitatBadgeStyle _treeStyle = _HabitatBadgeStyle(
-    background: Color(0xffFFF4E5),
-    foreground: Color(0xffC57A1F),
-  );
-  static const _HabitatBadgeStyle _rockStyle = _HabitatBadgeStyle(
-    background: Color(0xffF0F0F0),
-    foreground: Color(0xff6A6A6A),
-  );
-  static const _HabitatBadgeStyle _groundStyle = _HabitatBadgeStyle(
-    background: Color(0xffF1E39C),
-    foreground: AppColors.textPrimary,
-  );
-  static const _HabitatBadgeStyle _airStyle = _HabitatBadgeStyle(
-    background: Color(0xffF8D7FF),
-    foreground: Color(0xffC24AE9),
-  );
-  static const _HabitatBadgeStyle _specialStyle = _HabitatBadgeStyle(
-    background: Color(0xffEDE7FF),
-    foreground: Color(0xff6C63C9),
-  );
-  static const _HabitatBadgeStyle _neutralStyle = _HabitatBadgeStyle(
-    background: AppColors.navActiveBg,
-    foreground: AppColors.textSecondary,
-  );
-  static const List<_HabitatBadgeStyle> _fallbackPalette = <_HabitatBadgeStyle>[
-    _waterStyle,
-    _flowerStyle,
-    _treeStyle,
-    _rockStyle,
-    _groundStyle,
-    _airStyle,
-    _specialStyle,
-    _neutralStyle,
-  ];
-
-  static _HabitatBadgeStyle resolve(String habitat) {
-    final normalized = habitat.trim();
-    if (normalized.isEmpty) {
-      return _waterStyle;
-    }
-    if (_containsAny(normalized, <String>[
-      '바다',
-      '강',
-      '연못',
-      '물가',
-      '부둣가',
-      '해안',
-    ])) {
-      return _waterStyle;
-    }
-    if (_containsAny(normalized, <String>['꽃'])) {
-      return _flowerStyle;
-    }
-    if (_containsAny(normalized, <String>['나무', '야자수', '그루터기', '열매'])) {
-      return _treeStyle;
-    }
-    if (_containsAny(normalized, <String>['바위', '절벽'])) {
-      return _rockStyle;
-    }
-    if (_containsAny(normalized, <String>[
-      '지면',
-      '언더그라운드',
-      '쓰레기',
-      '썩은',
-      '눈덩이',
-    ])) {
-      return _groundStyle;
-    }
-    if (_containsAny(normalized, <String>['비행', '광원'])) {
-      return _airStyle;
-    }
-    if (_containsAny(normalized, <String>['위장', '주민'])) {
-      return _specialStyle;
-    }
-
-    // 유지보수 포인트:
-    // 새 서식처 문자열이 들어와도 한 가지 색으로 고정되지 않도록
-    // 해시 버킷으로 팔레트에 분산해 카드/상세 시트의 시각 톤을 맞춥니다.
-    final bucket = normalized.runes.fold<int>(0, (sum, rune) => sum + rune);
-    return _fallbackPalette[bucket % _fallbackPalette.length];
-  }
-
-  static bool _containsAny(String source, List<String> keywords) {
-    for (final keyword in keywords) {
-      if (source.contains(keyword)) {
-        return true;
-      }
-    }
-    return false;
-  }
-}
-
-class _VillagerPersonalityBadgeStyle {
-  const _VillagerPersonalityBadgeStyle({
-    required this.background,
-    required this.foreground,
-  });
-
-  final Color background;
-  final Color foreground;
-
-  static _VillagerPersonalityBadgeStyle resolve(String personality) {
-    switch (personality.trim()) {
-      case '운동광':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffE8F3FF),
-          foreground: Color(0xff2C6BCF),
-        );
-      case '단순활발':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffFFF6CC),
-          foreground: Color(0xffC29B1E),
-        );
-      case '먹보':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffFFF4E5),
-          foreground: Color(0xffC57A1F),
-        );
-      case '무뚝뚝':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffF0F0F0),
-          foreground: Color(0xff6A6A6A),
-        );
-      case '보통':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffF1E39C),
-          foreground: AppColors.textPrimary,
-        );
-      case '스누티':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffF8D7FF),
-          foreground: Color(0xffC24AE9),
-        );
-      case '아이돌':
-        return const _VillagerPersonalityBadgeStyle(
-          background: Color(0xffEDE7FF),
-          foreground: Color(0xff6C63C9),
-        );
-      case '느끼함':
-        return const _VillagerPersonalityBadgeStyle(
-          background: AppColors.navActiveBg,
-          foreground: AppColors.textSecondary,
-        );
-      default:
-        // 유지보수 포인트:
-        // 데이터셋에 새로운 성격이 추가되면 기본값(블루)으로 우선 노출됩니다.
-        // 필요 시 switch 케이스만 추가해 성격별 색상을 확장해 주세요.
-        return const _VillagerPersonalityBadgeStyle(
-          background: AppColors.badgeBlueBg,
-          foreground: AppColors.badgeBlueText,
-        );
-    }
-  }
-}
-
-class _SegmentStatusToggle extends StatelessWidget {
-  const _SegmentStatusToggle({
-    required this.value,
-    required this.offLabel,
-    required this.onLabel,
-    required this.offIcon,
-    required this.onIcon,
-    required this.onSelectedColor,
-    required this.onChanged,
-  });
-
-  final bool value;
-  final String offLabel;
-  final String onLabel;
-  final IconData offIcon;
-  final IconData onIcon;
-  final Color onSelectedColor;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.catalogSegmentBg,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: _SegmentStatusItem(
-              label: offLabel,
-              icon: offIcon,
-              selected: !value,
-              selectedColor: AppColors.textSecondary,
-              onTap: () {
-                if (value) {
-                  onChanged(false);
-                }
-              },
-            ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: _SegmentStatusItem(
-              label: onLabel,
-              icon: onIcon,
-              selected: value,
-              selectedColor: onSelectedColor,
-              onTap: () {
-                if (!value) {
-                  onChanged(true);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SegmentStatusItem extends StatelessWidget {
-  const _SegmentStatusItem({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.selectedColor,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final Color selectedColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.white : AppColors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: selected
-              ? const <BoxShadow>[
-                  BoxShadow(
-                    color: AppColors.shadowSoft,
-                    blurRadius: 6,
-                    offset: Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              icon,
-              size: 16,
-              color: selected ? selectedColor : AppColors.textMuted,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: AppTextStyles.bodyWithSize(
-                14,
-                color: selected ? selectedColor : AppColors.textMuted,
-                weight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

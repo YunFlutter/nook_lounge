@@ -56,11 +56,11 @@ class AirportVisitorManifestPage extends ConsumerWidget {
             const SizedBox(height: 15),
             Text(
               '비행장 입국 현황을 모니터링 중입니다.',
-              style: AppTextStyles.bodySecondaryStrong.copyWith(color: AppColors.navInactive),
+              style: AppTextStyles.bodySecondaryStrong.copyWith(
+                color: AppColors.navInactive,
+              ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               decoration: BoxDecoration(
@@ -263,6 +263,8 @@ class AirportVisitorManifestPage extends ConsumerWidget {
         child: FilledButton(
           onPressed: onInviteTap,
           style: FilledButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             backgroundColor: AppColors.badgeBlueText,
             foregroundColor: AppColors.textInverse,
             minimumSize: const Size.fromHeight(56),
@@ -365,6 +367,8 @@ class AirportVisitorManifestPage extends ConsumerWidget {
                           dialogContext,
                         ).pop(_TradeExitAction.cancel),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -386,7 +390,9 @@ class AirportVisitorManifestPage extends ConsumerWidget {
                           dialogContext,
                         ).pop(_TradeExitAction.complete),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),

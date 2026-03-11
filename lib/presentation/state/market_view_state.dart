@@ -12,5 +12,6 @@ sealed class MarketViewState with _$MarketViewState {
     @Default(<MarketOffer>[]) List<MarketOffer> offers,
     @Default(true) bool isLoading,
     String? errorMessage,
+    String? proposalErrorMessage,
   }) = _MarketViewState;
 }

@@ -90,6 +90,8 @@ class FirestorePaths {
   static String supportInquiry(String inquiryId) =>
       '${supportInquiries()}/$inquiryId';
 
+  static String appVersions() => 'app_version';
+
   static String adminInquiryReplyTemplates() => 'adminInquiryReplyTemplates';
 
   static String adminInquiryReplyTemplate(String templateId) =>

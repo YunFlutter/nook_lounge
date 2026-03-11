@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
@@ -146,11 +150,14 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     }
 
     if (widget.islandId.trim().isEmpty) {
-      return Center(
-        child: Text(
-          '섬이 선택되지 않았어요.\n먼저 섬을 등록해 주세요.',
-          textAlign: TextAlign.center,
-          style: AppTextStyles.bodySecondaryStrong,
+      return AppScreenView(
+        screenName: AppScreenNames.airportTab,
+        child: Center(
+          child: Text(
+            '섬이 선택되지 않았어요.\n먼저 섬을 등록해 주세요.',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodySecondaryStrong,
+          ),
         ),
       );
     }
@@ -160,14 +167,20 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
         _buildFallbackSession(island: selectedIsland, uid: widget.uid);
 
     if (session == null && state.isInitializing) {
-      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+      return const AppScreenView(
+        screenName: AppScreenNames.airportTab,
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      );
     }
 
     if (session == null) {
-      return Center(
-        child: Text(
-          '비행장 정보를 불러오지 못했어요.',
-          style: AppTextStyles.bodySecondaryStrong,
+      return AppScreenView(
+        screenName: AppScreenNames.airportTab,
+        child: Center(
+          child: Text(
+            '비행장 정보를 불러오지 못했어요.',
+            style: AppTextStyles.bodySecondaryStrong,
+          ),
         ),
       );
     }
@@ -195,92 +208,59 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
       loading: isMyRequestsRealtimeLoading,
     );
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        ref.invalidate(airportViewModelProvider(args));
-        await Future<void>.delayed(const Duration(milliseconds: 260));
-      },
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.pageHorizontal,
-          AppSpacing.s10,
-          AppSpacing.pageHorizontal,
-          AppSpacing.s10,
-        ),
-        children: <Widget>[
-          _buildGateSection(
-            session: session,
-            onToggle: (value) => viewModel.toggleGateOpen(value),
+    return AppScreenView(
+      screenName: AppScreenNames.airportTab,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(airportViewModelProvider(args));
+          await Future<void>.delayed(const Duration(milliseconds: 260));
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.pageHorizontal,
+            AppSpacing.s10,
+            AppSpacing.pageHorizontal,
+            AppSpacing.s10,
           ),
-          const SizedBox(height: 16),
-          _buildDodoCodeSection(
-            code: activeCode,
-            onInputCode: () => _openDodoCodeSheet(
-              context: context,
-              currentCode: activeCode,
-              onSaved: viewModel.updateDodoCode,
-            ),
-            onResetCode: viewModel.resetDodoCode,
-            onCopyCode: () {
-              if (activeCode.isEmpty) {
-                return;
-              }
-              Clipboard.setData(ClipboardData(text: activeCode));
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  const SnackBar(
-                    content: Text('도도코드를 복사했어요.'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-            },
-          ),
-          const SizedBox(height: 32),
-          myWaitingSection,
-          const SizedBox(height: 32),
-          _buildPendingSection(
-            requests: pendingRequests,
-            selectedIds: state.selectedRequestIds,
-            onToggleSelect: viewModel.toggleRequestSelection,
-            onCancel: viewModel.cancelVisitRequest,
-            onReportUser: (request) =>
-                viewModel.reportVisitRequester(request: request),
-            onOpenAll: () => _openRequestList(
-              context: context,
-              viewModel: viewModel,
+          children: <Widget>[
+            _buildGateSection(
               session: session,
-              requestListRequests: requestListRequests,
-              initiallySelectedIds: state.selectedRequestIds,
+              onToggle: (value) => viewModel.toggleGateOpen(value),
             ),
-          ),
-          const SizedBox(height: 32),
-          _buildInvitedSection(
-            requests: waitingGuests,
-            onMarkArrived: (requestId) => viewModel.markArrived(requestId),
-            onReportUser: (request) =>
-                viewModel.reportVisitRequester(request: request),
-            onOpenAll: () => _openRequestList(
-              context: context,
-              viewModel: viewModel,
-              session: session,
-              requestListRequests: requestListRequests,
-              initiallySelectedIds: state.selectedRequestIds,
+            const SizedBox(height: 16),
+            _buildDodoCodeSection(
+              code: activeCode,
+              onInputCode: () => _openDodoCodeSheet(
+                context: context,
+                currentCode: activeCode,
+                onSaved: viewModel.updateDodoCode,
+              ),
+              onResetCode: viewModel.resetDodoCode,
+              onCopyCode: () {
+                if (activeCode.isEmpty) {
+                  return;
+                }
+                Clipboard.setData(ClipboardData(text: activeCode));
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text('도도코드를 복사했어요.'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+              },
             ),
-          ),
-          const SizedBox(height: 32),
-          _buildCurrentVisitorsSection(
-            visitors: currentVisitors,
-            waitingGuests: waitingGuests,
-            capacity: session.capacity,
-            onMarkArrived: (requestId) => viewModel.markArrived(requestId),
-            onOpenManifest: () => _openVisitorManifest(
-              context: context,
-              uid: widget.uid,
-              islandId: widget.islandId,
-              session: session,
-              onInviteTap: () => _openRequestList(
+            const SizedBox(height: 32),
+            myWaitingSection,
+            const SizedBox(height: 32),
+            _buildInvitedSection(
+              requests: waitingGuests,
+              onMarkArrived: (requestId) => viewModel.markArrived(requestId),
+              onReportUser: (request) =>
+                  viewModel.reportVisitRequester(request: request),
+              onOpenAll: () => _openRequestList(
                 context: context,
                 viewModel: viewModel,
                 session: session,
@@ -288,8 +268,28 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                 initiallySelectedIds: state.selectedRequestIds,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 32),
+            _buildCurrentVisitorsSection(
+              visitors: currentVisitors,
+              waitingGuests: waitingGuests,
+              capacity: session.capacity,
+              onMarkArrived: (requestId) => viewModel.markArrived(requestId),
+              onOpenManifest: () => _openVisitorManifest(
+                context: context,
+                uid: widget.uid,
+                islandId: widget.islandId,
+                session: session,
+                onInviteTap: () => _openRequestList(
+                  context: context,
+                  viewModel: viewModel,
+                  session: session,
+                  requestListRequests: requestListRequests,
+                  initiallySelectedIds: state.selectedRequestIds,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -404,6 +404,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             TextButton(
               onPressed: onResetCode,
               style: TextButton.styleFrom(
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
                 foregroundColor: AppColors.textHint,
                 textStyle: AppTextStyles.captionSecondary,
               ),
@@ -412,7 +414,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
           ],
         ),
         // const SizedBox(height: 8),
-        InkWell(
+        AppInkWell(
           onTap: onInputCode,
           borderRadius: BorderRadius.circular(18),
           child: Container(
@@ -646,226 +648,6 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     );
   }
 
-  Widget _buildPendingSection({
-    required List<AirportVisitRequest> requests,
-    required Set<String> selectedIds,
-    required void Function(String requestId) onToggleSelect,
-    required Future<void> Function(AirportVisitRequest request) onCancel,
-    required Future<void> Function(AirportVisitRequest request) onReportUser,
-    required VoidCallback onOpenAll,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Text('다른 섬 방문 대기 현황', style: AppTextStyles.headingH3),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.badgeBlueBg,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                '대기중(${requests.length})',
-                style: AppTextStyles.captionWithColor(
-                  AppColors.badgeBlueText,
-                  weight: FontWeight.w800,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            TextButton(
-              onPressed: onOpenAll,
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.textSecondary,
-                textStyle: AppTextStyles.captionSecondary,
-              ),
-              child: const Text('전체보기'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        if (requests.isEmpty)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-            decoration: BoxDecoration(
-              color: AppColors.bgCard,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.borderDefault),
-            ),
-            child: Text(
-              '대기 중인 손님이 없어요.',
-              style: AppTextStyles.bodySecondaryStrong,
-              textAlign: TextAlign.center,
-            ),
-          )
-        else
-          ...requests.take(2).map((request) {
-            final selected = selectedIds.contains(request.id);
-            final isTradeLinked = request.sourceType == 'market_trade';
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(18),
-                onTap: () => onToggleSelect(request.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.bgCard,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: selected
-                          ? AppColors.accentOrange
-                          : AppColors.borderDefault,
-                      width: selected ? 2 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          ClipOval(
-                            child: SizedBox(
-                              width: 42,
-                              height: 42,
-                              child: request.requesterAvatarUrl.trim().isEmpty
-                                  ? Image.asset(
-                                      'assets/images/icon_raccoon_character.png',
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.network(
-                                      request.requesterAvatarUrl,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Image.asset(
-                                          'assets/images/icon_raccoon_character.png',
-                                          fit: BoxFit.cover,
-                                        );
-                                      },
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  request.requesterName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.bodyPrimaryStrong,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  request.message.isEmpty
-                                      ? request.purpose.label
-                                      : request.message,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppTextStyles.captionMuted,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            formatRelativeTime(request.requestedAt),
-                            style: AppTextStyles.captionMuted,
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            selected
-                                ? Icons.check_circle_rounded
-                                : Icons.radio_button_unchecked,
-                            color: selected
-                                ? AppColors.badgeBlueText
-                                : AppColors.borderDefault,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: <Widget>[
-                          if (isTradeLinked) ...<Widget>[
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.badgeYellowBg,
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Text(
-                                '거래',
-                                style: AppTextStyles.captionWithColor(
-                                  AppColors.badgeYellowText,
-                                  weight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                          ],
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.badgeBlueBg,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              request.purpose.label,
-                              style: AppTextStyles.captionWithColor(
-                                AppColors.badgeBlueText,
-                                weight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () => _onTapReportUser(
-                              onReportUser: onReportUser,
-                              request: request,
-                            ),
-                            style: TextButton.styleFrom(
-                              foregroundColor: AppColors.badgeRedText,
-                              textStyle: AppTextStyles.captionSecondary,
-                            ),
-                            child: const Text('신고'),
-                          ),
-                          const SizedBox(width: 4),
-                          OutlinedButton(
-                            onPressed: () => onCancel(request),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                color: AppColors.borderDefault,
-                              ),
-                              foregroundColor: AppColors.textSecondary,
-                              textStyle: AppTextStyles.captionSecondary,
-                            ),
-                            child: const Text('대기 취소'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-      ],
-    );
-  }
-
   Widget _buildInvitedSection({
     required List<AirportVisitRequest> requests,
     required Future<void> Function(String requestId) onMarkArrived,
@@ -883,6 +665,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             TextButton(
               onPressed: onOpenAll,
               style: TextButton.styleFrom(
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
                 foregroundColor: AppColors.textSecondary,
                 textStyle: AppTextStyles.captionSecondary,
               ),
@@ -1028,6 +812,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                             request: request,
                           ),
                           style: TextButton.styleFrom(
+                            overlayColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
                             foregroundColor: AppColors.badgeRedText,
                             textStyle: AppTextStyles.captionSecondary,
                           ),
@@ -1038,6 +824,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                           OutlinedButton(
                             onPressed: () => onMarkArrived(request.id),
                             style: OutlinedButton.styleFrom(
+                              overlayColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
                               side: const BorderSide(
                                 color: AppColors.borderDefault,
                               ),
@@ -1086,6 +874,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             TextButton(
               onPressed: onOpenManifest,
               style: TextButton.styleFrom(
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
                 foregroundColor: AppColors.textSecondary,
                 textStyle: AppTextStyles.captionSecondary,
               ),
@@ -1170,7 +960,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
   }) {
     return Material(
       color: AppColors.transparent,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: SizedBox(
@@ -1374,6 +1164,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1393,7 +1185,9 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1455,7 +1249,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
   }) async {
     final result = await Navigator.of(context)
         .push<({List<String> selectedRequestIds, String dodoCode})>(
-          MaterialPageRoute(
+          AppPageRoute<({List<String> selectedRequestIds, String dodoCode})>(
+            screenName: AppScreenNames.airportRequestList,
             builder: (_) => AirportRequestListPage(
               pendingRequests: requestListRequests,
               initialSelectedRequestIds: initiallySelectedIds,
@@ -1505,7 +1300,9 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.badgeBlueText,
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                backgroundColor: AppColors.modalPrimaryAction,
                 foregroundColor: AppColors.textInverse,
               ),
               child: const Text('확인'),
@@ -1547,7 +1344,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     required VoidCallback onInviteTap,
   }) async {
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.airportVisitorManifest,
         builder: (_) => AirportVisitorManifestPage(
           uid: uid,
           islandId: islandId,

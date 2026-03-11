@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/core/telemetry/app_telemetry.dart';
+import 'package:nook_lounge_app/core/telemetry/app_telemetry_events.dart';
 import 'package:nook_lounge_app/domain/model/turnip_saved_data.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
@@ -9,9 +11,11 @@ import 'package:nook_lounge_app/presentation/state/turnip_view_state.dart';
 class TurnipViewModel extends StateNotifier<TurnipViewState> {
   TurnipViewModel({
     required TurnipRepository repository,
+    required AppTelemetry telemetry,
     required String uid,
     required String islandId,
   }) : _repository = repository,
+       _telemetry = telemetry,
        _uid = uid,
        _islandId = islandId,
        super(const TurnipViewState()) {
@@ -22,11 +26,15 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
   }
 
   final TurnipRepository _repository;
+  final AppTelemetry _telemetry;
   final String _uid;
   final String _islandId;
+  Timer? _saveDebounce;
 
   void reset() {
     state = const TurnipViewState();
+    _scheduleSave(immediate: true);
+    unawaited(_telemetry.logEvent(AppTelemetryEvents.turnipReset));
   }
 
   void setSundayBuyPrice(int value) {
@@ -35,6 +43,7 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
       errorMessage: null,
       prediction: null,
     );
+    _scheduleSave();
   }
 
   void adjustSundayBuyPrice(int delta) {
@@ -71,6 +80,7 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
       errorMessage: null,
       prediction: null,
     );
+    _scheduleSave();
   }
 
   void adjustWeekSlotPrice({required int index, required int delta}) {
@@ -97,30 +107,75 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
         prediction: prediction,
         errorMessage: null,
       );
+      _scheduleSave(immediate: true);
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.turnipCalculated,
+          parameters: <String, Object>{
+            'input_count': filter.length,
+            'result_count': prediction.minMaxPattern.length,
+          },
+        ),
+      );
     } on TimeoutException {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '요청 시간이 초과되었어요. 잠시 후 다시 시도해주세요.',
+      );
+      unawaited(
+        _telemetry.recordError(
+          TimeoutException('turnip prediction timed out'),
+          StackTrace.current,
+          reason: 'turnip.calculate.timeout',
+        ),
       );
     } on SocketException {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '네트워크에 연결할 수 없어요. 인터넷 상태를 확인해주세요.',
       );
+      unawaited(
+        _telemetry.recordError(
+          const SocketException('turnip prediction network error'),
+          StackTrace.current,
+          reason: 'turnip.calculate.socket',
+        ),
+      );
     } on HttpException catch (error) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '서버 응답 오류가 발생했어요. (${error.message})',
+      );
+      unawaited(
+        _telemetry.recordError(
+          error,
+          StackTrace.current,
+          reason: 'turnip.calculate.http',
+        ),
       );
     } on FormatException {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '예측 데이터 형식을 해석하지 못했어요. 잠시 후 다시 시도해주세요.',
       );
-    } catch (_) {
+      unawaited(
+        _telemetry.recordError(
+          const FormatException('turnip prediction parse error'),
+          StackTrace.current,
+          reason: 'turnip.calculate.format',
+        ),
+      );
+    } catch (error, stackTrace) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: '예측 계산 중 알 수 없는 오류가 발생했어요. 다시 시도해주세요.',
+      );
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'turnip.calculate.unknown',
+        ),
       );
     }
   }
@@ -171,5 +226,49 @@ class TurnipViewModel extends StateNotifier<TurnipViewState> {
       errorMessage: null,
       activeDayIndex: -1,
     );
+  }
+
+  void _scheduleSave({bool immediate = false}) {
+    if (_uid.isEmpty || _islandId.isEmpty) {
+      return;
+    }
+
+    _saveDebounce?.cancel();
+    if (immediate) {
+      unawaited(_saveStateSilently());
+      return;
+    }
+
+    _saveDebounce = Timer(const Duration(milliseconds: 350), () {
+      unawaited(_saveStateSilently());
+    });
+  }
+
+  Future<void> _saveStateSilently() async {
+    final snapshot = TurnipSavedData(
+      sundayBuyPrice: state.sundayBuyPrice,
+      weekSlots: List<int?>.from(state.weekSlots),
+      prediction: state.prediction,
+    );
+
+    try {
+      await _repository.saveState(
+        uid: _uid,
+        islandId: _islandId,
+        data: snapshot,
+      );
+    } catch (_) {
+      // 유지보수 포인트:
+      // 저장 실패는 계산 흐름을 막지 않고 다음 입력/계산에서 재시도합니다.
+    }
+  }
+
+  @override
+  void dispose() {
+    _saveDebounce?.cancel();
+    if (_uid.isNotEmpty && _islandId.isNotEmpty) {
+      unawaited(_saveStateSilently());
+    }
+    super.dispose();
   }
 }

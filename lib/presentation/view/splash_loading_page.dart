@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 
 class SplashLoadingPage extends StatefulWidget {
   const SplashLoadingPage({
@@ -48,119 +50,122 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 72),
-          child: AnimatedBuilder(
-            animation: Listenable.merge(<Listenable>[
-              _progressController,
-              _floatController,
-            ]),
-            builder: (context, child) {
-              final progress = _progressController.value;
-              final percentText = '${(progress * 100).round()}%';
-              final floatOffset = (_floatController.value - 0.5) * 8;
+    return AppScreenView(
+      screenName: AppScreenNames.splashLoading,
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 72),
+            child: AnimatedBuilder(
+              animation: Listenable.merge(<Listenable>[
+                _progressController,
+                _floatController,
+              ]),
+              builder: (context, child) {
+                final progress = _progressController.value;
+                final percentText = '${(progress * 100).round()}%';
+                final floatOffset = (_floatController.value - 0.5) * 8;
 
-              if (progress >= 1 &&
-                  !_notifiedCompleted &&
-                  widget.onCompleted != null) {
-                _notifiedCompleted = true;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    widget.onCompleted!.call();
-                  }
-                });
-              }
+                if (progress >= 1 &&
+                    !_notifiedCompleted &&
+                    widget.onCompleted != null) {
+                  _notifiedCompleted = true;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      widget.onCompleted!.call();
+                    }
+                  });
+                }
 
-              return Column(
-                children: <Widget>[
-                  const Spacer(flex: 3),
-                  Transform.translate(
-                    offset: Offset(0, floatOffset),
-                    child: Image.asset(
-                      'assets/images/splash.png',
-                      width: size.width * 0.5,
-                      fit: BoxFit.contain,
+                return Column(
+                  children: <Widget>[
+                    const Spacer(flex: 3),
+                    Transform.translate(
+                      offset: Offset(0, floatOffset),
+                      child: Image.asset(
+                        'assets/images/splash.png',
+                        width: size.width * 0.5,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    'Nook Lounge',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.headingH1,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    '섬과 섬을 잇는 라운지',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.labelWithColor(
-                      AppColors.textSecondary,
-                      weight: FontWeight.w400,
+                    const SizedBox(height: 18),
+                    Text(
+                      'Nook Lounge',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.headingH1,
                     ),
-                  ),
-                  const Spacer(flex: 1),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          widget.waitingForSession
-                              ? '섬 데이터를 불러오는 중...'
-                              : '로그인 화면으로 이동할게요.',
-                          style: AppTextStyles.bodyWithSize(
-                            14,
-                            color: AppColors.textMuted,
-                            weight: FontWeight.w700,
+                    const SizedBox(height: 12),
+                    Text(
+                      '섬과 섬을 잇는 라운지',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.labelWithColor(
+                        AppColors.textSecondary,
+                        weight: FontWeight.w400,
+                      ),
+                    ),
+                    const Spacer(flex: 1),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            widget.waitingForSession
+                                ? '섬 데이터를 불러오는 중...'
+                                : '로그인 화면으로 이동할게요.',
+                            style: AppTextStyles.bodyWithSize(
+                              14,
+                              color: AppColors.textMuted,
+                              weight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        percentText,
-                        style: AppTextStyles.bodyWithSize(
-                          14,
-                          color: AppColors.textAccent,
-                          weight: FontWeight.w800,
+                        Text(
+                          percentText,
+                          style: AppTextStyles.bodyWithSize(
+                            14,
+                            color: AppColors.textAccent,
+                            weight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 8,
+                        backgroundColor: AppColors.borderDefault,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.textAccent,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 8,
-                      backgroundColor: AppColors.borderDefault,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.textAccent,
+                    ),
+                    const Spacer(flex: 3),
+                    Text(
+                      '© 2026 Project NL',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodyWithSize(
+                        14,
+                        color: AppColors.textMuted,
+                        weight: FontWeight.w700,
                       ),
                     ),
-                  ),
-                  const Spacer(flex: 3),
-                  Text(
-                    '© 2026 Project NL',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyWithSize(
-                      14,
-                      color: AppColors.textMuted,
-                      weight: FontWeight.w700,
+                    const SizedBox(height: 10),
+                    Text(
+                      '본 앱은 팬 제작 비공식 서비스이며 Nintendo와 공식적인 관련이 없습니다.\nAnimal Crossing™은 Nintendo의 상표입니다.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodyWithSize(
+                        12,
+                        color: AppColors.textMuted,
+                        weight: FontWeight.w400,
+                        height: 1.45,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    '본 앱은 팬 제작 비공식 서비스이며 Nintendo와 공식적인 관련이 없습니다.\nAnimal Crossing™은 Nintendo의 상표입니다.',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyWithSize(
-                      12,
-                      color: AppColors.textMuted,
-                      weight: FontWeight.w400,
-                      height: 1.45,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-              );
-            },
+                    const SizedBox(height: 12),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

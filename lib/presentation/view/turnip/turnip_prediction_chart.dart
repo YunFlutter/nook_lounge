@@ -1,6 +1,29 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+
+const List<String> _turnipChartDayLabels = <String>[
+  '월',
+  '화',
+  '수',
+  '목',
+  '금',
+  '토',
+];
+const double _turnipChartHeight = 260;
+const double _turnipChartYAxisWidth = 34;
+const double _turnipChartAxisGap = 10;
+const double _turnipChartTopPadding = 36;
+const double _turnipChartDayLabelGap = 18;
+const double _turnipChartDayLabelHeight = 28;
+const double _turnipChartDayLabelWidth = 28;
+const double _turnipChartPeakBubbleWidth = 104;
+const double _turnipChartGridDashWidth = 8;
+const double _turnipChartGridDashSpace = 4;
+const double _turnipChartPredictionDashWidth = 12;
+const double _turnipChartPredictionDashSpace = 10;
 
 class TurnipPredictionChart extends StatelessWidget {
   const TurnipPredictionChart({
@@ -31,20 +54,34 @@ class TurnipPredictionChart extends StatelessWidget {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 260,
+          height: _turnipChartHeight,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(width: 34, child: _YAxisLabels(yMax: yMax)),
-              const SizedBox(width: 10),
+              SizedBox(
+                width: _turnipChartYAxisWidth,
+                child: _YAxisLabels(
+                  yMax: yMax,
+                  topPadding: _turnipChartTopPadding,
+                ),
+              ),
+              const SizedBox(width: _turnipChartAxisGap),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
+                    final bubbleWidth = math.min(
+                      constraints.maxWidth,
+                      _turnipChartPeakBubbleWidth,
+                    );
+                    final maxBubbleLeft = math.max(
+                      0.0,
+                      constraints.maxWidth - bubbleWidth,
+                    );
                     final chartRect = Rect.fromLTWH(
                       0,
-                      36,
+                      _turnipChartTopPadding,
                       constraints.maxWidth,
-                      constraints.maxHeight - 36,
+                      constraints.maxHeight - _turnipChartTopPadding,
                     );
 
                     final points = _buildPoints(
@@ -64,17 +101,18 @@ class TurnipPredictionChart extends StatelessWidget {
                               minValues: graphMinValues,
                               maxValues: graphMaxValues,
                               yMax: yMax,
-                              chartTopPadding: 36,
+                              chartTopPadding: _turnipChartTopPadding,
                             ),
                           ),
                         ),
                         Positioned(
-                          left: (peakPoint.dx - 52).clamp(
-                            0,
-                            constraints.maxWidth - 104,
+                          left: (peakPoint.dx - (bubbleWidth / 2)).clamp(
+                            0.0,
+                            maxBubbleLeft,
                           ),
                           top: (peakPoint.dy - 108).clamp(0, chartRect.top - 4),
                           child: _PeakBubble(
+                            width: bubbleWidth,
                             label: peakLabel,
                             value: peakValue,
                           ),
@@ -87,26 +125,12 @@ class TurnipPredictionChart extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: List<Widget>.generate(6, (index) {
-            const labels = <String>['월', '화', '수', '목', '금', '토'];
-            final isPeak = index == peakDayIndex;
-            return Expanded(
-              child: Text(
-                labels[index],
-                textAlign: TextAlign.center,
-                style: AppTextStyles.bodyWithSize(
-                  18,
-                  color: isPeak
-                      ? AppColors.primaryDefault
-                      : AppColors.textPrimary,
-                  weight: FontWeight.w800,
-                ),
-              ),
-            );
-          }),
+        const SizedBox(height: _turnipChartDayLabelGap),
+        Padding(
+          padding: EdgeInsets.only(
+            left: _turnipChartYAxisWidth + _turnipChartAxisGap,
+          ),
+          child: _DayAxisLabels(peakDayIndex: peakDayIndex),
         ),
       ],
     );
@@ -135,12 +159,10 @@ class TurnipPredictionChart extends StatelessWidget {
     required double yMax,
   }) {
     final points = <Offset>[];
-    final stepX = values.length == 1
-        ? 0.0
-        : chartRect.width / (values.length - 1);
+    final stepX = values.isEmpty ? 0.0 : chartRect.width / values.length;
 
     for (var i = 0; i < values.length; i++) {
-      final x = chartRect.left + (stepX * i);
+      final x = chartRect.left + (stepX * i) + (stepX / 2);
       final ratio = (values[i] / yMax).clamp(0, 1);
       final y = chartRect.bottom - (chartRect.height * ratio);
       points.add(Offset(x, y));
@@ -162,9 +184,10 @@ class TurnipPredictionChart extends StatelessWidget {
 }
 
 class _YAxisLabels extends StatelessWidget {
-  const _YAxisLabels({required this.yMax});
+  const _YAxisLabels({required this.yMax, required this.topPadding});
 
   final double yMax;
+  final double topPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +199,7 @@ class _YAxisLabels extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.only(top: 36),
+      padding: EdgeInsets.only(top: topPadding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,16 +220,76 @@ class _YAxisLabels extends StatelessWidget {
   }
 }
 
-class _PeakBubble extends StatelessWidget {
-  const _PeakBubble({required this.label, required this.value});
+class _DayAxisLabels extends StatelessWidget {
+  const _DayAxisLabels({required this.peakDayIndex});
 
+  final int peakDayIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final highlightedIndex = peakDayIndex
+        .clamp(0, _turnipChartDayLabels.length - 1)
+        .toInt();
+
+    return SizedBox(
+      height: _turnipChartDayLabelHeight,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final stepX = _turnipChartDayLabels.isEmpty
+              ? 0.0
+              : constraints.maxWidth / _turnipChartDayLabels.length;
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: List<Widget>.generate(_turnipChartDayLabels.length, (
+              index,
+            ) {
+              final isPeak = index == highlightedIndex;
+
+              return Positioned(
+                left: (stepX * index) + (stepX / 2),
+                top: 0,
+                child: FractionalTranslation(
+                  translation: const Offset(-0.5, 0),
+                  child: SizedBox(
+                    width: _turnipChartDayLabelWidth,
+                    child: Text(
+                      _turnipChartDayLabels[index],
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodyWithSize(
+                        18,
+                        color: isPeak
+                            ? AppColors.turnipAccent
+                            : AppColors.textPrimary,
+                        weight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _PeakBubble extends StatelessWidget {
+  const _PeakBubble({
+    required this.width,
+    required this.label,
+    required this.value,
+  });
+
+  final double width;
   final String label;
   final int value;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 104,
+      width: width,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -227,28 +310,33 @@ class _PeakBubble extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyWithSize(
               14,
-              color: AppColors.primaryDefault,
+              color: AppColors.turnipAccent,
               weight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 1),
-          Text(
-            '최대',
-            style: AppTextStyles.bodyWithSize(
-              16,
-              color: AppColors.black,
-              weight: FontWeight.w800,
-              height: 1,
-            ),
-          ),
-          Text(
-            '$value',
-            style: AppTextStyles.bodyWithSize(
-              18,
-              color: AppColors.black,
-              weight: FontWeight.w800,
-              height: 1,
-            ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '최대 ',
+                style: AppTextStyles.bodyWithSize(
+                  16,
+                  color: AppColors.black,
+                  weight: FontWeight.w800,
+                  height: 1,
+                ),
+              ),
+              Text(
+                '$value',
+                style: AppTextStyles.bodyWithSize(
+                  18,
+                  color: AppColors.black,
+                  weight: FontWeight.w800,
+                  height: 1,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -283,7 +371,7 @@ class _TurnipLineChartPainter extends CustomPainter {
       canvas,
       chartRect,
       values: minValues,
-      color: AppColors.badgeYellowText,
+      color: AppColors.turnipPredictionMinLine,
       strokeWidth: 4,
       dashed: true,
     );
@@ -291,7 +379,7 @@ class _TurnipLineChartPainter extends CustomPainter {
       canvas,
       chartRect,
       values: maxValues,
-      color: AppColors.primaryDefault,
+      color: AppColors.turnipPredictionMaxLine,
       strokeWidth: 4,
       dashed: false,
     );
@@ -309,6 +397,8 @@ class _TurnipLineChartPainter extends CustomPainter {
         Offset(rect.left, y),
         Offset(rect.right, y),
         paint,
+        dashWidth: _turnipChartGridDashWidth,
+        dashSpace: _turnipChartGridDashSpace,
       );
     }
   }
@@ -335,7 +425,14 @@ class _TurnipLineChartPainter extends CustomPainter {
 
     for (var i = 0; i < points.length - 1; i++) {
       if (dashed) {
-        _drawDashedLine(canvas, points[i], points[i + 1], paint);
+        _drawDashedLine(
+          canvas,
+          points[i],
+          points[i + 1],
+          paint,
+          dashWidth: _turnipChartPredictionDashWidth,
+          dashSpace: _turnipChartPredictionDashSpace,
+        );
       } else {
         canvas.drawLine(points[i], points[i + 1], paint);
       }
@@ -343,11 +440,11 @@ class _TurnipLineChartPainter extends CustomPainter {
   }
 
   List<Offset> _buildPoints(Rect rect, List<int> values) {
-    final stepX = values.length == 1 ? 0.0 : rect.width / (values.length - 1);
+    final stepX = values.isEmpty ? 0.0 : rect.width / values.length;
     final points = <Offset>[];
 
     for (var i = 0; i < values.length; i++) {
-      final x = rect.left + (stepX * i);
+      final x = rect.left + (stepX * i) + (stepX / 2);
       final ratio = (values[i] / yMax).clamp(0, 1);
       final y = rect.bottom - (rect.height * ratio);
       points.add(Offset(x, y));
@@ -356,10 +453,14 @@ class _TurnipLineChartPainter extends CustomPainter {
     return points;
   }
 
-  void _drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint) {
-    const dashWidth = 8.0;
-    const dashSpace = 4.0;
-
+  void _drawDashedLine(
+    Canvas canvas,
+    Offset p1,
+    Offset p2,
+    Paint paint, {
+    required double dashWidth,
+    required double dashSpace,
+  }) {
     final distance = (p2 - p1).distance;
     if (distance == 0) {
       return;

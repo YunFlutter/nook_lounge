@@ -87,6 +87,21 @@ void main() {
       expect(viewModel.state.errorMessage, '차단된 유저의 섬에는 방문 신청할 수 없어요.');
       expect(airportRepository.submitVisitRequestCallCount, 0);
     });
+
+    test('게이트 토글은 저장 응답 전에도 화면 상태를 먼저 갱신한다', () async {
+      airportRepository.sessionController.add(_buildSession(ownerUid: 'me'));
+      await Future<void>.delayed(Duration.zero);
+
+      final completer = Completer<void>();
+      airportRepository.setGateOpenCompleter = completer;
+
+      final future = viewModel.toggleGateOpen(false);
+
+      expect(viewModel.state.session?.gateOpen, isFalse);
+
+      completer.complete();
+      await future;
+    });
   });
 }
 
@@ -142,6 +157,7 @@ class _FakeAirportRepository implements AirportRepository {
   final StreamController<List<AirportVisitRequest>> myRequestsController =
       StreamController<List<AirportVisitRequest>>.broadcast();
   int submitVisitRequestCallCount = 0;
+  Completer<void>? setGateOpenCompleter;
 
   Future<void> dispose() async {
     await sessionController.close();
@@ -182,6 +198,11 @@ class _FakeAirportRepository implements AirportRepository {
     String? sourceMoveType,
   }) async {
     submitVisitRequestCallCount += 1;
+  }
+
+  @override
+  Future<void> setGateOpen({required String islandId, required bool gateOpen}) {
+    return setGateOpenCompleter?.future ?? Future<void>.value();
   }
 
   @override

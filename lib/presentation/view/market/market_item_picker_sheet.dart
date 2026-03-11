@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
@@ -226,6 +227,8 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
             ? null
             : () => Navigator.of(context).pop(_buildMultiSelectedItems()),
         style: FilledButton.styleFrom(
+          overlayColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
           backgroundColor: AppColors.accentDeepOrange,
           minimumSize: const Size.fromHeight(56),
         ),
@@ -244,6 +247,8 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
           ? null
           : () => Navigator.of(context).pop(_selectedItem),
       style: FilledButton.styleFrom(
+        overlayColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
         backgroundColor: AppColors.accentDeepOrange,
         minimumSize: const Size.fromHeight(56),
       ),
@@ -322,7 +327,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
     required bool selected,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
       child: AnimatedContainer(
@@ -442,7 +447,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
         itemBuilder: (context, index) {
           final categoryKey = _visibleCategoryKeys[index];
           final selected = categoryKey == _selectedCategoryKey;
-          return InkWell(
+          return AppInkWell(
             borderRadius: BorderRadius.circular(999),
             onTap: () {
               setState(() {
@@ -482,7 +487,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
     final priceTag = _extractPrefixedTagValue(item, '판매가');
     final infoRows = _buildInfoRows(item);
 
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () {
         setState(() {
@@ -533,9 +538,7 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.bodyPrimaryHeavy,
                       ),
-                      SizedBox(
-                        height: 7,
-                      ),
+                      SizedBox(height: 7),
                       if (priceTag.isNotEmpty)
                         Text(
                           '판매가   $priceTag',

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
@@ -21,7 +22,7 @@ class UserNotificationListTile extends StatelessWidget {
     return Semantics(
       button: true,
       label: notification.title,
-      child: InkWell(
+      child: AppInkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(

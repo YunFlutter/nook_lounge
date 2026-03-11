@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
+import 'package:nook_lounge_app/core/telemetry/app_telemetry.dart';
+import 'package:nook_lounge_app/core/telemetry/app_telemetry_events.dart';
 import 'package:nook_lounge_app/data/service/local_notification_service.dart';
 import 'package:nook_lounge_app/presentation/state/push_offer_intent_notifier.dart';
 
@@ -15,17 +17,20 @@ class PushMessageService {
     required FirebaseFirestore firestore,
     required LocalNotificationService localNotificationService,
     required PushOfferIntentNotifier offerIntentNotifier,
+    required AppTelemetry telemetry,
   }) : _messaging = messaging,
        _auth = auth,
        _firestore = firestore,
        _localNotificationService = localNotificationService,
-       _offerIntentNotifier = offerIntentNotifier;
+       _offerIntentNotifier = offerIntentNotifier,
+       _telemetry = telemetry;
 
   final FirebaseMessaging _messaging;
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
   final LocalNotificationService _localNotificationService;
   final PushOfferIntentNotifier _offerIntentNotifier;
+  final AppTelemetry _telemetry;
 
   StreamSubscription<RemoteMessage>? _messageOpenedSubscription;
   StreamSubscription<RemoteMessage>? _foregroundMessageSubscription;
@@ -189,6 +194,12 @@ class PushMessageService {
     if (offerId == null) {
       return;
     }
+    unawaited(
+      _telemetry.logEvent(
+        AppTelemetryEvents.pushOfferOpened,
+        parameters: <String, Object>{'has_offer_id': true},
+      ),
+    );
     _offerIntentNotifier.setOfferId(offerId);
   }
 

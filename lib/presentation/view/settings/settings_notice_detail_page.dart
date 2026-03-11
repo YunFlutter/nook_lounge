@@ -4,6 +4,7 @@ import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/domain/model/settings_notice.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_markdown_body.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_pinned_badge.dart';
 
 class SettingsNoticeDetailPage extends StatelessWidget {
@@ -56,15 +57,7 @@ class SettingsNoticeDetailPage extends StatelessWidget {
           const SizedBox(height: 14),
           const Divider(height: 1),
           const SizedBox(height: 16),
-          Text(
-            notice.body,
-            style: AppTextStyles.bodyWithSize(
-              16,
-              color: AppColors.black,
-              weight: FontWeight.w700,
-              height: 1.5,
-            ),
-          ),
+          SettingsMarkdownBody(data: notice.body),
         ],
       ),
     );

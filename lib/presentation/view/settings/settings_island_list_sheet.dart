@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/island_profile_options.dart';
@@ -66,7 +67,7 @@ class SettingsIslandListSheet extends StatelessWidget {
                       return Semantics(
                         button: true,
                         label: '${island.islandName} 섬 상세',
-                        child: InkWell(
+                        child: AppInkWell(
                           borderRadius: BorderRadius.circular(
                             SettingsUiTokens.tileRadius,
                           ),

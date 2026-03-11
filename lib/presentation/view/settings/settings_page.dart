@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_strings.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_dialogs.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_document_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_blocked_users_page.dart';
+import 'package:nook_lounge_app/presentation/view/settings/settings_attribution_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_island_edit_page.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_island_list_sheet.dart';
 import 'package:nook_lounge_app/presentation/view/settings/settings_notice_list_page.dart';
@@ -94,7 +98,8 @@ class SettingsPage extends ConsumerWidget {
           _menuTile(
             title: '알림',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.settingsNotification,
                 builder: (_) => SettingsNotificationPage(uid: uid),
               ),
             ),
@@ -102,7 +107,8 @@ class SettingsPage extends ConsumerWidget {
           _menuTile(
             title: '공지사항',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.settingsNoticeList,
                 builder: (_) => const SettingsNoticeListPage(),
               ),
             ),
@@ -110,7 +116,8 @@ class SettingsPage extends ConsumerWidget {
           _menuTile(
             title: '고객센터',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.settingsSupportCenter,
                 builder: (_) => SettingsSupportCenterPage(
                   uid: uid,
                   displayName: selectedIsland?.representativeName ?? '',
@@ -121,7 +128,8 @@ class SettingsPage extends ConsumerWidget {
           _menuTile(
             title: '차단 관리',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.settingsBlockedUsers,
                 builder: (_) => SettingsBlockedUsersPage(uid: uid),
               ),
             ),
@@ -140,6 +148,15 @@ class SettingsPage extends ConsumerWidget {
             title: '개인정보처리방침',
             onTap: () =>
                 _openDocument(context, SettingsDocumentType.privacyPolicy),
+          ),
+          _menuTile(
+            title: '저작권 및 출처',
+            onTap: () => Navigator.of(context).push(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.settingsAttribution,
+                builder: (_) => const SettingsAttributionPage(),
+              ),
+            ),
           ),
           _menuTile(title: '앱 버전', trailingText: AppStrings.appVersion),
           const SizedBox(height: SettingsUiTokens.sectionGap),
@@ -198,7 +215,8 @@ class SettingsPage extends ConsumerWidget {
           onIslandTap: (island) async {
             Navigator.of(sheetContext).pop();
             await Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.settingsIslandEdit,
                 builder: (_) =>
                     SettingsIslandEditPage(uid: uid, island: island),
               ),
@@ -211,7 +229,10 @@ class SettingsPage extends ConsumerWidget {
 
   void _openDocument(BuildContext context, SettingsDocumentType type) {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => SettingsDocumentPage(type: type)),
+      AppPageRoute<void>(
+        screenName: AppScreenNames.settingsDocument,
+        builder: (_) => SettingsDocumentPage(type: type),
+      ),
     );
   }
 
@@ -310,7 +331,7 @@ class SettingsPage extends ConsumerWidget {
     return Semantics(
       button: true,
       label: title,
-      child: InkWell(
+      child: AppInkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(SettingsUiTokens.tileRadius),
         child: tile,

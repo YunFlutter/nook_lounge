@@ -1,10 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
@@ -48,55 +52,62 @@ class HomeShellPage extends ConsumerWidget {
     final selectedIslandId =
         ref.watch(homeDashboardPrimaryIslandIdProvider(uid)).valueOrNull ?? '';
 
-    return MarketRealtimeListener(
-      uid: uid,
-      child: Scaffold(
-        appBar: _buildAppBar(context, currentTab, ref, selectedIslandId),
-        body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 260),
-          child: KeyedSubtree(
-            key: ValueKey<int>(currentTab),
-            child: _buildTabBody(currentTab, ref, selectedIslandId),
+    return AppScreenView(
+      screenName: AppScreenNames.homeShell,
+      child: MarketRealtimeListener(
+        uid: uid,
+        child: Scaffold(
+          appBar: _buildAppBar(context, currentTab, ref, selectedIslandId),
+          body: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 260),
+            child: KeyedSubtree(
+              key: ValueKey<int>(currentTab),
+              child: _buildTabBody(currentTab, ref, selectedIslandId),
+            ),
           ),
-        ),
-        bottomNavigationBar: NavigationBar(
-          backgroundColor: AppColors.navBackground,
+          bottomNavigationBar: NavigationBar(
+            backgroundColor: AppColors.navBackground,
 
-          selectedIndex: currentTab,
-          onDestinationSelected: tabController.changeTab,
-          destinations: const <NavigationDestination>[
-            NavigationDestination(
-              icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
-              selectedIcon: _NavPngIcon(
-                assetPath: 'assets/icon/boarding_pass_act.png',
+            selectedIndex: currentTab,
+            onDestinationSelected: tabController.changeTab,
+            destinations: const <NavigationDestination>[
+              NavigationDestination(
+                icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
+                selectedIcon: _NavPngIcon(
+                  assetPath: 'assets/icon/boarding_pass_act.png',
+                ),
+                label: '비행장',
               ),
-              label: '비행장',
-            ),
-            NavigationDestination(
-              icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
-              selectedIcon: _NavPngIcon(assetPath: 'assets/icon/shop_act.png'),
-              label: '마켓',
-            ),
-            NavigationDestination(
-              icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
-              selectedIcon: _NavPngIcon(assetPath: 'assets/icon/house_act.png'),
-              label: '홈',
-            ),
-            NavigationDestination(
-              icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
-              selectedIcon: _NavPngIcon(
-                assetPath: 'assets/icon/book_stack_act.png',
+              NavigationDestination(
+                icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
+                selectedIcon: _NavPngIcon(
+                  assetPath: 'assets/icon/shop_act.png',
+                ),
+                label: '마켓',
               ),
-              label: '도감',
-            ),
-            NavigationDestination(
-              icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
-              selectedIcon: _NavPngIcon(
-                assetPath: 'assets/icon/combo_chart_act.png',
+              NavigationDestination(
+                icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
+                selectedIcon: _NavPngIcon(
+                  assetPath: 'assets/icon/house_act.png',
+                ),
+                label: '홈',
               ),
-              label: '무주식',
-            ),
-          ],
+              NavigationDestination(
+                icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
+                selectedIcon: _NavPngIcon(
+                  assetPath: 'assets/icon/book_stack_act.png',
+                ),
+                label: '도감',
+              ),
+              NavigationDestination(
+                icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
+                selectedIcon: _NavPngIcon(
+                  assetPath: 'assets/icon/combo_chart_act.png',
+                ),
+                label: '무주식',
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -126,7 +137,8 @@ class HomeShellPage extends ConsumerWidget {
                 ? null
                 : () async {
                     final nextRules = await Navigator.of(context).push<String>(
-                      MaterialPageRoute<String>(
+                      AppPageRoute<String>(
+                        screenName: AppScreenNames.airportRulesEdit,
                         builder: (_) =>
                             AirportRulesEditPage(initialRules: editableRules),
                       ),
@@ -141,6 +153,8 @@ class HomeShellPage extends ConsumerWidget {
             icon: const Icon(Icons.edit_square, size: 18),
             label: const Text('규칙편집'),
             style: TextButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               foregroundColor: AppColors.textSecondary,
               textStyle: AppTextStyles.captionSecondary,
             ),
@@ -175,7 +189,7 @@ class HomeShellPage extends ConsumerWidget {
       return AppBar(
         centerTitle: false,
         titleSpacing: AppSpacing.pageHorizontal,
-        title: InkWell(
+        title: AppInkWell(
           borderRadius: BorderRadius.circular(999),
           onTap: () => _openIslandSwitchSheet(
             context: context,
@@ -221,7 +235,7 @@ class HomeShellPage extends ConsumerWidget {
         title: _buildStaticHomeStyleTitle('너굴 마켓'),
         actions: <Widget>[
           IconButton(
-            onPressed: () => MarketTabPage.openMyTradesPage(context),
+            onPressed: () => MarketTabPage.openMyTradesPage(context, ref),
             icon: const Icon(
               Icons.shopping_cart_rounded,
               color: AppColors.textPrimary,
@@ -293,7 +307,10 @@ class HomeShellPage extends ConsumerWidget {
   Widget _buildNotificationAction(BuildContext context) {
     return IconButton(
       onPressed: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => UserNotificationPage(uid: uid)),
+        AppPageRoute<void>(
+          screenName: AppScreenNames.userNotification,
+          builder: (_) => UserNotificationPage(uid: uid),
+        ),
       ),
       icon: const Icon(Icons.notifications, color: AppColors.textPrimary),
       tooltip: '알림',
@@ -302,9 +319,12 @@ class HomeShellPage extends ConsumerWidget {
 
   Widget _buildSettingsAction(BuildContext context) {
     return IconButton(
-      onPressed: () => Navigator.of(
-        context,
-      ).push(MaterialPageRoute<void>(builder: (_) => SettingsPage(uid: uid))),
+      onPressed: () => Navigator.of(context).push(
+        AppPageRoute<void>(
+          screenName: AppScreenNames.settings,
+          builder: (_) => SettingsPage(uid: uid),
+        ),
+      ),
       icon: const Icon(Icons.settings, color: AppColors.textPrimary),
       tooltip: '설정',
     );
@@ -374,7 +394,8 @@ class HomeShellPage extends ConsumerWidget {
               Navigator.of(sheetContext).pop();
             }
             await Navigator.of(context).push(
-              MaterialPageRoute<void>(
+              AppPageRoute<void>(
+                screenName: AppScreenNames.createIsland,
                 builder: (_) => CreateIslandPage(
                   uid: uid,
                   popToDashboardOnEnter: true,
@@ -427,7 +448,8 @@ class HomeShellPage extends ConsumerWidget {
 
     ref.read(homeShellViewModelProvider.notifier).changeTab(1);
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );

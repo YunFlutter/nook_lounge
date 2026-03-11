@@ -86,9 +86,9 @@ class SettingsSeedData {
   static Color inquiryStatusBackgroundColor(SupportInquiryStatus status) {
     switch (status) {
       case SupportInquiryStatus.received:
-        return AppColors.badgeRedBg;
+        return AppColors.settingsInquiryReceivedBadgeBg;
       case SupportInquiryStatus.processing:
-        return AppColors.badgeBlueBg;
+        return AppColors.settingsInquiryProcessingBadgeBg;
       case SupportInquiryStatus.completed:
         return AppColors.bgSecondary;
     }
@@ -97,9 +97,9 @@ class SettingsSeedData {
   static Color inquiryStatusTextColor(SupportInquiryStatus status) {
     switch (status) {
       case SupportInquiryStatus.received:
-        return AppColors.badgeRedText;
+        return AppColors.settingsInquiryReceivedBadgeText;
       case SupportInquiryStatus.processing:
-        return AppColors.badgeBlueText;
+        return AppColors.settingsInquiryProcessingBadgeText;
       case SupportInquiryStatus.completed:
         return AppColors.textSecondary;
     }

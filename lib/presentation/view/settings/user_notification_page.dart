@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_user_notification.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_detail_page.dart';
@@ -45,6 +47,8 @@ class _UserNotificationPageState extends ConsumerState<UserNotificationPage> {
                     ? null
                     : () => _markAllAsRead(notifications),
                 style: TextButton.styleFrom(
+                  overlayColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
                   foregroundColor: AppColors.textSecondary,
                   textStyle: AppTextStyles.captionSecondary,
                 ),
@@ -197,7 +201,8 @@ class _UserNotificationPageState extends ConsumerState<UserNotificationPage> {
       }
 
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(
+        AppPageRoute<void>(
+          screenName: AppScreenNames.marketOfferDetail,
           builder: (_) => MarketOfferDetailPage(offer: offer),
         ),
       );

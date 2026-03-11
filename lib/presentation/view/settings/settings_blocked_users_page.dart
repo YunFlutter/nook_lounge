@@ -243,6 +243,8 @@ class _SettingsBlockedUsersPageState
                   ? null
                   : () => _unblockUser(context: context, summary: summary),
               style: OutlinedButton.styleFrom(
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
                 side: const BorderSide(color: AppColors.borderDefault),
                 foregroundColor: AppColors.textPrimary,
                 shape: RoundedRectangleBorder(

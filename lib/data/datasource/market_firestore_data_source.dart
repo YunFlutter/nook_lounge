@@ -371,6 +371,207 @@ class MarketFirestoreDataSource {
         });
   }
 
+  Stream<Set<String>> watchMyActiveProposalOfferIds(String proposerUid) {
+    final normalizedProposerUid = proposerUid.trim();
+    if (normalizedProposerUid.isEmpty) {
+      return Stream<Set<String>>.value(const <String>{});
+    }
+
+    late final StreamController<Set<String>> controller;
+    StreamSubscription<Set<String>>? subscription;
+    var isFallbackActive = false;
+
+    void emit(Set<String> offerIds) {
+      if (!controller.isClosed) {
+        controller.add(offerIds);
+      }
+    }
+
+    void startFallback() {
+      if (isFallbackActive || controller.isClosed) {
+        return;
+      }
+      isFallbackActive = true;
+      unawaited(subscription?.cancel());
+      // 유지보수 포인트:
+      // collectionGroup(proposals)는 프로젝트별 보안 규칙/인덱스 상태에 따라
+      // 실패할 수 있으므로, 동일 데이터를 offer별 제안 문서 구독으로 우회합니다.
+      subscription =
+          _watchMyActiveProposalOfferIdsByOfferDocuments(
+            normalizedProposerUid,
+          ).listen(
+            emit,
+            onError: (Object error, StackTrace stackTrace) {
+              if (!controller.isClosed) {
+                controller.addError(error, stackTrace);
+              }
+            },
+          );
+    }
+
+    controller = StreamController<Set<String>>(
+      onListen: () {
+        subscription =
+            _watchMyActiveProposalOfferIdsByCollectionGroup(
+              normalizedProposerUid,
+            ).listen(
+              emit,
+              onError: (Object error, StackTrace stackTrace) {
+                startFallback();
+              },
+            );
+      },
+      onCancel: () async {
+        final activeSubscription = subscription;
+        subscription = null;
+        await activeSubscription?.cancel();
+      },
+    );
+
+    return controller.stream;
+  }
+
+  Stream<Set<String>> _watchMyActiveProposalOfferIdsByCollectionGroup(
+    String proposerUid,
+  ) {
+    return _firestore
+        .collectionGroup('proposals')
+        .where('proposerUid', isEqualTo: proposerUid)
+        .snapshots()
+        .map((snapshot) {
+          final offerIds = <String>{};
+          for (final doc in snapshot.docs) {
+            final data = doc.data();
+            final status = (data['status'] as String?)?.trim() ?? '';
+            if (!_isActiveProposalStatusName(status)) {
+              continue;
+            }
+            final offerId = (data['offerId'] as String?)?.trim() ?? '';
+            if (offerId.isEmpty) {
+              continue;
+            }
+            offerIds.add(offerId);
+          }
+          return offerIds;
+        });
+  }
+
+  Stream<Set<String>> _watchMyActiveProposalOfferIdsByOfferDocuments(
+    String proposerUid,
+  ) {
+    late final StreamController<Set<String>> controller;
+    StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? offersSubscription;
+    final Map<
+      String,
+      StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>
+    >
+    proposalSubscriptions =
+        <String, StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>>{};
+    final Map<String, bool> activeProposalOfferMap = <String, bool>{};
+
+    void emitActiveOfferIds() {
+      if (controller.isClosed) {
+        return;
+      }
+      controller.add(
+        activeProposalOfferMap.entries
+            .where((entry) => entry.value)
+            .map((entry) => entry.key)
+            .toSet(),
+      );
+    }
+
+    void detachProposalSubscription(String offerId) {
+      final subscription = proposalSubscriptions.remove(offerId);
+      if (subscription != null) {
+        unawaited(subscription.cancel());
+      }
+      final removed = activeProposalOfferMap.remove(offerId) ?? false;
+      if (removed) {
+        emitActiveOfferIds();
+      }
+    }
+
+    void attachProposalSubscription(String offerId) {
+      if (proposalSubscriptions.containsKey(offerId)) {
+        return;
+      }
+      proposalSubscriptions[offerId] = _firestore
+          .doc(FirestorePaths.marketTradeProposal(offerId, proposerUid))
+          .snapshots()
+          .listen(
+            (snapshot) {
+              final status =
+                  (snapshot.data()?['status'] as String?)?.trim() ?? '';
+              final isActive = _isActiveProposalStatusName(status);
+              final previous = activeProposalOfferMap[offerId] ?? false;
+              if (isActive) {
+                activeProposalOfferMap[offerId] = true;
+              } else {
+                activeProposalOfferMap.remove(offerId);
+              }
+              if (previous != isActive) {
+                emitActiveOfferIds();
+              }
+            },
+            onError: (Object error, StackTrace stackTrace) {
+              // 유지보수 포인트:
+              // 개별 제안 문서 하나가 실패해도 전체 내 거래 화면을 깨뜨리지 않고
+              // 해당 offer만 제외한 상태로 계속 동작시킵니다.
+              final removed = activeProposalOfferMap.remove(offerId) ?? false;
+              if (removed) {
+                emitActiveOfferIds();
+              }
+            },
+          );
+    }
+
+    controller = StreamController<Set<String>>(
+      onListen: () {
+        offersSubscription = _firestore
+            .collection(FirestorePaths.marketPosts())
+            .where('lifecycle', isEqualTo: MarketLifecycleTab.ongoing.name)
+            .snapshots()
+            .listen(
+              (snapshot) {
+                final candidateOfferIds = snapshot.docs
+                    .where(
+                      (doc) => _shouldTrackProposalOffer(
+                        offerData: doc.data(),
+                        proposerUid: proposerUid,
+                      ),
+                    )
+                    .map((doc) => doc.id)
+                    .toSet();
+
+                for (final offerId in proposalSubscriptions.keys.toList()) {
+                  if (!candidateOfferIds.contains(offerId)) {
+                    detachProposalSubscription(offerId);
+                  }
+                }
+                for (final offerId in candidateOfferIds) {
+                  attachProposalSubscription(offerId);
+                }
+                emitActiveOfferIds();
+              },
+              onError: (Object error, StackTrace stackTrace) {
+                if (!controller.isClosed) {
+                  controller.addError(error, stackTrace);
+                }
+              },
+            );
+      },
+      onCancel: () async {
+        await offersSubscription?.cancel();
+        for (final subscription in proposalSubscriptions.values) {
+          await subscription.cancel();
+        }
+      },
+    );
+
+    return controller.stream;
+  }
+
   Future<void> sendTradeProposalNotification({
     required String offerId,
     required String ownerUid,
@@ -1926,6 +2127,28 @@ class MarketFirestoreDataSource {
       return value.toInt();
     }
     return int.tryParse(value.toString());
+  }
+
+  bool _shouldTrackProposalOffer({
+    required Map<String, dynamic> offerData,
+    required String proposerUid,
+  }) {
+    final ownerUid = (offerData['ownerUid'] as String?)?.trim() ?? '';
+    if (ownerUid.isEmpty || ownerUid == proposerUid) {
+      return false;
+    }
+    final lifecycle = (offerData['lifecycle'] as String?)?.trim() ?? '';
+    if (lifecycle != MarketLifecycleTab.ongoing.name) {
+      return false;
+    }
+    final status = (offerData['status'] as String?)?.trim() ?? '';
+    return status != MarketOfferStatus.offline.name &&
+        status != MarketOfferStatus.closed.name;
+  }
+
+  bool _isActiveProposalStatusName(String status) {
+    return status == MarketTradeProposalStatus.pending.name ||
+        status == MarketTradeProposalStatus.accepted.name;
   }
 
   int _proposalStatusRank(MarketTradeProposalStatus status) {

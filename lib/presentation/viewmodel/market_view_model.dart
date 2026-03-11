@@ -42,13 +42,18 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   StreamSubscription<String?>? _authSubscription;
   StreamSubscription<Set<String>>? _hiddenSubscription;
   StreamSubscription<Set<String>>? _blockedUserSubscription;
+  StreamSubscription<Set<String>>? _myActiveProposalOfferIdsSubscription;
   List<MarketOffer> _latestOffers = const <MarketOffer>[];
   Set<String> _hiddenOfferIds = const <String>{};
   Set<String> _guestHiddenOfferIds = <String>{};
   Set<String> _blockedUserIds = const <String>{};
+  Set<String> _activeProposalOfferIds = const <String>{};
   String _activeUserId = '';
+  bool _isProposalTrackingEnabled = false;
 
   String get currentUserId => _authRepository.currentUserId ?? '';
+
+  bool get isProposalTrackingEnabled => _isProposalTrackingEnabled;
 
   List<MarketOffer> get visibleOffers {
     final query = state.searchQuery.trim().toLowerCase();
@@ -78,6 +83,53 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         .toList(growable: false);
   }
 
+  List<MarketOffer> get ongoingTradeOffers {
+    final combined = <MarketOffer>[
+      ...ownedOffersByLifecycle(MarketLifecycleTab.ongoing),
+      ...proposalOffers,
+    ];
+    return _sortOffersForDisplay(combined);
+  }
+
+  int get ongoingTradeCount => ongoingTradeOffers.length;
+
+  Map<MarketLifecycleTab, int> get myOfferCounts {
+    final counts = <MarketLifecycleTab, int>{
+      MarketLifecycleTab.ongoing: 0,
+      MarketLifecycleTab.cancelled: 0,
+      MarketLifecycleTab.completed: 0,
+    };
+    for (final offer in state.offers) {
+      if (!offer.isMine) {
+        continue;
+      }
+      counts[offer.lifecycle] = (counts[offer.lifecycle] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  List<MarketOffer> ownedOffersByLifecycle(MarketLifecycleTab lifecycle) {
+    return state.offers
+        .where((offer) => offer.isMine)
+        .where((offer) => offer.lifecycle == lifecycle)
+        .toList(growable: false);
+  }
+
+  List<MarketOffer> get proposalOffers {
+    return state.offers
+        .where((offer) {
+          if (offer.isMine) {
+            return false;
+          }
+          // 유지보수 포인트:
+          // 내 소유 글이 아니더라도 아직 참여 중인 제안은
+          // "진행중" 탭에 함께 보여주기 위해 pending/accepted 제안만 포함합니다.
+          return offer.lifecycle == MarketLifecycleTab.ongoing &&
+              _activeProposalOfferIds.contains(offer.id);
+        })
+        .toList(growable: false);
+  }
+
   MarketOffer? findOfferById(String id) {
     for (final offer in state.offers) {
       if (offer.id == id) {
@@ -97,6 +149,14 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
 
   void setLifecycle(MarketLifecycleTab tab) {
     state = state.copyWith(selectedLifecycle: tab);
+  }
+
+  void ensureProposalTracking() {
+    if (_isProposalTrackingEnabled) {
+      return;
+    }
+    _isProposalTrackingEnabled = true;
+    _bindMyActiveProposalOfferIdsStream(_activeUserId);
   }
 
   Future<void> createOffer(MarketOffer offer) async {
@@ -312,6 +372,8 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     final normalizedTitle = offer.title.trim().isEmpty
         ? offer.wantItemName.trim()
         : offer.title.trim();
+    final previousActiveProposalOfferIds = _activeProposalOfferIds;
+    _setProposalOfferActiveLocally(offerId: offer.id, isActive: true);
 
     try {
       await _repository.sendTradeProposalNotification(
@@ -331,6 +393,8 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
           : errorCode == 'trade_proposal_already_exists'
           ? '이미 제안을 보냈어요. 응답을 기다려 주세요.'
           : '거래 제안을 보내지 못했어요.';
+      _activeProposalOfferIds = previousActiveProposalOfferIds;
+      _applyOffersState();
       state = state.copyWith(errorMessage: errorMessage);
       rethrow;
     }
@@ -475,14 +539,27 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     final normalizedTitle = offer.title.trim().isEmpty
         ? offer.wantItemName.trim()
         : offer.title.trim();
+    final requesterIsOwner = requesterUid == ownerUid;
+    final previousActiveProposalOfferIds = _activeProposalOfferIds;
+    if (!requesterIsOwner) {
+      _setProposalOfferActiveLocally(offerId: offer.id, isActive: false);
+    }
 
-    await _repository.cancelTrade(
-      offerId: offer.id,
-      ownerUid: ownerUid,
-      requesterUid: requesterUid,
-      offerTitle: normalizedTitle,
-    );
-    state = state.copyWith(errorMessage: null);
+    try {
+      await _repository.cancelTrade(
+        offerId: offer.id,
+        ownerUid: ownerUid,
+        requesterUid: requesterUid,
+        offerTitle: normalizedTitle,
+      );
+      state = state.copyWith(errorMessage: null);
+    } catch (error) {
+      if (!requesterIsOwner) {
+        _activeProposalOfferIds = previousActiveProposalOfferIds;
+        _applyOffersState();
+      }
+      rethrow;
+    }
   }
 
   Future<void> reportOffer({
@@ -614,6 +691,12 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     _guestHiddenOfferIds = <String>{};
     _bindHiddenOfferStream(normalizedUid);
     _bindBlockedUserStream(normalizedUid);
+    if (_isProposalTrackingEnabled) {
+      _bindMyActiveProposalOfferIdsStream(normalizedUid);
+    } else {
+      _activeProposalOfferIds = const <String>{};
+      state = state.copyWith(proposalErrorMessage: null);
+    }
     _applyOffersState();
   }
 
@@ -655,6 +738,31 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         );
   }
 
+  void _bindMyActiveProposalOfferIdsStream(String uid) {
+    _myActiveProposalOfferIdsSubscription?.cancel();
+    if (uid.isEmpty) {
+      _activeProposalOfferIds = const <String>{};
+      state = state.copyWith(proposalErrorMessage: null);
+      return;
+    }
+    _myActiveProposalOfferIdsSubscription = _repository
+        .watchMyActiveProposalOfferIds(uid)
+        .listen(
+          (offerIds) {
+            _activeProposalOfferIds = offerIds;
+            state = state.copyWith(proposalErrorMessage: null);
+            _applyOffersState();
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            _activeProposalOfferIds = const <String>{};
+            state = state.copyWith(
+              proposalErrorMessage: '진행중 거래 일부를 불러오지 못했어요.',
+            );
+            _applyOffersState();
+          },
+        );
+  }
+
   void _applyOffersState() {
     final currentUid = _activeUserId;
     final hiddenIds = currentUid.isEmpty
@@ -683,6 +791,22 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       offers: _sortOffersForDisplay(normalized),
       isLoading: false,
     );
+  }
+
+  void _setProposalOfferActiveLocally({
+    required String offerId,
+    required bool isActive,
+  }) {
+    final normalizedOfferId = offerId.trim();
+    if (normalizedOfferId.isEmpty) {
+      return;
+    }
+    _activeProposalOfferIds = isActive
+        ? <String>{..._activeProposalOfferIds, normalizedOfferId}
+        : <String>{
+            ..._activeProposalOfferIds.where((id) => id != normalizedOfferId),
+          };
+    _applyOffersState();
   }
 
   List<MarketOffer> _sortOffersForDisplay(List<MarketOffer> offers) {
@@ -723,6 +847,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     _authSubscription?.cancel();
     _hiddenSubscription?.cancel();
     _blockedUserSubscription?.cancel();
+    _myActiveProposalOfferIdsSubscription?.cancel();
     super.dispose();
   }
 }

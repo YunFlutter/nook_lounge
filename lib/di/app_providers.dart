@@ -4,9 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nook_lounge_app/core/utils/app_version_comparator.dart';
+import 'package:nook_lounge_app/core/telemetry/app_telemetry_provider.dart';
+import 'package:nook_lounge_app/data/datasource/app_version_firestore_data_source.dart';
+import 'package:nook_lounge_app/data/datasource/app_version_platform_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/catalog_state_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/firebase_auth_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/airport_firestore_data_source.dart';
@@ -22,6 +27,7 @@ import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/user_block_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/repository/auth_repository_impl.dart';
+import 'package:nook_lounge_app/data/repository/app_version_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/airport_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/catalog_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/island_repository_impl.dart';
@@ -30,6 +36,7 @@ import 'package:nook_lounge_app/data/repository/settings_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/turnip_repository_impl.dart';
 import 'package:nook_lounge_app/data/repository/user_block_repository_impl.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
+import 'package:nook_lounge_app/domain/repository/app_version_repository.dart';
 import 'package:nook_lounge_app/domain/repository/airport_repository.dart';
 import 'package:nook_lounge_app/domain/repository/catalog_repository.dart';
 import 'package:nook_lounge_app/domain/repository/island_repository.dart';
@@ -38,6 +45,7 @@ import 'package:nook_lounge_app/domain/repository/settings_repository.dart';
 import 'package:nook_lounge_app/domain/repository/turnip_repository.dart';
 import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
+import 'package:nook_lounge_app/domain/model/app_update_status.dart';
 import 'package:nook_lounge_app/domain/model/blocked_user_summary.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -86,6 +94,10 @@ final firebaseMessagingProvider = Provider<FirebaseMessaging>((ref) {
   return FirebaseMessaging.instance;
 });
 
+final appVersionComparatorProvider = Provider<AppVersionComparator>((ref) {
+  return const AppVersionComparator();
+});
+
 final flutterLocalNotificationsPluginProvider =
     Provider<FlutterLocalNotificationsPlugin>((ref) {
       return FlutterLocalNotificationsPlugin();
@@ -111,6 +123,7 @@ final pushMessageServiceProvider = Provider<PushMessageService>((ref) {
     firestore: ref.watch(firestoreProvider),
     localNotificationService: ref.watch(localNotificationServiceProvider),
     offerIntentNotifier: ref.watch(pushOfferIntentNotifierProvider.notifier),
+    telemetry: ref.watch(appTelemetryProvider),
   );
   ref.onDispose(service.dispose);
   return service;
@@ -169,6 +182,18 @@ final marketStorageDataSourceProvider = Provider<MarketStorageDataSource>((
   return MarketStorageDataSource(storage: ref.watch(firebaseStorageProvider));
 });
 
+final appVersionFirestoreDataSourceProvider =
+    Provider<AppVersionFirestoreDataSource>((ref) {
+      return AppVersionFirestoreDataSource(
+        firestore: ref.watch(firestoreProvider),
+      );
+    });
+
+final appVersionPlatformDataSourceProvider =
+    Provider<AppVersionPlatformDataSource>((ref) {
+      return AppVersionPlatformDataSource();
+    });
+
 final settingsFirestoreDataSourceProvider =
     Provider<SettingsFirestoreDataSource>((ref) {
       return SettingsFirestoreDataSource(
@@ -192,6 +217,7 @@ final userBlockFirestoreDataSourceProvider =
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     dataSource: ref.watch(firebaseAuthDataSourceProvider),
+    telemetry: ref.watch(appTelemetryProvider),
   );
 });
 
@@ -199,6 +225,7 @@ final islandRepositoryProvider = Provider<IslandRepository>((ref) {
   return IslandRepositoryImpl(
     firestoreDataSource: ref.watch(islandFirestoreDataSourceProvider),
     storageDataSource: ref.watch(islandStorageDataSourceProvider),
+    telemetry: ref.watch(appTelemetryProvider),
   );
 });
 
@@ -220,6 +247,13 @@ final marketRepositoryProvider = Provider<MarketRepository>((ref) {
   return MarketRepositoryImpl(
     firestoreDataSource: ref.watch(marketFirestoreDataSourceProvider),
     storageDataSource: ref.watch(marketStorageDataSourceProvider),
+    telemetry: ref.watch(appTelemetryProvider),
+  );
+});
+
+final appVersionRepositoryProvider = Provider<AppVersionRepository>((ref) {
+  return AppVersionRepositoryImpl(
+    dataSource: ref.watch(appVersionFirestoreDataSourceProvider),
   );
 });
 
@@ -232,6 +266,7 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 final airportRepositoryProvider = Provider<AirportRepository>((ref) {
   return AirportRepositoryImpl(
     dataSource: ref.watch(airportFirestoreDataSourceProvider),
+    telemetry: ref.watch(appTelemetryProvider),
   );
 });
 
@@ -265,7 +300,7 @@ final createIslandViewModelProvider =
 
 final homeShellViewModelProvider =
     StateNotifierProvider<HomeShellViewModel, HomeShellViewState>((ref) {
-      return HomeShellViewModel();
+      return HomeShellViewModel(telemetry: ref.watch(appTelemetryProvider));
     });
 
 final catalogSearchViewModelProvider =
@@ -298,6 +333,7 @@ final turnipViewModelProvider =
     >((ref, args) {
       return TurnipViewModel(
         repository: ref.watch(turnipRepositoryProvider),
+        telemetry: ref.watch(appTelemetryProvider),
         uid: args.uid,
         islandId: args.islandId,
       );
@@ -451,3 +487,32 @@ final settingsInquiriesProvider =
     StreamProvider.family<List<SupportInquiry>, String>((ref, uid) {
       return ref.watch(settingsRepositoryProvider).watchInquiries(uid: uid);
     });
+
+final currentAppVersionProvider = FutureProvider<String>((ref) {
+  return ref.watch(appVersionPlatformDataSourceProvider).fetchCurrentVersion();
+});
+
+final appUpdateStatusProvider = StreamProvider<AppUpdateStatus>((ref) async* {
+  final currentVersion = await ref.watch(currentAppVersionProvider.future);
+  final repository = ref.watch(appVersionRepositoryProvider);
+  final comparator = ref.watch(appVersionComparatorProvider);
+
+  await for (final config in repository.watchConfig()) {
+    final rawRemoteVersion = switch (defaultTargetPlatform) {
+      TargetPlatform.android => config?.androidVersion,
+      TargetPlatform.iOS => config?.iosVersion,
+      _ => null,
+    };
+    final remoteVersion = rawRemoteVersion?.trim();
+    final requiresUpdate =
+        remoteVersion != null &&
+        remoteVersion.isNotEmpty &&
+        comparator.compare(currentVersion, remoteVersion) < 0;
+
+    yield AppUpdateStatus(
+      currentVersion: currentVersion,
+      remoteVersion: remoteVersion,
+      requiresUpdate: requiresUpdate,
+    );
+  }
+});

@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:nook_lounge_app/core/telemetry/app_telemetry.dart';
+import 'package:nook_lounge_app/core/telemetry/app_telemetry_events.dart';
 import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
@@ -10,11 +14,14 @@ class MarketRepositoryImpl implements MarketRepository {
   MarketRepositoryImpl({
     required MarketFirestoreDataSource firestoreDataSource,
     required MarketStorageDataSource storageDataSource,
+    required AppTelemetry telemetry,
   }) : _firestoreDataSource = firestoreDataSource,
-       _storageDataSource = storageDataSource;
+       _storageDataSource = storageDataSource,
+       _telemetry = telemetry;
 
   final MarketFirestoreDataSource _firestoreDataSource;
   final MarketStorageDataSource _storageDataSource;
+  final AppTelemetry _telemetry;
 
   @override
   Stream<List<MarketOffer>> watchOffers() {
@@ -31,20 +38,42 @@ class MarketRepositoryImpl implements MarketRepository {
     required String uid,
     required MarketOffer offer,
   }) async {
-    var next = offer;
-    // 유지보수 포인트:
-    // Firestore에는 로컬 파일 경로를 절대 저장하지 않고
-    // 압축 업로드 후 받은 다운로드 URL만 저장합니다.
-    final localPath = _resolveLocalPath(offer.coverImageUrl);
-    if (localPath != null) {
-      final url = await _storageDataSource.uploadOfferProofImage(
-        uid: uid,
-        offerId: offer.id,
-        localFilePath: localPath,
+    try {
+      var next = offer;
+      // 유지보수 포인트:
+      // Firestore에는 로컬 파일 경로를 절대 저장하지 않고
+      // 압축 업로드 후 받은 다운로드 URL만 저장합니다.
+      final localPath = _resolveLocalPath(offer.coverImageUrl);
+      if (localPath != null) {
+        final url = await _storageDataSource.uploadOfferProofImage(
+          uid: uid,
+          offerId: offer.id,
+          localFilePath: localPath,
+        );
+        next = next.copyWith(coverImageUrl: url);
+      }
+      await _firestoreDataSource.createOffer(next);
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketOfferCreated,
+          parameters: <String, Object>{
+            'category': offer.category.name,
+            'trade_type': offer.tradeType.name,
+            'move_type': offer.moveType.name,
+            'has_cover_image': next.coverImageUrl.trim().isNotEmpty,
+          },
+        ),
       );
-      next = next.copyWith(coverImageUrl: url);
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.create_offer',
+        ),
+      );
+      rethrow;
     }
-    await _firestoreDataSource.createOffer(next);
   }
 
   @override
@@ -52,20 +81,41 @@ class MarketRepositoryImpl implements MarketRepository {
     required String uid,
     required MarketOffer offer,
   }) async {
-    var next = offer;
-    // 유지보수 포인트:
-    // 수정 시에도 로컬 파일 경로 저장을 금지하고
-    // 압축 업로드 후 URL만 Firestore에 반영합니다.
-    final localPath = _resolveLocalPath(offer.coverImageUrl);
-    if (localPath != null) {
-      final url = await _storageDataSource.uploadOfferProofImage(
-        uid: uid,
-        offerId: offer.id,
-        localFilePath: localPath,
+    try {
+      var next = offer;
+      // 유지보수 포인트:
+      // 수정 시에도 로컬 파일 경로 저장을 금지하고
+      // 압축 업로드 후 URL만 Firestore에 반영합니다.
+      final localPath = _resolveLocalPath(offer.coverImageUrl);
+      if (localPath != null) {
+        final url = await _storageDataSource.uploadOfferProofImage(
+          uid: uid,
+          offerId: offer.id,
+          localFilePath: localPath,
+        );
+        next = next.copyWith(coverImageUrl: url);
+      }
+      await _firestoreDataSource.updateOffer(next);
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketOfferUpdated,
+          parameters: <String, Object>{
+            'update_type': 'full',
+            'category': offer.category.name,
+            'trade_type': offer.tradeType.name,
+          },
+        ),
       );
-      next = next.copyWith(coverImageUrl: url);
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.update_offer',
+        ),
+      );
+      rethrow;
     }
-    await _firestoreDataSource.updateOffer(next);
   }
 
   @override
@@ -73,12 +123,33 @@ class MarketRepositoryImpl implements MarketRepository {
     required String offerId,
     required MarketLifecycleTab lifecycle,
     MarketOfferStatus? status,
-  }) {
-    return _firestoreDataSource.updateOfferLifecycle(
-      offerId: offerId,
-      lifecycle: lifecycle,
-      status: status,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.updateOfferLifecycle(
+        offerId: offerId,
+        lifecycle: lifecycle,
+        status: status,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketOfferUpdated,
+          parameters: <String, Object?>{
+            'update_type': 'lifecycle',
+            'lifecycle': lifecycle.name,
+            'status': status?.name,
+          },
+        ),
+      );
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.update_offer_lifecycle',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -86,12 +157,29 @@ class MarketRepositoryImpl implements MarketRepository {
     required String offerId,
     required String requesterUid,
     required String offerTitle,
-  }) {
-    return _firestoreDataSource.completeTrade(
-      offerId: offerId,
-      requesterUid: requesterUid,
-      offerTitle: offerTitle,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.completeTrade(
+        offerId: offerId,
+        requesterUid: requesterUid,
+        offerTitle: offerTitle,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketTradeCompleted,
+          parameters: const <String, Object>{'result': 'success'},
+        ),
+      );
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.complete_trade',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -99,17 +187,46 @@ class MarketRepositoryImpl implements MarketRepository {
     required String offerId,
     required String title,
     required String description,
-  }) {
-    return _firestoreDataSource.updateOfferBasicInfo(
-      offerId: offerId,
-      title: title,
-      description: description,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.updateOfferBasicInfo(
+        offerId: offerId,
+        title: title,
+        description: description,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketOfferUpdated,
+          parameters: const <String, Object>{'update_type': 'basic_info'},
+        ),
+      );
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.update_offer_basic_info',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
-  Future<void> deleteOffer(String offerId) {
-    return _firestoreDataSource.deleteOffer(offerId);
+  Future<void> deleteOffer(String offerId) async {
+    try {
+      await _firestoreDataSource.deleteOffer(offerId);
+      unawaited(_telemetry.logEvent(AppTelemetryEvents.marketOfferDeleted));
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.delete_offer',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -118,13 +235,25 @@ class MarketRepositoryImpl implements MarketRepository {
     required String ownerUid,
     required String proposerUid,
     required String offerTitle,
-  }) {
-    return _firestoreDataSource.sendTradeProposalNotification(
-      offerId: offerId,
-      ownerUid: ownerUid,
-      proposerUid: proposerUid,
-      offerTitle: offerTitle,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.sendTradeProposalNotification(
+        offerId: offerId,
+        ownerUid: ownerUid,
+        proposerUid: proposerUid,
+        offerTitle: offerTitle,
+      );
+      unawaited(_telemetry.logEvent(AppTelemetryEvents.marketProposalSent));
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.send_trade_proposal',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -144,20 +273,43 @@ class MarketRepositoryImpl implements MarketRepository {
   }
 
   @override
+  Stream<Set<String>> watchMyActiveProposalOfferIds(String proposerUid) {
+    return _firestoreDataSource.watchMyActiveProposalOfferIds(proposerUid);
+  }
+
+  @override
   Future<MarketTradeCodeSession> acceptTradeProposal({
     required String offerId,
     required String ownerUid,
     required String proposerUid,
     required MarketMoveType moveType,
     required String offerTitle,
-  }) {
-    return _firestoreDataSource.acceptTradeProposal(
-      offerId: offerId,
-      ownerUid: ownerUid,
-      proposerUid: proposerUid,
-      moveType: moveType,
-      offerTitle: offerTitle,
-    );
+  }) async {
+    try {
+      final session = await _firestoreDataSource.acceptTradeProposal(
+        offerId: offerId,
+        ownerUid: ownerUid,
+        proposerUid: proposerUid,
+        moveType: moveType,
+        offerTitle: offerTitle,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketProposalAccepted,
+          parameters: <String, Object>{'move_type': moveType.name},
+        ),
+      );
+      return session;
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.accept_trade_proposal',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -166,13 +318,31 @@ class MarketRepositoryImpl implements MarketRepository {
     required String ownerUid,
     required String proposerUid,
     required MarketMoveType moveType,
-  }) {
-    return _firestoreDataSource.prepareTradeCodeSession(
-      offerId: offerId,
-      ownerUid: ownerUid,
-      proposerUid: proposerUid,
-      moveType: moveType,
-    );
+  }) async {
+    try {
+      final session = await _firestoreDataSource.prepareTradeCodeSession(
+        offerId: offerId,
+        ownerUid: ownerUid,
+        proposerUid: proposerUid,
+        moveType: moveType,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketTradeCodePrepared,
+          parameters: <String, Object>{'move_type': moveType.name},
+        ),
+      );
+      return session;
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.prepare_trade_code_session',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -224,13 +394,24 @@ class MarketRepositoryImpl implements MarketRepository {
     required String ownerUid,
     required String proposerUid,
     required String offerTitle,
-  }) {
-    return _firestoreDataSource.sendTradeAcceptNotification(
-      offerId: offerId,
-      ownerUid: ownerUid,
-      proposerUid: proposerUid,
-      offerTitle: offerTitle,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.sendTradeAcceptNotification(
+        offerId: offerId,
+        ownerUid: ownerUid,
+        proposerUid: proposerUid,
+        offerTitle: offerTitle,
+      );
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.send_trade_accept_notification',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -241,15 +422,34 @@ class MarketRepositoryImpl implements MarketRepository {
     required String code,
     required String islandRules,
     required String offerTitle,
-  }) {
-    return _firestoreDataSource.sendTradeCode(
-      offerId: offerId,
-      senderUid: senderUid,
-      receiverUid: receiverUid,
-      code: code,
-      islandRules: islandRules,
-      offerTitle: offerTitle,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.sendTradeCode(
+        offerId: offerId,
+        senderUid: senderUid,
+        receiverUid: receiverUid,
+        code: code,
+        islandRules: islandRules,
+        offerTitle: offerTitle,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketTradeCodeSent,
+          parameters: <String, Object>{
+            'has_rules': islandRules.trim().isNotEmpty,
+          },
+        ),
+      );
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.send_trade_code',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -257,12 +457,24 @@ class MarketRepositoryImpl implements MarketRepository {
     required String offerId,
     required String receiverUid,
     required String code,
-  }) {
-    return _firestoreDataSource.agreeTradeRules(
-      offerId: offerId,
-      receiverUid: receiverUid,
-      code: code,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.agreeTradeRules(
+        offerId: offerId,
+        receiverUid: receiverUid,
+        code: code,
+      );
+      unawaited(_telemetry.logEvent(AppTelemetryEvents.marketTradeRulesAgreed));
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.agree_trade_rules',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -271,13 +483,25 @@ class MarketRepositoryImpl implements MarketRepository {
     required String ownerUid,
     required String requesterUid,
     required String offerTitle,
-  }) {
-    return _firestoreDataSource.cancelTrade(
-      offerId: offerId,
-      ownerUid: ownerUid,
-      requesterUid: requesterUid,
-      offerTitle: offerTitle,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.cancelTrade(
+        offerId: offerId,
+        ownerUid: ownerUid,
+        requesterUid: requesterUid,
+        offerTitle: offerTitle,
+      );
+      unawaited(_telemetry.logEvent(AppTelemetryEvents.marketTradeCancelled));
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.cancel_trade',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -287,14 +511,31 @@ class MarketRepositoryImpl implements MarketRepository {
     required String reporterUid,
     required String reason,
     required String detail,
-  }) {
-    return _firestoreDataSource.reportTradeOffer(
-      offerId: offerId,
-      ownerUid: ownerUid,
-      reporterUid: reporterUid,
-      reason: reason,
-      detail: detail,
-    );
+  }) async {
+    try {
+      await _firestoreDataSource.reportTradeOffer(
+        offerId: offerId,
+        ownerUid: ownerUid,
+        reporterUid: reporterUid,
+        reason: reason,
+        detail: detail,
+      );
+      unawaited(
+        _telemetry.logEvent(
+          AppTelemetryEvents.marketOfferReported,
+          parameters: <String, Object>{'report_reason': reason},
+        ),
+      );
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(
+          error,
+          stackTrace,
+          reason: 'market.report_offer',
+        ),
+      );
+      rethrow;
+    }
   }
 
   @override
@@ -306,8 +547,16 @@ class MarketRepositoryImpl implements MarketRepository {
   Future<void> hideOfferForUser({
     required String uid,
     required String offerId,
-  }) {
-    return _firestoreDataSource.hideOfferForUser(uid: uid, offerId: offerId);
+  }) async {
+    try {
+      await _firestoreDataSource.hideOfferForUser(uid: uid, offerId: offerId);
+      unawaited(_telemetry.logEvent(AppTelemetryEvents.marketOfferHidden));
+    } catch (error, stackTrace) {
+      unawaited(
+        _telemetry.recordError(error, stackTrace, reason: 'market.hide_offer'),
+      );
+      rethrow;
+    }
   }
 
   @override

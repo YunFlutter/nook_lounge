@@ -54,6 +54,7 @@ class AppColors {
   static const Color shadowSoft = Color(0x145F4F24);
   static const Color shadowMedium = Color(0x245F4F24);
   static const Color shadowStrong = Color(0x265F4F24);
+  static const Color modalPrimaryAction = Color(0xFF85C8E5);
 
   // Catalog Surface
   static const Color catalogSegmentBg = bgSecondary;
@@ -101,6 +102,14 @@ class AppColors {
   static const Color confettiBlue = bgPlane;
   static const Color confettiOrange = navActive;
 
+  // Turnip
+  // 유지보수 포인트:
+  // 무주식 차트 색상은 공통 Primary와 분리해 두면
+  // 그래프 팔레트만 바꿔도 버튼/CTA 색상에 영향이 없습니다.
+  static const Color turnipAccent = Color(0xFF72D7B2);
+  static const Color turnipPredictionMinLine = accentOrange;
+  static const Color turnipPredictionMaxLine = turnipAccent;
+
   // Market
   static const Color marketTouchFurniture = textPrimary;
   static const Color marketTouchWallpaper = accentOrange;
@@ -120,6 +129,10 @@ class AppColors {
   // 설정 화면 CTA도 공통 브랜드 Primary 토큰을 재사용합니다.
   static const Color settingsPrimaryButton = primaryDefault;
   static const Color settingsPrimaryButtonPressed = primaryHover;
+  static const Color settingsInquiryReceivedBadgeBg = Color(0xFFE1FFF4);
+  static const Color settingsInquiryReceivedBadgeText = primaryPressed;
+  static const Color settingsInquiryProcessingBadgeBg = Color(0xFFE8F3FF);
+  static const Color settingsInquiryProcessingBadgeText = Color(0xFF2C6BCF);
   static const Color settingsOverlay = Color(0x665F4F24);
   static const Color settingsSuccessIcon = accentOrange;
   static const Color settingsWarning = accentDeepOrange;

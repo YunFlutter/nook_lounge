@@ -104,6 +104,8 @@ class _AirportRulesEditPageState extends State<AirportRulesEditPage> {
               FilledButton(
                 onPressed: _onSave,
                 style: FilledButton.styleFrom(
+                  overlayColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
                   backgroundColor: AppColors.badgeBlueText,
                   foregroundColor: AppColors.textInverse,
                   minimumSize: const Size.fromHeight(56),

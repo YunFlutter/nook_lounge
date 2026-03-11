@@ -6,6 +6,8 @@ import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/core/constants/market_report_constants.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/core/utils/touching_item_tag_codec.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
@@ -499,6 +501,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
           FilledButton(
             onPressed: null,
             style: FilledButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               backgroundColor: AppColors.catalogChipBg,
               disabledBackgroundColor: AppColors.catalogChipBg,
               minimumSize: const Size.fromHeight(58),
@@ -509,6 +513,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
           OutlinedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: OutlinedButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               minimumSize: const Size.fromHeight(56),
               side: const BorderSide(color: AppColors.borderDefault, width: 2),
               shape: RoundedRectangleBorder(
@@ -615,6 +621,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
         FilledButton(
           onPressed: primaryOnPressed,
           style: FilledButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             backgroundColor: primaryBackground,
             minimumSize: const Size.fromHeight(58),
           ),
@@ -624,6 +632,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
         OutlinedButton(
           onPressed: secondaryOnPressed,
           style: OutlinedButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             minimumSize: const Size.fromHeight(56),
             side: const BorderSide(color: AppColors.borderDefault, width: 2),
             shape: RoundedRectangleBorder(
@@ -663,6 +673,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ? () => _completeMyOffer(context, ref)
               : null,
           style: FilledButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             backgroundColor: AppColors.accentDeepOrange,
             disabledBackgroundColor: AppColors.catalogChipBg,
             minimumSize: const Size.fromHeight(58),
@@ -675,6 +687,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
               ? () => _cancelTradeAsOwner(context, ref)
               : () => _deleteMyOffer(context, ref),
           style: OutlinedButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             minimumSize: const Size.fromHeight(56),
             side: const BorderSide(color: AppColors.borderDefault, width: 2),
             shape: RoundedRectangleBorder(
@@ -910,6 +924,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                               onPressed: () =>
                                   _acceptProposal(context, ref, proposal),
                               style: FilledButton.styleFrom(
+                                overlayColor: Colors.transparent,
+                                splashFactory: NoSplash.splashFactory,
                                 backgroundColor: AppColors.accentDeepOrange,
                                 minimumSize: const Size(72, 38),
                                 padding: const EdgeInsets.symmetric(
@@ -932,6 +948,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                                 currentOffer: currentOffer,
                               ),
                               style: OutlinedButton.styleFrom(
+                                overlayColor: Colors.transparent,
+                                splashFactory: NoSplash.splashFactory,
                                 minimumSize: const Size(84, 38),
                                 side: const BorderSide(
                                   color: AppColors.borderStrong,
@@ -1464,7 +1482,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
 
     if (shouldSendCode) {
       await Navigator.of(context).push(
-        MaterialPageRoute<void>(
+        AppPageRoute<void>(
+          screenName: AppScreenNames.marketTradeCodeSend,
           builder: (_) =>
               MarketTradeCodeSendPage(offer: offer, session: session),
         ),
@@ -1472,7 +1491,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: AppScreenNames.marketTradeCodeView,
         builder: (_) => MarketTradeCodeViewPage(offer: offer),
       ),
     );
@@ -1508,6 +1528,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1527,7 +1549,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1587,6 +1611,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1606,7 +1632,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1753,7 +1781,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
     final currentUid = viewModel.currentUserId;
     final shouldSendCode = session.isCodeSender(currentUid) && !session.hasCode;
     await Navigator.of(context).push(
-      MaterialPageRoute<void>(
+      AppPageRoute<void>(
+        screenName: shouldSendCode
+            ? AppScreenNames.marketTradeCodeSend
+            : AppScreenNames.marketTradeCodeView,
         builder: (_) => shouldSendCode
             ? MarketTradeCodeSendPage(offer: currentOffer, session: session)
             : MarketTradeCodeViewPage(offer: currentOffer),
@@ -1920,6 +1951,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1939,7 +1972,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -1993,6 +2028,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2012,7 +2049,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2200,6 +2239,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2219,7 +2260,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2273,6 +2316,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2292,7 +2337,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2383,6 +2430,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),
@@ -2402,7 +2451,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accentDeepOrange,
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: AppColors.modalPrimaryAction,
                           minimumSize: const Size.fromHeight(
                             dialogButtonHeight,
                           ),

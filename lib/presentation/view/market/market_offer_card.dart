@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
@@ -56,7 +57,7 @@ class MarketOfferCard extends StatelessWidget {
     final card = Material(
       color: AppColors.bgCard,
       borderRadius: BorderRadius.circular(22),
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(22),
         onTap: onTap,
         child: Container(
@@ -644,7 +645,7 @@ class MarketOfferCard extends StatelessWidget {
     return Material(
       color: bgColor,
       borderRadius: BorderRadius.circular(12),
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: disabled ? null : onActionTap,
         child: Padding(
@@ -686,7 +687,7 @@ class MarketOfferCard extends StatelessWidget {
     return Material(
       color: bgColor,
       borderRadius: BorderRadius.circular(10),
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(10),
         onTap: disabled ? null : onTap,
         child: Padding(

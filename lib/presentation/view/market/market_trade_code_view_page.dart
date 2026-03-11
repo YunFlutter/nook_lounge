@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -139,7 +141,8 @@ class _MarketTradeCodeViewPageState
           FilledButton(
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute<void>(
+                AppPageRoute<void>(
+                  screenName: AppScreenNames.marketTradeCodeSend,
                   builder: (_) => MarketTradeCodeSendPage(
                     offer: widget.offer,
                     session: session,
@@ -148,6 +151,8 @@ class _MarketTradeCodeViewPageState
               );
             },
             style: FilledButton.styleFrom(
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
               minimumSize: const Size.fromHeight(56),
               backgroundColor: AppColors.accentDeepOrange,
             ),
@@ -205,6 +210,8 @@ class _MarketTradeCodeViewPageState
         FilledButton(
           onPressed: isBusy ? null : () => _agreeRulesAndRevealCode(session),
           style: FilledButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             minimumSize: const Size.fromHeight(56),
             backgroundColor: AppColors.accentDeepOrange,
           ),
@@ -220,6 +227,8 @@ class _MarketTradeCodeViewPageState
         OutlinedButton(
           onPressed: isBusy ? null : _rejectRulesAndCancelTrade,
           style: OutlinedButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             minimumSize: const Size.fromHeight(52),
             side: const BorderSide(color: AppColors.badgeRedText),
             foregroundColor: AppColors.badgeRedText,
@@ -353,6 +362,8 @@ class _MarketTradeCodeViewPageState
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
                         style: OutlinedButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(52),
                           side: const BorderSide(
                             color: AppColors.borderDefault,
@@ -370,8 +381,10 @@ class _MarketTradeCodeViewPageState
                       child: FilledButton(
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                         style: FilledButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
                           minimumSize: const Size.fromHeight(52),
-                          backgroundColor: AppColors.badgeRedText,
+                          backgroundColor: AppColors.modalPrimaryAction,
                         ),
                         child: Text(
                           '거래 취소',

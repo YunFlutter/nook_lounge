@@ -141,7 +141,9 @@ class _AirportPurposeEditSheetState extends State<AirportPurposeEditSheet> {
             FilledButton(
               onPressed: _onSubmit,
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.badgeBlueText,
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                backgroundColor: AppColors.modalPrimaryAction,
                 foregroundColor: AppColors.textInverse,
                 minimumSize: const Size.fromHeight(56),
                 shape: RoundedRectangleBorder(

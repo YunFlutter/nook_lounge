@@ -4,6 +4,11 @@ import UIKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+  private static let appVersionChannelName = "nook_lounge_app/app_version"
+  private static let getAppVersionMethod = "getAppVersion"
+
+  private var appVersionChannel: FlutterMethodChannel?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -27,6 +32,18 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    appVersionChannel = FlutterMethodChannel(
+      name: Self.appVersionChannelName,
+      binaryMessenger: engineBridge.applicationRegistrar.messenger()
+    )
+    appVersionChannel?.setMethodCallHandler { call, result in
+      guard call.method == Self.getAppVersionMethod else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+
+      result(Self.resolveAppVersion())
+    }
   }
 
   override func application(
@@ -121,5 +138,13 @@ import UIKit
       action,
       detail
     )
+  }
+
+  private static func resolveAppVersion() -> String {
+    let rawVersion = Bundle.main.object(
+      forInfoDictionaryKey: "CFBundleShortVersionString"
+    ) as? String
+    let normalizedVersion = rawVersion?.trimmingCharacters(in: .whitespacesAndNewlines)
+    return normalizedVersion?.isEmpty == false ? normalizedVersion! : "0.0.0"
   }
 }

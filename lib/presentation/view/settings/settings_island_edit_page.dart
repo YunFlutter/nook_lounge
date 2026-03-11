@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
@@ -107,7 +108,7 @@ class _SettingsIslandEditPageState
                 child: Semantics(
                   button: true,
                   label: '섬 이미지 수정',
-                  child: InkWell(
+                  child: AppInkWell(
                     borderRadius: BorderRadius.circular(80),
                     onTap: _isSaving || _isDeleting ? null : _pickImage,
                     child: Column(
@@ -177,7 +178,7 @@ class _SettingsIslandEditPageState
                                 ? 10
                                 : 0,
                           ),
-                          child: InkWell(
+                          child: AppInkWell(
                             onTap: _isSaving || _isDeleting
                                 ? null
                                 : () => setState(
@@ -233,7 +234,7 @@ class _SettingsIslandEditPageState
                           IslandProfileOptions.fruitEmojiByName[fruit] ??
                           IslandProfileOptions.fallbackFruitEmoji;
                       final selected = _selectedFruit == fruit;
-                      return InkWell(
+                      return AppInkWell(
                         onTap: _isSaving || _isDeleting
                             ? null
                             : () => setState(() => _selectedFruit = fruit),
@@ -272,6 +273,8 @@ class _SettingsIslandEditPageState
                 child: FilledButton(
                   onPressed: _isSaving || _isDeleting ? null : _save,
                   style: FilledButton.styleFrom(
+                    overlayColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
                     backgroundColor: AppColors.accentDeepOrange,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(26),

@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/create_island_draft.dart';
 import 'package:nook_lounge_app/presentation/state/create_island_view_state.dart';
@@ -91,7 +95,8 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
           _openingIssuedPage = true;
 
           final entered = await Navigator.of(context).push<bool>(
-            MaterialPageRoute<bool>(
+            AppPageRoute<bool>(
+              screenName: AppScreenNames.passportIssued,
               builder: (_) => PassportIssuedPage(
                 draft: submittedDraft,
                 imagePath: next.selectedImagePath,
@@ -154,196 +159,201 @@ class _CreateIslandPageState extends ConsumerState<CreateIslandPage> {
     final state = ref.watch(createIslandViewModelProvider);
     final viewModel = ref.read(createIslandViewModelProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(title: const HomeStyleAppBarTitle('여권 만들기')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.pageHorizontal,
-          AppSpacing.s10,
-          AppSpacing.pageHorizontal,
-          AppSpacing.s10 * 3,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              AnimatedFadeSlide(
-                child: Text(
-                  '나만의 여권을\n등록해볼까요?',
-                  style: AppTextStyles.bodyWithSize(
-                    24,
-                    color: AppColors.textPrimary,
-                    weight: FontWeight.w800,
-                    height: 1.5,
+    return AppScreenView(
+      screenName: AppScreenNames.createIsland,
+      child: Scaffold(
+        appBar: AppBar(title: const HomeStyleAppBarTitle('여권 만들기')),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.pageHorizontal,
+            AppSpacing.s10,
+            AppSpacing.pageHorizontal,
+            AppSpacing.s10 * 3,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                AnimatedFadeSlide(
+                  child: Text(
+                    '나만의 여권을\n등록해볼까요?',
+                    style: AppTextStyles.bodyWithSize(
+                      24,
+                      color: AppColors.textPrimary,
+                      weight: FontWeight.w800,
+                      height: 1.5,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.s10),
-              AnimatedFadeSlide(
-                delay: Duration(milliseconds: 30),
-                child: Text(
-                  '당신의 섬 정보를 입력해 주세요.',
-                  style: AppTextStyles.bodyWithSize(
-                    16,
-                    color: AppColors.textMuted,
-                    weight: FontWeight.w700,
+                const SizedBox(height: AppSpacing.s10),
+                AnimatedFadeSlide(
+                  delay: Duration(milliseconds: 30),
+                  child: Text(
+                    '당신의 섬 정보를 입력해 주세요.',
+                    style: AppTextStyles.bodyWithSize(
+                      16,
+                      color: AppColors.textMuted,
+                      weight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.s10 * 2),
-              AnimatedFadeSlide(
-                delay: const Duration(milliseconds: 60),
-                child: Center(
-                  child: Semantics(
-                    button: true,
-                    label: '사진 업로드',
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(60),
-                      onTap: state.isSubmitting ? null : _pickPassportImage,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 110,
-                            height: 110,
-                            decoration: BoxDecoration(
-                              color: AppColors.bgSecondary,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.borderDefault,
-                                style: BorderStyle.solid,
+                const SizedBox(height: AppSpacing.s10 * 2),
+                AnimatedFadeSlide(
+                  delay: const Duration(milliseconds: 60),
+                  child: Center(
+                    child: Semantics(
+                      button: true,
+                      label: '사진 업로드',
+                      child: AppInkWell(
+                        borderRadius: BorderRadius.circular(60),
+                        onTap: state.isSubmitting ? null : _pickPassportImage,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              width: 110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                color: AppColors.bgSecondary,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.borderDefault,
+                                  style: BorderStyle.solid,
+                                ),
+                              ),
+                              child: state.selectedImagePath == null
+                                  ? const Icon(
+                                      Icons.photo_camera_outlined,
+                                      size: 42,
+                                      color: AppColors.textMuted,
+                                    )
+                                  : ClipOval(
+                                      child: Image.file(
+                                        File(state.selectedImagePath!),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                            ),
+                            const SizedBox(height: AppSpacing.s10),
+                            Text(
+                              '사진 업로드',
+                              style: AppTextStyles.bodyWithSize(
+                                13,
+                                color: AppColors.textMuted,
+                                weight: FontWeight.w700,
                               ),
                             ),
-                            child: state.selectedImagePath == null
-                                ? const Icon(
-                                    Icons.photo_camera_outlined,
-                                    size: 42,
-                                    color: AppColors.textMuted,
-                                  )
-                                : ClipOval(
-                                    child: Image.file(
-                                      File(state.selectedImagePath!),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                          ),
-                          const SizedBox(height: AppSpacing.s10),
-                          Text(
-                            '사진 업로드',
-                            style: AppTextStyles.bodyWithSize(
-                              13,
-                              color: AppColors.textMuted,
-                              weight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.s10 * 2),
-              Text('섬 이름', style: AppTextStyles.headingH2Secondary),
-              const SizedBox(height: 6),
-              TextFormField(
-                controller: _islandNameController,
-                cursorColor: AppColors.accentDeepOrange,
-                decoration: _fieldDecoration(hintText: '예: 너굴섬'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '섬 이름을 입력해주세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppSpacing.s22),
-              Text('대표 주민 이름', style: AppTextStyles.headingH2Secondary),
-              const SizedBox(height: AppSpacing.s10),
-              TextFormField(
-                controller: _representativeController,
-                cursorColor: AppColors.accentDeepOrange,
-                decoration: _fieldDecoration(hintText: '예: 너굴팬'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '대표 주민 이름을 입력해주세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: AppSpacing.s22),
-              Text('반구 선택', style: AppTextStyles.headingH2Secondary),
-              const SizedBox(height: AppSpacing.s10),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _HemisphereCard(
-                      title: '북반구',
-                      imagePath:
-                          'assets/images/icon_northern_hemisphere_compass.png',
-                      selected: _hemisphere == '북반구',
-                      onTap: () => setState(() => _hemisphere = '북반구'),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.s10),
-                  Expanded(
-                    child: _HemisphereCard(
-                      title: '남반구',
-                      imagePath:
-                          'assets/images/icon_southern_hemisphere_compass.png',
-                      selected: _hemisphere == '남반구',
-                      onTap: () => setState(() => _hemisphere = '남반구'),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.s22),
-              Text('특산물', style: AppTextStyles.headingH2Secondary),
-              const SizedBox(height: AppSpacing.s10),
-              Wrap(
-                spacing: AppSpacing.s10,
-                runSpacing: AppSpacing.s10,
-                children: _fruits
-                    .map(
-                      (fruit) => _FruitCircleButton(
-                        emoji: _fruitEmojiByName[fruit] ?? '🍀',
-                        selected: _nativeFruit == fruit,
-                        onTap: () => setState(() => _nativeFruit = fruit),
-                      ),
-                    )
-                    .toList(growable: false),
-              ),
-              const SizedBox(height: AppSpacing.s10 * 2),
-              FilledButton(
-                onPressed: state.isSubmitting
-                    ? null
-                    : () async {
-                        if (!_formKey.currentState!.validate()) {
-                          return;
-                        }
-
-                        final draft = CreateIslandDraft(
-                          islandName: _islandNameController.text.trim(),
-                          representativeName: _representativeController.text
-                              .trim(),
-                          hemisphere: _hemisphere,
-                          nativeFruit: _nativeFruit,
-                        );
-
-                        _lastSubmittedDraft = draft;
-                        _lastCreatedIslandId = await viewModel.createIsland(
-                          uid: widget.uid,
-                          draft: draft,
-                        );
-                      },
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.accentDeepOrange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+                const SizedBox(height: AppSpacing.s10 * 2),
+                Text('섬 이름', style: AppTextStyles.headingH2Secondary),
+                const SizedBox(height: 6),
+                TextFormField(
+                  controller: _islandNameController,
+                  cursorColor: AppColors.accentDeepOrange,
+                  decoration: _fieldDecoration(hintText: '예: 너굴섬'),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return '섬 이름을 입력해주세요.';
+                    }
+                    return null;
+                  },
                 ),
-                child: Text(state.isSubmitting ? '등록 중...' : '섬 등록하고 시작하기'),
-              ),
-            ],
+                const SizedBox(height: AppSpacing.s22),
+                Text('대표 주민 이름', style: AppTextStyles.headingH2Secondary),
+                const SizedBox(height: AppSpacing.s10),
+                TextFormField(
+                  controller: _representativeController,
+                  cursorColor: AppColors.accentDeepOrange,
+                  decoration: _fieldDecoration(hintText: '예: 너굴팬'),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return '대표 주민 이름을 입력해주세요.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppSpacing.s22),
+                Text('반구 선택', style: AppTextStyles.headingH2Secondary),
+                const SizedBox(height: AppSpacing.s10),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: _HemisphereCard(
+                        title: '북반구',
+                        imagePath:
+                            'assets/images/icon_northern_hemisphere_compass.png',
+                        selected: _hemisphere == '북반구',
+                        onTap: () => setState(() => _hemisphere = '북반구'),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.s10),
+                    Expanded(
+                      child: _HemisphereCard(
+                        title: '남반구',
+                        imagePath:
+                            'assets/images/icon_southern_hemisphere_compass.png',
+                        selected: _hemisphere == '남반구',
+                        onTap: () => setState(() => _hemisphere = '남반구'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.s22),
+                Text('특산물', style: AppTextStyles.headingH2Secondary),
+                const SizedBox(height: AppSpacing.s10),
+                Wrap(
+                  spacing: AppSpacing.s10,
+                  runSpacing: AppSpacing.s10,
+                  children: _fruits
+                      .map(
+                        (fruit) => _FruitCircleButton(
+                          emoji: _fruitEmojiByName[fruit] ?? '🍀',
+                          selected: _nativeFruit == fruit,
+                          onTap: () => setState(() => _nativeFruit = fruit),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+                const SizedBox(height: AppSpacing.s10 * 2),
+                FilledButton(
+                  onPressed: state.isSubmitting
+                      ? null
+                      : () async {
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
+
+                          final draft = CreateIslandDraft(
+                            islandName: _islandNameController.text.trim(),
+                            representativeName: _representativeController.text
+                                .trim(),
+                            hemisphere: _hemisphere,
+                            nativeFruit: _nativeFruit,
+                          );
+
+                          _lastSubmittedDraft = draft;
+                          _lastCreatedIslandId = await viewModel.createIsland(
+                            uid: widget.uid,
+                            draft: draft,
+                          );
+                        },
+                  style: FilledButton.styleFrom(
+                    overlayColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                    backgroundColor: AppColors.accentDeepOrange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  child: Text(state.isSubmitting ? '등록 중...' : '섬 등록하고 시작하기'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -394,7 +404,7 @@ class _HemisphereCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(24),
       onTap: onTap,
       child: AnimatedContainer(
@@ -444,7 +454,7 @@ class _FruitCircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return AppInkWell(
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
       child: AnimatedContainer(

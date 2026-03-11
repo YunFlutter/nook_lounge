@@ -1,11 +1,14 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/animation/app_motion.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
+import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/catalog_item.dart';
 import 'package:nook_lounge_app/domain/model/catalog_user_state.dart';
@@ -83,41 +86,53 @@ class _CatalogDashboardTabState extends ConsumerState<CatalogDashboardTab> {
     );
 
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const AppScreenView(
+        screenName: AppScreenNames.catalogDashboard,
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (_errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.pageHorizontal),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(_errorMessage!, style: AppTextStyles.bodyPrimary),
-              const SizedBox(height: AppSpacing.s10),
-              FilledButton(onPressed: _loadCatalog, child: const Text('다시 시도')),
-            ],
+      return AppScreenView(
+        screenName: AppScreenNames.catalogDashboard,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.pageHorizontal),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(_errorMessage!, style: AppTextStyles.bodyPrimary),
+                const SizedBox(height: AppSpacing.s10),
+                FilledButton(
+                  onPressed: _loadCatalog,
+                  child: const Text('다시 시도'),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadCatalog,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.catalogHorizontal,
-          AppSpacing.s10,
-          AppSpacing.catalogHorizontal,
-          AppSpacing.s10 * 2,
+    return AppScreenView(
+      screenName: AppScreenNames.catalogDashboard,
+      child: RefreshIndicator(
+        onRefresh: _loadCatalog,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.catalogHorizontal,
+            AppSpacing.s10,
+            AppSpacing.catalogHorizontal,
+            AppSpacing.s10 * 2,
+          ),
+          children: <Widget>[
+            _buildVillagerSection(context, overrides),
+            const SizedBox(height: AppSpacing.s10 * 2),
+            _buildMuseumSection(context, overrides),
+            const SizedBox(height: AppSpacing.s10 * 2),
+            _buildCollectionSection(context, overrides),
+          ],
         ),
-        children: <Widget>[
-          _buildVillagerSection(context, overrides),
-          const SizedBox(height: AppSpacing.s10 * 2),
-          _buildMuseumSection(context, overrides),
-          const SizedBox(height: AppSpacing.s10 * 2),
-          _buildCollectionSection(context, overrides),
-        ],
       ),
     );
   }
@@ -461,6 +476,8 @@ class _SectionTitleRow extends StatelessWidget {
         TextButton(
           onPressed: onTap,
           style: TextButton.styleFrom(
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             foregroundColor: AppColors.primaryDefault,
             minimumSize: const Size(0, 0),
             padding: EdgeInsets.zero,
@@ -510,6 +527,8 @@ class _ProgressSection extends StatelessWidget {
             TextButton(
               onPressed: onViewAll,
               style: TextButton.styleFrom(
+                overlayColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
                 foregroundColor: AppColors.primaryDefault,
                 minimumSize: const Size(0, 0),
                 padding: EdgeInsets.zero,
@@ -562,7 +581,7 @@ class _ProgressCircleCard extends StatelessWidget {
 
     return SizedBox(
       width: width,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Container(
@@ -641,7 +660,7 @@ class _VillagerAvatarItem extends StatelessWidget {
     return Semantics(
       label: '주민 슬롯 ${slotIndex + 1}: ${item.name}',
       button: true,
-      child: InkWell(
+      child: AppInkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: SizedBox(
@@ -747,7 +766,7 @@ class _VillagerEmptySlot extends StatelessWidget {
       button: canOpenCollection,
       child: Material(
         color: AppColors.transparent,
-        child: InkWell(
+        child: AppInkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: canOpenCollection ? onTap : null,
           child: SizedBox(
