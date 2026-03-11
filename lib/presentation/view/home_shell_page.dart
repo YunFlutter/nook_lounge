@@ -12,8 +12,8 @@ import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
-import 'package:nook_lounge_app/presentation/view/airport/airport_rules_edit_page.dart';
 import 'package:nook_lounge_app/presentation/view/airport/airport_tab_page.dart';
+import 'package:nook_lounge_app/presentation/view/common/island_rules_edit_sheet.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
@@ -136,14 +136,17 @@ class HomeShellPage extends ConsumerWidget {
             onPressed: selectedIslandId.trim().isEmpty
                 ? null
                 : () async {
-                    final nextRules = await Navigator.of(context).push<String>(
-                      AppPageRoute<String>(
-                        screenName: AppScreenNames.airportRulesEdit,
-                        builder: (_) =>
-                            AirportRulesEditPage(initialRules: editableRules),
-                      ),
+                    final nextRules = await IslandRulesEditSheet.show(
+                      context: context,
+                      initialRules: editableRules,
+                      title: '섬 방문 규칙',
+                      subtitle: '비행장 손님에게 보여줄 섬 규칙을 작성해 주세요.',
+                      hintText: '예시)\n1. 꽃 밟지 않기\n2. 열매 따먹지 않기',
+                      emptyRulesMessage: '규칙을 한 줄 이상 입력해 주세요.',
                     );
-                    if (nextRules == null || nextRules.trim().isEmpty) {
+                    if (!context.mounted ||
+                        nextRules == null ||
+                        nextRules.trim().isEmpty) {
                       return;
                     }
                     await ref

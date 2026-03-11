@@ -3,17 +3,64 @@ import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 
-class MarketTradeRulesEditSheet extends StatefulWidget {
-  const MarketTradeRulesEditSheet({required this.initialRules, super.key});
+class IslandRulesEditSheet extends StatefulWidget {
+  const IslandRulesEditSheet({
+    required this.initialRules,
+    required this.title,
+    required this.subtitle,
+    required this.hintText,
+    required this.emptyRulesMessage,
+    this.primaryButtonLabel = '규칙 저장하기',
+    super.key,
+  });
 
   final String initialRules;
+  final String title;
+  final String subtitle;
+  final String hintText;
+  final String emptyRulesMessage;
+  final String primaryButtonLabel;
+
+  static Future<String?> show({
+    required BuildContext context,
+    required String initialRules,
+    required String title,
+    required String subtitle,
+    required String hintText,
+    required String emptyRulesMessage,
+    String primaryButtonLabel = '규칙 저장하기',
+  }) {
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.transparent,
+      builder: (sheetContext) {
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
+          ),
+          child: SingleChildScrollView(
+            child: IslandRulesEditSheet(
+              initialRules: initialRules,
+              title: title,
+              subtitle: subtitle,
+              hintText: hintText,
+              emptyRulesMessage: emptyRulesMessage,
+              primaryButtonLabel: primaryButtonLabel,
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
-  State<MarketTradeRulesEditSheet> createState() =>
-      _MarketTradeRulesEditSheetState();
+  State<IslandRulesEditSheet> createState() => _IslandRulesEditSheetState();
 }
 
-class _MarketTradeRulesEditSheetState extends State<MarketTradeRulesEditSheet> {
+class _IslandRulesEditSheetState extends State<IslandRulesEditSheet> {
   late final TextEditingController _controller;
 
   @override
@@ -34,8 +81,8 @@ class _MarketTradeRulesEditSheetState extends State<MarketTradeRulesEditSheet> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('섬 규칙을 한 줄 이상 입력해 주세요.'),
+          SnackBar(
+            content: Text(widget.emptyRulesMessage),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -72,48 +119,44 @@ class _MarketTradeRulesEditSheetState extends State<MarketTradeRulesEditSheet> {
               ),
             ),
             const SizedBox(height: AppSpacing.s22),
-            Text('섬 방문 규칙', style: AppTextStyles.headingH1),
+            Text(widget.title, style: AppTextStyles.headingH1),
             const SizedBox(height: AppSpacing.s12),
             Text(
-              '상대가 동의한 뒤 코드를 확인할 수 있어요.',
+              widget.subtitle,
               textAlign: TextAlign.center,
               style: AppTextStyles.bodySecondaryStrong,
             ),
             const SizedBox(height: AppSpacing.s18),
-            Container(
-              padding: const EdgeInsets.all(15),
-              child: TextField(
-                controller: _controller,
-                minLines: 8,
-                maxLines: 12,
-                textInputAction: TextInputAction.newline,
-                cursorColor: AppColors.accentDeepOrange,
-                style: AppTextStyles.bodySecondaryStrong.copyWith(height: 1.5),
-                decoration: InputDecoration(
-                  hintText: '예시)\n1. 꽃 밟지 않기\n2. 열매 따먹지 않기\n3. 게시판에 방문록 남기기',
-                  hintStyle: AppTextStyles.bodyHintStrong.copyWith(height: 1.5),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: const BorderSide(
-                      color: AppColors.borderDefault,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: const BorderSide(
-                      color: AppColors.borderDefault,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: const BorderSide(
-                      color: AppColors.accentDeepOrange,
-                      width: 2,
-                    ),
-                  ),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.all(15),
+            // 유지보수 포인트:
+            // 공항/마켓이 같은 규칙 편집 시트를 재사용하므로
+            // 입력창 토큰은 여기서만 조정하면 두 화면이 함께 맞춰집니다.
+            TextField(
+              controller: _controller,
+              minLines: 8,
+              maxLines: 12,
+              textInputAction: TextInputAction.newline,
+              cursorColor: AppColors.accentDeepOrange,
+              style: AppTextStyles.bodySecondaryStrong.copyWith(height: 1.5),
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                hintStyle: AppTextStyles.bodyHintStrong.copyWith(height: 1.5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(color: AppColors.borderDefault),
                 ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(color: AppColors.borderDefault),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: const BorderSide(
+                    color: AppColors.accentDeepOrange,
+                    width: 2,
+                  ),
+                ),
+                isDense: true,
+                contentPadding: const EdgeInsets.all(15),
               ),
             ),
             const SizedBox(height: AppSpacing.s20),
@@ -129,7 +172,10 @@ class _MarketTradeRulesEditSheetState extends State<MarketTradeRulesEditSheet> {
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
-              child: Text('규칙 저장하기', style: AppTextStyles.buttonPrimary),
+              child: Text(
+                widget.primaryButtonLabel,
+                style: AppTextStyles.buttonPrimary,
+              ),
             ),
             const SizedBox(height: AppSpacing.s10),
             OutlinedButton(

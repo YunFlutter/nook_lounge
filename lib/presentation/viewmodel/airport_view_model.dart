@@ -184,6 +184,21 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
       state = state.copyWith(errorMessage: '초대할 손님을 선택해 주세요.');
       return false;
     }
+    final capacity = state.session?.capacity ?? 8;
+    final approvedCount = state.approvedRequests.length;
+    final remainingSlots = (capacity - approvedCount).clamp(0, capacity);
+    if (remainingSlots <= 0) {
+      state = state.copyWith(
+        errorMessage: '동시에 받을 수 있는 손님이 가득 찼어요. 방문 종료 후 다시 승낙해 주세요.',
+      );
+      return false;
+    }
+    if (selected.length > remainingSlots) {
+      state = state.copyWith(
+        errorMessage: '현재는 최대 $remainingSlots명까지만 추가로 승낙할 수 있어요.',
+      );
+      return false;
+    }
 
     return _runAction(
       action: () => _repository.inviteRequests(
@@ -527,6 +542,10 @@ class AirportViewModel extends StateNotifier<AirportViewState> {
           return '신고할 손님 정보를 찾지 못했어요.';
         case 'blocked_user':
           return '차단된 유저와는 방문 요청을 주고받을 수 없어요.';
+        case 'airport_capacity_full':
+          return '동시에 받을 수 있는 손님은 최대 8명이에요.';
+        case 'touching_visit_already_in_progress':
+          return '만지작 줄서기는 한 번에 한 명씩만 방문 확인할 수 있어요.';
         case 'cannot_report_self':
           return '본인 계정은 신고할 수 없어요.';
       }

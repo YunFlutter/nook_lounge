@@ -29,101 +29,121 @@ class AirportViewState {
 
   List<AirportVisitRequest> get pendingRequests {
     // 유지보수 포인트:
-    // "다른 섬 방문 대기 현황"은 일반 방문 요청(비거래)만 노출합니다.
-    // 거래 연동 요청은 waitingGuests로 분리합니다.
-    final requests = incomingRequests
-        .where((request) {
-          return request.status == AirportVisitRequestStatus.pending &&
-              !_isTradeLinked(request);
-        })
+    // 줄서기/거래 연동 여부와 무관하게 "아직 승낙 전" 요청은
+    // 모두 동일한 대기열로 취급하되, 동일 손님의 최신 활성 상태가
+    // 초대 완료/방문 중이면 pending에서 빠져야 UI가 중복되지 않습니다.
+    final requests = _resolvedIncomingActiveRequests
+        .where((request) => request.status == AirportVisitRequestStatus.pending)
         .toList(growable: false);
     requests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return requests;
   }
 
   List<AirportVisitRequest> get invitedRequests {
-    return incomingRequests
+    final requests = _resolvedIncomingActiveRequests
         .where((request) => request.status == AirportVisitRequestStatus.invited)
         .toList(growable: false);
+    requests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return requests;
   }
 
   // 유지보수 포인트:
-  // 거래 연동(`sourceType == market_trade`) 요청은
-  // 상태가 대기/초대/방문중(active)일 때 "내 섬에 방문 대기 중인 손님"으로 모읍니다.
+  // "내 섬에 방문 대기 중인 손님"은 아직 입장 전(pending/invited) 손님만 보여줍니다.
+  // 동일 거래에 arrived 상태가 생기면 이 목록에서는 빠지고 방문객 명단으로만 이동해야 합니다.
   List<AirportVisitRequest> get waitingGuests {
-    final guests = _dedupeTradeLinkedRequests(
-      incomingRequests.where((request) {
-        if (!_isTradeLinked(request)) {
-          return false;
-        }
-        return request.status == AirportVisitRequestStatus.pending ||
-            request.status == AirportVisitRequestStatus.invited ||
-            request.status == AirportVisitRequestStatus.arrived;
-      }),
-    ).toList(growable: false);
-
+    final guests = _resolvedIncomingActiveRequests
+        .where((request) {
+          return request.status == AirportVisitRequestStatus.pending ||
+              request.status == AirportVisitRequestStatus.invited;
+        })
+        .toList(growable: false);
     guests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return guests;
   }
 
   List<AirportVisitRequest> get activeVisitors {
-    final visitors = _dedupeTradeLinkedRequests(
-      incomingRequests.where((request) {
-        return request.status == AirportVisitRequestStatus.arrived;
-      }),
-    ).toList(growable: false);
+    final visitors = _resolvedIncomingActiveRequests
+        .where((request) => request.status == AirportVisitRequestStatus.arrived)
+        .toList(growable: false);
     visitors.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return visitors;
   }
 
+  List<AirportVisitRequest> get approvedRequests {
+    final requests = _resolvedIncomingActiveRequests
+        .where((request) {
+          return request.status == AirportVisitRequestStatus.invited ||
+              request.status == AirportVisitRequestStatus.arrived;
+        })
+        .toList(growable: false);
+    requests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return requests;
+  }
+
   List<AirportVisitRequest> get myActiveRequests {
-    return _dedupeTradeLinkedRequests(
+    return _dedupeRequests(
       myRequests.where((request) => request.isActive),
     ).toList(growable: false);
   }
 
-  Iterable<AirportVisitRequest> _dedupeTradeLinkedRequests(
+  Iterable<AirportVisitRequest> _dedupeRequests(
     Iterable<AirportVisitRequest> requests,
   ) {
     final requestsByKey = <String, AirportVisitRequest>{};
     for (final request in requests) {
-      final key = _tradeRequestKey(request);
+      final key = _requestKey(request);
       final existing = requestsByKey[key];
-      if (existing == null || _shouldReplaceTradeRequest(existing, request)) {
+      if (existing == null || _shouldReplaceRequest(existing, request)) {
         requestsByKey[key] = request;
       }
     }
     return requestsByKey.values;
   }
 
-  String _tradeRequestKey(AirportVisitRequest request) {
+  Iterable<AirportVisitRequest> get _resolvedIncomingActiveRequests {
+    return _dedupeRequests(
+      incomingRequests.where((request) {
+        return request.status == AirportVisitRequestStatus.pending ||
+            request.status == AirportVisitRequestStatus.invited ||
+            request.status == AirportVisitRequestStatus.arrived;
+      }),
+    );
+  }
+
+  String _requestKey(AirportVisitRequest request) {
     if (!_isTradeLinked(request)) {
       return request.id;
     }
     final sourceOfferId = request.sourceOfferId?.trim() ?? '';
+    final requesterUid = request.requesterUid.trim();
     if (sourceOfferId.isNotEmpty) {
-      return 'trade:$sourceOfferId';
+      return requesterUid.isEmpty
+          ? 'trade:$sourceOfferId'
+          : 'trade:$sourceOfferId:$requesterUid';
     }
     final requestId = request.id.trim();
     if (requestId.startsWith(_tradeRequestIdPrefix)) {
-      return 'trade:${requestId.substring(_tradeRequestIdPrefix.length)}';
+      final legacyKey = requestId.substring(_tradeRequestIdPrefix.length);
+      return requesterUid.isEmpty
+          ? 'trade:$legacyKey'
+          : 'trade:$legacyKey:$requesterUid';
     }
     return requestId;
   }
 
-  bool _shouldReplaceTradeRequest(
+  bool _shouldReplaceRequest(
     AirportVisitRequest current,
     AirportVisitRequest next,
   ) {
-    final currentRank = _tradeRequestStatusRank(current.status);
-    final nextRank = _tradeRequestStatusRank(next.status);
+    final currentRank = _requestStatusRank(current.status);
+    final nextRank = _requestStatusRank(next.status);
     if (nextRank != currentRank) {
       return nextRank < currentRank;
     }
     return next.updatedAt.isAfter(current.updatedAt);
   }
 
-  int _tradeRequestStatusRank(AirportVisitRequestStatus status) {
+  int _requestStatusRank(AirportVisitRequestStatus status) {
     switch (status) {
       case AirportVisitRequestStatus.arrived:
         return 0;

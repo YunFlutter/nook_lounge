@@ -6,6 +6,7 @@ import 'package:nook_lounge_app/core/constants/app_spacing.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/viewmodel/airport_view_model.dart';
@@ -255,7 +256,7 @@ class AirportVisitorManifestPage extends ConsumerWidget {
           style: FilledButton.styleFrom(
             overlayColor: Colors.transparent,
             splashFactory: NoSplash.splashFactory,
-            backgroundColor: AppColors.badgeBlueText,
+            backgroundColor: Color(0xff85c8e5),
             foregroundColor: AppColors.textInverse,
             minimumSize: const Size.fromHeight(56),
             shape: RoundedRectangleBorder(
@@ -292,6 +293,12 @@ class AirportVisitorManifestPage extends ConsumerWidget {
       return;
     }
     if (offer == null) {
+      await airportViewModel.completeVisit(visitor.id);
+      return;
+    }
+
+    if (offer.tradeType == MarketTradeType.touching &&
+        offer.moveType == MarketMoveType.host) {
       await airportViewModel.completeVisit(visitor.id);
       return;
     }

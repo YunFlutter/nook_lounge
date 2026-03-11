@@ -13,11 +13,12 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/presentation/view/airport/airport_dodo_code_input_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/common/island_rules_edit_sheet.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_card.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_trade_code_view_page.dart';
-import 'package:nook_lounge_app/presentation/view/market/market_trade_rules_edit_sheet.dart';
 
 class MarketTradeCodeSendPage extends ConsumerStatefulWidget {
   const MarketTradeCodeSendPage({
@@ -47,6 +48,8 @@ class _MarketTradeCodeSendPageState
   bool _hasUserEditedCode = false;
   bool _hasUserEditedRules = false;
   bool _isSending = false;
+  bool _hasInitializedReceiverSelection = false;
+  Set<String> _selectedReceiverUids = <String>{};
 
   String get _normalizedCode => _codeController.text.trim().toUpperCase();
   String get _normalizedRules => _rulesController.text.trim();
@@ -82,11 +85,26 @@ class _MarketTradeCodeSendPageState
     final viewModel = ref.read(marketViewModelProvider.notifier);
     final currentUid = viewModel.currentUserId;
     final isSender = widget.session.isCodeSender(currentUid);
+    final supportsTouchingQueue = _supportsTouchingQueue;
+    final proposalsAsync = supportsTouchingQueue
+        ? ref.watch(marketTradeProposalsProvider(widget.offer.id))
+        : const AsyncValue<List<MarketTradeProposal>>.data(
+            <MarketTradeProposal>[],
+          );
+    final acceptedProposals =
+        proposalsAsync.valueOrNull
+            ?.where((proposal) => proposal.isAccepted)
+            .toList(growable: false) ??
+        const <MarketTradeProposal>[];
+    final selectedReceiverUids = supportsTouchingQueue
+        ? _resolveSelectedReceiverUids(acceptedProposals)
+        : _splitUidCsv(widget.session.codeReceiverUid);
     final canEdit = isSender && !_isSending;
     final canSend =
         canEdit &&
         _dodoCodePattern.hasMatch(_normalizedCode) &&
-        _normalizedRules.isNotEmpty;
+        _normalizedRules.isNotEmpty &&
+        (!supportsTouchingQueue || selectedReceiverUids.isNotEmpty);
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -165,6 +183,25 @@ class _MarketTradeCodeSendPageState
                 weight: FontWeight.w800,
               ),
             ),
+            if (supportsTouchingQueue) ...<Widget>[
+              const SizedBox(height: AppSpacing.s24),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _buildSectionTitle('코드 보낼 손님'),
+              ),
+              const SizedBox(height: AppSpacing.s10),
+              _buildReceiverSelectionSection(
+                proposalsAsync: proposalsAsync,
+                selectedReceiverUids: selectedReceiverUids,
+                canEdit: canEdit,
+              ),
+              const SizedBox(height: AppSpacing.s10),
+              Text(
+                '선택한 손님들에게 같은 도도 코드와 규칙을 한 번에 보내요.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.captionSecondary,
+              ),
+            ],
             if (!isSender) ...<Widget>[
               const SizedBox(height: AppSpacing.s12),
               Text(
@@ -201,7 +238,11 @@ class _MarketTradeCodeSendPageState
                   ),
                 ),
                 child: Text(
-                  _isSending ? '코드 전송 중...' : '코드 보내기',
+                  _isSending
+                      ? '코드 전송 중...'
+                      : supportsTouchingQueue
+                      ? '선택한 손님에게 코드 보내기'
+                      : '코드 보내기',
                   style: AppTextStyles.buttonPrimary,
                 ),
               ),
@@ -243,11 +284,221 @@ class _MarketTradeCodeSendPageState
     );
   }
 
+  bool get _supportsTouchingQueue {
+    return widget.offer.tradeType == MarketTradeType.touching &&
+        widget.offer.moveType == MarketMoveType.host;
+  }
+
+  Set<String> _resolveSelectedReceiverUids(
+    List<MarketTradeProposal> acceptedProposals,
+  ) {
+    final acceptedUids = acceptedProposals
+        .map((proposal) => proposal.proposerUid.trim())
+        .where((uid) => uid.isNotEmpty)
+        .toSet();
+    if (!_hasInitializedReceiverSelection) {
+      final sessionReceiverUids = _splitUidCsv(
+        widget.session.codeReceiverUid,
+      ).intersection(acceptedUids);
+      _selectedReceiverUids = sessionReceiverUids.isNotEmpty
+          ? sessionReceiverUids
+          : acceptedUids;
+      _hasInitializedReceiverSelection = true;
+    } else {
+      _selectedReceiverUids = _selectedReceiverUids
+          .intersection(acceptedUids)
+          .toSet();
+    }
+    return _selectedReceiverUids;
+  }
+
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
       textAlign: TextAlign.center,
       style: AppTextStyles.headingH3,
+    );
+  }
+
+  Widget _buildReceiverSelectionSection({
+    required AsyncValue<List<MarketTradeProposal>> proposalsAsync,
+    required Set<String> selectedReceiverUids,
+    required bool canEdit,
+  }) {
+    return proposalsAsync.when(
+      loading: () => _buildSelectionPanel(
+        child: const Center(
+          child: SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ),
+      error: (error, stackTrace) => _buildSelectionPanel(
+        child: Text(
+          '승낙된 손님 목록을 불러오지 못했어요.',
+          textAlign: TextAlign.center,
+          style: AppTextStyles.captionMuted,
+        ),
+      ),
+      data: (proposals) {
+        final acceptedProposals = proposals
+            .where((proposal) => proposal.isAccepted)
+            .toList(growable: false);
+        if (acceptedProposals.isEmpty) {
+          return _buildSelectionPanel(
+            child: Text(
+              '아직 코드 보낼 손님이 없어요.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.captionMuted,
+            ),
+          );
+        }
+
+        return _buildSelectionPanel(
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      '선택 ${selectedReceiverUids.length}명 / 승낙 ${acceptedProposals.length}명',
+                      style: AppTextStyles.bodySecondaryStrong,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: canEdit
+                        ? () {
+                            setState(() {
+                              _selectedReceiverUids = acceptedProposals
+                                  .map(
+                                    (proposal) => proposal.proposerUid.trim(),
+                                  )
+                                  .where((uid) => uid.isNotEmpty)
+                                  .toSet();
+                            });
+                          }
+                        : null,
+                    child: const Text('전체 선택'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.s8),
+              ...acceptedProposals.asMap().entries.map((entry) {
+                final index = entry.key;
+                final proposal = entry.value;
+                final proposerUid = proposal.proposerUid.trim();
+                final isSelected = selectedReceiverUids.contains(proposerUid);
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == acceptedProposals.length - 1
+                        ? 0
+                        : AppSpacing.s10,
+                  ),
+                  child: Material(
+                    color: AppColors.bgSecondary,
+                    borderRadius: BorderRadius.circular(18),
+                    child: InkWell(
+                      onTap: !canEdit || proposerUid.isEmpty
+                          ? null
+                          : () {
+                              setState(() {
+                                if (isSelected) {
+                                  _selectedReceiverUids.remove(proposerUid);
+                                } else {
+                                  _selectedReceiverUids.add(proposerUid);
+                                }
+                              });
+                            },
+                      borderRadius: BorderRadius.circular(18),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.modalPrimaryAction
+                                : AppColors.borderDefault,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            ClipOval(
+                              child: SizedBox(
+                                width: 44,
+                                height: 44,
+                                child: proposal.proposerAvatarUrl.trim().isEmpty
+                                    ? Image.asset(
+                                        'assets/images/icon_raccoon_character.png',
+                                        fit: BoxFit.cover,
+                                      )
+                                    : _buildImage(proposal.proposerAvatarUrl),
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.s10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    proposal.proposerName.trim().isEmpty
+                                        ? '이름 없는 유저'
+                                        : proposal.proposerName.trim(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.bodyPrimaryHeavy
+                                        .copyWith(fontSize: 15),
+                                  ),
+                                  const SizedBox(height: AppSpacing.s4),
+                                  Text(
+                                    proposal.status.label,
+                                    style: AppTextStyles.captionSecondary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.s10),
+                            Icon(
+                              isSelected
+                                  ? Icons.check_circle_rounded
+                                  : Icons.radio_button_unchecked_rounded,
+                              color: isSelected
+                                  ? AppColors.modalPrimaryAction
+                                  : AppColors.textMuted,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSelectionPanel({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.s18),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: AppColors.borderDefault),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(
+            color: AppColors.shadowSoft,
+            blurRadius: 14,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 
@@ -391,9 +642,7 @@ class _MarketTradeCodeSendPageState
                   rulesPreview,
                   style: _normalizedRules.isEmpty
                       ? AppTextStyles.bodyHintStrong
-                      : AppTextStyles.bodySecondaryStrong.copyWith(
-                    height: 1.5
-                  ),
+                      : AppTextStyles.bodySecondaryStrong.copyWith(height: 1.5),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -476,22 +725,13 @@ class _MarketTradeCodeSendPageState
   }
 
   Future<void> _openRulesSheet(BuildContext context) async {
-    final nextRules = await showModalBottomSheet<String>(
+    final nextRules = await IslandRulesEditSheet.show(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.transparent,
-      builder: (sheetContext) {
-        return AnimatedPadding(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
-          ),
-          child: SingleChildScrollView(
-            child: MarketTradeRulesEditSheet(initialRules: _normalizedRules),
-          ),
-        );
-      },
+      initialRules: _normalizedRules,
+      title: '섬 방문 규칙',
+      subtitle: '상대가 동의한 뒤 코드를 확인할 수 있어요.',
+      hintText: '예시)\n1. 꽃 밟지 않기\n2. 열매 따먹지 않기\n3. 게시판에 방문록 남기기',
+      emptyRulesMessage: '섬 규칙을 한 줄 이상 입력해 주세요.',
     );
 
     if (!mounted || nextRules == null) {
@@ -507,6 +747,9 @@ class _MarketTradeCodeSendPageState
   Future<void> _sendCode(BuildContext context, WidgetRef ref) async {
     final code = _normalizedCode;
     final rules = _normalizedRules;
+    final selectedReceiverUids = _supportsTouchingQueue
+        ? _selectedReceiverUids.toSet()
+        : _splitUidCsv(widget.session.codeReceiverUid);
     if (!_dodoCodePattern.hasMatch(code)) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -529,6 +772,17 @@ class _MarketTradeCodeSendPageState
         );
       return;
     }
+    if (selectedReceiverUids.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('코드를 보낼 손님을 한 명 이상 선택해 주세요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      return;
+    }
 
     setState(() => _isSending = true);
     try {
@@ -536,7 +790,7 @@ class _MarketTradeCodeSendPageState
           .read(marketViewModelProvider.notifier)
           .sendTradeCode(
             offer: widget.offer,
-            receiverUid: widget.session.codeReceiverUid,
+            receiverUid: _joinUidCsv(selectedReceiverUids),
             code: code,
             islandRules: rules,
           );
@@ -663,5 +917,45 @@ class _MarketTradeCodeSendPageState
           letters[random.nextInt(letters.length)];
     }
     return chars.join();
+  }
+
+  Set<String> _splitUidCsv(String raw) {
+    return raw
+        .split(',')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toSet();
+  }
+
+  String _joinUidCsv(Iterable<String> uids) {
+    final normalized =
+        uids
+            .map((uid) => uid.trim())
+            .where((uid) => uid.isNotEmpty)
+            .toSet()
+            .toList(growable: false)
+          ..sort();
+    return normalized.join(',');
+  }
+
+  Widget _buildImage(String source) {
+    if (source.startsWith('http://') || source.startsWith('https://')) {
+      return Image.network(
+        source,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          'assets/images/icon_raccoon_character.png',
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    return Image.asset(
+      source,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Image.asset(
+        'assets/images/icon_raccoon_character.png',
+        fit: BoxFit.cover,
+      ),
+    );
   }
 }

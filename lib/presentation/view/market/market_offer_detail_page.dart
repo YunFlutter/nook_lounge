@@ -214,6 +214,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
         target.status == MarketOfferStatus.closed;
   }
 
+  bool _supportsTouchingQueue(MarketOffer target) {
+    return target.tradeType == MarketTradeType.touching &&
+        target.moveType == MarketMoveType.host;
+  }
+
   bool _canOpenSimpleMenu({
     required bool isMine,
     required MarketOffer currentOffer,
@@ -569,9 +574,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
     var secondaryLabel = '닫기';
     VoidCallback? secondaryOnPressed = () => Navigator.of(context).pop();
     final canCancelTrade = !_isInactiveOffer(currentOffer);
+    final supportsTouchingQueue = _supportsTouchingQueue(currentOffer);
     final isOfferLockedByAcceptedTrade =
-        currentOffer.status == MarketOfferStatus.waiting ||
-        currentOffer.status == MarketOfferStatus.trading;
+        (currentOffer.status == MarketOfferStatus.waiting ||
+            currentOffer.status == MarketOfferStatus.trading) &&
+        !supportsTouchingQueue;
 
     if (myProposalAsync.isLoading) {
       primaryLabel = '제안 상태 확인 중...';
@@ -1006,7 +1013,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
           bgColor = AppColors.badgeYellowBg;
           textColor = AppColors.badgeYellowText;
         case MarketTradeProposalStatus.accepted:
-          bgColor = AppColors.catalogSuccessBg;
+          bgColor = Color(0xff9ee476).withOpacity(0.3);
           textColor = AppColors.catalogSuccessText;
         case MarketTradeProposalStatus.rejected:
           bgColor = AppColors.badgeRedBg;
@@ -1454,8 +1461,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
       return;
     }
     final isOfferLockedByAcceptedTrade =
-        currentOffer.status == MarketOfferStatus.waiting ||
-        currentOffer.status == MarketOfferStatus.trading;
+        (currentOffer.status == MarketOfferStatus.waiting ||
+            currentOffer.status == MarketOfferStatus.trading) &&
+        !_supportsTouchingQueue(currentOffer);
     if (isOfferLockedByAcceptedTrade) {
       if (!context.mounted) {
         return;
@@ -1540,11 +1548,14 @@ class MarketOfferDetailPage extends ConsumerWidget {
       if (!context.mounted) {
         return;
       }
+      final errorMessage =
+          ref.read(marketViewModelProvider).errorMessage ??
+          '제안 승낙에 실패했어요. 다시 시도해 주세요.';
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _snackContent(context, '제안 승낙에 실패했어요. 다시 시도해 주세요.'),
+            content: _snackContent(context, errorMessage),
             behavior: SnackBarBehavior.floating,
           ),
         );

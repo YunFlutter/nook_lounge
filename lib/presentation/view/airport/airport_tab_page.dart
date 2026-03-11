@@ -189,6 +189,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     final activeCode = session.activeDodoCode();
     final pendingRequests = state.pendingRequests;
     final waitingGuests = state.waitingGuests;
+    final approvedRequests = state.approvedRequests;
     final currentVisitors = state.activeVisitors;
     final requestListRequests = _buildRequestListRequests(
       pendingRequests: pendingRequests,
@@ -267,6 +268,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                 session: session,
                 requestListRequests: requestListRequests,
                 initiallySelectedIds: state.selectedRequestIds,
+                approvedRequestCount: approvedRequests.length,
               ),
             ),
             const SizedBox(height: 32),
@@ -286,6 +288,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                   session: session,
                   requestListRequests: requestListRequests,
                   initiallySelectedIds: state.selectedRequestIds,
+                  approvedRequestCount: approvedRequests.length,
                 ),
               ),
             ),
@@ -517,10 +520,10 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
                 request.inviteCode?.trim().isNotEmpty ?? false;
             final statusColor =
                 request.status == AirportVisitRequestStatus.arrived
-                ? AppColors.catalogSuccessBg
+                ? Color(0xff9ee476).withOpacity(0.3)
                 : request.status == AirportVisitRequestStatus.invited ||
                       hasInviteCode
-                ? AppColors.badgeBlueBg
+                ? Color(0xffbbeaff).withOpacity(0.3)
                 : AppColors.badgeRedBg;
             final textColor =
                 request.status == AirportVisitRequestStatus.arrived
@@ -685,7 +688,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
             final canMarkArrived = !isArrived && (isInvited || hasInviteCode);
             final waitingLabel = isArrived
                 ? '방문 중'
-                : (isInvited || hasInviteCode ? '도착 대기' : '코드 대기');
+                : (isInvited || hasInviteCode ? '도착 대기' : '승낙 대기');
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Container(
@@ -1230,6 +1233,7 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
     required AirportSession session,
     required List<AirportVisitRequest> requestListRequests,
     required Set<String> initiallySelectedIds,
+    required int approvedRequestCount,
   }) async {
     final result = await Navigator.of(context)
         .push<({List<String> selectedRequestIds, String dodoCode})>(
@@ -1239,6 +1243,8 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
               pendingRequests: requestListRequests,
               initialSelectedRequestIds: initiallySelectedIds,
               initialDodoCode: session.activeDodoCode(),
+              approvedRequestCount: approvedRequestCount,
+              capacity: session.capacity,
             ),
           ),
         );
@@ -1303,9 +1309,6 @@ class _AirportTabPageState extends ConsumerState<AirportTabPage> {
   }) {
     final mergedById = <String, AirportVisitRequest>{};
     for (final request in pendingRequests) {
-      if (request.status == AirportVisitRequestStatus.arrived) {
-        continue;
-      }
       mergedById[request.id] = request;
     }
     for (final request in waitingGuests) {

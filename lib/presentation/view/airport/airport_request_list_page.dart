@@ -13,12 +13,16 @@ class AirportRequestListPage extends StatefulWidget {
     required this.pendingRequests,
     required this.initialSelectedRequestIds,
     required this.initialDodoCode,
+    required this.approvedRequestCount,
+    required this.capacity,
     super.key,
   });
 
   final List<AirportVisitRequest> pendingRequests;
   final Set<String> initialSelectedRequestIds;
   final String initialDodoCode;
+  final int approvedRequestCount;
+  final int capacity;
 
   @override
   State<AirportRequestListPage> createState() => _AirportRequestListPageState();
@@ -29,15 +33,73 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
 
   late final Set<String> _selectedIds;
 
+  int get _normalizedCapacity =>
+      (widget.capacity <= 0 ? 8 : widget.capacity).clamp(1, 8);
+
+  int get _remainingInviteSlots =>
+      (_normalizedCapacity - widget.approvedRequestCount).clamp(
+        0,
+        _normalizedCapacity,
+      );
+
   @override
   void initState() {
     super.initState();
-    _selectedIds = {...widget.initialSelectedRequestIds};
+    _selectedIds = _buildInitialSelection();
   }
 
-  void _toggleSelection(String requestId) {
+  Set<String> _buildInitialSelection() {
+    if (_remainingInviteSlots <= 0) {
+      return <String>{};
+    }
+
+    final seeded = <String>{};
+    for (final request in widget.pendingRequests) {
+      if (!_canSelectRequest(request)) {
+        continue;
+      }
+      if (!widget.initialSelectedRequestIds.contains(request.id)) {
+        continue;
+      }
+      seeded.add(request.id);
+      if (seeded.length >= _remainingInviteSlots) {
+        break;
+      }
+    }
+    return seeded;
+  }
+
+  bool _canSelectRequest(AirportVisitRequest request) {
+    return request.status == AirportVisitRequestStatus.pending;
+  }
+
+  void _showSnackBarMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+      );
+  }
+
+  void _toggleSelection(AirportVisitRequest request) {
+    if (!_canSelectRequest(request)) {
+      _showSnackBarMessage('이미 승낙된 손님은 현재 상태만 확인할 수 있어요.');
+      return;
+    }
+
+    final requestId = request.id;
+    final isSelecting = !_selectedIds.contains(requestId);
+    if (isSelecting && _remainingInviteSlots <= 0) {
+      _showSnackBarMessage('지금은 추가로 승낙할 수 있는 자리가 없어요.');
+      return;
+    }
+    if (isSelecting && _selectedIds.length >= _remainingInviteSlots) {
+      _showSnackBarMessage('현재는 최대 $_remainingInviteSlots명까지만 추가로 승낙할 수 있어요.');
+      return;
+    }
+
     setState(() {
-      if (_selectedIds.contains(requestId)) {
+      if (!isSelecting) {
         _selectedIds.remove(requestId);
       } else {
         _selectedIds.add(requestId);
@@ -46,35 +108,39 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
   }
 
   void _selectAll() {
+    if (_remainingInviteSlots <= 0) {
+      _showSnackBarMessage('지금은 추가로 승낙할 수 있는 자리가 없어요.');
+      return;
+    }
+
+    final selectableIds = widget.pendingRequests
+        .where(_canSelectRequest)
+        .take(_remainingInviteSlots)
+        .map((request) => request.id)
+        .toSet();
     setState(() {
       _selectedIds
         ..clear()
-        ..addAll(widget.pendingRequests.map((request) => request.id));
+        ..addAll(selectableIds);
     });
   }
 
   void _onInvite() {
     final normalizedCode = widget.initialDodoCode.trim().toUpperCase();
+    if (_remainingInviteSlots <= 0) {
+      _showSnackBarMessage('지금은 추가로 승낙할 수 있는 자리가 없어요.');
+      return;
+    }
     if (_selectedIds.isEmpty) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('초대할 손님을 선택해 주세요.'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      _showSnackBarMessage('초대할 손님을 선택해 주세요.');
+      return;
+    }
+    if (_selectedIds.length > _remainingInviteSlots) {
+      _showSnackBarMessage('현재는 최대 $_remainingInviteSlots명까지만 추가로 승낙할 수 있어요.');
       return;
     }
     if (!_codePattern.hasMatch(normalizedCode)) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('비행장 탭에서 도도코드를 먼저 등록해 주세요.'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      _showSnackBarMessage('비행장 탭에서 도도코드를 먼저 등록해 주세요.');
       return;
     }
 
@@ -86,8 +152,12 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final remainSeats = (8 - widget.pendingRequests.length).clamp(0, 8);
+    final remainSeats = _remainingInviteSlots;
     final hasRequests = widget.pendingRequests.isNotEmpty;
+    final selectableCount = widget.pendingRequests
+        .where(_canSelectRequest)
+        .length;
+    final canSelectAny = selectableCount > 0 && remainSeats > 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -130,7 +200,7 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: hasRequests ? _selectAll : null,
+                    onPressed: canSelectAny ? _selectAll : null,
                     style: TextButton.styleFrom(
                       overlayColor: Colors.transparent,
                       splashFactory: NoSplash.splashFactory,
@@ -152,7 +222,27 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                   0,
                 ),
                 child: Text(
-                  '도도코드는 비행장 탭에 등록된 코드를 사용해요.',
+                  '동시에 최대 $_normalizedCapacity명까지 승낙할 수 있어요.\n이미 승낙된 손님은 상태만 확인할 수 있어요.',
+                  style: AppTextStyles.captionMuted.copyWith(
+                    height: 1.5
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.pageHorizontal,
+                  AppSpacing.s2,
+                  AppSpacing.pageHorizontal,
+                  0,
+                ),
+                child: Text(
+                  '현재 승낙 중 ${widget.approvedRequestCount}/$_normalizedCapacity명',
                   style: AppTextStyles.captionMuted,
                 ),
               ),
@@ -171,10 +261,32 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                           const SizedBox(height: 10),
                       itemBuilder: (context, index) {
                         final request = widget.pendingRequests[index];
+                        final canSelect = _canSelectRequest(request);
                         final selected = _selectedIds.contains(request.id);
+                        final statusLabel =
+                            request.status == AirportVisitRequestStatus.arrived
+                            ? '방문 중'
+                            : request.status ==
+                                  AirportVisitRequestStatus.invited
+                            ? '도착 대기'
+                            : '승낙 대기';
+                        final statusBg =
+                            request.status == AirportVisitRequestStatus.arrived
+                            ? AppColors.catalogSuccessBg
+                            : request.status ==
+                                  AirportVisitRequestStatus.invited
+                            ? Color(0xffbbeaff).withOpacity(0.3)
+                            : AppColors.badgeYellowBg;
+                        final statusTextColor =
+                            request.status == AirportVisitRequestStatus.arrived
+                            ? AppColors.catalogSuccessText
+                            : request.status ==
+                                  AirportVisitRequestStatus.invited
+                            ? AppColors.badgeBlueText
+                            : AppColors.badgeYellowText;
                         return AppInkWell(
                           borderRadius: BorderRadius.circular(18),
-                          onTap: () => _toggleSelection(request.id),
+                          onTap: () => _toggleSelection(request),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
@@ -184,10 +296,10 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                               color: AppColors.bgCard,
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
-                                color: selected
+                                color: canSelect && selected
                                     ? AppColors.accentOrange
                                     : AppColors.borderDefault,
-                                width: selected ? 2 : 1,
+                                width: canSelect && selected ? 2 : 1,
                               ),
                             ),
                             child: Row(
@@ -245,19 +357,50 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Text(
-                                  formatRelativeTime(request.requestedAt),
-                                  style: AppTextStyles.captionMuted,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: statusBg,
+                                        borderRadius: BorderRadius.circular(
+                                          999,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        statusLabel,
+                                        style: AppTextStyles.captionWithColor(
+                                          statusTextColor,
+                                          weight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      formatRelativeTime(
+                                        canSelect
+                                            ? request.requestedAt
+                                            : request.updatedAt,
+                                      ),
+                                      style: AppTextStyles.captionMuted,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 8),
-                                Icon(
-                                  selected
-                                      ? Icons.check_circle
-                                      : Icons.radio_button_unchecked,
-                                  color: selected
-                                      ? AppColors.badgeBlueText
-                                      : AppColors.borderDefault,
-                                ),
+                                if (canSelect) ...<Widget>[
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    selected
+                                        ? Icons.check_circle
+                                        : Icons.radio_button_unchecked,
+                                    color: selected
+                                        ? AppColors.badgeBlueText
+                                        : AppColors.borderDefault,
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -311,18 +454,18 @@ class _AirportRequestListPageState extends State<AirportRequestListPage> {
             Expanded(
               flex: 2,
               child: FilledButton(
-                onPressed: hasRequests ? _onInvite : null,
+                onPressed: canSelectAny ? _onInvite : null,
                 style: FilledButton.styleFrom(
                   overlayColor: Colors.transparent,
                   splashFactory: NoSplash.splashFactory,
-                  backgroundColor: AppColors.badgeBlueText,
+                  backgroundColor: Color(0xff85c8e5),
                   foregroundColor: AppColors.textInverse,
                   minimumSize: const Size.fromHeight(56),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
-                child: Text('다음 번호 초대하기(${_selectedIds.length})'),
+                child: Text('선택한 손님 승낙하기(${_selectedIds.length})'),
               ),
             ),
           ],

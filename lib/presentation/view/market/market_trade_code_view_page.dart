@@ -59,11 +59,14 @@ class _MarketTradeCodeViewPageState
         .read(marketViewModelProvider.notifier)
         .currentUserId
         .trim();
-    final tradeVisitRequestAsync = ref.watch(
-      airportTradeVisitLookupProvider((
+    final tradeVisitRequestsAsync = ref.watch(
+      airportTradeVisitRequestsProvider((
         offerId: widget.offer.id,
         uid: currentUid,
       )),
+    );
+    final agreedReceiverUidsAsync = ref.watch(
+      marketTradeAgreedReceiverUidsProvider(widget.offer.id),
     );
 
     return Scaffold(
@@ -82,27 +85,112 @@ class _MarketTradeCodeViewPageState
               subtitle: '거래 승낙 후 코드가 생성됩니다.',
             );
           }
-          final agreementReceiverUid = session.isCodeSender(currentUid)
-              ? session.codeReceiverUid
+          final isSender = session.isCodeSender(currentUid);
+          final supportsTouchingQueue = _supportsTouchingQueue(widget.offer);
+          final tradeVisitRequests =
+              tradeVisitRequestsAsync.valueOrNull ??
+              const <AirportVisitRequest>[];
+          final agreedReceiverUids =
+              agreedReceiverUidsAsync.valueOrNull ?? const <String>{};
+          final selectedReceiverUids = _splitUidCsv(session.codeReceiverUid);
+          final tradeVisitRequest = isSender && supportsTouchingQueue
+              ? _resolveHostTradeVisitRequest(
+                  requests: tradeVisitRequests,
+                  selectedReceiverUids: selectedReceiverUids,
+                  agreedReceiverUids: agreedReceiverUids,
+                )
+              : tradeVisitRequests.isEmpty
+              ? null
+              : tradeVisitRequests.first;
+          final shouldWatchAgreementStream =
+              !(isSender && supportsTouchingQueue);
+          final agreementReceiverUid = isSender
+              ? tradeVisitRequest?.requesterUid.trim() ?? ''
               : currentUid;
-          final rulesAgreedAsync = ref.watch(
-            marketTradeRuleAgreementProvider((
-              offerId: widget.offer.id,
-              receiverUid: agreementReceiverUid,
-            )),
-          );
+          final rulesAgreedAsync = shouldWatchAgreementStream
+              ? ref.watch(
+                  marketTradeRuleAgreementProvider((
+                    offerId: widget.offer.id,
+                    receiverUid: agreementReceiverUid,
+                  )),
+                )
+              : const AsyncValue<bool>.data(false);
+          final isRulesAgreed = isSender && supportsTouchingQueue
+              ? _isHostVisitRequestReadyForArrival(
+                  request: tradeVisitRequest,
+                  agreedReceiverUids: agreedReceiverUids,
+                )
+              : (rulesAgreedAsync.valueOrNull ?? false);
           return _buildBody(
             context: context,
             session: session,
             currentUid: currentUid,
-            isRulesAgreed: rulesAgreedAsync.valueOrNull ?? false,
-            isRulesAgreementLoading: rulesAgreedAsync.isLoading,
-            tradeVisitRequest: tradeVisitRequestAsync.valueOrNull,
-            isTradeVisitRequestLoading: tradeVisitRequestAsync.isLoading,
+            isRulesAgreed: isRulesAgreed,
+            isRulesAgreementLoading: shouldWatchAgreementStream
+                ? rulesAgreedAsync.isLoading
+                : agreedReceiverUidsAsync.isLoading,
+            tradeVisitRequest: tradeVisitRequest,
+            isTradeVisitRequestLoading: tradeVisitRequestsAsync.isLoading,
           );
         },
       ),
     );
+  }
+
+  bool _supportsTouchingQueue(MarketOffer offer) {
+    return offer.tradeType == MarketTradeType.touching &&
+        offer.moveType == MarketMoveType.host;
+  }
+
+  AirportVisitRequest? _resolveHostTradeVisitRequest({
+    required List<AirportVisitRequest> requests,
+    required Set<String> selectedReceiverUids,
+    required Set<String> agreedReceiverUids,
+  }) {
+    final candidateRequests = selectedReceiverUids.isEmpty
+        ? requests
+        : requests
+              .where(
+                (request) =>
+                    selectedReceiverUids.contains(request.requesterUid.trim()),
+              )
+              .toList(growable: false);
+    for (final request in candidateRequests) {
+      if (request.isInvited &&
+          agreedReceiverUids.contains(request.requesterUid.trim())) {
+        return request;
+      }
+    }
+    for (final request in candidateRequests) {
+      if (request.isInvited) {
+        return request;
+      }
+    }
+    for (final request in candidateRequests) {
+      if (request.isArrived) {
+        return request;
+      }
+    }
+    for (final request in candidateRequests) {
+      if (request.isPending) {
+        return request;
+      }
+    }
+    return null;
+  }
+
+  bool _isHostVisitRequestReadyForArrival({
+    required AirportVisitRequest? request,
+    required Set<String> agreedReceiverUids,
+  }) {
+    if (request == null) {
+      return false;
+    }
+    if (request.isArrived) {
+      return true;
+    }
+    return request.isInvited &&
+        agreedReceiverUids.contains(request.requesterUid.trim());
   }
 
   AppBar _buildAppBar() {
@@ -972,9 +1060,19 @@ class _MarketTradeCodeViewPageState
       switch (error.message) {
         case 'permission-denied':
           return '방문 상태를 변경할 권한이 없어요.';
+        case 'touching_visit_already_in_progress':
+          return '만지작 줄서기는 한 번에 한 명씩만 방문 확인할 수 있어요.';
       }
     }
     return '방문 확인 처리에 실패했어요. 잠시 후 다시 시도해 주세요.';
+  }
+
+  Set<String> _splitUidCsv(String raw) {
+    return raw
+        .split(',')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toSet();
   }
 
   String _resolveCancelTradeErrorMessage(Object error) {

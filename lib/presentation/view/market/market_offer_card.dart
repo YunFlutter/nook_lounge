@@ -93,6 +93,11 @@ class MarketOfferCard extends StatelessWidget {
         offer.status == MarketOfferStatus.closed;
   }
 
+  bool get _supportsTouchingQueue {
+    return offer.tradeType == MarketTradeType.touching &&
+        offer.moveType == MarketMoveType.host;
+  }
+
   Widget _buildExchangeBody(BuildContext context) {
     return Column(
       children: <Widget>[
@@ -698,7 +703,8 @@ class MarketOfferCard extends StatelessWidget {
         _isCompletedOffer ||
         offer.status == MarketOfferStatus.closed ||
         offer.status == MarketOfferStatus.offline ||
-        offer.status == MarketOfferStatus.trading ||
+        (offer.status == MarketOfferStatus.trading &&
+            !_supportsTouchingQueue) ||
         offer.dimmed;
     final Color enabledBgColor = isProposalAction
         ? AppColors.marketProposalBadgeBg

@@ -345,11 +345,14 @@ class _MarketRealtimeListenerState
       if (!mounted) {
         return;
       }
+      final errorMessage =
+          ref.read(marketViewModelProvider).errorMessage ??
+          '실시간 승낙 처리에 실패했어요. 대기열에서 다시 시도해 주세요.';
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: const Text('실시간 승낙 처리에 실패했어요. 대기열에서 다시 시도해 주세요.'),
+            content: Text(errorMessage),
             behavior: SnackBarBehavior.floating,
           ),
         );

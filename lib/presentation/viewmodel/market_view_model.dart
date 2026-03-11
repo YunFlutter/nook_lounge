@@ -430,13 +430,24 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     final normalizedTitle = offer.title.trim().isEmpty
         ? offer.wantItemName.trim()
         : offer.title.trim();
-    final session = await _repository.acceptTradeProposal(
-      offerId: offer.id,
-      ownerUid: ownerUid,
-      proposerUid: targetProposerUid,
-      moveType: offer.moveType,
-      offerTitle: normalizedTitle,
-    );
+    late final MarketTradeCodeSession session;
+    try {
+      session = await _repository.acceptTradeProposal(
+        offerId: offer.id,
+        ownerUid: ownerUid,
+        proposerUid: targetProposerUid,
+        moveType: offer.moveType,
+        offerTitle: normalizedTitle,
+      );
+    } catch (error) {
+      final errorCode = _readStateErrorCode(error);
+      state = state.copyWith(
+        errorMessage: errorCode == 'touching_trade_accept_limit_exceeded'
+            ? '만지작 줄서기는 동시에 최대 8명까지만 승낙할 수 있어요.'
+            : '거래 승낙에 실패했어요. 다시 시도해 주세요.',
+      );
+      rethrow;
+    }
 
     final shouldSendCode = session.isCodeSender(ownerUid);
     state = state.copyWith(errorMessage: null);

@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
 import 'package:nook_lounge_app/core/utils/app_version_comparator.dart';
 import 'package:nook_lounge_app/core/telemetry/app_telemetry_provider.dart';
 import 'package:nook_lounge_app/data/datasource/app_version_firestore_data_source.dart';
@@ -381,6 +382,98 @@ final marketTradeRuleAgreementProvider =
           );
     });
 
+final marketTradeAgreedReceiverUidsProvider =
+    StreamProvider.family<Set<String>, String>((ref, offerId) {
+      final normalizedOfferId = offerId.trim();
+      if (normalizedOfferId.isEmpty) {
+        return Stream<Set<String>>.value(const <String>{});
+      }
+
+      return ref
+          .watch(firestoreProvider)
+          .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
+          .snapshots()
+          .map((snapshot) {
+            final data = snapshot.data() ?? const <String, dynamic>{};
+            return _splitUidCsv(
+              (data['receiverRuleAgreedUid'] as String?)?.trim() ?? '',
+            );
+          });
+    });
+
+final airportTradeVisitRequestsProvider =
+    StreamProvider.family<
+      List<AirportVisitRequest>,
+      ({String offerId, String uid})
+    >((ref, args) {
+      final normalizedOfferId = args.offerId.trim();
+      if (normalizedOfferId.isEmpty) {
+        return Stream<List<AirportVisitRequest>>.value(
+          const <AirportVisitRequest>[],
+        );
+      }
+
+      final firestore = ref.watch(firestoreProvider);
+      final sourceQuery = firestore
+          .collectionGroup('requests')
+          .where('sourceOfferId', isEqualTo: normalizedOfferId);
+      final normalizedUid = args.uid.trim();
+      final requesterQuery = normalizedUid.isEmpty
+          ? null
+          : firestore
+                .collectionGroup('requests')
+                .where('requesterUid', isEqualTo: normalizedUid);
+      final hostQuery = normalizedUid.isEmpty
+          ? null
+          : firestore
+                .collectionGroup('requests')
+                .where('hostUid', isEqualTo: normalizedUid);
+
+      return Stream<List<AirportVisitRequest>>.multi((controller) {
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> sourceDocs =
+            const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> requesterDocs =
+            const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> hostDocs =
+            const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+
+        void emit() {
+          controller.add(
+            _findActiveTradeVisitRequests(
+              docs: <QueryDocumentSnapshot<Map<String, dynamic>>>[
+                ...sourceDocs,
+                ...requesterDocs,
+                ...hostDocs,
+              ],
+              offerId: normalizedOfferId,
+              uid: args.uid,
+            ),
+          );
+        }
+
+        final sourceSubscription = sourceQuery.snapshots().listen((snapshot) {
+          sourceDocs = snapshot.docs;
+          emit();
+        }, onError: controller.addError);
+        final requesterSubscription = requesterQuery?.snapshots().listen((
+          snapshot,
+        ) {
+          requesterDocs = snapshot.docs;
+          emit();
+        }, onError: controller.addError);
+        final hostSubscription = hostQuery?.snapshots().listen((snapshot) {
+          hostDocs = snapshot.docs;
+          emit();
+        }, onError: controller.addError);
+
+        controller.onCancel = () async {
+          await sourceSubscription.cancel();
+          await requesterSubscription?.cancel();
+          await hostSubscription?.cancel();
+        };
+      });
+    });
+
 final airportTradeVisitRequestProvider =
     StreamProvider.family<AirportVisitRequest?, ({String offerId, String uid})>(
       (ref, args) {
@@ -393,14 +486,24 @@ final airportTradeVisitRequestProvider =
         final sourceQuery = firestore
             .collectionGroup('requests')
             .where('sourceOfferId', isEqualTo: normalizedOfferId);
-        final legacyQuery = firestore
-            .collectionGroup('requests')
-            .where(FieldPath.documentId, isEqualTo: 'trade_$normalizedOfferId');
+        final normalizedUid = args.uid.trim();
+        final requesterQuery = normalizedUid.isEmpty
+            ? null
+            : firestore
+                  .collectionGroup('requests')
+                  .where('requesterUid', isEqualTo: normalizedUid);
+        final hostQuery = normalizedUid.isEmpty
+            ? null
+            : firestore
+                  .collectionGroup('requests')
+                  .where('hostUid', isEqualTo: normalizedUid);
 
         return Stream<AirportVisitRequest?>.multi((controller) {
           List<QueryDocumentSnapshot<Map<String, dynamic>>> sourceDocs =
               const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-          List<QueryDocumentSnapshot<Map<String, dynamic>>> legacyDocs =
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> requesterDocs =
+              const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> hostDocs =
               const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
 
           void emit() {
@@ -408,9 +511,11 @@ final airportTradeVisitRequestProvider =
               _findActiveTradeVisitRequest(
                 docs: <QueryDocumentSnapshot<Map<String, dynamic>>>[
                   ...sourceDocs,
-                  ...legacyDocs,
+                  ...requesterDocs,
+                  ...hostDocs,
                 ],
                 offerId: normalizedOfferId,
+                uid: args.uid,
               ),
             );
           }
@@ -419,14 +524,21 @@ final airportTradeVisitRequestProvider =
             sourceDocs = snapshot.docs;
             emit();
           }, onError: controller.addError);
-          final legacySubscription = legacyQuery.snapshots().listen((snapshot) {
-            legacyDocs = snapshot.docs;
+          final requesterSubscription = requesterQuery?.snapshots().listen((
+            snapshot,
+          ) {
+            requesterDocs = snapshot.docs;
+            emit();
+          }, onError: controller.addError);
+          final hostSubscription = hostQuery?.snapshots().listen((snapshot) {
+            hostDocs = snapshot.docs;
             emit();
           }, onError: controller.addError);
 
           controller.onCancel = () async {
             await sourceSubscription.cancel();
-            await legacySubscription.cancel();
+            await requesterSubscription?.cancel();
+            await hostSubscription?.cancel();
           };
         });
       },
@@ -447,14 +559,24 @@ final airportTradeVisitLookupProvider =
         final sourceQuery = firestore
             .collectionGroup('requests')
             .where('sourceOfferId', isEqualTo: normalizedOfferId);
-        final legacyQuery = firestore
-            .collectionGroup('requests')
-            .where(FieldPath.documentId, isEqualTo: 'trade_$normalizedOfferId');
+        final normalizedUid = args.uid.trim();
+        final requesterQuery = normalizedUid.isEmpty
+            ? null
+            : firestore
+                  .collectionGroup('requests')
+                  .where('requesterUid', isEqualTo: normalizedUid);
+        final hostQuery = normalizedUid.isEmpty
+            ? null
+            : firestore
+                  .collectionGroup('requests')
+                  .where('hostUid', isEqualTo: normalizedUid);
 
         return Stream<AirportVisitRequest?>.multi((controller) {
           List<QueryDocumentSnapshot<Map<String, dynamic>>> sourceDocs =
               const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
-          List<QueryDocumentSnapshot<Map<String, dynamic>>> legacyDocs =
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> requesterDocs =
+              const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> hostDocs =
               const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
 
           void emit() {
@@ -462,9 +584,11 @@ final airportTradeVisitLookupProvider =
               _findActiveTradeVisitRequest(
                 docs: <QueryDocumentSnapshot<Map<String, dynamic>>>[
                   ...sourceDocs,
-                  ...legacyDocs,
+                  ...requesterDocs,
+                  ...hostDocs,
                 ],
                 offerId: normalizedOfferId,
+                uid: args.uid,
               ),
             );
           }
@@ -473,14 +597,21 @@ final airportTradeVisitLookupProvider =
             sourceDocs = snapshot.docs;
             emit();
           }, onError: controller.addError);
-          final legacySubscription = legacyQuery.snapshots().listen((snapshot) {
-            legacyDocs = snapshot.docs;
+          final requesterSubscription = requesterQuery?.snapshots().listen((
+            snapshot,
+          ) {
+            requesterDocs = snapshot.docs;
+            emit();
+          }, onError: controller.addError);
+          final hostSubscription = hostQuery?.snapshots().listen((snapshot) {
+            hostDocs = snapshot.docs;
             emit();
           }, onError: controller.addError);
 
           controller.onCancel = () async {
             await sourceSubscription.cancel();
-            await legacySubscription.cancel();
+            await requesterSubscription?.cancel();
+            await hostSubscription?.cancel();
           };
         });
       },
@@ -489,7 +620,25 @@ final airportTradeVisitLookupProvider =
 AirportVisitRequest? _findActiveTradeVisitRequest({
   required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
   required String offerId,
+  required String uid,
 }) {
+  final matched = _findActiveTradeVisitRequests(
+    docs: docs,
+    offerId: offerId,
+    uid: uid,
+  );
+  if (matched.isEmpty) {
+    return null;
+  }
+  return matched.first;
+}
+
+List<AirportVisitRequest> _findActiveTradeVisitRequests({
+  required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  required String offerId,
+  required String uid,
+}) {
+  final normalizedUid = uid.trim();
   final requestsByPath = <String, AirportVisitRequest>{};
   for (final doc in docs) {
     final islandId = _extractAirportIslandId(doc.reference.path);
@@ -508,15 +657,49 @@ AirportVisitRequest? _findActiveTradeVisitRequest({
         if (!request.isActive) {
           return false;
         }
-        return _resolveTradeOfferIdFromRequest(request) == offerId;
+        if (_resolveTradeOfferIdFromRequest(request) != offerId) {
+          return false;
+        }
+        if (normalizedUid.isEmpty) {
+          return true;
+        }
+        return request.requesterUid.trim() == normalizedUid ||
+            request.hostUid.trim() == normalizedUid;
       })
       .toList(growable: false);
-  if (matched.isEmpty) {
-    return null;
-  }
 
-  matched.sort((left, right) => right.updatedAt.compareTo(left.updatedAt));
-  return matched.first;
+  matched.sort((left, right) {
+    final leftRank = _tradeVisitLookupStatusRank(left.status);
+    final rightRank = _tradeVisitLookupStatusRank(right.status);
+    if (leftRank != rightRank) {
+      return leftRank.compareTo(rightRank);
+    }
+    return right.updatedAt.compareTo(left.updatedAt);
+  });
+  return matched;
+}
+
+int _tradeVisitLookupStatusRank(AirportVisitRequestStatus status) {
+  switch (status) {
+    case AirportVisitRequestStatus.arrived:
+      return 0;
+    case AirportVisitRequestStatus.invited:
+      return 1;
+    case AirportVisitRequestStatus.pending:
+      return 2;
+    case AirportVisitRequestStatus.cancelled:
+      return 3;
+    case AirportVisitRequestStatus.completed:
+      return 4;
+  }
+}
+
+Set<String> _splitUidCsv(String raw) {
+  return raw
+      .split(',')
+      .map((value) => value.trim())
+      .where((value) => value.isNotEmpty)
+      .toSet();
 }
 
 String _extractAirportIslandId(String path) {

@@ -4,11 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
+import 'package:nook_lounge_app/domain/model/market_offer.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 
 class AirportFirestoreDataSource {
   AirportFirestoreDataSource({required FirebaseFirestore firestore})
     : _firestore = firestore;
 
+  static const int _defaultAirportCapacity = 8;
   static final RegExp _dodoCodePattern = RegExp(
     r'^(?=.*[A-Z])(?=.*\d)[A-Z\d]{5}$',
   );
@@ -16,6 +19,9 @@ class AirportFirestoreDataSource {
       'duplicate_airport_visit_report';
   static const String _tradeLinkedSourceType = 'market_trade';
   static const String _tradeRequestIdPrefix = 'trade_';
+  static const String _receiverRuleAgreedUidField = 'receiverRuleAgreedUid';
+  static const String _receiverRuleAgreedCodeField = 'receiverRuleAgreedCode';
+  static const String _receiverRuleAgreedAtField = 'receiverRuleAgreedAt';
 
   final FirebaseFirestore _firestore;
 
@@ -50,8 +56,6 @@ class AirportFirestoreDataSource {
         .snapshots()
         .asyncMap((snapshot) async {
           final requests = <AirportVisitRequest>[];
-          final tradeRequestRefsByOffer =
-              <String, List<DocumentReference<Map<String, dynamic>>>>{};
           for (final doc in snapshot.docs) {
             final data = doc.data();
             final request = AirportVisitRequest.fromMap(
@@ -60,25 +64,10 @@ class AirportFirestoreDataSource {
               data: data,
             );
             requests.add(request);
-
-            final sourceOfferId = _resolveTradeSourceOfferId(
-              requestId: doc.id,
-              sourceType: (data['sourceType'] as String?)?.trim() ?? '',
-              sourceOfferId: (data['sourceOfferId'] as String?)?.trim() ?? '',
-            );
-            if (request.isActive && sourceOfferId.isNotEmpty) {
-              tradeRequestRefsByOffer
-                  .putIfAbsent(
-                    sourceOfferId,
-                    () => <DocumentReference<Map<String, dynamic>>>[],
-                  )
-                  .add(doc.reference);
-            }
           }
 
           final filtered = await _filterAndCleanupStaleTradeRequests(
             requests: requests,
-            tradeRequestRefsByOffer: tradeRequestRefsByOffer,
           );
           filtered.sort(_sortIncomingRequests);
           return filtered;
@@ -98,8 +87,6 @@ class AirportFirestoreDataSource {
         .snapshots()
         .asyncMap((snapshot) async {
           final requests = <AirportVisitRequest>[];
-          final tradeRequestRefsByOffer =
-              <String, List<DocumentReference<Map<String, dynamic>>>>{};
           for (final doc in snapshot.docs) {
             final segments = doc.reference.path.split('/');
             if (segments.length < 4 || segments[0] != 'airportQueues') {
@@ -113,24 +100,9 @@ class AirportFirestoreDataSource {
               data: data,
             );
             requests.add(request);
-
-            final sourceOfferId = _resolveTradeSourceOfferId(
-              requestId: doc.id,
-              sourceType: (data['sourceType'] as String?)?.trim() ?? '',
-              sourceOfferId: (data['sourceOfferId'] as String?)?.trim() ?? '',
-            );
-            if (request.isActive && sourceOfferId.isNotEmpty) {
-              tradeRequestRefsByOffer
-                  .putIfAbsent(
-                    sourceOfferId,
-                    () => <DocumentReference<Map<String, dynamic>>>[],
-                  )
-                  .add(doc.reference);
-            }
           }
           final filtered = await _filterAndCleanupStaleTradeRequests(
             requests: requests,
-            tradeRequestRefsByOffer: tradeRequestRefsByOffer,
           );
           filtered.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
           return filtered;
@@ -367,6 +339,9 @@ class AirportFirestoreDataSource {
       sourceType: (requestData['sourceType'] as String?)?.trim() ?? '',
       sourceOfferId: (requestData['sourceOfferId'] as String?)?.trim() ?? '',
     );
+    final isQueuedTouchingTrade = sourceOfferId.isNotEmpty
+        ? await _isQueuedTouchingTrade(sourceOfferId)
+        : false;
 
     final targetRefs = <DocumentReference<Map<String, dynamic>>>[];
     if (sourceOfferId.isNotEmpty) {
@@ -377,6 +352,13 @@ class AirportFirestoreDataSource {
         for (final doc in relatedDocs) {
           final statusName = (doc.data()['status'] as String?)?.trim() ?? '';
           if (!_isActiveRequestStatusName(statusName)) {
+            continue;
+          }
+          if (isQueuedTouchingTrade &&
+              !_isSameTradeRequester(
+                baseRequestData: requestData,
+                candidateRequestData: doc.data(),
+              )) {
             continue;
           }
           targetRefs.add(doc.reference);
@@ -417,6 +399,13 @@ class AirportFirestoreDataSource {
     for (final ref in sameIslandRefs) {
       batch.set(ref, payload, SetOptions(merge: true));
     }
+    if (sourceOfferId.isNotEmpty) {
+      await _stageMarketTradeCancellationForAirportRequest(
+        batch: batch,
+        offerId: sourceOfferId,
+        requestData: requestData,
+      );
+    }
     await batch.commit();
 
     for (final ref in crossIslandRefs) {
@@ -444,12 +433,44 @@ class AirportFirestoreDataSource {
       throw const FormatException('invalid_dodo_code');
     }
 
+    final normalizedRequestIds = requestIds
+        .map((requestId) => requestId.trim())
+        .where((requestId) => requestId.isNotEmpty)
+        .toSet();
+    if (normalizedRequestIds.isEmpty) {
+      return;
+    }
+
+    final queueSnapshot = await _firestore
+        .doc(FirestorePaths.airportQueue(normalizedIslandId))
+        .get();
+    final queueData = queueSnapshot.data() ?? const <String, dynamic>{};
+    final capacity =
+        ((queueData['capacity'] as num?)?.toInt() ?? _defaultAirportCapacity)
+            .clamp(1, _defaultAirportCapacity);
+    final approvedSnapshot = await _firestore
+        .collection(FirestorePaths.airportRequests(normalizedIslandId))
+        .where(
+          'status',
+          whereIn: <String>[
+            AirportVisitRequestStatus.invited.name,
+            AirportVisitRequestStatus.arrived.name,
+          ],
+        )
+        .get();
+    final approvedRequestIds = approvedSnapshot.docs
+        .map((doc) => doc.id.trim())
+        .where((requestId) => requestId.isNotEmpty)
+        .toSet();
+    final newApprovalCount = normalizedRequestIds
+        .where((requestId) => !approvedRequestIds.contains(requestId))
+        .length;
+    if (approvedRequestIds.length + newApprovalCount > capacity) {
+      throw StateError('airport_capacity_full');
+    }
+
     final batch = _firestore.batch();
-    for (final requestId in requestIds) {
-      final normalizedRequestId = requestId.trim();
-      if (normalizedRequestId.isEmpty) {
-        continue;
-      }
+    for (final normalizedRequestId in normalizedRequestIds) {
       batch.set(
         _firestore.doc(
           FirestorePaths.airportRequest(
@@ -491,18 +512,40 @@ class AirportFirestoreDataSource {
       return;
     }
 
-    await _firestore
-        .doc(
-          FirestorePaths.airportRequest(
-            normalizedIslandId,
-            normalizedRequestId,
-          ),
-        )
-        .set(<String, dynamic>{
-          'status': AirportVisitRequestStatus.arrived.name,
-          'arrivedAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+    final requestRef = _firestore.doc(
+      FirestorePaths.airportRequest(normalizedIslandId, normalizedRequestId),
+    );
+    final requestSnapshot = await requestRef.get();
+    final requestData = requestSnapshot.data() ?? const <String, dynamic>{};
+    final status = AirportVisitRequestStatus.fromName(
+      requestData['status'] as String?,
+    );
+    if (status == AirportVisitRequestStatus.arrived) {
+      return;
+    }
+
+    final sourceOfferId = _resolveTradeSourceOfferId(
+      requestId: normalizedRequestId,
+      sourceType: (requestData['sourceType'] as String?)?.trim() ?? '',
+      sourceOfferId: (requestData['sourceOfferId'] as String?)?.trim() ?? '',
+    );
+    if (sourceOfferId.isNotEmpty &&
+        await _isQueuedTouchingTrade(sourceOfferId) &&
+        await _hasOtherArrivedTradeRequest(
+          offerId: sourceOfferId,
+          excludingRequestId: normalizedRequestId,
+        )) {
+      // 유지보수 포인트:
+      // 만지작 줄서기는 동시에 여러 명이 섬에 들어오지 않도록
+      // arrived 상태를 한 번에 한 명만 허용합니다.
+      throw StateError('touching_visit_already_in_progress');
+    }
+
+    await requestRef.set(<String, dynamic>{
+      'status': AirportVisitRequestStatus.arrived.name,
+      'arrivedAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   Future<void> completeVisit({
@@ -525,9 +568,12 @@ class AirportFirestoreDataSource {
       sourceType: (requestData['sourceType'] as String?)?.trim() ?? '',
       sourceOfferId: (requestData['sourceOfferId'] as String?)?.trim() ?? '',
     );
+    final isQueuedTouchingTrade = sourceOfferId.isNotEmpty
+        ? await _isQueuedTouchingTrade(sourceOfferId)
+        : false;
 
     final targetRefs = <DocumentReference<Map<String, dynamic>>>[];
-    if (sourceOfferId.isNotEmpty) {
+    if (sourceOfferId.isNotEmpty && !isQueuedTouchingTrade) {
       try {
         final relatedDocs = await _findTradeLinkedRequestDocsByOfferId(
           sourceOfferId,
@@ -594,6 +640,165 @@ class AirportFirestoreDataSource {
       return '';
     }
     return segments[1];
+  }
+
+  Future<void> _stageMarketTradeCancellationForAirportRequest({
+    required WriteBatch batch,
+    required String offerId,
+    required Map<String, dynamic> requestData,
+  }) async {
+    final normalizedOfferId = offerId.trim();
+    if (normalizedOfferId.isEmpty) {
+      return;
+    }
+
+    final offerRef = _firestore.doc(
+      FirestorePaths.marketPost(normalizedOfferId),
+    );
+    final offerSnapshot = await offerRef.get();
+    final offerData = offerSnapshot.data();
+    if (!offerSnapshot.exists || offerData == null) {
+      return;
+    }
+
+    final ownerUid = (offerData['ownerUid'] as String?)?.trim() ?? '';
+    if (ownerUid.isEmpty) {
+      return;
+    }
+
+    final moveType = _resolveTradeMoveType(
+      offerData: offerData,
+      requestData: requestData,
+    );
+    final proposalUid = _resolveTradeProposalUidForAirportRequest(
+      ownerUid: ownerUid,
+      hostUid: (requestData['hostUid'] as String?)?.trim() ?? '',
+      requesterUid: (requestData['requesterUid'] as String?)?.trim() ?? '',
+      moveType: moveType,
+    );
+    if (proposalUid.isEmpty) {
+      return;
+    }
+
+    final proposalsRef = _firestore.collection(
+      FirestorePaths.marketTradeProposals(normalizedOfferId),
+    );
+    final proposalsSnapshot = await proposalsRef.get();
+    QueryDocumentSnapshot<Map<String, dynamic>>? selectedProposal;
+    for (final doc in proposalsSnapshot.docs) {
+      if (doc.id.trim() == proposalUid) {
+        selectedProposal = doc;
+        break;
+      }
+    }
+    if (selectedProposal == null) {
+      return;
+    }
+
+    final selectedStatus =
+        (selectedProposal.data()['status'] as String?)?.trim() ?? '';
+    final wasAccepted =
+        selectedStatus == MarketTradeProposalStatus.accepted.name;
+    final shouldCancelProposal =
+        selectedStatus != MarketTradeProposalStatus.cancelled.name &&
+        selectedStatus != MarketTradeProposalStatus.rejected.name;
+
+    if (shouldCancelProposal) {
+      batch.set(selectedProposal.reference, <String, dynamic>{
+        'status': MarketTradeProposalStatus.cancelled.name,
+        'acceptedAt': FieldValue.delete(),
+        'acceptedAtMillis': FieldValue.delete(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAtMillis': FieldValue.delete(),
+      }, SetOptions(merge: true));
+    }
+
+    final isQueuedTouchingTrade =
+        (offerData['tradeType'] as String?)?.trim() ==
+            MarketTradeType.touching.name &&
+        moveType == MarketMoveType.host;
+    if (isQueuedTouchingTrade) {
+      final codeRef = _firestore.doc(
+        FirestorePaths.marketTradeCode(normalizedOfferId),
+      );
+      final codeSnapshot = await codeRef.get();
+      final codeData = codeSnapshot.data() ?? const <String, dynamic>{};
+      if (codeSnapshot.exists) {
+        final receiverUids = _splitUidCsv(
+          (codeData['codeReceiverUid'] as String?)?.trim() ?? '',
+        )..remove(proposalUid);
+        final agreedReceiverUids = _splitUidCsv(
+          (codeData[_receiverRuleAgreedUidField] as String?)?.trim() ?? '',
+        )..remove(proposalUid);
+        batch.set(codeRef, <String, dynamic>{
+          'codeReceiverUid': receiverUids.isEmpty
+              ? FieldValue.delete()
+              : _joinUidCsv(receiverUids),
+          _receiverRuleAgreedUidField: agreedReceiverUids.isEmpty
+              ? FieldValue.delete()
+              : _joinUidCsv(agreedReceiverUids),
+          _receiverRuleAgreedCodeField: agreedReceiverUids.isEmpty
+              ? FieldValue.delete()
+              : (codeData[_receiverRuleAgreedCodeField] ?? FieldValue.delete()),
+          _receiverRuleAgreedAtField: agreedReceiverUids.isEmpty
+              ? FieldValue.delete()
+              : (codeData[_receiverRuleAgreedAtField] ?? FieldValue.delete()),
+          'receiverRuleAgreedAtMillis': FieldValue.delete(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'updatedAtMillis': FieldValue.delete(),
+        }, SetOptions(merge: true));
+      }
+
+      final hasOtherAcceptedProposal = proposalsSnapshot.docs.any((doc) {
+        if (doc.id.trim() == proposalUid) {
+          return false;
+        }
+        final status = (doc.data()['status'] as String?)?.trim() ?? '';
+        return status == MarketTradeProposalStatus.accepted.name;
+      });
+      if (!hasOtherAcceptedProposal) {
+        batch.set(offerRef, <String, dynamic>{
+          'lifecycle': MarketLifecycleTab.ongoing.name,
+          'status': MarketOfferStatus.open.name,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'updatedAtMillis': FieldValue.delete(),
+          'actionLabel': FieldValue.delete(),
+        }, SetOptions(merge: true));
+      }
+      return;
+    }
+
+    if (!wasAccepted) {
+      return;
+    }
+
+    for (final doc in proposalsSnapshot.docs) {
+      if (doc.id.trim() == proposalUid) {
+        continue;
+      }
+      final status = (doc.data()['status'] as String?)?.trim() ?? '';
+      if (status != MarketTradeProposalStatus.rejected.name) {
+        continue;
+      }
+      batch.set(doc.reference, <String, dynamic>{
+        'status': MarketTradeProposalStatus.pending.name,
+        'acceptedAt': FieldValue.delete(),
+        'acceptedAtMillis': FieldValue.delete(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAtMillis': FieldValue.delete(),
+      }, SetOptions(merge: true));
+    }
+
+    batch.set(offerRef, <String, dynamic>{
+      'lifecycle': MarketLifecycleTab.ongoing.name,
+      'status': MarketOfferStatus.open.name,
+      'updatedAt': FieldValue.serverTimestamp(),
+      'updatedAtMillis': FieldValue.delete(),
+      'actionLabel': FieldValue.delete(),
+    }, SetOptions(merge: true));
+    batch.delete(
+      _firestore.doc(FirestorePaths.marketTradeCode(normalizedOfferId)),
+    );
   }
 
   Future<void> reportVisitRequester({
@@ -674,19 +879,99 @@ class AirportFirestoreDataSource {
     return normalizedRequestId.substring(_tradeRequestIdPrefix.length).trim();
   }
 
+  bool _isSameTradeRequester({
+    required Map<String, dynamic> baseRequestData,
+    required Map<String, dynamic> candidateRequestData,
+  }) {
+    final baseRequesterUid =
+        (baseRequestData['requesterUid'] as String?)?.trim() ?? '';
+    final candidateRequesterUid =
+        (candidateRequestData['requesterUid'] as String?)?.trim() ?? '';
+    if (baseRequesterUid.isEmpty || candidateRequesterUid.isEmpty) {
+      return false;
+    }
+    return baseRequesterUid == candidateRequesterUid;
+  }
+
+  MarketMoveType _resolveTradeMoveType({
+    required Map<String, dynamic> offerData,
+    required Map<String, dynamic> requestData,
+  }) {
+    final candidates = <String>[
+      (offerData['moveType'] as String?)?.trim() ?? '',
+      (requestData['sourceMoveType'] as String?)?.trim() ?? '',
+    ];
+    for (final candidate in candidates) {
+      for (final moveType in MarketMoveType.values) {
+        if (moveType.name == candidate) {
+          return moveType;
+        }
+      }
+    }
+    return MarketMoveType.visitor;
+  }
+
+  String _resolveTradeProposalUidForAirportRequest({
+    required String ownerUid,
+    required String hostUid,
+    required String requesterUid,
+    required MarketMoveType moveType,
+  }) {
+    final normalizedOwnerUid = ownerUid.trim();
+    final normalizedHostUid = hostUid.trim();
+    final normalizedRequesterUid = requesterUid.trim();
+
+    if (moveType == MarketMoveType.host) {
+      if (normalizedRequesterUid.isNotEmpty &&
+          normalizedRequesterUid != normalizedOwnerUid) {
+        return normalizedRequesterUid;
+      }
+      if (normalizedHostUid.isNotEmpty &&
+          normalizedHostUid != normalizedOwnerUid) {
+        return normalizedHostUid;
+      }
+      return normalizedRequesterUid;
+    }
+
+    if (normalizedHostUid.isNotEmpty &&
+        normalizedHostUid != normalizedOwnerUid) {
+      return normalizedHostUid;
+    }
+    if (normalizedRequesterUid.isNotEmpty &&
+        normalizedRequesterUid != normalizedOwnerUid) {
+      return normalizedRequesterUid;
+    }
+    return normalizedHostUid;
+  }
+
+  Set<String> _splitUidCsv(String raw) {
+    return raw
+        .split(',')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toSet();
+  }
+
+  String _joinUidCsv(Iterable<String> uids) {
+    final normalized =
+        uids
+            .map((uid) => uid.trim())
+            .where((uid) => uid.isNotEmpty)
+            .toSet()
+            .toList(growable: false)
+          ..sort();
+    return normalized.join(',');
+  }
+
   Future<List<AirportVisitRequest>> _filterAndCleanupStaleTradeRequests({
     required List<AirportVisitRequest> requests,
-    required Map<String, List<DocumentReference<Map<String, dynamic>>>>
-    tradeRequestRefsByOffer,
   }) async {
-    if (requests.isEmpty || tradeRequestRefsByOffer.isEmpty) {
+    if (requests.isEmpty) {
       return requests;
     }
 
-    final staleOfferIds = await _findStaleTradeOfferIds(
-      tradeRequestRefsByOffer.keys,
-    );
-    if (staleOfferIds.isEmpty) {
+    final staleRequestPaths = await _resolveStaleTradeRequestPaths(requests);
+    if (staleRequestPaths.isEmpty) {
       return requests;
     }
 
@@ -700,22 +985,23 @@ class AirportFirestoreDataSource {
             sourceType: request.sourceType?.trim() ?? '',
             sourceOfferId: request.sourceOfferId?.trim() ?? '',
           );
-          return resolvedOfferId.isEmpty ||
-              !staleOfferIds.contains(resolvedOfferId);
+          if (resolvedOfferId.isEmpty) {
+            return true;
+          }
+          final requestPath = FirestorePaths.airportRequest(
+            request.islandId,
+            request.id,
+          );
+          return !staleRequestPaths.contains(requestPath);
         })
         .toList(growable: false);
 
     // 유지보수 포인트:
-    // 거래 완료/취소 직후에는 화면에서 먼저 숨기고,
+    // 거래 취소/거절 반영이 늦더라도 화면에서는 즉시 숨기고,
     // 실제 요청 문서는 백그라운드에서 cancelled로 정리합니다.
-    final staleRefs = <DocumentReference<Map<String, dynamic>>>[];
-    for (final offerId in staleOfferIds) {
-      final refs = tradeRequestRefsByOffer[offerId];
-      if (refs == null || refs.isEmpty) {
-        continue;
-      }
-      staleRefs.addAll(refs);
-    }
+    final staleRefs = staleRequestPaths
+        .map((path) => _firestore.doc(path))
+        .toList(growable: false);
     if (staleRefs.isNotEmpty) {
       unawaited(_cancelTradeRequestRefs(staleRefs));
     }
@@ -723,43 +1009,136 @@ class AirportFirestoreDataSource {
     return filtered;
   }
 
-  Future<Set<String>> _findStaleTradeOfferIds(Iterable<String> offerIds) async {
-    final stale = <String>{};
-    final normalizedOfferIds = offerIds
-        .map((offerId) => offerId.trim())
-        .where((offerId) => offerId.isNotEmpty)
-        .toSet();
-    if (normalizedOfferIds.isEmpty) {
-      return stale;
-    }
+  Future<Set<String>> _resolveStaleTradeRequestPaths(
+    List<AirportVisitRequest> requests,
+  ) async {
+    final stalePaths = <String>{};
+    final offerCache = <String, Map<String, dynamic>?>{};
+    final proposalStatusCache = <String, String>{};
 
     await Future.wait(
-      normalizedOfferIds.map((offerId) async {
-        try {
-          final offerSnapshot = await _firestore
-              .doc(FirestorePaths.marketPost(offerId))
-              .get();
-          final offerData = offerSnapshot.data();
-          if (!offerSnapshot.exists || offerData == null) {
-            stale.add(offerId);
-            return;
-          }
+      requests.map((request) async {
+        if (!request.isActive) {
+          return;
+        }
 
-          final lifecycle = (offerData['lifecycle'] as String?)?.trim() ?? '';
-          final status = (offerData['status'] as String?)?.trim() ?? '';
-          final isClosedOrCancelled =
-              lifecycle == 'cancelled' ||
-              lifecycle == 'completed' ||
-              status == 'offline' ||
-              status == 'closed';
-          if (isClosedOrCancelled) {
-            stale.add(offerId);
-          }
-        } catch (_) {}
+        final offerId = _resolveTradeSourceOfferId(
+          requestId: request.id,
+          sourceType: request.sourceType?.trim() ?? '',
+          sourceOfferId: request.sourceOfferId?.trim() ?? '',
+        );
+        if (offerId.isEmpty) {
+          return;
+        }
+
+        final isStale = await _isTradeRequestStale(
+          request: request,
+          offerId: offerId,
+          offerCache: offerCache,
+          proposalStatusCache: proposalStatusCache,
+        );
+        if (!isStale) {
+          return;
+        }
+        stalePaths.add(
+          FirestorePaths.airportRequest(request.islandId, request.id),
+        );
       }),
     );
 
-    return stale;
+    return stalePaths;
+  }
+
+  Future<bool> _isTradeRequestStale({
+    required AirportVisitRequest request,
+    required String offerId,
+    required Map<String, Map<String, dynamic>?> offerCache,
+    required Map<String, String> proposalStatusCache,
+  }) async {
+    final normalizedOfferId = offerId.trim();
+    if (normalizedOfferId.isEmpty) {
+      return false;
+    }
+
+    Map<String, dynamic>? offerData;
+    if (offerCache.containsKey(normalizedOfferId)) {
+      offerData = offerCache[normalizedOfferId];
+    } else {
+      try {
+        final snapshot = await _firestore
+            .doc(FirestorePaths.marketPost(normalizedOfferId))
+            .get();
+        offerData = snapshot.exists ? snapshot.data() : null;
+      } catch (_) {
+        return false;
+      }
+      offerCache[normalizedOfferId] = offerData;
+    }
+    if (offerData == null) {
+      return true;
+    }
+
+    final lifecycle = (offerData['lifecycle'] as String?)?.trim() ?? '';
+    final offerStatus = (offerData['status'] as String?)?.trim() ?? '';
+    final isClosedOrCancelled =
+        lifecycle == MarketLifecycleTab.cancelled.name ||
+        lifecycle == MarketLifecycleTab.completed.name ||
+        offerStatus == MarketOfferStatus.offline.name ||
+        offerStatus == MarketOfferStatus.closed.name;
+    if (isClosedOrCancelled) {
+      return true;
+    }
+
+    final ownerUid = (offerData['ownerUid'] as String?)?.trim() ?? '';
+    if (ownerUid.isEmpty) {
+      return true;
+    }
+
+    final requestData = <String, dynamic>{
+      'hostUid': request.hostUid,
+      'requesterUid': request.requesterUid,
+      'sourceMoveType': request.sourceMoveType,
+    };
+    final moveType = _resolveTradeMoveType(
+      offerData: offerData,
+      requestData: requestData,
+    );
+    final proposalUid = _resolveTradeProposalUidForAirportRequest(
+      ownerUid: ownerUid,
+      hostUid: request.hostUid,
+      requesterUid: request.requesterUid,
+      moveType: moveType,
+    );
+    if (proposalUid.isEmpty) {
+      return true;
+    }
+
+    final proposalCacheKey = '$normalizedOfferId:$proposalUid';
+    String proposalStatus;
+    if (proposalStatusCache.containsKey(proposalCacheKey)) {
+      proposalStatus = proposalStatusCache[proposalCacheKey] ?? '';
+    } else {
+      try {
+        final snapshot = await _firestore
+            .doc(
+              FirestorePaths.marketTradeProposal(
+                normalizedOfferId,
+                proposalUid,
+              ),
+            )
+            .get();
+        proposalStatus = (snapshot.data()?['status'] as String?)?.trim() ?? '';
+      } catch (_) {
+        return false;
+      }
+      proposalStatusCache[proposalCacheKey] = proposalStatus;
+    }
+
+    if (proposalStatus != MarketTradeProposalStatus.accepted.name) {
+      return true;
+    }
+
+    return false;
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
@@ -783,14 +1162,22 @@ class AirportFirestoreDataSource {
       docsByPath[doc.reference.path] = doc;
     }
 
-    final legacyRequestId = '$_tradeRequestIdPrefix$normalizedOfferId';
-    final byLegacyRequestId = await _firestore
-        .collectionGroup('requests')
-        .where(FieldPath.documentId, isEqualTo: legacyRequestId)
-        .limit(10)
-        .get();
-    for (final doc in byLegacyRequestId.docs) {
-      docsByPath[doc.reference.path] = doc;
+    if (docsByPath.isEmpty) {
+      try {
+        final legacyRequestId = '$_tradeRequestIdPrefix$normalizedOfferId';
+        final byLegacyRequestId = await _firestore
+            .collectionGroup('requests')
+            .where(FieldPath.documentId, isEqualTo: legacyRequestId)
+            .limit(10)
+            .get();
+        for (final doc in byLegacyRequestId.docs) {
+          docsByPath[doc.reference.path] = doc;
+        }
+      } catch (_) {
+        // 유지보수 포인트:
+        // 일부 SDK 조합에서 collectionGroup + documentId equalTo 파싱 오류가 있어
+        // 레거시 fallback 조회 실패는 무시하고 sourceOfferId 기반 문서만 사용합니다.
+      }
     }
 
     return docsByPath.values.toList(growable: false);
@@ -820,6 +1207,46 @@ class AirportFirestoreDataSource {
         }, SetOptions(merge: true));
       } catch (_) {}
     }
+  }
+
+  Future<bool> _isQueuedTouchingTrade(String offerId) async {
+    final normalizedOfferId = offerId.trim();
+    if (normalizedOfferId.isEmpty) {
+      return false;
+    }
+
+    try {
+      final offerSnapshot = await _firestore
+          .doc(FirestorePaths.marketPost(normalizedOfferId))
+          .get();
+      final offerData = offerSnapshot.data() ?? const <String, dynamic>{};
+      if (!offerSnapshot.exists) {
+        return false;
+      }
+      return (offerData['tradeType'] as String?)?.trim() ==
+              MarketTradeType.touching.name &&
+          (offerData['moveType'] as String?)?.trim() ==
+              MarketMoveType.host.name;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> _hasOtherArrivedTradeRequest({
+    required String offerId,
+    required String excludingRequestId,
+  }) async {
+    final relatedDocs = await _findTradeLinkedRequestDocsByOfferId(offerId);
+    for (final doc in relatedDocs) {
+      if (doc.id == excludingRequestId) {
+        continue;
+      }
+      final statusName = (doc.data()['status'] as String?)?.trim() ?? '';
+      if (statusName == AirportVisitRequestStatus.arrived.name) {
+        return true;
+      }
+    }
+    return false;
   }
 
   int _sortIncomingRequests(AirportVisitRequest a, AirportVisitRequest b) {

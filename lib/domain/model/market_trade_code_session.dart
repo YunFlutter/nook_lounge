@@ -44,7 +44,7 @@ sealed class MarketTradeCodeSession with _$MarketTradeCodeSession {
     if (normalized.isEmpty) {
       return false;
     }
-    return codeReceiverUid == normalized;
+    return _splitUidCsv(codeReceiverUid).contains(normalized);
   }
 
   String get normalizedSenderIslandRules => senderIslandRules.trim();
@@ -179,4 +179,12 @@ int? _toInt(Object? value) {
     return value.toInt();
   }
   return int.tryParse(value.toString());
+}
+
+Set<String> _splitUidCsv(String raw) {
+  return raw
+      .split(',')
+      .map((value) => value.trim())
+      .where((value) => value.isNotEmpty)
+      .toSet();
 }

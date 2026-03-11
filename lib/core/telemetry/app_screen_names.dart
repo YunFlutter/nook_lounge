@@ -10,7 +10,6 @@ abstract final class AppScreenNames {
   static const String catalogDashboard = 'catalog_dashboard';
   static const String turnip = 'turnip';
   static const String passportIssued = 'passport_issued';
-  static const String airportRulesEdit = 'airport_rules_edit';
   static const String airportRequestList = 'airport_request_list';
   static const String airportVisitorManifest = 'airport_visitor_manifest';
   static const String airportLiveRecruit = 'airport_live_recruit';

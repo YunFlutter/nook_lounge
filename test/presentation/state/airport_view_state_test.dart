@@ -5,7 +5,7 @@ import 'package:nook_lounge_app/presentation/state/airport_view_state.dart';
 
 void main() {
   group('AirportViewState', () {
-    test('거래 손님 목록은 같은 거래의 중복 요청을 한 건만 노출한다', () {
+    test('방문 중 손님은 대기 목록에서 빠지고 방문객 명단에만 남는다', () {
       final baseTime = DateTime(2026, 3, 11, 9);
       final state = AirportViewState(
         incomingRequests: <AirportVisitRequest>[
@@ -43,7 +43,11 @@ void main() {
 
       expect(
         state.waitingGuests.map((request) => request.id).toList(),
-        <String>['request-other', 'request-arrived'],
+        <String>['request-other'],
+      );
+      expect(
+        state.activeVisitors.map((request) => request.id).toList(),
+        <String>['request-arrived'],
       );
     });
 
