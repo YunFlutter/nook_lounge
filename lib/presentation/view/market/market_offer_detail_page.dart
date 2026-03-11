@@ -136,14 +136,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
           ],
-          Text('올린 유저', style: AppTextStyles.bodyPrimaryHeavy),
+          _buildOfferOverviewCard(ref, currentOffer),
+          const SizedBox(height: 20),
+          Text(
+            isMine ? '받은 거래 제안' : '내 거래 제안',
+            style: AppTextStyles.bodyPrimaryHeavy,
+          ),
           const SizedBox(height: 8),
-          _buildOfferOwnerInfoCard(ref, currentOffer),
-          const SizedBox(height: 20),
-          Text('교환 제안', style: AppTextStyles.bodyPrimaryHeavy),
-          const SizedBox(height: 12),
-          _buildTradeSummaryCard(),
-          const SizedBox(height: 20),
           isMine
               ? _buildOwnerProposalQueueSection(
                   context,
@@ -284,7 +283,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return canDeleteMineOffer;
   }
 
-  Widget _buildOfferOwnerInfoCard(WidgetRef ref, MarketOffer currentOffer) {
+  Widget _buildOfferOverviewCard(WidgetRef ref, MarketOffer currentOffer) {
     final ownerUid = currentOffer.ownerUid.trim();
     final islandsAsync = ownerUid.isEmpty
         ? null
@@ -307,8 +306,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
     final hemisphere = (selectedIsland?.hemisphere ?? '').trim();
     final nativeFruit = (selectedIsland?.nativeFruit ?? '').trim();
-    final secondaryText = islandName.isNotEmpty
-        ? islandName
+    final ownerInfoLine = _buildOfferOwnerInfoLine(
+      islandName: islandName,
+      hemisphere: hemisphere,
+      nativeFruit: nativeFruit,
+    );
+    final secondaryText = ownerInfoLine.isNotEmpty
+        ? ownerInfoLine
         : ownerUid.isEmpty
         ? '게시자 정보 일부만 표시하고 있어요.'
         : (islandsAsync?.isLoading == true ||
@@ -317,13 +321,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
         : '등록된 대표 섬 정보가 없어요.';
 
     return Semantics(
-      label: '거래 게시자 정보 카드',
+      label: '거래 요약 카드',
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(color: AppColors.borderDefault),
           boxShadow: const <BoxShadow>[
             BoxShadow(
@@ -333,95 +336,96 @@ class MarketOfferDetailPage extends ConsumerWidget {
             ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: <Widget>[
-            ClipOval(
-              child: Container(
-                width: 58,
-                height: 58,
-                color: AppColors.bgSecondary,
-                child: avatarUrl.isEmpty
-                    ? Image.asset(
-                        'assets/images/icon_raccoon_character.png',
-                        fit: BoxFit.cover,
-                      )
-                    : _buildImage(avatarUrl),
-              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+              child: _buildTradeSummaryCard(embedded: true),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          displayName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.bodyPrimaryHeavy,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.badgeYellowBg,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          '작성자',
-                          style: AppTextStyles.captionWithColor(
-                            AppColors.badgeYellowText,
-                            weight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    secondaryText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.captionMuted,
-                  ),
-                  if (nativeFruit.isNotEmpty ||
-                      hemisphere.isNotEmpty) ...<Widget>[
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: <Widget>[
-                        if (nativeFruit.isNotEmpty)
-                          _buildOfferOwnerMetaChip(
-                            icon: Icons.apple_rounded,
-                            label: nativeFruit,
-                            backgroundColor: AppColors.navActiveBg,
-                            foregroundColor: AppColors.textPrimary,
-                          ),
-                        if (hemisphere.isNotEmpty)
-                          _buildOfferOwnerMetaChip(
-                            icon: Icons.public_rounded,
-                            label: hemisphere,
-                            backgroundColor: AppColors.badgeBlueBg,
-                            foregroundColor: AppColors.badgeBlueText,
-                          ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
+            _buildOfferOwnerFooter(
+              displayName: displayName,
+              secondaryText: secondaryText,
+              avatarUrl: avatarUrl,
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildOfferOwnerFooter({
+    required String displayName,
+    required String secondaryText,
+    required String avatarUrl,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 16, 14, 16),
+      decoration: BoxDecoration(
+        color: AppColors.bgSecondary,
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(21)),
+        border: Border(
+          top: BorderSide(
+            color: AppColors.borderDefault.withValues(alpha: 0.6),
+          ),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          ClipOval(
+            child: Container(
+              width: 42,
+              height: 42,
+              color: AppColors.catalogChipBg,
+              child: avatarUrl.isEmpty
+                  ? Image.asset(
+                      'assets/images/icon_raccoon_character.png',
+                      fit: BoxFit.cover,
+                    )
+                  : _buildImage(avatarUrl),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  secondaryText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.captionMuted,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _buildOfferOwnerInfoLine({
+    required String islandName,
+    required String hemisphere,
+    required String nativeFruit,
+  }) {
+    final segments = <String>[
+      if (islandName.isNotEmpty) islandName,
+      if (hemisphere.isNotEmpty) hemisphere,
+      if (nativeFruit.isNotEmpty) nativeFruit,
+    ];
+    return segments.join(' · ');
   }
 
   String _resolveOfferOwnerDisplayName({
@@ -456,35 +460,6 @@ class MarketOfferDetailPage extends ConsumerWidget {
       return latestImageUrl;
     }
     return currentOffer.ownerAvatarUrl.trim();
-  }
-
-  Widget _buildOfferOwnerMetaChip({
-    required IconData icon,
-    required String label,
-    required Color backgroundColor,
-    required Color foregroundColor,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 13, color: foregroundColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: AppTextStyles.captionWithColor(
-              foregroundColor,
-              weight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildVisitorBottomActions(
@@ -1022,20 +997,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildTradeSummaryCard() {
+  Widget _buildTradeSummaryCard({bool embedded = false}) {
     if (offer.tradeType == MarketTradeType.touching) {
-      return _buildTouchingTradeSummaryCard();
+      return _buildTouchingTradeSummaryCard(embedded: embedded);
     }
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Column(
-        children: <Widget>[
-          Row(
+    final Widget content = offer.oneWayOffer
+        ? _buildSingleTradeSummaryContent(embedded: embedded)
+        : Row(
             children: <Widget>[
               Expanded(
                 child: _buildItemMiniCard(
@@ -1046,6 +1014,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   title: offer.offerItemName,
                   quantity: offer.offerItemQuantity,
                   categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
+                  imageSize: embedded ? 106 : 74,
+                  imageBorderRadius: embedded ? 22 : 16,
                 ),
               ),
               _buildTradeDirectionIndicator(),
@@ -1058,18 +1028,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   title: offer.wantItemName,
                   quantity: offer.wantItemQuantity,
                   categoryLabel: _resolveItemTypeLabel(isOfferSide: false),
+                  imageSize: embedded ? 106 : 74,
+                  imageBorderRadius: embedded ? 22 : 16,
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTouchingTradeSummaryCard() {
-    final touchingTags = _resolveTouchingTags();
-    final touchingCount = touchingTags.length;
+          );
+    if (embedded) {
+      return content;
+    }
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1077,68 +1044,106 @@ class MarketOfferDetailPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AppColors.borderDefault),
       ),
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: _buildItemMiniCard(
-                  header: '입장료',
-                  defaultHeader: '입장료',
-                  headerColor: AppColors.primaryDefault,
-                  imageUrl: offer.offerItemImageUrl,
-                  title: offer.offerItemName,
-                  quantity: offer.offerItemQuantity,
-                  categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
-                ),
+      child: content,
+    );
+  }
+
+  Widget _buildSingleTradeSummaryContent({bool embedded = false}) {
+    return Center(
+      child: _buildItemMiniCard(
+        header: offer.offerHeaderLabel,
+        defaultHeader: '나눔',
+        headerColor: AppColors.primaryDefault,
+        imageUrl: offer.offerItemImageUrl,
+        title: offer.offerItemName,
+        quantity: offer.offerItemQuantity,
+        categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
+        imageSize: embedded ? 106 : 74,
+        imageBorderRadius: embedded ? 22 : 16,
+      ),
+    );
+  }
+
+  Widget _buildTouchingTradeSummaryCard({bool embedded = false}) {
+    final touchingTags = _resolveTouchingTags();
+    final touchingCount = touchingTags.length;
+    final Widget content = Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildItemMiniCard(
+                header: '입장료',
+                defaultHeader: '입장료',
+                headerColor: AppColors.primaryDefault,
+                imageUrl: offer.offerItemImageUrl,
+                title: offer.offerItemName,
+                quantity: offer.offerItemQuantity,
+                categoryLabel: _resolveItemTypeLabel(isOfferSide: true),
+                imageSize: embedded ? 106 : 74,
+                imageBorderRadius: embedded ? 22 : 16,
               ),
-              _buildTradeDirectionIndicator(),
-              Expanded(
-                child: _buildItemMiniCard(
-                  header: '만지작',
-                  defaultHeader: '만지작',
-                  headerColor: AppColors.badgePurpleText,
-                  imageUrl: '',
-                  title: touchingCount > 0 ? '만지작 $touchingCount개' : '만지작',
-                  quantity: 0,
-                  categoryLabel: '만지작',
-                  emptyImageIcon: Icons.touch_app_rounded,
-                ),
-              ),
-            ],
-          ),
-          if (touchingTags.isNotEmpty) ...<Widget>[
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.bgSecondary,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.borderDefault),
-              ),
-              child: Row(
-                children: <Widget>[
-                  const Icon(
-                    Icons.unfold_less_rounded,
-                    size: 15,
-                    color: AppColors.textMuted,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      _buildFoldedTouchingSummaryText(touchingTags),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.captionMuted,
-                    ),
-                  ),
-                ],
+            ),
+            _buildTradeDirectionIndicator(),
+            Expanded(
+              child: _buildItemMiniCard(
+                header: '만지작',
+                defaultHeader: '만지작',
+                headerColor: AppColors.badgePurpleText,
+                imageUrl: '',
+                title: touchingCount > 0 ? '만지작 $touchingCount개' : '만지작',
+                quantity: 0,
+                categoryLabel: '만지작',
+                emptyImageIcon: Icons.touch_app_rounded,
+                imageSize: embedded ? 106 : 74,
+                imageBorderRadius: embedded ? 22 : 16,
               ),
             ),
           ],
+        ),
+        if (touchingTags.isNotEmpty) ...<Widget>[
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.bgSecondary,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.borderDefault),
+            ),
+            child: Row(
+              children: <Widget>[
+                const Icon(
+                  Icons.unfold_less_rounded,
+                  size: 15,
+                  color: AppColors.textMuted,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    _buildFoldedTouchingSummaryText(touchingTags),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.captionMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
+      ],
+    );
+    if (embedded) {
+      return content;
+    }
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.bgCard,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.borderDefault),
       ),
+      child: content,
     );
   }
 
@@ -1156,9 +1161,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Widget _buildTradeDirectionIndicator() {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Icon(Icons.sync_alt_outlined, size: 30, color: AppColors.textAccent,),
+      child: Icon(
+        Icons.sync_alt_outlined,
+        size: 30,
+        color: AppColors.textAccent,
+      ),
     );
   }
 
@@ -1175,6 +1184,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
     required int quantity,
     required String categoryLabel,
     IconData emptyImageIcon = Icons.image_not_supported_outlined,
+    double imageSize = 74,
+    double imageBorderRadius = 16,
   }) {
     final displayName = title.trim().isEmpty ? '-' : title.trim();
     final displayQuantity = quantity <= 0 ? 0 : quantity;
@@ -1186,17 +1197,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
           style: AppTextStyles.captionWithColor(
             headerColor,
             weight: FontWeight.w800,
-          ).copyWith(
-
           ),
         ),
         const SizedBox(height: 6),
         Container(
-          width: 74,
-          height: 74,
+          width: imageSize,
+          height: imageSize,
           decoration: BoxDecoration(
             color: AppColors.catalogChipBg,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(imageBorderRadius),
           ),
           alignment: Alignment.center,
           padding: const EdgeInsets.all(6),
@@ -1210,9 +1219,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyPrimaryHeavy.copyWith(
-            fontSize:  14
-          ),
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 14),
         ),
         const SizedBox(height: 8),
         _buildItemTypeBadge(categoryLabel),
