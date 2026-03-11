@@ -1053,7 +1053,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 child: _buildItemMiniCard(
                   header: offer.wantHeaderLabel,
                   defaultHeader: '받아요',
-                  headerColor: AppColors.badgeBlueText,
+                  headerColor: AppColors.accentDeepOrange,
                   imageUrl: offer.wantItemImageUrl,
                   title: offer.wantItemName,
                   quantity: offer.wantItemQuantity,
@@ -1156,15 +1156,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Widget _buildTradeDirectionIndicator() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(Icons.arrow_forward_rounded, color: AppColors.textAccent),
-          Icon(Icons.arrow_back_rounded, color: AppColors.textAccent),
-        ],
-      ),
+    return  Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Icon(Icons.sync_alt_outlined, size: 30, color: AppColors.textAccent,),
     );
   }
 
@@ -1189,9 +1183,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
       children: <Widget>[
         Text(
           headerText,
-          style: AppTextStyles.labelWithColor(
+          style: AppTextStyles.captionWithColor(
             headerColor,
             weight: FontWeight.w800,
+          ).copyWith(
+
           ),
         ),
         const SizedBox(height: 6),
@@ -1214,7 +1210,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyPrimaryHeavy,
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+            fontSize:  14
+          ),
         ),
         const SizedBox(height: 8),
         _buildItemTypeBadge(categoryLabel),
@@ -1242,7 +1240,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         textColor = AppColors.badgeYellowText;
         icon = Icons.description_rounded;
       case '주민':
-        bgColor = AppColors.badgeMintBg;
+        bgColor = const Color(0xff9ee476).withValues(alpha: 0.3);
         textColor = AppColors.badgeMintText;
         icon = Icons.person_rounded;
       case '만지작':

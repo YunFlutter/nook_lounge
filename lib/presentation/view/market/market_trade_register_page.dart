@@ -1402,15 +1402,9 @@ class _MarketTradeRegisterPageState
   }
 
   Widget _buildTradeDirectionIndicator() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(Icons.arrow_forward_rounded, color: AppColors.textAccent),
-          Icon(Icons.arrow_back_rounded, color: AppColors.textAccent),
-        ],
-      ),
+    return const  Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Icon(Icons.sync_alt_outlined, size: 30, color: AppColors.textAccent,),
     );
   }
 

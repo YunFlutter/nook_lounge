@@ -11,6 +11,7 @@ class MarketOfferCard extends StatelessWidget {
     required this.offer,
     required this.onTap,
     required this.onActionTap,
+    this.touchingWaitingCount,
     this.onEditTap,
     this.onDeleteTap,
     this.onCompleteTap,
@@ -20,6 +21,7 @@ class MarketOfferCard extends StatelessWidget {
   final MarketOffer offer;
   final VoidCallback onTap;
   final VoidCallback onActionTap;
+  final int? touchingWaitingCount;
   final VoidCallback? onEditTap;
   final VoidCallback? onDeleteTap;
   final VoidCallback? onCompleteTap;
@@ -195,7 +197,9 @@ class MarketOfferCard extends StatelessWidget {
           offer.offerItemName,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: AppTextStyles.bodyPrimaryHeavy,
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+            fontSize: 14
+          ),
         ),
         const SizedBox(height: 10),
         _buildItemTypeBadge(_resolveItemTypeLabel(isOfferSide: true)),
@@ -225,12 +229,7 @@ class MarketOfferCard extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            children: const <Widget>[
-              Icon(Icons.arrow_forward_rounded, color: AppColors.textAccent),
-              Icon(Icons.arrow_back_rounded, color: AppColors.textAccent),
-            ],
-          ),
+          child: Icon(Icons.sync_alt_outlined, size: 30, color: AppColors.textAccent,),
         ),
         Expanded(
           child: _buildOfferColumn(
@@ -280,7 +279,9 @@ class MarketOfferCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: AppTextStyles.bodyPrimaryHeavy,
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+            fontSize: 14
+          ),
         ),
         const SizedBox(height: 10),
         _buildItemTypeBadge(categoryLabel),
@@ -335,6 +336,10 @@ class MarketOfferCard extends StatelessWidget {
                   ],
                 ),
               ),
+              if (touchingWaitingCount != null) ...<Widget>[
+                const SizedBox(width: 10),
+                _buildTouchingWaitingBadge(touchingWaitingCount!),
+              ],
             ],
           ),
           const SizedBox(height: 20),
@@ -394,6 +399,57 @@ class MarketOfferCard extends StatelessWidget {
       return normalized;
     }
     return '만지작 거래';
+  }
+
+  Widget _buildTouchingWaitingBadge(int waitingCount) {
+    final normalizedCount = waitingCount < 0 ? 0 : waitingCount;
+    final hasWaiting = normalizedCount > 0;
+    final badgeColor = hasWaiting
+        ? AppColors.marketQueueBadgeBg
+        : AppColors.textMuted;
+    final backgroundColor = hasWaiting
+        ? AppColors.marketQueueBadgeBg.withValues(alpha: 0.12)
+        : AppColors.catalogChipBg;
+    final borderColor = hasWaiting
+        ? AppColors.marketQueueBadgeBg.withValues(alpha: 0.2)
+        : AppColors.borderDefault;
+    final label = '대기 ${_formatTouchingWaitingCount(normalizedCount)}명';
+
+    return Semantics(
+      label: '$normalizedCount명 대기 중',
+      child: ExcludeSemantics(
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(Icons.groups_rounded, size: 14, color: badgeColor),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: AppTextStyles.captionWithColor(
+                  badgeColor,
+                  weight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _formatTouchingWaitingCount(int waitingCount) {
+    if (waitingCount > 99) {
+      return '99+';
+    }
+    return '$waitingCount';
   }
 
   List<({String label, String imageUrl, String category})>
@@ -631,8 +687,8 @@ class MarketOfferCard extends StatelessWidget {
 
   Widget _buildActionChip() {
     final actionLabel = _resolveActionLabel();
-    final isProposalAction = actionLabel == '거래제안';
-    final isQueueAction = actionLabel == '줄서기';
+    final isProposalAction = actionLabel == '거래 제안';
+    final isQueueAction = actionLabel == '줄 서기  →';
     final bool disabled =
         _isCompletedOffer ||
         offer.status == MarketOfferStatus.closed ||
@@ -767,7 +823,7 @@ class MarketOfferCard extends StatelessWidget {
         textColor = AppColors.badgeYellowText;
         icon = Icons.description_rounded;
       case '주민':
-        bgColor = Color(0xff9ee476).withOpacity(0.3);
+        bgColor = const Color(0xff9ee476).withValues(alpha: 0.3);
         textColor = AppColors.badgeMintText;
         icon = Icons.person_rounded;
       case '만지작':
@@ -836,8 +892,8 @@ class MarketOfferCard extends StatelessWidget {
 
   String _resolveActionLabel() {
     if (offer.tradeType == MarketTradeType.touching) {
-      return '줄서기';
+      return '줄 서기  →';
     }
-    return '거래제안';
+    return '거래 제안';
   }
 }

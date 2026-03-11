@@ -11,6 +11,7 @@ import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/presentation/view/animated_fade_slide.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_my_trades_page.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_card.dart';
@@ -163,6 +164,21 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                   ...offers.asMap().entries.map((entry) {
                     final index = entry.key;
                     final offer = entry.value;
+                    final touchingWaitingCount =
+                        offer.boardType == MarketBoardType.touching
+                        ? ref
+                              .watch(marketTradeProposalsProvider(offer.id))
+                              .maybeWhen(
+                                data: (proposals) => proposals
+                                    .where(
+                                      (proposal) =>
+                                          proposal.status ==
+                                          MarketTradeProposalStatus.pending,
+                                    )
+                                    .length,
+                                orElse: () => null,
+                              )
+                        : null;
                     return Padding(
                       padding: EdgeInsets.only(
                         bottom: index == offers.length - 1 ? 0 : 12,
@@ -171,6 +187,7 @@ class _MarketTabPageState extends ConsumerState<MarketTabPage> {
                         delay: Duration(milliseconds: 70 + (index * 26)),
                         child: MarketOfferCard(
                           offer: offer,
+                          touchingWaitingCount: touchingWaitingCount,
                           onTap: () => _openOfferDetail(context, offer),
                           onActionTap: () => _openOfferDetail(context, offer),
                           onEditTap: offer.isMine
