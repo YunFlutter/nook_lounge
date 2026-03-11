@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -20,6 +21,7 @@ class FirebaseAuthDataSource {
   final FirebaseFirestore _firestore;
   final GoogleSignIn _googleSignIn;
   bool _googleInitialized = false;
+  bool _isWithdrawalInProgress = false;
 
   Stream<String?> watchUserId() {
     return _firebaseAuth.authStateChanges().map((User? user) => user?.uid);
@@ -41,6 +43,7 @@ class FirebaseAuthDataSource {
 
   String? get currentUserId => _firebaseAuth.currentUser?.uid;
   bool get isAnonymous => _firebaseAuth.currentUser?.isAnonymous ?? false;
+  bool get isWithdrawalInProgress => _isWithdrawalInProgress;
 
   Future<bool> hasUserDocument(String uid) async {
     final normalizedUid = uid.trim();
@@ -155,10 +158,14 @@ class FirebaseAuthDataSource {
   }
 
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      await _firebaseAuth.signOut();
 
-    if (_googleInitialized) {
-      await _googleSignIn.signOut();
+      if (_googleInitialized) {
+        await _googleSignIn.signOut();
+      }
+    } finally {
+      _isWithdrawalInProgress = false;
     }
   }
 
@@ -168,11 +175,27 @@ class FirebaseAuthDataSource {
       throw AppException('로그인 사용자 정보를 찾을 수 없어요.');
     }
 
-    await _firestore.doc(FirestorePaths.user(currentUser.uid)).set({
-      'accountStatus': 'withdrawn',
-      'withdrawnAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    _isWithdrawalInProgress = true;
+
+    try {
+      final callable = FirebaseFunctions.instance.httpsCallable(
+        'deleteUserAccount',
+      );
+      await callable.call(<String, dynamic>{});
+    } on FirebaseFunctionsException catch (error) {
+      _isWithdrawalInProgress = false;
+      final message = _resolveWithdrawalErrorMessage(error);
+      if (message != null && message.isNotEmpty) {
+        throw AppException(message);
+      }
+      if (error.code == 'unauthenticated') {
+        throw AppException('로그인 정보가 만료되었어요. 다시 로그인 후 시도해 주세요.');
+      }
+      throw AppException('탈퇴 처리 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.');
+    } catch (_) {
+      _isWithdrawalInProgress = false;
+      rethrow;
+    }
   }
 
   Future<void> _syncUserDocument(User? user) async {
@@ -255,5 +278,23 @@ class FirebaseAuthDataSource {
       return null;
     }
     return trimmedValue;
+  }
+
+  String? _resolveWithdrawalErrorMessage(FirebaseFunctionsException error) {
+    final details = error.details;
+    if (details is Map) {
+      final detailMessage = _readTrimmedString(details['message']);
+      if (detailMessage != null) {
+        return detailMessage;
+      }
+    }
+
+    final rawMessage = error.message?.trim();
+    if (rawMessage == null ||
+        rawMessage.isEmpty ||
+        rawMessage.toUpperCase() == error.code.toUpperCase()) {
+      return null;
+    }
+    return rawMessage;
   }
 }

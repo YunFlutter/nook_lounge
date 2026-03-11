@@ -171,6 +171,32 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
     }
   }
 
+  String _buildSplashStatusMessage({
+    required SessionViewState state,
+    required bool isAnonymous,
+  }) {
+    if (state.isLoading) {
+      return '앱을 준비하는 중...';
+    }
+
+    final session = state.session;
+    if (session == null) {
+      return '다음 화면을 준비하는 중...';
+    }
+
+    // 유지보수 포인트:
+    // 스플래시 안내 문구는 실제 세션 분기와 같은 기준을 사용해야
+    // 로그인 여부와 무관하게 잘못된 목적 화면을 안내하지 않습니다.
+    return session.when(
+      signedOut: () => '로그인 화면으로 이동할게요.',
+      needsIslandSetup: (_) => '섬 등록 화면으로 이동할게요.',
+      ready: (uid) => uid == SessionViewModel.guestUid || isAnonymous
+          ? '둘러보기 화면으로 이동할게요.'
+          : '홈 화면으로 이동할게요.',
+      blocked: (_, _) => '이용 제한 상태를 확인할게요.',
+    );
+  }
+
   @override
   void dispose() {
     _sessionSubscription?.close();
@@ -187,7 +213,10 @@ class _SessionGatePageState extends ConsumerState<SessionGatePage> {
 
     if (!_splashCompleted) {
       return SplashLoadingPage(
-        waitingForSession: state.isLoading,
+        statusMessage: _buildSplashStatusMessage(
+          state: state,
+          isAnonymous: isAnonymous,
+        ),
         onCompleted: () {
           if (!mounted || _splashCompleted) {
             return;

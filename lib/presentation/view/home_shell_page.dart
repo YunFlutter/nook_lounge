@@ -276,7 +276,10 @@ class HomeShellPage extends ConsumerWidget {
     }
 
     return AppBar(
-      title: const Text('Nook Lounge'),
+      title: const Text(
+        'Nook Lounge',
+        style: TextStyle(color: AppColors.textSecondary),
+      ),
       actions: <Widget>[
         IconButton(
           onPressed: () async {
@@ -290,18 +293,7 @@ class HomeShellPage extends ConsumerWidget {
   }
 
   Widget _buildStaticHomeStyleTitle(String title) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.s14,
-        vertical: AppSpacing.s8,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Text(title, style: AppTextStyles.appBarHomeTitle),
-    );
+    return Text(title, style: AppTextStyles.headingH1);
   }
 
   Widget _buildNotificationAction(BuildContext context) {

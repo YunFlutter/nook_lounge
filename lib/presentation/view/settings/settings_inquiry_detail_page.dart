@@ -46,6 +46,7 @@ class _SettingsInquiryDetailPageState
           inquiry.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: <Widget>[
           IconButton(

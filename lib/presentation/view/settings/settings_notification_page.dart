@@ -48,7 +48,10 @@ class _SettingsNotificationPageState
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('알림'),
+        title: const Text(
+          '알림',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(
@@ -74,7 +77,7 @@ class _SettingsNotificationPageState
                 Text('푸시 알림', style: AppTextStyles.captionMuted),
                 const SizedBox(height: SettingsUiTokens.sectionGap),
                 _switchTile(
-                  title: '내글에 거래 제안 알림',
+                  title: '내 글에 거래 제안 알림',
                   value: effectivePrefs.tradeOfferEnabled,
                   onChanged: (enabled) => _updatePreference(
                     context: context,

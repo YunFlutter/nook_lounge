@@ -7,11 +7,11 @@ import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
 class SplashLoadingPage extends StatefulWidget {
   const SplashLoadingPage({
     super.key,
-    this.waitingForSession = true,
+    required this.statusMessage,
     this.onCompleted,
   });
 
-  final bool waitingForSession;
+  final String statusMessage;
   final VoidCallback? onCompleted;
 
   @override
@@ -108,9 +108,7 @@ class _SplashLoadingPageState extends State<SplashLoadingPage>
                       children: <Widget>[
                         Expanded(
                           child: Text(
-                            widget.waitingForSession
-                                ? '섬 데이터를 불러오는 중...'
-                                : '로그인 화면으로 이동할게요.',
+                            widget.statusMessage,
                             style: AppTextStyles.bodyWithSize(
                               14,
                               color: AppColors.textMuted,

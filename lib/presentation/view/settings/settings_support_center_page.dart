@@ -47,7 +47,10 @@ class _SettingsSupportCenterPageState
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('고객센터'),
+        title: const Text(
+          '고객센터',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(

@@ -27,6 +27,8 @@ class AuthRepositoryImpl implements AuthRepository {
   String? get currentUserId => _dataSource.currentUserId;
   @override
   bool get isAnonymous => _dataSource.isAnonymous;
+  @override
+  bool get isWithdrawalInProgress => _dataSource.isWithdrawalInProgress;
 
   @override
   Future<bool> hasUserDocument(String uid) => _dataSource.hasUserDocument(uid);

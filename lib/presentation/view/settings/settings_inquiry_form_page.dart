@@ -70,6 +70,8 @@ class _SettingsInquiryFormPageState
 
   @override
   Widget build(BuildContext context) {
+    final inquiryFormTheme = _buildInquiryFormTheme(context);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -77,98 +79,144 @@ class _SettingsInquiryFormPageState
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: Text(widget.pageTitle),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          SettingsUiTokens.horizontalPadding,
-          SettingsUiTokens.verticalGap,
-          SettingsUiTokens.horizontalPadding,
-          SettingsUiTokens.horizontalPadding,
+        title: Text(
+          widget.pageTitle,
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('문의 분류', style: AppTextStyles.bodyPrimaryStrong),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedCategory,
-                items: SettingsSeedData.supportCategories
-                    .map(
-                      (category) => DropdownMenuItem<String>(
-                        value: category,
-                        child: Text(
-                          category,
-                          style: AppTextStyles.bodyPrimaryStrong,
+      ),
+      body: Theme(
+        data: inquiryFormTheme,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            SettingsUiTokens.horizontalPadding,
+            SettingsUiTokens.verticalGap,
+            SettingsUiTokens.horizontalPadding,
+            SettingsUiTokens.horizontalPadding,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('문의 분류', style: AppTextStyles.bodyPrimaryStrong),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedCategory,
+                  items: SettingsSeedData.supportCategories
+                      .map(
+                        (category) => DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(
+                            category,
+                            style: AppTextStyles.bodyPrimaryStrong,
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(growable: false),
-                onChanged: _submitting || widget.lockCategory
-                    ? null
-                    : (value) {
-                        if (value == null) {
-                          return;
-                        }
-                        setState(() {
-                          _selectedCategory = value;
-                        });
-                      },
-              ),
-              const SizedBox(height: 14),
-              Text('제목', style: AppTextStyles.bodyPrimaryStrong),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _titleController,
-                enabled: !_submitting,
-                decoration: InputDecoration(hintText: widget.titleHintText),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '제목을 입력해주세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 14),
-              Text('문의 내용', style: AppTextStyles.bodyPrimaryStrong),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _bodyController,
-                enabled: !_submitting,
-                minLines: 7,
-                maxLines: 12,
-                decoration: InputDecoration(
-                  hintText: widget.bodyHintText,
-                  alignLabelWithHint: true,
+                      )
+                      .toList(growable: false),
+                  onChanged: _submitting || widget.lockCategory
+                      ? null
+                      : (value) {
+                          if (value == null) {
+                            return;
+                          }
+                          setState(() {
+                            _selectedCategory = value;
+                          });
+                        },
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return '문의 내용을 입력해주세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _submitting ? null : _submit,
-                  style: FilledButton.styleFrom(
-                    overlayColor: Colors.transparent,
-                    splashFactory: NoSplash.splashFactory,
-                    backgroundColor: AppColors.settingsPrimaryButton,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(26),
+                const SizedBox(height: 14),
+                Text('제목', style: AppTextStyles.bodyPrimaryStrong),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _titleController,
+                  enabled: !_submitting,
+                  decoration: InputDecoration(hintText: widget.titleHintText),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return '제목을 입력해주세요.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                Text('문의 내용', style: AppTextStyles.bodyPrimaryStrong),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _bodyController,
+                  enabled: !_submitting,
+                  minLines: 7,
+                  maxLines: 12,
+                  decoration: InputDecoration(
+                    hintText: widget.bodyHintText,
+                    alignLabelWithHint: true,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return '문의 내용을 입력해주세요.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _submitting ? null : _submit,
+                    style: FilledButton.styleFrom(
+                      overlayColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      backgroundColor: AppColors.modalPrimaryAction,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                    ),
+                    child: Text(
+                      _submitting ? '접수 중...' : widget.submitButtonLabel,
                     ),
                   ),
-                  child: Text(
-                    _submitting ? '접수 중...' : widget.submitButtonLabel,
-                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ThemeData _buildInquiryFormTheme(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return theme.copyWith(
+      textSelectionTheme: const TextSelectionThemeData(
+        // 유지보수 포인트:
+        // 문의 화면 입력 포커스 컬러는 디자인 요청에 맞춰 accentOrange로만 덮어씁니다.
+        // 다른 폼 화면까지 바꿔야 하면 app_theme.dart의 전역 InputDecorationTheme로 옮기면 됩니다.
+        cursorColor: AppColors.accentOrange,
+      ),
+      inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: AppColors.accentOrange,
+            width: 1.8,
+          ),
+        ),
+        errorStyle: AppTextStyles.captionWithColor(
+          AppColors.accentOrange,
+          weight: FontWeight.w800,
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: AppColors.accentOrange,
+            width: 1.5,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: AppColors.accentOrange,
+            width: 1.8,
           ),
         ),
       ),

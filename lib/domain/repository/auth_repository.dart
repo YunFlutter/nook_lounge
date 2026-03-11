@@ -6,6 +6,7 @@ abstract class AuthRepository {
 
   String? get currentUserId;
   bool get isAnonymous;
+  bool get isWithdrawalInProgress;
   Future<bool> hasUserDocument(String uid);
   Future<UserServiceBlock?> getActiveServiceBlock(String uid);
 

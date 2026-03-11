@@ -43,7 +43,10 @@ class SettingsInquiryListPage extends ConsumerWidget {
                 icon: const Icon(Icons.arrow_back_ios_new_rounded),
                 tooltip: '뒤로가기',
               ),
-        title: Text(blockedAccessMode ? '문의 내역 / 이의 신청' : '나의 문의 내역'),
+        title: Text(
+          blockedAccessMode ? '문의 내역 / 이의 신청' : '나의 문의 내역',
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
         actions: blockedAccessMode
             ? <Widget>[
                 TextButton(

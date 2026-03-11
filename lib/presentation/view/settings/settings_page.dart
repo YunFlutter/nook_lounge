@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:nook_lounge_app/presentation/view/common/app_ink_well.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +47,10 @@ class SettingsPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('설정'),
+        title: const Text(
+          '설정',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -261,8 +266,15 @@ class SettingsPage extends ConsumerWidget {
       return;
     }
 
+    final rootNavigator = Navigator.of(context, rootNavigator: true);
+    final loadingRoute = SettingsDialogs.buildWithdrawalLoadingRoute(context);
+    unawaited(rootNavigator.push<void>(loadingRoute));
+
     try {
       await ref.read(authRepositoryProvider).requestWithdrawal();
+      if (loadingRoute.isActive) {
+        rootNavigator.removeRoute(loadingRoute);
+      }
       if (!context.mounted) {
         return;
       }
@@ -272,6 +284,9 @@ class SettingsPage extends ConsumerWidget {
       }
       await ref.read(authRepositoryProvider).signOut();
     } catch (error) {
+      if (loadingRoute.isActive) {
+        rootNavigator.removeRoute(loadingRoute);
+      }
       if (!context.mounted) {
         return;
       }

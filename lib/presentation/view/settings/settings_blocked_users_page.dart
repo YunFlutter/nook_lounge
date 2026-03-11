@@ -36,7 +36,10 @@ class _SettingsBlockedUsersPageState
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('차단 관리'),
+        title: const Text(
+          '차단 관리',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -86,10 +89,12 @@ class _SettingsBlockedUsersPageState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('차단한 유저', style: AppTextStyles.headingH3),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Text(
             '차단한 유저는 마켓 게시물과 방문 요청에서 서로 보이지 않아요.',
-            style: AppTextStyles.bodySecondaryStrong,
+            style: AppTextStyles.bodySecondaryStrong.copyWith(
+              height: 1.5
+            ),
           ),
         ],
       ),
@@ -156,7 +161,7 @@ class _SettingsBlockedUsersPageState
           ),
           const SizedBox(height: 10),
           Text('차단한 유저가 없어요.', style: AppTextStyles.headingH3),
-          const SizedBox(height: 6),
+          const SizedBox(height: 16),
           Text(
             '마켓이나 비행장에서 차단한 유저가 여기에 표시됩니다.',
             style: AppTextStyles.bodySecondaryStrong,

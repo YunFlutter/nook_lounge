@@ -110,7 +110,7 @@ class MarketOfferCard extends StatelessWidget {
               ),
             ),
           ),
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          padding: const EdgeInsets.fromLTRB(14, 16, 14, 16),
           child: Row(
             children: <Widget>[
               ClipOval(
@@ -129,7 +129,10 @@ class MarketOfferCard extends StatelessWidget {
                       offer.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodyPrimaryHeavy,
+                      style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 7),
                     Text(
@@ -293,7 +296,7 @@ class MarketOfferCard extends StatelessWidget {
     final touchingItems = _touchingPreviewItems;
     final touchingTitle = _resolvedTouchingTitle;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -319,9 +322,12 @@ class MarketOfferCard extends StatelessWidget {
                       touchingTitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodyPrimaryHeavy,
+                      style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 10),
                     Text(
                       formatRelativeTime(offer.createdAt),
                       style: AppTextStyles.captionMuted,
@@ -331,6 +337,7 @@ class MarketOfferCard extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 20),
           if (offer.description.isNotEmpty)
             Text(
               offer.description,
@@ -760,7 +767,7 @@ class MarketOfferCard extends StatelessWidget {
         textColor = AppColors.badgeYellowText;
         icon = Icons.description_rounded;
       case '주민':
-        bgColor = AppColors.badgeMintBg;
+        bgColor = Color(0xff9ee476).withOpacity(0.3);
         textColor = AppColors.badgeMintText;
         icon = Icons.person_rounded;
       case '만지작':

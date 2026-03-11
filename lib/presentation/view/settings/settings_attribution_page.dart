@@ -21,7 +21,10 @@ class SettingsAttributionPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('저작권 및 출처'),
+        title: const Text(
+          '저작권 및 출처',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
       ),
       body: SelectionArea(
         child: ListView(

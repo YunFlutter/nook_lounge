@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/settings_ui_tokens.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
@@ -22,7 +23,10 @@ class SettingsDocumentPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: Text(type.defaultTitle),
+        title: Text(
+          type.defaultTitle,
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
       ),
       body: documentAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

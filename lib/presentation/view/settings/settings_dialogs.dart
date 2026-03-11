@@ -41,6 +41,60 @@ class SettingsDialogs {
     );
   }
 
+  static DialogRoute<void> buildWithdrawalLoadingRoute(BuildContext context) {
+    return DialogRoute<void>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: AppColors.settingsOverlay,
+      builder: (dialogContext) {
+        return PopScope(
+          canPop: false,
+          child: Center(
+            child: Container(
+              width: 240,
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+              decoration: BoxDecoration(
+                color: AppColors.bgCard,
+                borderRadius: BorderRadius.circular(
+                  SettingsUiTokens.dialogRadius,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.modalPrimaryAction,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    '탈퇴 처리 중이에요.',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.dialogTitleCompact,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '잠시만 기다려 주세요.',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.dialogBodyCompact.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static Future<void> showInquiryReceived({
     required BuildContext context,
     required String displayName,
@@ -115,11 +169,14 @@ class SettingsDialogs {
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.dialogTitle,
+                  style: AppTextStyles.headingH2Secondary,
                 ),
-                const SizedBox(height: 14),
-                Text(accent, style: AppTextStyles.dialogDanger),
-                const SizedBox(height: 18),
+                const SizedBox(height: 20),
+                Text(
+                  accent,
+                  style: AppTextStyles.dialogDanger.copyWith(fontSize: 40),
+                ),
+                const SizedBox(height: 20),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -261,7 +318,7 @@ class SettingsDialogs {
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.dialogTitle,
+                  style: AppTextStyles.headingH2Secondary.copyWith(height: 1.5),
                 ),
                 if (subtitle != null) ...<Widget>[
                   const SizedBox(height: 10),
@@ -273,8 +330,8 @@ class SettingsDialogs {
                 ],
                 const SizedBox(height: 18),
                 Container(
-                  width: 56,
-                  height: 56,
+                  width: 40,
+                  height: 40,
                   decoration: const BoxDecoration(
                     color: AppColors.settingsSuccessIcon,
                     shape: BoxShape.circle,

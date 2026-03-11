@@ -80,7 +80,10 @@ class _SettingsIslandEditPageState
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: Text(appBarTitle),
+        title: Text(
+          appBarTitle,
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
         actions: <Widget>[
           IconButton(
             onPressed: canDeleteIsland ? _deleteIsland : null,

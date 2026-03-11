@@ -1,13 +1,19 @@
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const {initializeApp} = require("firebase-admin/app");
+const {getAuth} = require("firebase-admin/auth");
 const {getFirestore, FieldValue} = require("firebase-admin/firestore");
 const {getMessaging} = require("firebase-admin/messaging");
+const {getStorage} = require("firebase-admin/storage");
 
 initializeApp();
 
+const auth = getAuth();
 const db = getFirestore();
 const messaging = getMessaging();
+const storage = getStorage();
+const USER_DELETE_QUERY_PAGE_SIZE = 40;
+const WITHDRAWAL_ARCHIVE_RETENTION_DAYS = parseWithdrawalRetentionDays();
 
 /**
  * 유지보수 포인트:
@@ -144,6 +150,66 @@ exports.sendTradeProposalPush = onCall(async (request) => {
     failCount: response.failureCount,
     invalidTokenCount: invalidTokens.length,
   };
+});
+
+/**
+ * 유지보수 포인트:
+ * 탈퇴는 Auth/Firestore/Storage를 함께 정리해야 하므로
+ * 클라이언트 권한 대신 Admin SDK callable에서 일괄 처리합니다.
+ */
+exports.deleteUserAccount = onCall({timeoutSeconds: 300}, async (request) => {
+  const authUid = String(request.auth?.uid ?? "").trim();
+
+  if (!authUid) {
+    throw new HttpsError("unauthenticated", "로그인이 필요합니다.");
+  }
+
+  logger.info("deleteUserAccount started", {uid: authUid});
+
+  const archiveRef = withdrawalArchiveRef(authUid);
+  let currentStage = "archive_seed";
+
+  try {
+    const archiveSeed = await buildWithdrawalArchiveSeed(authUid);
+    await archiveRef.set(archiveSeed, {merge: true});
+
+    currentStage = "firestore_delete";
+    const firestoreDeletionSummary = await deleteUserRelatedFirestore(authUid);
+    currentStage = "storage_delete";
+    await deleteUserRelatedStorage(authUid);
+    currentStage = "auth_delete";
+    await deleteAuthUser(authUid);
+    currentStage = "archive_complete";
+    await archiveRef.set({
+      archiveStatus: "completed",
+      authDeleted: true,
+      authDeletedAt: new Date(),
+      deletedDataSummary: firestoreDeletionSummary,
+      updatedAt: new Date(),
+    }, {merge: true});
+  } catch (error) {
+    console.error(
+        formatWithdrawalDebugSummary({
+          uid: authUid,
+          stage: currentStage,
+          error,
+        }),
+    );
+
+    await markWithdrawalArchiveFailed(archiveRef, error);
+
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+
+    throw buildWithdrawalInternalError({
+      stage: currentStage,
+      error,
+    });
+  }
+
+  logger.info("deleteUserAccount done", {uid: authUid});
+  return {ok: true};
 });
 
 async function isPushEnabledForType({targetUid, type}) {
@@ -286,4 +352,324 @@ async function cleanupInvalidTokens(uid, invalidTokens) {
   }
 
   await batch.commit();
+}
+
+async function deleteUserRelatedFirestore(uid) {
+  const normalizedUid = String(uid).trim();
+  if (!normalizedUid) {
+    return {};
+  }
+
+  const deletionSummary = {};
+
+  deletionSummary.marketPostsOwned = await runDeletionTask(
+      "marketPosts.ownerUid",
+      () => deleteQueryDocuments(
+          db.collection("marketPosts").where("ownerUid", "==", normalizedUid),
+          "marketPosts.ownerUid",
+      ),
+  );
+  deletionSummary.marketTradeCodesOwned = await runDeletionTask(
+      "marketTradeCodes.ownerUid",
+      () => deleteQueryDocuments(
+          db.collection("marketTradeCodes").where("ownerUid", "==", normalizedUid),
+          "marketTradeCodes.ownerUid",
+      ),
+  );
+  deletionSummary.marketTradeCodesParticipated = await runDeletionTask(
+      "marketTradeCodes.proposerUid",
+      () => deleteQueryDocuments(
+          db.collection("marketTradeCodes").where("proposerUid", "==", normalizedUid),
+          "marketTradeCodes.proposerUid",
+      ),
+  );
+  deletionSummary.marketProposalsOwned = "handled_by_marketPosts_cleanup";
+  deletionSummary.marketProposalsParticipated = await runDeletionTask(
+      "proposals.proposerUid",
+      () => deleteQueryDocuments(
+          db.collectionGroup("proposals").where("proposerUid", "==", normalizedUid),
+          "proposals.proposerUid",
+      ),
+  );
+  deletionSummary.airportQueuesOwned = await runDeletionTask(
+      "airportQueues.ownerUid",
+      () => deleteQueryDocuments(
+          db.collection("airportQueues").where("ownerUid", "==", normalizedUid),
+          "airportQueues.ownerUid",
+      ),
+  );
+  deletionSummary.airportRequestsHosted = "handled_by_airportQueues_cleanup";
+  deletionSummary.airportRequestsRequested = await runDeletionTask(
+      "requests.requesterUid",
+      () => deleteQueryDocuments(
+          db.collectionGroup("requests").where("requesterUid", "==", normalizedUid),
+          "requests.requesterUid",
+      ),
+  );
+  deletionSummary.supportInquiries = await runDeletionTask(
+      "supportInquiries.uid",
+      () => deleteQueryDocuments(
+          db.collection("supportInquiries").where("uid", "==", normalizedUid),
+          "supportInquiries.uid",
+      ),
+  );
+  deletionSummary.reportsSubmitted = await runDeletionTask(
+      "reports.reporterUid",
+      () => deleteQueryDocuments(
+          db.collection("reports").where("reporterUid", "==", normalizedUid),
+          "reports.reporterUid",
+      ),
+  );
+  deletionSummary.reportsAboutOwnedOffers = await runDeletionTask(
+      "reports.offerOwnerUid",
+      () => deleteQueryDocuments(
+          db.collection("reports").where("offerOwnerUid", "==", normalizedUid),
+          "reports.offerOwnerUid",
+      ),
+  );
+  deletionSummary.reportsAsAirportHost = await runDeletionTask(
+      "reports.requestHostUid",
+      () => deleteQueryDocuments(
+          db.collection("reports").where("requestHostUid", "==", normalizedUid),
+          "reports.requestHostUid",
+      ),
+  );
+  deletionSummary.reportsAsAirportRequester = await runDeletionTask(
+      "reports.requestRequesterUid",
+      () => deleteQueryDocuments(
+          db.collection("reports").where("requestRequesterUid", "==", normalizedUid),
+          "reports.requestRequesterUid",
+      ),
+  );
+  deletionSummary.notificationsSent = await runDeletionTask(
+      "notifications.senderUid",
+      () => deleteQueryDocuments(
+          db.collectionGroup("notifications").where("senderUid", "==", normalizedUid),
+          "notifications.senderUid",
+      ),
+  );
+  deletionSummary.blockedUserEdges = await runDeletionTask(
+      "blockedUsers.blockedUid",
+      () => deleteQueryDocuments(
+          db.collectionGroup("blockedUsers").where("blockedUid", "==", normalizedUid),
+          "blockedUsers.blockedUid",
+      ),
+  );
+  deletionSummary.blockedByUserEdges = await runDeletionTask(
+      "blockedByUsers.blockerUid",
+      () => deleteQueryDocuments(
+          db.collectionGroup("blockedByUsers").where("blockerUid", "==", normalizedUid),
+          "blockedByUsers.blockerUid",
+      ),
+  );
+
+  deletionSummary.userServiceBlock = await runDeletionTask(
+      "userServiceBlocks.doc",
+      () => safeDeleteDocument(db.collection("userServiceBlocks").doc(normalizedUid)),
+  );
+
+  // 유지보수 포인트:
+  // users/{uid}는 마지막에 재귀 삭제해, 탈퇴 완료 직전까지는
+  // 클라이언트 세션 문서 감시가 불필요하게 흔들리지 않도록 합니다.
+  deletionSummary.userRootDeleted = await runDeletionTask(
+      "users.root",
+      () => safeRecursiveDelete(
+          db.collection("users").doc(normalizedUid),
+      ),
+  );
+
+  return deletionSummary;
+}
+
+async function deleteUserRelatedStorage(uid) {
+  const normalizedUid = String(uid).trim();
+  if (!normalizedUid) {
+    return;
+  }
+
+  try {
+    await storage.bucket().deleteFiles({
+      prefix: `users/${normalizedUid}/`,
+      force: true,
+    });
+  } catch (error) {
+    logger.warn("deleteUserRelatedStorage skipped", {
+      uid: normalizedUid,
+      error: String(error),
+    });
+  }
+}
+
+async function deleteAuthUser(uid) {
+  try {
+    await auth.deleteUser(uid);
+  } catch (error) {
+    if (error?.code === "auth/user-not-found") {
+      return;
+    }
+    throw error;
+  }
+}
+
+async function deleteQueryDocuments(query, label) {
+  let deletedCount = 0;
+
+  while (true) {
+    const snapshot = await query.limit(USER_DELETE_QUERY_PAGE_SIZE).get();
+    if (snapshot.empty) {
+      if (deletedCount > 0) {
+        logger.info("deleteUserAccount query cleanup", {label, deletedCount});
+      }
+      return deletedCount;
+    }
+
+    for (const doc of snapshot.docs) {
+      await safeRecursiveDelete(doc.ref);
+      deletedCount += 1;
+    }
+
+    if (snapshot.size < USER_DELETE_QUERY_PAGE_SIZE) {
+      logger.info("deleteUserAccount query cleanup", {label, deletedCount});
+      return deletedCount;
+    }
+  }
+}
+
+async function safeRecursiveDelete(ref) {
+  await db.recursiveDelete(ref);
+  return true;
+}
+
+async function safeDeleteDocument(ref) {
+  try {
+    await ref.delete();
+    return true;
+  } catch (error) {
+    const code = String(error?.code ?? "");
+    if (code === "5" || code === "not-found") {
+      return false;
+    }
+    throw error;
+  }
+}
+
+async function runDeletionTask(label, task) {
+  try {
+    return await task();
+  } catch (error) {
+    throw new Error(
+        `[firestore_delete:${label}] ${sanitizeWithdrawalErrorMessage(error)}`,
+    );
+  }
+}
+
+function withdrawalArchiveRef(uid) {
+  return db.collection("complianceArchives")
+      .doc("withdrawnUsers")
+      .collection("records")
+      .doc(uid);
+}
+
+async function buildWithdrawalArchiveSeed(uid) {
+  const now = new Date();
+  const retentionUntil = new Date(
+      now.getTime() + WITHDRAWAL_ARCHIVE_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+  );
+  const authSnapshot = await safeGetUserRecord(uid);
+
+  return {
+    uid,
+    archiveStatus: "in_progress",
+    withdrawalReason: "self_service_withdrawal",
+    archiveSchemaVersion: 1,
+    legalHold: false,
+    retentionDays: WITHDRAWAL_ARCHIVE_RETENTION_DAYS,
+    retentionReason: "withdrawal_minimum_compliance_archive",
+    withdrawnAt: now,
+    retentionUntil,
+    authDeleted: false,
+    deletedAuthProviders: authSnapshot.providerIds,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+async function markWithdrawalArchiveFailed(archiveRef, error) {
+  try {
+    await archiveRef.set({
+      archiveStatus: "failed",
+      lastErrorCode: String(error?.code ?? "unknown"),
+      lastErrorMessage: String(error?.message ?? error ?? "unknown"),
+      updatedAt: new Date(),
+    }, {merge: true});
+  } catch (archiveError) {
+    logger.warn("deleteUserAccount archive failure update skipped", {
+      archivePath: archiveRef.path,
+      error: String(archiveError),
+    });
+  }
+}
+
+async function safeGetUserRecord(uid) {
+  try {
+    const userRecord = await auth.getUser(uid);
+    return {
+      providerIds: userRecord.providerData
+          .map((provider) => String(provider.providerId ?? "").trim())
+          .filter((providerId) => providerId),
+    };
+  } catch (error) {
+    if (error?.code === "auth/user-not-found") {
+      return {providerIds: []};
+    }
+    throw error;
+  }
+}
+
+function parseWithdrawalRetentionDays() {
+  const rawValue = String(
+      process.env.WITHDRAWAL_ARCHIVE_RETENTION_DAYS ?? "1095",
+  ).trim();
+  const parsedValue = Number.parseInt(rawValue, 10);
+
+  // 유지보수 포인트:
+  // 보관 기간은 개인정보처리방침/법무 검토 기준으로 조정할 수 있도록
+  // 환경변수로 덮어쓸 수 있게 두고, 기본값은 3년(1095일)로 둡니다.
+  if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+    return 1095;
+  }
+  return parsedValue;
+}
+
+function buildWithdrawalInternalError({stage, error}) {
+  const rawMessage = sanitizeWithdrawalErrorMessage(error);
+
+  return new HttpsError(
+      "internal",
+      `탈퇴 처리 중 오류가 발생했어요. [${stage}] ${rawMessage}`,
+      {
+        stage,
+        message: rawMessage,
+      },
+  );
+}
+
+function formatWithdrawalDebugSummary({uid, stage, error}) {
+  const rawMessage = sanitizeWithdrawalErrorMessage(error);
+  return `deleteUserAccount failed uid=${uid} stage=${stage} error=${rawMessage}`;
+}
+
+function sanitizeWithdrawalErrorMessage(error) {
+  const rawMessage = String(error?.message ?? error ?? "unknown");
+  const normalizedMessage = rawMessage.replace(/\s+/g, " ").trim();
+
+  if (!normalizedMessage) {
+    return "unknown";
+  }
+
+  if (normalizedMessage.length <= 300) {
+    return normalizedMessage;
+  }
+
+  return `${normalizedMessage.slice(0, 300)}...`;
 }

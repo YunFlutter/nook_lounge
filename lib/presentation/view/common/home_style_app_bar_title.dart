@@ -17,21 +17,12 @@ class HomeStyleAppBarTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.s14,
-        vertical: AppSpacing.s8,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.borderDefault),
-      ),
-      child: Text(
-        title,
-        maxLines: maxLines,
-        overflow: overflow,
-        style: AppTextStyles.appBarHomeTitle,
+    return Text(
+      title,
+      maxLines: maxLines,
+      overflow: overflow,
+      style: AppTextStyles.headingH3.copyWith(
+        color: AppColors.textSecondary
       ),
     );
   }

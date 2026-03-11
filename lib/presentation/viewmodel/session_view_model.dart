@@ -122,6 +122,7 @@ class SessionViewModel extends StateNotifier<SessionViewState> {
 
   Future<void> _handleMissingUserDocument(String uid) async {
     if (_authRepository.currentUserId != uid ||
+        _authRepository.isWithdrawalInProgress ||
         _isForcingSignOutForMissingUser) {
       return;
     }

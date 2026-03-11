@@ -28,7 +28,9 @@ class SettingsNoticeListPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('공지사항'),
+        title: Text('공지사항', style: TextStyle(
+          color: AppColors.textSecondary
+        ),),
       ),
       body: noticesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -92,8 +94,9 @@ class SettingsNoticeListPage extends ConsumerWidget {
               Text(
                 notice.title,
                 style: AppTextStyles.bodyWithSize(
-                  22,
+                  18,
                   color: AppColors.textSecondary,
+                  height: 1.45,
                   weight: FontWeight.w800,
                 ),
               ),

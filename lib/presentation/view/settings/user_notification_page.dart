@@ -35,7 +35,10 @@ class _UserNotificationPageState extends ConsumerState<UserNotificationPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           tooltip: '뒤로가기',
         ),
-        title: const Text('알림'),
+        title: const Text(
+          '알림',
+          style: TextStyle(color: AppColors.textSecondary),
+        ),
         actions: <Widget>[
           notificationsAsync.when(
             loading: () => const SizedBox.shrink(),
