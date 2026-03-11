@@ -84,10 +84,15 @@ class AirportGatePillToggle extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.flight_rounded,
-                    size: 20,
-                    color: AppColors.borderStrong,
+                  child: Transform.rotate(
+                    // 유지보수 포인트:
+                    // 요청 UI에 맞춰 비행기 아이콘 방향만 시계 방향 90도로 고정합니다.
+                    angle: math.pi / 2,
+                    child: const Icon(
+                      Icons.flight_rounded,
+                      size: 20,
+                      color: AppColors.borderStrong,
+                    ),
                   ),
                 ),
               ),
