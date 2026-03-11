@@ -50,6 +50,9 @@ class AirportVisitRequest {
     this.invitedAt,
     this.arrivedAt,
     this.inviteCode,
+    this.senderIslandRules,
+    this.ruleAgreedCode,
+    this.ruleAgreedAt,
     this.sourceType,
     this.sourceOfferId,
     this.sourceMoveType,
@@ -74,6 +77,9 @@ class AirportVisitRequest {
   final DateTime? invitedAt;
   final DateTime? arrivedAt;
   final String? inviteCode;
+  final String? senderIslandRules;
+  final String? ruleAgreedCode;
+  final DateTime? ruleAgreedAt;
   final String? sourceType;
   final String? sourceOfferId;
   final String? sourceMoveType;
@@ -81,6 +87,15 @@ class AirportVisitRequest {
   bool get isPending => status == AirportVisitRequestStatus.pending;
   bool get isInvited => status == AirportVisitRequestStatus.invited;
   bool get isArrived => status == AirportVisitRequestStatus.arrived;
+  bool get hasInviteCode => inviteCode?.trim().isNotEmpty ?? false;
+  bool get hasValidRuleAgreement {
+    final normalizedInviteCode = inviteCode?.trim().toUpperCase() ?? '';
+    final normalizedAgreedCode = ruleAgreedCode?.trim().toUpperCase() ?? '';
+    if (normalizedInviteCode.isEmpty || normalizedAgreedCode.isEmpty) {
+      return false;
+    }
+    return normalizedInviteCode == normalizedAgreedCode;
+  }
 
   bool get isActive {
     return status == AirportVisitRequestStatus.pending ||
@@ -108,6 +123,9 @@ class AirportVisitRequest {
     DateTime? invitedAt,
     DateTime? arrivedAt,
     String? inviteCode,
+    String? senderIslandRules,
+    String? ruleAgreedCode,
+    DateTime? ruleAgreedAt,
     String? sourceType,
     String? sourceOfferId,
     String? sourceMoveType,
@@ -133,6 +151,9 @@ class AirportVisitRequest {
       invitedAt: invitedAt ?? this.invitedAt,
       arrivedAt: arrivedAt ?? this.arrivedAt,
       inviteCode: inviteCode ?? this.inviteCode,
+      senderIslandRules: senderIslandRules ?? this.senderIslandRules,
+      ruleAgreedCode: ruleAgreedCode ?? this.ruleAgreedCode,
+      ruleAgreedAt: ruleAgreedAt ?? this.ruleAgreedAt,
       sourceType: sourceType ?? this.sourceType,
       sourceOfferId: sourceOfferId ?? this.sourceOfferId,
       sourceMoveType: sourceMoveType ?? this.sourceMoveType,
@@ -169,6 +190,9 @@ class AirportVisitRequest {
       invitedAt: _toDateTime(data['invitedAt']),
       arrivedAt: _toDateTime(data['arrivedAt']),
       inviteCode: (data['inviteCode'] as String?)?.trim().toUpperCase(),
+      senderIslandRules: (data['senderIslandRules'] as String?)?.trim(),
+      ruleAgreedCode: (data['ruleAgreedCode'] as String?)?.trim().toUpperCase(),
+      ruleAgreedAt: _toDateTime(data['ruleAgreedAt']),
       sourceType: (data['sourceType'] as String?)?.trim(),
       sourceOfferId: (data['sourceOfferId'] as String?)?.trim(),
       sourceMoveType: (data['sourceMoveType'] as String?)?.trim(),
@@ -194,6 +218,9 @@ class AirportVisitRequest {
       'invitedAt': invitedAt,
       'arrivedAt': arrivedAt,
       'inviteCode': inviteCode,
+      'senderIslandRules': senderIslandRules,
+      'ruleAgreedCode': ruleAgreedCode,
+      'ruleAgreedAt': ruleAgreedAt,
       'sourceType': sourceType,
       'sourceOfferId': sourceOfferId,
       'sourceMoveType': sourceMoveType,

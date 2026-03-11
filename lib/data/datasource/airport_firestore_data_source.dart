@@ -19,9 +19,12 @@ class AirportFirestoreDataSource {
       'duplicate_airport_visit_report';
   static const String _tradeLinkedSourceType = 'market_trade';
   static const String _tradeRequestIdPrefix = 'trade_';
+  static const String _receiverRuleAgreementMapField = 'receiverRuleAgreements';
   static const String _receiverRuleAgreedUidField = 'receiverRuleAgreedUid';
   static const String _receiverRuleAgreedCodeField = 'receiverRuleAgreedCode';
   static const String _receiverRuleAgreedAtField = 'receiverRuleAgreedAt';
+  static const String _receiverRuleAgreementCodeKey = 'code';
+  static const String _receiverRuleAgreementAtKey = 'agreedAt';
 
   final FirebaseFirestore _firestore;
 
@@ -727,26 +730,21 @@ class AirportFirestoreDataSource {
         final receiverUids = _splitUidCsv(
           (codeData['codeReceiverUid'] as String?)?.trim() ?? '',
         )..remove(proposalUid);
-        final agreedReceiverUids = _splitUidCsv(
-          (codeData[_receiverRuleAgreedUidField] as String?)?.trim() ?? '',
-        )..remove(proposalUid);
-        batch.set(codeRef, <String, dynamic>{
+        final payload = <String, dynamic>{
           'codeReceiverUid': receiverUids.isEmpty
               ? FieldValue.delete()
               : _joinUidCsv(receiverUids),
-          _receiverRuleAgreedUidField: agreedReceiverUids.isEmpty
-              ? FieldValue.delete()
-              : _joinUidCsv(agreedReceiverUids),
-          _receiverRuleAgreedCodeField: agreedReceiverUids.isEmpty
-              ? FieldValue.delete()
-              : (codeData[_receiverRuleAgreedCodeField] ?? FieldValue.delete()),
-          _receiverRuleAgreedAtField: agreedReceiverUids.isEmpty
-              ? FieldValue.delete()
-              : (codeData[_receiverRuleAgreedAtField] ?? FieldValue.delete()),
-          'receiverRuleAgreedAtMillis': FieldValue.delete(),
           'updatedAt': FieldValue.serverTimestamp(),
           'updatedAtMillis': FieldValue.delete(),
-        }, SetOptions(merge: true));
+        };
+        _applyReceiverRuleAgreementPayload(
+          payload,
+          agreements: _removeReceiverRuleAgreementsForReceivers(
+            _extractReceiverRuleAgreementMap(codeData),
+            receiverUids: <String>{proposalUid},
+          ),
+        );
+        batch.set(codeRef, payload, SetOptions(merge: true));
       }
 
       final hasOtherAcceptedProposal = proposalsSnapshot.docs.any((doc) {
@@ -963,6 +961,96 @@ class AirportFirestoreDataSource {
     return normalized.join(',');
   }
 
+  void _applyReceiverRuleAgreementPayload(
+    Map<String, dynamic> payload, {
+    required Map<String, Map<String, dynamic>> agreements,
+  }) {
+    payload[_receiverRuleAgreementMapField] = agreements.isEmpty
+        ? FieldValue.delete()
+        : _serializeReceiverRuleAgreementMap(agreements);
+    payload[_receiverRuleAgreedUidField] = FieldValue.delete();
+    payload[_receiverRuleAgreedCodeField] = FieldValue.delete();
+    payload[_receiverRuleAgreedAtField] = FieldValue.delete();
+    payload['receiverRuleAgreedAtMillis'] = FieldValue.delete();
+  }
+
+  Map<String, Map<String, dynamic>> _extractReceiverRuleAgreementMap(
+    Map<String, dynamic> data,
+  ) {
+    final agreements = <String, Map<String, dynamic>>{};
+    final rawAgreements = data[_receiverRuleAgreementMapField];
+    if (rawAgreements is! Map) {
+      return agreements;
+    }
+    for (final entry in rawAgreements.entries) {
+      final uid = entry.key.toString().trim();
+      final rawAgreement = entry.value;
+      if (uid.isEmpty || rawAgreement is! Map) {
+        continue;
+      }
+      final code =
+          (rawAgreement[_receiverRuleAgreementCodeKey] as String?)
+              ?.trim()
+              .toUpperCase() ??
+          '';
+      if (!_dodoCodePattern.hasMatch(code)) {
+        continue;
+      }
+      agreements[uid] = <String, dynamic>{
+        _receiverRuleAgreementCodeKey: code,
+        if (rawAgreement[_receiverRuleAgreementAtKey] != null)
+          _receiverRuleAgreementAtKey:
+              rawAgreement[_receiverRuleAgreementAtKey],
+      };
+    }
+    return agreements;
+  }
+
+  Map<String, dynamic> _serializeReceiverRuleAgreementMap(
+    Map<String, Map<String, dynamic>> agreements,
+  ) {
+    final serialized = <String, dynamic>{};
+    for (final entry in agreements.entries) {
+      final uid = entry.key.trim();
+      if (uid.isEmpty) {
+        continue;
+      }
+      final code =
+          (entry.value[_receiverRuleAgreementCodeKey] as String?)
+              ?.trim()
+              .toUpperCase() ??
+          '';
+      if (!_dodoCodePattern.hasMatch(code)) {
+        continue;
+      }
+      serialized[uid] = <String, dynamic>{
+        _receiverRuleAgreementCodeKey: code,
+        if (entry.value[_receiverRuleAgreementAtKey] != null)
+          _receiverRuleAgreementAtKey: entry.value[_receiverRuleAgreementAtKey],
+      };
+    }
+    return serialized;
+  }
+
+  Map<String, Map<String, dynamic>> _removeReceiverRuleAgreementsForReceivers(
+    Map<String, Map<String, dynamic>> agreements, {
+    required Set<String> receiverUids,
+  }) {
+    if (agreements.isEmpty || receiverUids.isEmpty) {
+      return agreements.isEmpty
+          ? const <String, Map<String, dynamic>>{}
+          : <String, Map<String, dynamic>>{...agreements};
+    }
+    final next = <String, Map<String, dynamic>>{};
+    for (final entry in agreements.entries) {
+      if (receiverUids.contains(entry.key)) {
+        continue;
+      }
+      next[entry.key] = <String, dynamic>{...entry.value};
+    }
+    return next;
+  }
+
   Future<List<AirportVisitRequest>> _filterAndCleanupStaleTradeRequests({
     required List<AirportVisitRequest> requests,
   }) async {
@@ -1087,6 +1175,13 @@ class AirportFirestoreDataSource {
         offerStatus == MarketOfferStatus.closed.name;
     if (isClosedOrCancelled) {
       return true;
+    }
+
+    if (request.status == AirportVisitRequestStatus.arrived) {
+      // 유지보수 포인트:
+      // 방문 확인으로 이미 입장 처리된 손님은 거래가 진행 중인 동안
+      // proposal 조회/동기화 지연이 있어도 현재 방문객 명단에서 우선 보여줍니다.
+      return false;
     }
 
     final ownerUid = (offerData['ownerUid'] as String?)?.trim() ?? '';

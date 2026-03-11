@@ -11,6 +11,7 @@ import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_session.dart';
+import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
@@ -24,11 +25,13 @@ class MarketTradeCodeSendPage extends ConsumerStatefulWidget {
   const MarketTradeCodeSendPage({
     required this.offer,
     required this.session,
+    this.targetReceiverUid = '',
     super.key,
   });
 
   final MarketOffer offer;
   final MarketTradeCodeSession session;
+  final String targetReceiverUid;
 
   @override
   ConsumerState<MarketTradeCodeSendPage> createState() =>
@@ -48,8 +51,6 @@ class _MarketTradeCodeSendPageState
   bool _hasUserEditedCode = false;
   bool _hasUserEditedRules = false;
   bool _isSending = false;
-  bool _hasInitializedReceiverSelection = false;
-  Set<String> _selectedReceiverUids = <String>{};
 
   String get _normalizedCode => _codeController.text.trim().toUpperCase();
   String get _normalizedRules => _rulesController.text.trim();
@@ -96,15 +97,47 @@ class _MarketTradeCodeSendPageState
             ?.where((proposal) => proposal.isAccepted)
             .toList(growable: false) ??
         const <MarketTradeProposal>[];
-    final selectedReceiverUids = supportsTouchingQueue
-        ? _resolveSelectedReceiverUids(acceptedProposals)
+    final queuedTouchingTargetUid = _resolveQueuedTouchingTargetUid(
+      acceptedProposals: acceptedProposals,
+    );
+    final targetProposal = queuedTouchingTargetUid.isEmpty
+        ? null
+        : _findAcceptedProposalByUid(
+            proposals: acceptedProposals,
+            proposerUid: queuedTouchingTargetUid,
+          );
+    final tradeVisitRequestsAsync = isSender && supportsTouchingQueue
+        ? ref.watch(
+            airportTradeVisitRequestsProvider((
+              offerId: widget.offer.id,
+              uid: '',
+            )),
+          )
+        : const AsyncValue<List<AirportVisitRequest>>.data(
+            <AirportVisitRequest>[],
+          );
+    final targetTradeVisitRequest = queuedTouchingTargetUid.isEmpty
+        ? null
+        : _findTradeVisitRequestForReceiver(
+            requests:
+                tradeVisitRequestsAsync.valueOrNull ??
+                const <AirportVisitRequest>[],
+            receiverUid: queuedTouchingTargetUid,
+          );
+    final isTradeCodeAlreadySent =
+        supportsTouchingQueue && _hasActiveTradeInvite(targetTradeVisitRequest);
+    final targetReceiverUids = supportsTouchingQueue
+        ? (queuedTouchingTargetUid.isEmpty
+              ? const <String>{}
+              : <String>{queuedTouchingTargetUid})
         : _splitUidCsv(widget.session.codeReceiverUid);
     final canEdit = isSender && !_isSending;
     final canSend =
         canEdit &&
         _dodoCodePattern.hasMatch(_normalizedCode) &&
         _normalizedRules.isNotEmpty &&
-        (!supportsTouchingQueue || selectedReceiverUids.isNotEmpty);
+        (!supportsTouchingQueue || targetReceiverUids.isNotEmpty) &&
+        !isTradeCodeAlreadySent;
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -187,17 +220,18 @@ class _MarketTradeCodeSendPageState
               const SizedBox(height: AppSpacing.s24),
               Align(
                 alignment: Alignment.centerLeft,
-                child: _buildSectionTitle('코드 보낼 손님'),
+                child: _buildSectionTitle('코드 받을 손님'),
               ),
               const SizedBox(height: AppSpacing.s10),
-              _buildReceiverSelectionSection(
+              _buildReceiverSummarySection(
                 proposalsAsync: proposalsAsync,
-                selectedReceiverUids: selectedReceiverUids,
-                canEdit: canEdit,
+                targetProposal: targetProposal,
               ),
               const SizedBox(height: AppSpacing.s10),
               Text(
-                '선택한 손님들에게 같은 도도 코드와 규칙을 한 번에 보내요.',
+                isTradeCodeAlreadySent
+                    ? '이미 이 손님에게 코드를 보냈어요. 코드 확인 화면에서 진행 상태를 확인해 주세요.'
+                    : '이전 화면에서 선택한 손님 1명에게만 도도 코드와 규칙을 보내요.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.captionSecondary,
               ),
@@ -226,7 +260,13 @@ class _MarketTradeCodeSendPageState
                 ],
               ),
               child: FilledButton(
-                onPressed: canSend ? () => _sendCode(context, ref) : null,
+                onPressed: canSend
+                    ? () => _sendCode(
+                        context,
+                        ref,
+                        receiverUids: targetReceiverUids,
+                      )
+                    : null,
                 style: FilledButton.styleFrom(
                   overlayColor: Colors.transparent,
                   splashFactory: NoSplash.splashFactory,
@@ -240,6 +280,8 @@ class _MarketTradeCodeSendPageState
                 child: Text(
                   _isSending
                       ? '코드 전송 중...'
+                      : isTradeCodeAlreadySent
+                      ? '이미 전송된 손님이에요'
                       : supportsTouchingQueue
                       ? '선택한 손님에게 코드 보내기'
                       : '코드 보내기',
@@ -289,29 +331,6 @@ class _MarketTradeCodeSendPageState
         widget.offer.moveType == MarketMoveType.host;
   }
 
-  Set<String> _resolveSelectedReceiverUids(
-    List<MarketTradeProposal> acceptedProposals,
-  ) {
-    final acceptedUids = acceptedProposals
-        .map((proposal) => proposal.proposerUid.trim())
-        .where((uid) => uid.isNotEmpty)
-        .toSet();
-    if (!_hasInitializedReceiverSelection) {
-      final sessionReceiverUids = _splitUidCsv(
-        widget.session.codeReceiverUid,
-      ).intersection(acceptedUids);
-      _selectedReceiverUids = sessionReceiverUids.isNotEmpty
-          ? sessionReceiverUids
-          : acceptedUids;
-      _hasInitializedReceiverSelection = true;
-    } else {
-      _selectedReceiverUids = _selectedReceiverUids
-          .intersection(acceptedUids)
-          .toSet();
-    }
-    return _selectedReceiverUids;
-  }
-
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -320,10 +339,9 @@ class _MarketTradeCodeSendPageState
     );
   }
 
-  Widget _buildReceiverSelectionSection({
+  Widget _buildReceiverSummarySection({
     required AsyncValue<List<MarketTradeProposal>> proposalsAsync,
-    required Set<String> selectedReceiverUids,
-    required bool canEdit,
+    required MarketTradeProposal? targetProposal,
   }) {
     return proposalsAsync.when(
       loading: () => _buildSelectionPanel(
@@ -355,6 +373,15 @@ class _MarketTradeCodeSendPageState
             ),
           );
         }
+        if (targetProposal == null) {
+          return _buildSelectionPanel(
+            child: Text(
+              '선택한 손님 정보를 찾지 못했어요. 이전 화면에서 다시 선택해 주세요.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.captionMuted,
+            ),
+          );
+        }
 
         return _buildSelectionPanel(
           child: Column(
@@ -363,123 +390,163 @@ class _MarketTradeCodeSendPageState
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      '선택 ${selectedReceiverUids.length}명 / 승낙 ${acceptedProposals.length}명',
+                      '선택 1명 / 승낙 ${acceptedProposals.length}명',
                       style: AppTextStyles.bodySecondaryStrong,
                     ),
                   ),
-                  TextButton(
-                    onPressed: canEdit
-                        ? () {
-                            setState(() {
-                              _selectedReceiverUids = acceptedProposals
-                                  .map(
-                                    (proposal) => proposal.proposerUid.trim(),
-                                  )
-                                  .where((uid) => uid.isNotEmpty)
-                                  .toSet();
-                            });
-                          }
-                        : null,
-                    child: const Text('전체 선택'),
+                  Text(
+                    '선택된 손님',
+                    style: AppTextStyles.captionWithColor(
+                      AppColors.modalPrimaryAction,
+                      weight: FontWeight.w800,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.s8),
-              ...acceptedProposals.asMap().entries.map((entry) {
-                final index = entry.key;
-                final proposal = entry.value;
-                final proposerUid = proposal.proposerUid.trim();
-                final isSelected = selectedReceiverUids.contains(proposerUid);
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index == acceptedProposals.length - 1
-                        ? 0
-                        : AppSpacing.s10,
-                  ),
-                  child: Material(
-                    color: AppColors.bgSecondary,
+              Material(
+                color: AppColors.bgSecondary,
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    child: InkWell(
-                      onTap: !canEdit || proposerUid.isEmpty
-                          ? null
-                          : () {
-                              setState(() {
-                                if (isSelected) {
-                                  _selectedReceiverUids.remove(proposerUid);
-                                } else {
-                                  _selectedReceiverUids.add(proposerUid);
-                                }
-                              });
-                            },
-                      borderRadius: BorderRadius.circular(18),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.modalPrimaryAction
-                                : AppColors.borderDefault,
-                            width: isSelected ? 2 : 1,
-                          ),
+                    border: Border.all(
+                      color: AppColors.modalPrimaryAction,
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      ClipOval(
+                        child: SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: targetProposal.proposerAvatarUrl.trim().isEmpty
+                              ? Image.asset(
+                                  'assets/images/icon_raccoon_character.png',
+                                  fit: BoxFit.cover,
+                                )
+                              : _buildImage(targetProposal.proposerAvatarUrl),
                         ),
-                        child: Row(
+                      ),
+                      const SizedBox(width: AppSpacing.s10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            ClipOval(
-                              child: SizedBox(
-                                width: 44,
-                                height: 44,
-                                child: proposal.proposerAvatarUrl.trim().isEmpty
-                                    ? Image.asset(
-                                        'assets/images/icon_raccoon_character.png',
-                                        fit: BoxFit.cover,
-                                      )
-                                    : _buildImage(proposal.proposerAvatarUrl),
+                            Text(
+                              targetProposal.proposerName.trim().isEmpty
+                                  ? '이름 없는 유저'
+                                  : targetProposal.proposerName.trim(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.bodyPrimaryHeavy.copyWith(
+                                fontSize: 15,
                               ),
                             ),
-                            const SizedBox(width: AppSpacing.s10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    proposal.proposerName.trim().isEmpty
-                                        ? '이름 없는 유저'
-                                        : proposal.proposerName.trim(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: AppTextStyles.bodyPrimaryHeavy
-                                        .copyWith(fontSize: 15),
-                                  ),
-                                  const SizedBox(height: AppSpacing.s4),
-                                  Text(
-                                    proposal.status.label,
-                                    style: AppTextStyles.captionSecondary,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.s10),
-                            Icon(
-                              isSelected
-                                  ? Icons.check_circle_rounded
-                                  : Icons.radio_button_unchecked_rounded,
-                              color: isSelected
-                                  ? AppColors.modalPrimaryAction
-                                  : AppColors.textMuted,
+                            const SizedBox(height: AppSpacing.s4),
+                            Text(
+                              targetProposal.status.label,
+                              style: AppTextStyles.captionSecondary,
                             ),
                           ],
                         ),
                       ),
-                    ),
+                      const SizedBox(width: AppSpacing.s10),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppColors.modalPrimaryAction,
+                      ),
+                    ],
                   ),
-                );
-              }),
+                ),
+              ),
             ],
           ),
         );
       },
     );
+  }
+
+  String _resolveQueuedTouchingTargetUid({
+    required List<MarketTradeProposal> acceptedProposals,
+  }) {
+    final explicitTargetUid = widget.targetReceiverUid.trim();
+    if (explicitTargetUid.isNotEmpty) {
+      return _findAcceptedProposalByUid(
+                proposals: acceptedProposals,
+                proposerUid: explicitTargetUid,
+              ) !=
+              null
+          ? explicitTargetUid
+          : '';
+    }
+
+    // 유지보수 포인트:
+    // 줄서기 코드는 "코드"를 누른 상대 1명만 대상으로 해야 하므로
+    // 명시적 선택이 없을 때만 마지막 세션 상대를 fallback으로 사용합니다.
+    final sessionProposerUid = widget.session.proposerUid.trim();
+    if (_findAcceptedProposalByUid(
+          proposals: acceptedProposals,
+          proposerUid: sessionProposerUid,
+        ) !=
+        null) {
+      return sessionProposerUid;
+    }
+
+    final currentReceiverUids = _splitUidCsv(widget.session.codeReceiverUid);
+    for (final uid in currentReceiverUids) {
+      if (_findAcceptedProposalByUid(
+            proposals: acceptedProposals,
+            proposerUid: uid,
+          ) !=
+          null) {
+        return uid;
+      }
+    }
+    return '';
+  }
+
+  MarketTradeProposal? _findAcceptedProposalByUid({
+    required List<MarketTradeProposal> proposals,
+    required String proposerUid,
+  }) {
+    final normalizedProposerUid = proposerUid.trim();
+    if (normalizedProposerUid.isEmpty) {
+      return null;
+    }
+    for (final proposal in proposals) {
+      if (proposal.proposerUid.trim() == normalizedProposerUid &&
+          proposal.isAccepted) {
+        return proposal;
+      }
+    }
+    return null;
+  }
+
+  AirportVisitRequest? _findTradeVisitRequestForReceiver({
+    required List<AirportVisitRequest> requests,
+    required String receiverUid,
+  }) {
+    final normalizedReceiverUid = receiverUid.trim();
+    if (normalizedReceiverUid.isEmpty) {
+      return null;
+    }
+    for (final request in requests) {
+      if (request.requesterUid.trim() == normalizedReceiverUid) {
+        return request;
+      }
+    }
+    return null;
+  }
+
+  bool _hasActiveTradeInvite(AirportVisitRequest? request) {
+    if (request == null) {
+      return false;
+    }
+    final hasInviteCode = request.inviteCode?.trim().isNotEmpty ?? false;
+    return hasInviteCode || request.isInvited || request.isArrived;
   }
 
   Widget _buildSelectionPanel({required Widget child}) {
@@ -744,12 +811,13 @@ class _MarketTradeCodeSendPageState
     setState(() {});
   }
 
-  Future<void> _sendCode(BuildContext context, WidgetRef ref) async {
+  Future<void> _sendCode(
+    BuildContext context,
+    WidgetRef ref, {
+    required Set<String> receiverUids,
+  }) async {
     final code = _normalizedCode;
     final rules = _normalizedRules;
-    final selectedReceiverUids = _supportsTouchingQueue
-        ? _selectedReceiverUids.toSet()
-        : _splitUidCsv(widget.session.codeReceiverUid);
     if (!_dodoCodePattern.hasMatch(code)) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -772,12 +840,12 @@ class _MarketTradeCodeSendPageState
         );
       return;
     }
-    if (selectedReceiverUids.isEmpty) {
+    if (receiverUids.isEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
-            content: Text('코드를 보낼 손님을 한 명 이상 선택해 주세요.'),
+            content: Text('코드를 받을 승낙 손님이 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -790,7 +858,7 @@ class _MarketTradeCodeSendPageState
           .read(marketViewModelProvider.notifier)
           .sendTradeCode(
             offer: widget.offer,
-            receiverUid: _joinUidCsv(selectedReceiverUids),
+            receiverUid: _joinUidCsv(receiverUids),
             code: code,
             islandRules: rules,
           );
@@ -815,7 +883,10 @@ class _MarketTradeCodeSendPageState
     await Navigator.of(context).pushReplacement(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketTradeCodeView,
-        builder: (_) => MarketTradeCodeViewPage(offer: widget.offer),
+        builder: (_) => MarketTradeCodeViewPage(
+          offer: widget.offer,
+          targetReceiverUid: receiverUids.length == 1 ? receiverUids.first : '',
+        ),
       ),
     );
   }
@@ -826,11 +897,22 @@ class _MarketTradeCodeSendPageState
         case 'invalid_trade_code_format':
           return '코드는 영문 대문자+숫자 조합 5자리로 입력해 주세요.';
         case 'invalid_code_receiver':
-          return '코드 수신 대상을 찾지 못했어요. 다시 시도해 주세요.';
+          return '코드 수신 대상이 바뀌었어요. 대기열을 다시 확인해 주세요.';
         case 'invalid_trade_code_payload':
           return '코드 전송 정보가 올바르지 않아요. 다시 시도해 주세요.';
         case 'invalid_trade_rules':
           return '섬 규칙을 한 줄 이상 입력해 주세요.';
+        case 'trade_code_send_in_progress':
+          return '이미 이 거래의 코드 전송을 진행 중이에요.';
+        case 'trade_code_session_not_found':
+          return '거래 코드 세션을 찾지 못했어요. 대기열에서 다시 확인해 주세요.';
+        case 'trade_code_sender_mismatch':
+          return '현재 계정은 이 거래의 코드 발송자가 아니에요.';
+        case 'trade_code_already_sent':
+          return '이미 이 손님에게 코드를 보냈어요.';
+        case 'trade_offer_not_found':
+        case 'trade_offer_unavailable':
+          return '이미 종료되었거나 취소된 거래라 코드를 보낼 수 없어요.';
       }
     }
     if (error is FirebaseException) {

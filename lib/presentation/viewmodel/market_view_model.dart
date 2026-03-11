@@ -48,6 +48,8 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   Set<String> _guestHiddenOfferIds = <String>{};
   Set<String> _blockedUserIds = const <String>{};
   Set<String> _activeProposalOfferIds = const <String>{};
+  final Set<String> _acceptingOfferIds = <String>{};
+  final Set<String> _sendingCodeOfferIds = <String>{};
   String _activeUserId = '';
   bool _isProposalTrackingEnabled = false;
 
@@ -432,18 +434,35 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
         : offer.title.trim();
     late final MarketTradeCodeSession session;
     try {
-      session = await _repository.acceptTradeProposal(
-        offerId: offer.id,
-        ownerUid: ownerUid,
-        proposerUid: targetProposerUid,
-        moveType: offer.moveType,
-        offerTitle: normalizedTitle,
+      session = await _runSingleFlight<MarketTradeCodeSession>(
+        registry: _acceptingOfferIds,
+        key: offer.id,
+        errorCode: 'trade_accept_in_progress',
+        errorMessage: '이미 이 거래의 승낙을 처리 중이에요.',
+        action: () {
+          return _repository.acceptTradeProposal(
+            offerId: offer.id,
+            ownerUid: ownerUid,
+            proposerUid: targetProposerUid,
+            moveType: offer.moveType,
+            offerTitle: normalizedTitle,
+          );
+        },
       );
     } catch (error) {
       final errorCode = _readStateErrorCode(error);
       state = state.copyWith(
         errorMessage: errorCode == 'touching_trade_accept_limit_exceeded'
             ? '만지작 줄서기는 동시에 최대 8명까지만 승낙할 수 있어요.'
+            : errorCode == 'trade_accept_in_progress'
+            ? '이미 이 거래의 승낙을 처리 중이에요.'
+            : errorCode == 'trade_proposal_not_found' ||
+                  errorCode == 'trade_proposal_unavailable'
+            ? '이미 취소되었거나 지금은 승낙할 수 없는 제안이에요.'
+            : errorCode == 'trade_offer_locked'
+            ? '이미 진행 중인 상대가 있어요. 현재 거래를 먼저 정리해 주세요.'
+            : errorCode == 'trade_offer_unavailable'
+            ? '이미 종료되었거나 취소된 거래예요.'
             : '거래 승낙에 실패했어요. 다시 시도해 주세요.',
       );
       rethrow;
@@ -465,43 +484,44 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       state = state.copyWith(errorMessage: '로그인 후 코드를 보낼 수 있어요.');
       throw StateError('unauthenticated');
     }
-    await _repository.sendTradeCode(
-      offerId: offer.id,
-      senderUid: senderUid,
-      receiverUid: receiverUid,
-      code: code,
-      islandRules: islandRules,
-      offerTitle: offer.title,
+    await _runSingleFlight<void>(
+      registry: _sendingCodeOfferIds,
+      key: offer.id,
+      errorCode: 'trade_code_send_in_progress',
+      errorMessage: '이미 이 거래의 코드 전송을 진행 중이에요.',
+      action: () {
+        return _repository.sendTradeCode(
+          offerId: offer.id,
+          senderUid: senderUid,
+          receiverUid: receiverUid,
+          code: code,
+          islandRules: islandRules,
+          offerTitle: offer.title,
+        );
+      },
     );
     state = state.copyWith(errorMessage: null);
   }
 
   Future<void> agreeTradeRules({
     required MarketOffer offer,
-    required MarketTradeCodeSession session,
+    required String inviteCode,
   }) async {
     final receiverUid = currentUserId.trim();
     if (receiverUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 규칙 동의를 진행해 주세요.');
       throw StateError('unauthenticated');
     }
-    if (!session.isCodeReceiver(receiverUid)) {
-      state = state.copyWith(errorMessage: '코드 수신자만 규칙에 동의할 수 있어요.');
-      throw StateError('trade_rule_agreement_permission_denied');
-    }
-    if (!session.hasCode) {
+    final normalizedInviteCode = inviteCode.trim().toUpperCase();
+    if (normalizedInviteCode.isEmpty) {
       state = state.copyWith(errorMessage: '아직 확인할 코드가 준비되지 않았어요.');
       throw StateError('trade_code_not_ready');
-    }
-    if (!session.hasSenderIslandRules) {
-      state = state.copyWith(errorMessage: '상대 섬 방문 규칙이 아직 없어요.');
-      throw StateError('trade_rule_missing');
     }
 
     await _repository.agreeTradeRules(
       offerId: offer.id,
       receiverUid: receiverUid,
-      code: session.code,
+      code: normalizedInviteCode,
     );
     state = state.copyWith(errorMessage: null);
   }
@@ -850,6 +870,29 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       return error.message.toString();
     }
     return '';
+  }
+
+  Future<T> _runSingleFlight<T>({
+    required Set<String> registry,
+    required String key,
+    required String errorCode,
+    required String errorMessage,
+    required Future<T> Function() action,
+  }) async {
+    final normalizedKey = key.trim();
+    if (normalizedKey.isEmpty) {
+      return action();
+    }
+    if (!registry.add(normalizedKey)) {
+      state = state.copyWith(errorMessage: errorMessage);
+      throw StateError(errorCode);
+    }
+
+    try {
+      return await action();
+    } finally {
+      registry.remove(normalizedKey);
+    }
   }
 
   @override

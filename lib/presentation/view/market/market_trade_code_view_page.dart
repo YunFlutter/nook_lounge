@@ -12,6 +12,7 @@ import 'package:nook_lounge_app/di/app_providers.dart';
 import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_proposal.dart';
 import 'package:nook_lounge_app/presentation/view/common/home_style_app_bar_title.dart';
 import 'package:nook_lounge_app/presentation/view/common/app_owl_empty_state.dart';
 import 'package:nook_lounge_app/presentation/view/market/market_offer_card.dart';
@@ -19,9 +20,14 @@ import 'package:nook_lounge_app/presentation/view/market/market_trade_code_send_
 import 'package:nook_lounge_app/presentation/view/market/market_trade_rules_view_sheet.dart';
 
 class MarketTradeCodeViewPage extends ConsumerStatefulWidget {
-  const MarketTradeCodeViewPage({required this.offer, super.key});
+  const MarketTradeCodeViewPage({
+    required this.offer,
+    this.targetReceiverUid = '',
+    super.key,
+  });
 
   final MarketOffer offer;
+  final String targetReceiverUid;
 
   @override
   ConsumerState<MarketTradeCodeViewPage> createState() =>
@@ -60,13 +66,7 @@ class _MarketTradeCodeViewPageState
         .currentUserId
         .trim();
     final tradeVisitRequestsAsync = ref.watch(
-      airportTradeVisitRequestsProvider((
-        offerId: widget.offer.id,
-        uid: currentUid,
-      )),
-    );
-    final agreedReceiverUidsAsync = ref.watch(
-      marketTradeAgreedReceiverUidsProvider(widget.offer.id),
+      airportTradeVisitRequestsProvider((offerId: widget.offer.id, uid: '')),
     );
 
     return Scaffold(
@@ -87,50 +87,86 @@ class _MarketTradeCodeViewPageState
           }
           final isSender = session.isCodeSender(currentUid);
           final supportsTouchingQueue = _supportsTouchingQueue(widget.offer);
+          final proposalsAsync = isSender && supportsTouchingQueue
+              ? ref.watch(marketTradeProposalsProvider(widget.offer.id))
+              : const AsyncValue<List<MarketTradeProposal>>.data(
+                  <MarketTradeProposal>[],
+                );
           final tradeVisitRequests =
               tradeVisitRequestsAsync.valueOrNull ??
               const <AirportVisitRequest>[];
-          final agreedReceiverUids =
-              agreedReceiverUidsAsync.valueOrNull ?? const <String>{};
+          final agreedReceiverUids = tradeVisitRequests
+              .where((request) => request.hasValidRuleAgreement)
+              .map((request) => request.requesterUid.trim())
+              .where((uid) => uid.isNotEmpty)
+              .toSet();
+          final normalizedTargetReceiverUid = widget.targetReceiverUid.trim();
           final selectedReceiverUids = _splitUidCsv(session.codeReceiverUid);
+          final acceptedReceiverUids =
+              proposalsAsync.valueOrNull
+                  ?.where((proposal) => proposal.isAccepted)
+                  .map((proposal) => proposal.proposerUid.trim())
+                  .where((uid) => uid.isNotEmpty)
+                  .toSet() ??
+              const <String>{};
+          final targetTradeVisitRequest = normalizedTargetReceiverUid.isEmpty
+              ? null
+              : _findTradeVisitRequestForReceiver(
+                  requests: tradeVisitRequests,
+                  receiverUid: normalizedTargetReceiverUid,
+                );
+          final shouldResetQueuedTouchingCode =
+              isSender &&
+              supportsTouchingQueue &&
+              (normalizedTargetReceiverUid.isNotEmpty
+                  ? !selectedReceiverUids.contains(
+                          normalizedTargetReceiverUid,
+                        ) &&
+                        !_hasActiveTradeInvite(targetTradeVisitRequest)
+                  : (proposalsAsync.isLoading ||
+                        (acceptedReceiverUids.isNotEmpty &&
+                            !_hasSameUidSet(
+                              acceptedReceiverUids,
+                              selectedReceiverUids,
+                            ))));
+          final focusReceiverUids = normalizedTargetReceiverUid.isNotEmpty
+              ? <String>{normalizedTargetReceiverUid}
+              : shouldResetQueuedTouchingCode
+              ? _resolveQueuedTouchingFocusReceiverUids(
+                  acceptedReceiverUids: acceptedReceiverUids,
+                  selectedReceiverUids: selectedReceiverUids,
+                  proposerUid: session.proposerUid,
+                )
+              : selectedReceiverUids;
           final tradeVisitRequest = isSender && supportsTouchingQueue
               ? _resolveHostTradeVisitRequest(
                   requests: tradeVisitRequests,
-                  selectedReceiverUids: selectedReceiverUids,
+                  selectedReceiverUids: focusReceiverUids,
                   agreedReceiverUids: agreedReceiverUids,
                 )
-              : tradeVisitRequests.isEmpty
-              ? null
-              : tradeVisitRequests.first;
-          final shouldWatchAgreementStream =
-              !(isSender && supportsTouchingQueue);
-          final agreementReceiverUid = isSender
-              ? tradeVisitRequest?.requesterUid.trim() ?? ''
-              : currentUid;
-          final rulesAgreedAsync = shouldWatchAgreementStream
-              ? ref.watch(
-                  marketTradeRuleAgreementProvider((
-                    offerId: widget.offer.id,
-                    receiverUid: agreementReceiverUid,
-                  )),
-                )
-              : const AsyncValue<bool>.data(false);
+              : _resolveTradeVisitRequestForViewer(
+                  requests: tradeVisitRequests,
+                  viewerUid: currentUid,
+                  targetReceiverUid: isSender
+                      ? normalizedTargetReceiverUid
+                      : currentUid,
+                  fallbackReceiverUid: isSender
+                      ? session.proposerUid
+                      : currentUid,
+                );
           final isRulesAgreed = isSender && supportsTouchingQueue
-              ? _isHostVisitRequestReadyForArrival(
-                  request: tradeVisitRequest,
-                  agreedReceiverUids: agreedReceiverUids,
-                )
-              : (rulesAgreedAsync.valueOrNull ?? false);
+              ? _isHostVisitRequestReadyForArrival(request: tradeVisitRequest)
+              : (tradeVisitRequest?.hasValidRuleAgreement ?? false);
           return _buildBody(
             context: context,
             session: session,
             currentUid: currentUid,
             isRulesAgreed: isRulesAgreed,
-            isRulesAgreementLoading: shouldWatchAgreementStream
-                ? rulesAgreedAsync.isLoading
-                : agreedReceiverUidsAsync.isLoading,
+            isRulesAgreementLoading:
+                tradeVisitRequestsAsync.isLoading || proposalsAsync.isLoading,
             tradeVisitRequest: tradeVisitRequest,
             isTradeVisitRequestLoading: tradeVisitRequestsAsync.isLoading,
+            shouldResetQueuedTouchingCode: shouldResetQueuedTouchingCode,
           );
         },
       ),
@@ -179,9 +215,123 @@ class _MarketTradeCodeViewPageState
     return null;
   }
 
+  Set<String> _resolveQueuedTouchingFocusReceiverUids({
+    required Set<String> acceptedReceiverUids,
+    required Set<String> selectedReceiverUids,
+    required String proposerUid,
+  }) {
+    final normalizedProposerUid = proposerUid.trim();
+    if (normalizedProposerUid.isNotEmpty &&
+        acceptedReceiverUids.contains(normalizedProposerUid) &&
+        !selectedReceiverUids.contains(normalizedProposerUid)) {
+      return <String>{normalizedProposerUid};
+    }
+
+    final unsentReceiverUids = acceptedReceiverUids.difference(
+      selectedReceiverUids,
+    );
+    if (unsentReceiverUids.isNotEmpty) {
+      return unsentReceiverUids;
+    }
+    return acceptedReceiverUids;
+  }
+
+  bool _hasSameUidSet(Set<String> left, Set<String> right) {
+    if (left.length != right.length) {
+      return false;
+    }
+    for (final uid in left) {
+      if (!right.contains(uid)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  AirportVisitRequest? _findTradeVisitRequestForReceiver({
+    required List<AirportVisitRequest> requests,
+    required String receiverUid,
+  }) {
+    final normalizedReceiverUid = receiverUid.trim();
+    if (normalizedReceiverUid.isEmpty) {
+      return null;
+    }
+    for (final request in requests) {
+      if (request.requesterUid.trim() == normalizedReceiverUid) {
+        return request;
+      }
+    }
+    return null;
+  }
+
+  AirportVisitRequest? _resolveTradeVisitRequestForViewer({
+    required List<AirportVisitRequest> requests,
+    required String viewerUid,
+    required String targetReceiverUid,
+    required String fallbackReceiverUid,
+  }) {
+    final normalizedTargetReceiverUid = targetReceiverUid.trim();
+    if (normalizedTargetReceiverUid.isNotEmpty) {
+      return _findTradeVisitRequestForReceiver(
+        requests: requests,
+        receiverUid: normalizedTargetReceiverUid,
+      );
+    }
+
+    final normalizedViewerUid = viewerUid.trim();
+    final viewerRequest = _findTradeVisitRequestForReceiver(
+      requests: requests,
+      receiverUid: normalizedViewerUid,
+    );
+    if (viewerRequest != null) {
+      return viewerRequest;
+    }
+
+    final normalizedFallbackReceiverUid = fallbackReceiverUid.trim();
+    if (normalizedFallbackReceiverUid.isNotEmpty) {
+      return _findTradeVisitRequestForReceiver(
+        requests: requests,
+        receiverUid: normalizedFallbackReceiverUid,
+      );
+    }
+
+    if (requests.isEmpty) {
+      return null;
+    }
+    return requests.first;
+  }
+
+  bool _hasActiveTradeInvite(AirportVisitRequest? request) {
+    if (request == null) {
+      return false;
+    }
+    final hasInviteCode = request.inviteCode?.trim().isNotEmpty ?? false;
+    return hasInviteCode || request.isInvited || request.isArrived;
+  }
+
+  String _resolveTradeCodeSendTargetReceiverUid({
+    required MarketTradeCodeSession session,
+    required AirportVisitRequest? tradeVisitRequest,
+  }) {
+    final requestReceiverUid = tradeVisitRequest?.requesterUid.trim() ?? '';
+    if (requestReceiverUid.isNotEmpty) {
+      return requestReceiverUid;
+    }
+
+    final sessionProposerUid = session.proposerUid.trim();
+    if (sessionProposerUid.isNotEmpty) {
+      return sessionProposerUid;
+    }
+
+    final receiverUids = _splitUidCsv(session.codeReceiverUid);
+    if (receiverUids.length == 1) {
+      return receiverUids.first;
+    }
+    return '';
+  }
+
   bool _isHostVisitRequestReadyForArrival({
     required AirportVisitRequest? request,
-    required Set<String> agreedReceiverUids,
   }) {
     if (request == null) {
       return false;
@@ -189,8 +339,7 @@ class _MarketTradeCodeViewPageState
     if (request.isArrived) {
       return true;
     }
-    return request.isInvited &&
-        agreedReceiverUids.contains(request.requesterUid.trim());
+    return request.isInvited && request.hasValidRuleAgreement;
   }
 
   AppBar _buildAppBar() {
@@ -211,10 +360,21 @@ class _MarketTradeCodeViewPageState
     required bool isRulesAgreementLoading,
     required AirportVisitRequest? tradeVisitRequest,
     required bool isTradeVisitRequestLoading,
+    required bool shouldResetQueuedTouchingCode,
   }) {
     final isSender = session.isCodeSender(currentUid);
-    final hasCode = session.hasCode;
-    final rules = session.normalizedSenderIslandRules;
+    final requestCode =
+        tradeVisitRequest?.inviteCode?.trim().toUpperCase() ?? '';
+    final sessionCode = session.code.trim().toUpperCase();
+    final displayedActiveCode = requestCode.isNotEmpty
+        ? requestCode
+        : (isSender ? sessionCode : '');
+    final hasCode =
+        displayedActiveCode.isNotEmpty && !shouldResetQueuedTouchingCode;
+    final rules =
+        (tradeVisitRequest?.senderIslandRules?.trim().isNotEmpty ?? false)
+        ? tradeVisitRequest!.senderIslandRules!.trim()
+        : session.normalizedSenderIslandRules;
     final canShowSenderRules = !isSender && hasCode;
     final isCodeLockedByRuleAgreement = canShowSenderRules && !isRulesAgreed;
     final canRevealCode = hasCode && (isSender || !isCodeLockedByRuleAgreement);
@@ -225,7 +385,8 @@ class _MarketTradeCodeViewPageState
         isSender &&
         isRulesAgreed &&
         tradeVisitRequest != null &&
-        !tradeVisitRequest.isArrived;
+        !tradeVisitRequest.isArrived &&
+        _hasActiveTradeInvite(tradeVisitRequest);
     final codeGuideMessage = _resolveCodeGuideMessage(
       hasCode: hasCode,
       isSender: isSender,
@@ -310,10 +471,12 @@ class _MarketTradeCodeViewPageState
           const SizedBox(height: AppSpacing.s10),
           _buildCodeCard(
             displayedCode: hasCode && canRevealCode
-                ? session.code
+                ? displayedActiveCode
                 : _maskedCode,
             guideMessage: codeGuideMessage,
-            visibleAt: hasCode && canRevealCode ? session.codeSentAt : null,
+            visibleAt: hasCode && canRevealCode
+                ? (tradeVisitRequest?.invitedAt ?? session.codeSentAt)
+                : null,
           ),
           if (canShowSenderRules) ...<Widget>[
             const SizedBox(height: AppSpacing.s24),
@@ -333,7 +496,7 @@ class _MarketTradeCodeViewPageState
                       ? null
                       : () => _openRulesSheet(
                           context,
-                          session: session,
+                          inviteCode: displayedActiveCode,
                           rules: rules,
                           requiresAgreement: true,
                         ),
@@ -562,12 +725,18 @@ class _MarketTradeCodeViewPageState
               ),
               child: FilledButton(
                 onPressed: () {
+                  final targetReceiverUid =
+                      _resolveTradeCodeSendTargetReceiverUid(
+                        session: session,
+                        tradeVisitRequest: tradeVisitRequest,
+                      );
                   Navigator.of(context).push(
                     AppPageRoute<void>(
                       screenName: AppScreenNames.marketTradeCodeSend,
                       builder: (_) => MarketTradeCodeSendPage(
                         offer: widget.offer,
                         session: session,
+                        targetReceiverUid: targetReceiverUid,
                       ),
                     ),
                   );
@@ -691,7 +860,7 @@ class _MarketTradeCodeViewPageState
 
   Future<void> _openRulesSheet(
     BuildContext context, {
-    required MarketTradeCodeSession session,
+    required String inviteCode,
     required String rules,
     required bool requiresAgreement,
   }) async {
@@ -720,7 +889,7 @@ class _MarketTradeCodeViewPageState
       return;
     }
     if (result == MarketTradeRulesSheetAction.agree) {
-      await _agreeRulesAndRevealCode(session);
+      await _agreeRulesAndRevealCode(inviteCode);
       return;
     }
     if (result == MarketTradeRulesSheetAction.cancelTrade) {
@@ -770,7 +939,7 @@ class _MarketTradeCodeViewPageState
     Navigator.of(context).pop();
   }
 
-  Future<void> _agreeRulesAndRevealCode(MarketTradeCodeSession session) async {
+  Future<void> _agreeRulesAndRevealCode(String inviteCode) async {
     if (_isAgreeingRules || _isCancellingTrade) {
       return;
     }
@@ -779,7 +948,7 @@ class _MarketTradeCodeViewPageState
     try {
       await ref
           .read(marketViewModelProvider.notifier)
-          .agreeTradeRules(offer: widget.offer, session: session);
+          .agreeTradeRules(offer: widget.offer, inviteCode: inviteCode);
     } catch (error) {
       if (!mounted) {
         return;

@@ -18,9 +18,12 @@ class MarketFirestoreDataSource {
   static const int _touchingAcceptedLimit = 8;
   static const String _tradeAirportSourceType = 'market_trade';
   static const String _tradeAirportRequestIdPrefix = 'trade_';
+  static const String _receiverRuleAgreementMapField = 'receiverRuleAgreements';
   static const String _receiverRuleAgreedUidField = 'receiverRuleAgreedUid';
   static const String _receiverRuleAgreedCodeField = 'receiverRuleAgreedCode';
   static const String _receiverRuleAgreedAtField = 'receiverRuleAgreedAt';
+  static const String _receiverRuleAgreementCodeKey = 'code';
+  static const String _receiverRuleAgreementAtKey = 'agreedAt';
 
   MarketFirestoreDataSource({required FirebaseFirestore firestore})
     : _firestore = firestore;
@@ -723,7 +726,17 @@ class MarketFirestoreDataSource {
       FirestorePaths.marketPost(normalizedOfferId),
     );
     final offerSnapshot = await offerRef.get();
-    final offerData = offerSnapshot.data() ?? const <String, dynamic>{};
+    final offerData = offerSnapshot.data();
+    if (!offerSnapshot.exists || offerData == null) {
+      throw StateError('trade_offer_not_found');
+    }
+    final offerOwnerUid = (offerData['ownerUid'] as String?)?.trim() ?? '';
+    if (offerOwnerUid.isEmpty || offerOwnerUid != normalizedOwnerUid) {
+      throw StateError('invalid_offer_owner');
+    }
+    if (_isTradeOfferUnavailable(offerData)) {
+      throw StateError('trade_offer_unavailable');
+    }
     final tradeTypeName = (offerData['tradeType'] as String?)?.trim() ?? '';
     final isTouchingTrade = tradeTypeName == MarketTradeType.touching.name;
     final supportsQueuedTouchingAccept =
@@ -753,6 +766,32 @@ class MarketFirestoreDataSource {
 
     final selectedSnapshot = await selectedRef.get();
     final selectedData = selectedSnapshot.data();
+    if (!selectedSnapshot.exists || selectedData == null) {
+      throw StateError('trade_proposal_not_found');
+    }
+    final selectedOwnerUid =
+        (selectedData['ownerUid'] as String?)?.trim() ?? '';
+    final selectedProposerUid =
+        (selectedData['proposerUid'] as String?)?.trim() ?? '';
+    if ((selectedOwnerUid.isNotEmpty &&
+            selectedOwnerUid != normalizedOwnerUid) ||
+        (selectedProposerUid.isNotEmpty &&
+            selectedProposerUid != normalizedProposerUid)) {
+      throw StateError('trade_proposal_not_found');
+    }
+    final selectedStatus = (selectedData['status'] as String?)?.trim() ?? '';
+    if (!_isAcceptableProposalStatusName(selectedStatus)) {
+      throw StateError('trade_proposal_unavailable');
+    }
+    if (!supportsQueuedTouchingAccept &&
+        !isAlreadyAccepted &&
+        acceptedProposalIds.any((uid) => uid != normalizedProposerUid)) {
+      // 유지보수 포인트:
+      // 일반 거래와 비대기열 만지작은 동시에 상대를 바꾸면서 승낙하면
+      // 코드 세션/알림/비행장 요청이 서로 다른 상대 기준으로 덮일 수 있습니다.
+      // 이미 승낙된 상대가 있으면 기존 거래를 정리한 뒤 다시 승낙하게 막습니다.
+      throw StateError('trade_offer_locked');
+    }
     String proposerName = '';
     String proposerAvatarUrl = '';
     final proposerRef = _firestore.doc(
@@ -765,24 +804,21 @@ class MarketFirestoreDataSource {
       proposerUid: normalizedProposerUid,
       proposerUserData: proposerProfileData,
     );
-    if (selectedData != null) {
-      proposerName = (selectedData['proposerName'] as String?) ?? '';
-      proposerAvatarUrl = (selectedData['proposerAvatarUrl'] as String?) ?? '';
-      if (proposerName.trim().isEmpty) {
-        proposerName = resolvedProposerIdentity.$1;
-      }
-      if (proposerAvatarUrl.trim().isEmpty) {
-        proposerAvatarUrl = resolvedProposerIdentity.$2;
-      }
-    } else {
+    proposerName = (selectedData['proposerName'] as String?) ?? '';
+    proposerAvatarUrl = (selectedData['proposerAvatarUrl'] as String?) ?? '';
+    if (proposerName.trim().isEmpty) {
       proposerName = resolvedProposerIdentity.$1;
+    }
+    if (proposerAvatarUrl.trim().isEmpty) {
       proposerAvatarUrl = resolvedProposerIdentity.$2;
     }
 
     final batch = _firestore.batch();
+    var didUpdateSelectedProposal = false;
     for (final proposalDoc in existingProposals.docs) {
       final proposalId = proposalDoc.id;
       if (proposalId == normalizedProposerUid) {
+        didUpdateSelectedProposal = true;
         batch.set(proposalDoc.reference, <String, dynamic>{
           'status': MarketTradeProposalStatus.accepted.name,
           'acceptedAt': FieldValue.serverTimestamp(),
@@ -826,21 +862,8 @@ class MarketFirestoreDataSource {
       }
     }
 
-    if (!selectedSnapshot.exists) {
-      batch.set(selectedRef, <String, dynamic>{
-        'offerId': normalizedOfferId,
-        'ownerUid': normalizedOwnerUid,
-        'proposerUid': normalizedProposerUid,
-        'proposerName': proposerName,
-        'proposerAvatarUrl': proposerAvatarUrl,
-        'status': MarketTradeProposalStatus.accepted.name,
-        'createdAt': FieldValue.serverTimestamp(),
-        'createdAtMillis': FieldValue.delete(),
-        'acceptedAt': FieldValue.serverTimestamp(),
-        'acceptedAtMillis': FieldValue.delete(),
-        'updatedAt': FieldValue.serverTimestamp(),
-        'updatedAtMillis': FieldValue.delete(),
-      }, SetOptions(merge: true));
+    if (!didUpdateSelectedProposal) {
+      throw StateError('trade_proposal_not_found');
     }
 
     batch.set(offerRef, <String, dynamic>{
@@ -951,18 +974,14 @@ class MarketFirestoreDataSource {
         (existingData['code'] as String?)?.trim().toUpperCase() ?? '';
     final preservedRules =
         (existingData['senderIslandRules'] as String?)?.trim() ?? '';
-    final preservedAgreedCode =
-        (existingData[_receiverRuleAgreedCodeField] as String?)
-            ?.trim()
-            .toUpperCase() ??
-        '';
-    final nextReceiverUids = _splitUidCsv(codeReceiverUid);
-    final preservedAgreedReceiverUids = _splitUidCsv(
-      (existingData[_receiverRuleAgreedUidField] as String?)?.trim() ?? '',
+    final preservedAgreementMap = _extractReceiverRuleAgreementMap(
+      existingData,
     );
-    final nextAgreedReceiverUids = preservedAgreedCode == preservedCode
-        ? preservedAgreedReceiverUids.intersection(nextReceiverUids)
-        : <String>{};
+    final nextAgreementMap = _filterReceiverRuleAgreementMap(
+      agreements: preservedAgreementMap,
+      receiverUids: preservedAgreementMap.keys.toSet(),
+      expectedCode: preservedCode,
+    );
 
     final payload = <String, dynamic>{
       'offerId': normalizedOfferId,
@@ -983,26 +1002,16 @@ class MarketFirestoreDataSource {
           : preservedRules;
       payload['codeSentAt'] = existingData['codeSentAt'] ?? FieldValue.delete();
       payload['codeSentAtMillis'] = FieldValue.delete();
-      payload[_receiverRuleAgreedUidField] = nextAgreedReceiverUids.isEmpty
-          ? FieldValue.delete()
-          : _joinUidCsv(nextAgreedReceiverUids);
-      payload[_receiverRuleAgreedCodeField] =
-          nextAgreedReceiverUids.isEmpty || preservedAgreedCode.isEmpty
-          ? FieldValue.delete()
-          : preservedAgreedCode;
-      payload[_receiverRuleAgreedAtField] = nextAgreedReceiverUids.isEmpty
-          ? FieldValue.delete()
-          : (existingData[_receiverRuleAgreedAtField] ?? FieldValue.delete());
-      payload['receiverRuleAgreedAtMillis'] = FieldValue.delete();
+      _applyReceiverRuleAgreementPayload(payload, agreements: nextAgreementMap);
     } else {
       payload['code'] = '';
       payload['senderIslandRules'] = FieldValue.delete();
       payload['codeSentAt'] = FieldValue.delete();
       payload['codeSentAtMillis'] = FieldValue.delete();
-      payload[_receiverRuleAgreedUidField] = FieldValue.delete();
-      payload[_receiverRuleAgreedCodeField] = FieldValue.delete();
-      payload[_receiverRuleAgreedAtField] = FieldValue.delete();
-      payload['receiverRuleAgreedAtMillis'] = FieldValue.delete();
+      _applyReceiverRuleAgreementPayload(
+        payload,
+        agreements: const <String, Map<String, dynamic>>{},
+      );
     }
 
     await docRef.set(payload, SetOptions(merge: true));
@@ -1079,34 +1088,38 @@ class MarketFirestoreDataSource {
     }
 
     return _firestore
-        .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
+        .collectionGroup('requests')
+        .where('sourceOfferId', isEqualTo: normalizedOfferId)
         .snapshots()
         .map((snapshot) {
-          final data = snapshot.data();
-          if (data == null) {
-            return false;
+          for (final doc in snapshot.docs) {
+            final data = doc.data();
+            final requestSourceType =
+                (data['sourceType'] as String?)?.trim() ?? '';
+            if (requestSourceType.isNotEmpty &&
+                requestSourceType != _tradeAirportSourceType) {
+              continue;
+            }
+            final requesterUid =
+                (data['requesterUid'] as String?)?.trim() ?? '';
+            if (requesterUid != normalizedReceiverUid) {
+              continue;
+            }
+            final status = (data['status'] as String?)?.trim() ?? '';
+            if (status == AirportVisitRequestStatus.cancelled.name ||
+                status == AirportVisitRequestStatus.completed.name) {
+              continue;
+            }
+            final inviteCode =
+                (data['inviteCode'] as String?)?.trim().toUpperCase() ?? '';
+            final agreedCode =
+                (data['ruleAgreedCode'] as String?)?.trim().toUpperCase() ?? '';
+            if (_dodoCodePattern.hasMatch(inviteCode) &&
+                inviteCode == agreedCode) {
+              return true;
+            }
           }
-          final codeReceiverUids = _splitUidCsv(
-            (data['codeReceiverUid'] as String?)?.trim() ?? '',
-          );
-          if (!codeReceiverUids.contains(normalizedReceiverUid)) {
-            return false;
-          }
-          final currentCode =
-              (data['code'] as String?)?.trim().toUpperCase() ?? '';
-          if (!_dodoCodePattern.hasMatch(currentCode)) {
-            return false;
-          }
-          final agreedUids = _splitUidCsv(
-            (data[_receiverRuleAgreedUidField] as String?)?.trim() ?? '',
-          );
-          final agreedCode =
-              (data[_receiverRuleAgreedCodeField] as String?)
-                  ?.trim()
-                  .toUpperCase() ??
-              '';
-          return agreedUids.contains(normalizedReceiverUid) &&
-              agreedCode == currentCode;
+          return false;
         });
   }
 
@@ -1124,22 +1137,27 @@ class MarketFirestoreDataSource {
       throw StateError('invalid_trade_rule_agreement_payload');
     }
 
-    final docRef = _firestore.doc(
-      FirestorePaths.marketTradeCode(normalizedOfferId),
+    final requestRef = await _findAirportTradeRequestRefForReceiver(
+      offerId: normalizedOfferId,
+      receiverUid: normalizedReceiverUid,
     );
+    if (requestRef == null) {
+      throw StateError('trade_request_not_found');
+    }
+
     await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
+      final snapshot = await transaction.get(requestRef);
       final data = snapshot.data();
       if (!snapshot.exists || data == null) {
-        throw StateError('trade_code_session_not_found');
+        throw StateError('trade_request_not_found');
       }
-      final codeReceiverUids = _splitUidCsv(
-        (data['codeReceiverUid'] as String?)?.trim() ?? '',
-      );
-      if (!codeReceiverUids.contains(normalizedReceiverUid)) {
-        throw StateError('trade_rule_agreement_permission_denied');
+      final currentStatus = (data['status'] as String?)?.trim() ?? '';
+      if (currentStatus == AirportVisitRequestStatus.cancelled.name ||
+          currentStatus == AirportVisitRequestStatus.completed.name) {
+        throw StateError('trade_request_inactive');
       }
-      final currentCode = (data['code'] as String?)?.trim().toUpperCase() ?? '';
+      final currentCode =
+          (data['inviteCode'] as String?)?.trim().toUpperCase() ?? '';
       if (!_dodoCodePattern.hasMatch(currentCode)) {
         throw StateError('trade_code_not_ready');
       }
@@ -1150,20 +1168,10 @@ class MarketFirestoreDataSource {
       if (rules.isEmpty) {
         throw StateError('trade_rule_missing');
       }
-      final agreedUids = _splitUidCsv(
-        (data[_receiverRuleAgreedUidField] as String?)?.trim() ?? '',
-      );
-      agreedUids
-        ..removeWhere((uid) => !codeReceiverUids.contains(uid))
-        ..add(normalizedReceiverUid);
-
-      transaction.set(docRef, <String, dynamic>{
-        _receiverRuleAgreedUidField: _joinUidCsv(agreedUids),
-        _receiverRuleAgreedCodeField: normalizedCode,
-        _receiverRuleAgreedAtField: FieldValue.serverTimestamp(),
-        'receiverRuleAgreedAtMillis': FieldValue.delete(),
+      transaction.set(requestRef, <String, dynamic>{
+        'ruleAgreedCode': normalizedCode,
+        'ruleAgreedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
-        'updatedAtMillis': FieldValue.delete(),
       }, SetOptions(merge: true));
     });
   }
@@ -1306,14 +1314,54 @@ class MarketFirestoreDataSource {
     final sessionSnapshot = await _firestore
         .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
         .get();
-    final sessionData = sessionSnapshot.data() ?? const <String, dynamic>{};
-    final receiverUids = _splitUidCsv(normalizedReceiverUid).isEmpty
-        ? _splitUidCsv(
-            (sessionData['codeReceiverUid'] as String?)?.trim() ?? '',
-          )
-        : _splitUidCsv(normalizedReceiverUid);
+    final sessionData = sessionSnapshot.data();
+    if (!sessionSnapshot.exists || sessionData == null) {
+      throw StateError('trade_code_session_not_found');
+    }
+
+    final offerSnapshot = await _firestore
+        .doc(FirestorePaths.marketPost(normalizedOfferId))
+        .get();
+    final offerData = offerSnapshot.data();
+    if (!offerSnapshot.exists || offerData == null) {
+      throw StateError('trade_offer_not_found');
+    }
+    if (_isTradeOfferUnavailable(offerData)) {
+      throw StateError('trade_offer_unavailable');
+    }
+
+    final expectedSenderUid = _resolveExpectedTradeCodeSenderUid(sessionData);
+    if (expectedSenderUid.isEmpty || expectedSenderUid != normalizedSenderUid) {
+      throw StateError('trade_code_sender_mismatch');
+    }
+
+    final requestedReceiverUids = _splitUidCsv(normalizedReceiverUid);
+    var allowedReceiverUids = _resolveExpectedTradeCodeReceiverUids(
+      sessionData,
+    );
+    if (_supportsQueuedTouchingTrade(offerData)) {
+      // 유지보수 포인트:
+      // 만지작 대기열은 선택 화면이 열린 뒤에도 승낙/취소가 바뀔 수 있으므로
+      // 코드 전송 시점에 accepted 제안자만 다시 추려 stale 선택을 제거합니다.
+      allowedReceiverUids = await _loadAcceptedTradeProposalUids(
+        normalizedOfferId,
+      );
+    }
+
+    var receiverUids = requestedReceiverUids.isEmpty
+        ? allowedReceiverUids
+        : requestedReceiverUids.intersection(allowedReceiverUids);
     if (receiverUids.isEmpty) {
       throw StateError('invalid_code_receiver');
+    }
+    if (_supportsQueuedTouchingTrade(offerData)) {
+      final alreadySentReceiverUids = await _loadTradeInviteReadyReceiverUids(
+        normalizedOfferId,
+      );
+      receiverUids = receiverUids.difference(alreadySentReceiverUids);
+      if (receiverUids.isEmpty) {
+        throw StateError('trade_code_already_sent');
+      }
     }
 
     var effectiveCode = normalizedCode;
@@ -1334,28 +1382,41 @@ class MarketFirestoreDataSource {
       effectiveCode = normalizedCode;
     }
 
+    final nextAgreementMap = _removeReceiverRuleAgreementsForReceivers(
+      _extractReceiverRuleAgreementMap(sessionData),
+      receiverUids: receiverUids,
+    );
+    final payload = <String, dynamic>{
+      'code': effectiveCode,
+      'senderIslandRules': normalizedIslandRules,
+      'codeReceiverUid': receiverUids.isEmpty
+          ? FieldValue.delete()
+          : _joinUidCsv(receiverUids),
+      'codeSentAt': FieldValue.serverTimestamp(),
+      'codeSentAtMillis': FieldValue.delete(),
+      'updatedAt': FieldValue.serverTimestamp(),
+      'updatedAtMillis': FieldValue.delete(),
+    };
+    _applyReceiverRuleAgreementPayload(payload, agreements: nextAgreementMap);
     await _firestore
         .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
-        .set(<String, dynamic>{
-          'code': effectiveCode,
-          'senderIslandRules': normalizedIslandRules,
-          'codeReceiverUid': receiverUids.isEmpty
-              ? FieldValue.delete()
-              : _joinUidCsv(receiverUids),
-          'codeSentAt': FieldValue.serverTimestamp(),
-          'codeSentAtMillis': FieldValue.delete(),
-          _receiverRuleAgreedUidField: FieldValue.delete(),
-          _receiverRuleAgreedCodeField: FieldValue.delete(),
-          _receiverRuleAgreedAtField: FieldValue.delete(),
-          'receiverRuleAgreedAtMillis': FieldValue.delete(),
-          'updatedAt': FieldValue.serverTimestamp(),
-          'updatedAtMillis': FieldValue.delete(),
-        }, SetOptions(merge: true));
+        .set(payload, SetOptions(merge: true));
+    await Future.wait(
+      receiverUids.map(
+        (targetUid) => _ensureAirportTradeRequestForInvite(
+          offerId: normalizedOfferId,
+          hostUid: normalizedSenderUid,
+          visitorUid: targetUid,
+          offerTitle: offerTitle,
+        ),
+      ),
+    );
     try {
       await _syncAirportInviteForTradeCode(
         offerId: normalizedOfferId,
         senderUid: normalizedSenderUid,
         inviteCode: effectiveCode,
+        islandRules: normalizedIslandRules,
         offerTitle: offerTitle,
         targetReceiverUids: receiverUids,
       );
@@ -1378,8 +1439,7 @@ class MarketFirestoreDataSource {
           type: 'market_trade_code',
           offerId: normalizedOfferId,
           title: '거래 코드가 도착했어요',
-          body: '$normalizedTitle 코드: $effectiveCode',
-          extra: <String, dynamic>{'tradeCode': effectiveCode},
+          body: '$normalizedTitle 거래 코드가 도착했어요. 앱에서 확인해 주세요.',
         );
       } catch (_) {}
     }
@@ -1638,27 +1698,21 @@ class MarketFirestoreDataSource {
           final receiverUids = _splitUidCsv(
             (codeData['codeReceiverUid'] as String?)?.trim() ?? '',
           )..remove(normalizedRequesterUid);
-          final agreedReceiverUids = _splitUidCsv(
-            (codeData[_receiverRuleAgreedUidField] as String?)?.trim() ?? '',
-          )..remove(normalizedRequesterUid);
-          batch.set(codeRef, <String, dynamic>{
+          final agreementPayload = <String, dynamic>{
             'codeReceiverUid': receiverUids.isEmpty
                 ? FieldValue.delete()
                 : _joinUidCsv(receiverUids),
-            _receiverRuleAgreedUidField: agreedReceiverUids.isEmpty
-                ? FieldValue.delete()
-                : _joinUidCsv(agreedReceiverUids),
-            _receiverRuleAgreedCodeField: agreedReceiverUids.isEmpty
-                ? FieldValue.delete()
-                : (codeData[_receiverRuleAgreedCodeField] ??
-                      FieldValue.delete()),
-            _receiverRuleAgreedAtField: agreedReceiverUids.isEmpty
-                ? FieldValue.delete()
-                : (codeData[_receiverRuleAgreedAtField] ?? FieldValue.delete()),
-            'receiverRuleAgreedAtMillis': FieldValue.delete(),
             'updatedAt': FieldValue.serverTimestamp(),
             'updatedAtMillis': FieldValue.delete(),
-          }, SetOptions(merge: true));
+          };
+          _applyReceiverRuleAgreementPayload(
+            agreementPayload,
+            agreements: _removeReceiverRuleAgreementsForReceivers(
+              _extractReceiverRuleAgreementMap(codeData),
+              receiverUids: <String>{normalizedRequesterUid},
+            ),
+          );
+          batch.set(codeRef, agreementPayload, SetOptions(merge: true));
         }
       } else if (shouldReopenOffer) {
         // 유지보수 포인트:
@@ -1934,6 +1988,9 @@ class MarketFirestoreDataSource {
       'invitedAt': FieldValue.delete(),
       'arrivedAt': FieldValue.delete(),
       'inviteCode': FieldValue.delete(),
+      'senderIslandRules': FieldValue.delete(),
+      'ruleAgreedCode': FieldValue.delete(),
+      'ruleAgreedAt': FieldValue.delete(),
       'sourceType': _tradeAirportSourceType,
       'sourceOfferId': offerId,
       'sourceMoveType': moveType.name,
@@ -1941,10 +1998,71 @@ class MarketFirestoreDataSource {
     await batch.commit();
   }
 
+  Future<void> _ensureAirportTradeRequestForInvite({
+    required String offerId,
+    required String hostUid,
+    required String visitorUid,
+    required String offerTitle,
+  }) async {
+    final normalizedOfferId = offerId.trim();
+    final normalizedHostUid = hostUid.trim();
+    final normalizedVisitorUid = visitorUid.trim();
+    if (normalizedOfferId.isEmpty ||
+        normalizedHostUid.isEmpty ||
+        normalizedVisitorUid.isEmpty ||
+        normalizedHostUid == normalizedVisitorUid) {
+      return;
+    }
+
+    final hostProfile = await _loadPrimaryIslandProfile(normalizedHostUid);
+    final visitorProfile = await _loadPrimaryIslandProfile(
+      normalizedVisitorUid,
+    );
+    if (hostProfile == null || visitorProfile == null) {
+      return;
+    }
+
+    final requestRef = _firestore.doc(
+      FirestorePaths.airportRequest(
+        hostProfile.islandId,
+        _tradeAirportRequestId(
+          normalizedOfferId,
+          requesterUid: normalizedVisitorUid,
+        ),
+      ),
+    );
+    final existingData = (await requestRef.get()).data();
+    final existingStatus = (existingData?['status'] as String?)?.trim() ?? '';
+    await requestRef.set(<String, dynamic>{
+      'islandId': hostProfile.islandId,
+      'hostUid': normalizedHostUid,
+      'hostName': hostProfile.representativeName,
+      'hostIslandName': hostProfile.islandName,
+      'hostIslandImageUrl': hostProfile.imageUrl,
+      'requesterUid': normalizedVisitorUid,
+      'requesterName': visitorProfile.representativeName,
+      'requesterAvatarUrl': visitorProfile.imageUrl,
+      'requesterIslandName': visitorProfile.islandName,
+      'requesterIslandImageUrl': visitorProfile.imageUrl,
+      'purpose': _resolveAirportPurposeFromTradeTitle(offerTitle).name,
+      'message': offerTitle.trim().isEmpty ? '거래 약속 요청이에요.' : offerTitle,
+      'status': existingStatus.isNotEmpty
+          ? existingStatus
+          : AirportVisitRequestStatus.pending.name,
+      'requestedAt': existingData != null && existingData['requestedAt'] != null
+          ? existingData['requestedAt']
+          : FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+      'sourceType': _tradeAirportSourceType,
+      'sourceOfferId': normalizedOfferId,
+    }, SetOptions(merge: true));
+  }
+
   Future<void> _syncAirportInviteForTradeCode({
     required String offerId,
     required String senderUid,
     required String inviteCode,
+    required String islandRules,
     required String offerTitle,
     Set<String>? targetReceiverUids,
   }) async {
@@ -2029,6 +2147,7 @@ class MarketFirestoreDataSource {
 
     final requestPayload = <String, dynamic>{
       'inviteCode': normalizedInviteCode,
+      'senderIslandRules': islandRules,
       'updatedAt': FieldValue.serverTimestamp(),
       'purpose': _pickFirstNonEmpty(<Object?>[
         requestData['purpose'],
@@ -2059,21 +2178,23 @@ class MarketFirestoreDataSource {
       final isSelected =
           requesterUid.isNotEmpty &&
           selectedReceiverUids.contains(requesterUid);
+      if (!isSelected) {
+        continue;
+      }
       if (currentStatus == AirportVisitRequestStatus.arrived.name) {
         // 유지보수 포인트:
         // 만지작 줄서기에서 새 손님을 승낙하더라도 이미 입장한 손님의
         // arrived 상태를 invited로 되돌리면 안 됩니다.
         payload['inviteCode'] =
             requestData['inviteCode'] ?? normalizedInviteCode;
-      } else if (isSelected) {
+        payload['senderIslandRules'] =
+            requestData['senderIslandRules'] ?? islandRules;
+      } else {
         payload['status'] = AirportVisitRequestStatus.invited.name;
         payload['invitedAt'] = FieldValue.serverTimestamp();
         payload['arrivedAt'] = FieldValue.delete();
-      } else {
-        payload['status'] = AirportVisitRequestStatus.pending.name;
-        payload['inviteCode'] = FieldValue.delete();
-        payload['invitedAt'] = FieldValue.delete();
-        payload['arrivedAt'] = FieldValue.delete();
+        payload['ruleAgreedCode'] = FieldValue.delete();
+        payload['ruleAgreedAt'] = FieldValue.delete();
       }
       batch.set(requestRef, payload, SetOptions(merge: true));
     }
@@ -2127,6 +2248,9 @@ class MarketFirestoreDataSource {
     if (status == AirportVisitRequestStatus.cancelled ||
         status == AirportVisitRequestStatus.completed) {
       payload['inviteCode'] = FieldValue.delete();
+      payload['senderIslandRules'] = FieldValue.delete();
+      payload['ruleAgreedCode'] = FieldValue.delete();
+      payload['ruleAgreedAt'] = FieldValue.delete();
     }
     if (status == AirportVisitRequestStatus.cancelled) {
       payload['invitedAt'] = FieldValue.delete();
@@ -2183,6 +2307,9 @@ class MarketFirestoreDataSource {
             ? AirportVisitRequestStatus.completed.name
             : AirportVisitRequestStatus.cancelled.name,
         'inviteCode': FieldValue.delete(),
+        'senderIslandRules': FieldValue.delete(),
+        'ruleAgreedCode': FieldValue.delete(),
+        'ruleAgreedAt': FieldValue.delete(),
         'updatedAt': FieldValue.serverTimestamp(),
       };
       if (isCompletedTarget) {
@@ -2227,6 +2354,26 @@ class MarketFirestoreDataSource {
       return null;
     }
     return refs.first;
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>?>
+  _findAirportTradeRequestRefForReceiver({
+    required String offerId,
+    required String receiverUid,
+  }) async {
+    final normalizedReceiverUid = receiverUid.trim();
+    if (normalizedReceiverUid.isEmpty) {
+      return null;
+    }
+    final refs = await _findAirportTradeRequestRefs(offerId);
+    for (final ref in refs) {
+      final data = (await ref.get()).data() ?? const <String, dynamic>{};
+      final requesterUid = (data['requesterUid'] as String?)?.trim() ?? '';
+      if (requesterUid == normalizedReceiverUid) {
+        return ref;
+      }
+    }
+    return null;
   }
 
   Future<List<DocumentReference<Map<String, dynamic>>>>
@@ -2389,6 +2536,227 @@ class MarketFirestoreDataSource {
     return (offerData['tradeType'] as String?)?.trim() ==
             MarketTradeType.touching.name &&
         (offerData['moveType'] as String?)?.trim() == MarketMoveType.host.name;
+  }
+
+  bool _isTradeOfferUnavailable(Map<String, dynamic> offerData) {
+    final lifecycle = (offerData['lifecycle'] as String?)?.trim() ?? '';
+    final offerStatus = (offerData['status'] as String?)?.trim() ?? '';
+    return lifecycle == MarketLifecycleTab.cancelled.name ||
+        lifecycle == MarketLifecycleTab.completed.name ||
+        offerStatus == MarketOfferStatus.offline.name ||
+        offerStatus == MarketOfferStatus.closed.name;
+  }
+
+  bool _isAcceptableProposalStatusName(String status) {
+    return status == MarketTradeProposalStatus.pending.name ||
+        status == MarketTradeProposalStatus.accepted.name;
+  }
+
+  Future<Set<String>> _loadAcceptedTradeProposalUids(String offerId) async {
+    final snapshot = await _firestore
+        .collection(FirestorePaths.marketTradeProposals(offerId))
+        .where('status', isEqualTo: MarketTradeProposalStatus.accepted.name)
+        .get();
+    return snapshot.docs
+        .map((doc) => doc.id.trim())
+        .where((uid) => uid.isNotEmpty)
+        .toSet();
+  }
+
+  Future<Set<String>> _loadTradeInviteReadyReceiverUids(String offerId) async {
+    final requestRefs = await _findAirportTradeRequestRefs(offerId);
+    if (requestRefs.isEmpty) {
+      return const <String>{};
+    }
+
+    final receiverUids = <String>{};
+    for (final requestRef in requestRefs) {
+      final snapshot = await requestRef.get();
+      final data = snapshot.data() ?? const <String, dynamic>{};
+      final status = (data['status'] as String?)?.trim() ?? '';
+      if (status == AirportVisitRequestStatus.cancelled.name ||
+          status == AirportVisitRequestStatus.completed.name) {
+        continue;
+      }
+
+      final requesterUid = (data['requesterUid'] as String?)?.trim() ?? '';
+      final hasInviteCode =
+          (data['inviteCode'] as String?)?.trim().isNotEmpty ?? false;
+      final hasActiveInvite =
+          hasInviteCode ||
+          status == AirportVisitRequestStatus.invited.name ||
+          status == AirportVisitRequestStatus.arrived.name;
+      if (requesterUid.isNotEmpty && hasActiveInvite) {
+        receiverUids.add(requesterUid);
+      }
+    }
+    return receiverUids;
+  }
+
+  void _applyReceiverRuleAgreementPayload(
+    Map<String, dynamic> payload, {
+    required Map<String, Map<String, dynamic>> agreements,
+  }) {
+    final serializedAgreements = _serializeReceiverRuleAgreementMap(agreements);
+    payload[_receiverRuleAgreementMapField] = serializedAgreements.isEmpty
+        ? FieldValue.delete()
+        : serializedAgreements;
+    payload[_receiverRuleAgreedUidField] = FieldValue.delete();
+    payload[_receiverRuleAgreedCodeField] = FieldValue.delete();
+    payload[_receiverRuleAgreedAtField] = FieldValue.delete();
+    payload['receiverRuleAgreedAtMillis'] = FieldValue.delete();
+  }
+
+  Map<String, Map<String, dynamic>> _extractReceiverRuleAgreementMap(
+    Map<String, dynamic> data,
+  ) {
+    final agreements = <String, Map<String, dynamic>>{};
+    final rawAgreements = data[_receiverRuleAgreementMapField];
+    if (rawAgreements is Map) {
+      for (final entry in rawAgreements.entries) {
+        final uid = entry.key.toString().trim();
+        final agreement = _normalizeReceiverRuleAgreementEntry(entry.value);
+        if (uid.isEmpty || agreement == null) {
+          continue;
+        }
+        agreements[uid] = agreement;
+      }
+    }
+    return agreements;
+  }
+
+  Map<String, dynamic>? _normalizeReceiverRuleAgreementEntry(Object? rawEntry) {
+    if (rawEntry is! Map) {
+      return null;
+    }
+    final rawCode =
+        (rawEntry[_receiverRuleAgreementCodeKey] as String?)
+            ?.trim()
+            .toUpperCase() ??
+        '';
+    if (!_dodoCodePattern.hasMatch(rawCode)) {
+      return null;
+    }
+    final normalizedEntry = <String, dynamic>{
+      _receiverRuleAgreementCodeKey: rawCode,
+    };
+    final agreedAt = rawEntry[_receiverRuleAgreementAtKey];
+    if (agreedAt != null) {
+      normalizedEntry[_receiverRuleAgreementAtKey] = agreedAt;
+    }
+    return normalizedEntry;
+  }
+
+  Map<String, Map<String, dynamic>> _filterReceiverRuleAgreementMap({
+    required Map<String, Map<String, dynamic>> agreements,
+    required Set<String> receiverUids,
+    required String expectedCode,
+  }) {
+    final normalizedCode = expectedCode.trim().toUpperCase();
+    if (!_dodoCodePattern.hasMatch(normalizedCode) || receiverUids.isEmpty) {
+      return const <String, Map<String, dynamic>>{};
+    }
+
+    final filtered = <String, Map<String, dynamic>>{};
+    for (final uid in receiverUids) {
+      final agreement = agreements[uid];
+      if (agreement == null) {
+        continue;
+      }
+      final agreementCode =
+          (agreement[_receiverRuleAgreementCodeKey] as String?)
+              ?.trim()
+              .toUpperCase() ??
+          '';
+      if (agreementCode != normalizedCode) {
+        continue;
+      }
+      filtered[uid] = <String, dynamic>{...agreement};
+    }
+    return filtered;
+  }
+
+  Map<String, dynamic> _serializeReceiverRuleAgreementMap(
+    Map<String, Map<String, dynamic>> agreements,
+  ) {
+    final serialized = <String, dynamic>{};
+    for (final entry in agreements.entries) {
+      final uid = entry.key.trim();
+      final normalizedEntry = _normalizeReceiverRuleAgreementEntry(entry.value);
+      if (uid.isEmpty || normalizedEntry == null) {
+        continue;
+      }
+      serialized[uid] = normalizedEntry;
+    }
+    return serialized;
+  }
+
+  Map<String, Map<String, dynamic>> _removeReceiverRuleAgreementsForReceivers(
+    Map<String, Map<String, dynamic>> agreements, {
+    required Set<String> receiverUids,
+  }) {
+    if (agreements.isEmpty || receiverUids.isEmpty) {
+      return agreements.isEmpty
+          ? const <String, Map<String, dynamic>>{}
+          : <String, Map<String, dynamic>>{...agreements};
+    }
+    final nextAgreements = <String, Map<String, dynamic>>{};
+    for (final entry in agreements.entries) {
+      if (receiverUids.contains(entry.key)) {
+        continue;
+      }
+      nextAgreements[entry.key] = <String, dynamic>{...entry.value};
+    }
+    return nextAgreements;
+  }
+
+  String _resolveExpectedTradeCodeSenderUid(Map<String, dynamic> sessionData) {
+    final explicitSenderUid =
+        (sessionData['codeSenderUid'] as String?)?.trim() ?? '';
+    if (explicitSenderUid.isNotEmpty) {
+      return explicitSenderUid;
+    }
+
+    final ownerUid = (sessionData['ownerUid'] as String?)?.trim() ?? '';
+    final proposerUid = (sessionData['proposerUid'] as String?)?.trim() ?? '';
+    if (ownerUid.isEmpty || proposerUid.isEmpty) {
+      return '';
+    }
+
+    final moveType = _parseMarketMoveType(
+      (sessionData['moveType'] as String?)?.trim(),
+    );
+    return moveType == MarketMoveType.visitor ? proposerUid : ownerUid;
+  }
+
+  Set<String> _resolveExpectedTradeCodeReceiverUids(
+    Map<String, dynamic> sessionData,
+  ) {
+    final explicitReceiverUids = _splitUidCsv(
+      (sessionData['codeReceiverUid'] as String?)?.trim() ?? '',
+    );
+    if (explicitReceiverUids.isNotEmpty) {
+      return explicitReceiverUids;
+    }
+
+    final ownerUid = (sessionData['ownerUid'] as String?)?.trim() ?? '';
+    final proposerUid = (sessionData['proposerUid'] as String?)?.trim() ?? '';
+    if (ownerUid.isEmpty || proposerUid.isEmpty) {
+      return const <String>{};
+    }
+
+    final senderUid = _resolveExpectedTradeCodeSenderUid(sessionData);
+    return <String>{ownerUid, proposerUid}
+      ..removeWhere((uid) => uid.isEmpty || uid == senderUid);
+  }
+
+  MarketMoveType _parseMarketMoveType(String? value) {
+    for (final item in MarketMoveType.values) {
+      if (item.name == value) {
+        return item;
+      }
+    }
+    return MarketMoveType.visitor;
   }
 
   AirportVisitPurpose _resolveAirportPurposeFromTradeTitle(String offerTitle) {

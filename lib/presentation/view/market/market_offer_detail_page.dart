@@ -11,6 +11,7 @@ import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/core/utils/relative_time_formatter.dart';
 import 'package:nook_lounge_app/core/utils/touching_item_tag_codec.dart';
 import 'package:nook_lounge_app/di/app_providers.dart';
+import 'package:nook_lounge_app/domain/model/airport_visit_request.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
 import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
@@ -957,6 +958,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                               context,
                               ref,
                               currentOffer: currentOffer,
+                              targetProposerUid: proposal.proposerUid,
                             ),
                             style: OutlinedButton.styleFrom(
                               overlayColor: Colors.transparent,
@@ -1013,7 +1015,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
           bgColor = AppColors.badgeYellowBg;
           textColor = AppColors.badgeYellowText;
         case MarketTradeProposalStatus.accepted:
-          bgColor = Color(0xff9ee476).withOpacity(0.3);
+          bgColor = const Color(0xff9ee476).withValues(alpha: 0.3);
           textColor = AppColors.catalogSuccessText;
         case MarketTradeProposalStatus.rejected:
           bgColor = AppColors.badgeRedBg;
@@ -1578,8 +1580,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
       await Navigator.of(context).push(
         AppPageRoute<void>(
           screenName: AppScreenNames.marketTradeCodeSend,
-          builder: (_) =>
-              MarketTradeCodeSendPage(offer: offer, session: session),
+          builder: (_) => MarketTradeCodeSendPage(
+            offer: offer,
+            session: session,
+            targetReceiverUid: proposal.proposerUid,
+          ),
         ),
       );
       return;
@@ -1587,7 +1592,10 @@ class MarketOfferDetailPage extends ConsumerWidget {
     await Navigator.of(context).push(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketTradeCodeView,
-        builder: (_) => MarketTradeCodeViewPage(offer: offer),
+        builder: (_) => MarketTradeCodeViewPage(
+          offer: offer,
+          targetReceiverUid: proposal.proposerUid,
+        ),
       ),
     );
   }
@@ -1720,6 +1728,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref, {
     required MarketOffer currentOffer,
+    String targetProposerUid = '',
   }) async {
     if (_isInactiveOffer(currentOffer)) {
       ScaffoldMessenger.of(context)
@@ -1749,17 +1758,118 @@ class MarketOfferDetailPage extends ConsumerWidget {
       return;
     }
     final currentUid = viewModel.currentUserId;
-    final shouldSendCode = session.isCodeSender(currentUid) && !session.hasCode;
+    final normalizedTargetProposerUid = targetProposerUid.trim();
+    var hasAlreadySentTradeCode = false;
+    if (session.isCodeSender(currentUid) &&
+        currentOffer.tradeType == MarketTradeType.touching &&
+        currentOffer.moveType == MarketMoveType.host &&
+        normalizedTargetProposerUid.isNotEmpty) {
+      try {
+        final tradeVisitRequests = await ref.read(
+          airportTradeVisitRequestsProvider((
+            offerId: currentOffer.id,
+            uid: currentUid,
+          )).future,
+        );
+        final targetTradeVisitRequest = _findTradeVisitRequestForReceiver(
+          requests: tradeVisitRequests,
+          receiverUid: normalizedTargetProposerUid,
+        );
+        hasAlreadySentTradeCode = _hasActiveTradeInvite(
+          targetTradeVisitRequest,
+        );
+      } catch (_) {}
+    }
+    final queuedTouchingReceiverUids = _splitUidCsv(session.codeReceiverUid);
+    final shouldOpenQueuedTouchingSendPage =
+        session.isCodeSender(currentUid) &&
+        currentOffer.tradeType == MarketTradeType.touching &&
+        currentOffer.moveType == MarketMoveType.host &&
+        normalizedTargetProposerUid.isNotEmpty &&
+        !hasAlreadySentTradeCode &&
+        !queuedTouchingReceiverUids.contains(normalizedTargetProposerUid);
+    final shouldSendCode =
+        session.isCodeSender(currentUid) &&
+        (!session.hasCode || shouldOpenQueuedTouchingSendPage);
+    final sendTargetReceiverUid = normalizedTargetProposerUid.isNotEmpty
+        ? normalizedTargetProposerUid
+        : _resolveTradeCodeSendTargetReceiverUid(
+            currentOffer: currentOffer,
+            session: session,
+          );
+    if (!context.mounted) {
+      return;
+    }
     await Navigator.of(context).push(
       AppPageRoute<void>(
         screenName: shouldSendCode
             ? AppScreenNames.marketTradeCodeSend
             : AppScreenNames.marketTradeCodeView,
         builder: (_) => shouldSendCode
-            ? MarketTradeCodeSendPage(offer: currentOffer, session: session)
-            : MarketTradeCodeViewPage(offer: currentOffer),
+            ? MarketTradeCodeSendPage(
+                offer: currentOffer,
+                session: session,
+                targetReceiverUid: sendTargetReceiverUid,
+              )
+            : MarketTradeCodeViewPage(
+                offer: currentOffer,
+                targetReceiverUid: normalizedTargetProposerUid,
+              ),
       ),
     );
+  }
+
+  String _resolveTradeCodeSendTargetReceiverUid({
+    required MarketOffer currentOffer,
+    required MarketTradeCodeSession session,
+  }) {
+    if (currentOffer.tradeType != MarketTradeType.touching ||
+        currentOffer.moveType != MarketMoveType.host) {
+      return '';
+    }
+
+    final sessionProposerUid = session.proposerUid.trim();
+    if (sessionProposerUid.isNotEmpty) {
+      return sessionProposerUid;
+    }
+
+    final receiverUids = _splitUidCsv(session.codeReceiverUid);
+    if (receiverUids.length == 1) {
+      return receiverUids.first;
+    }
+    return '';
+  }
+
+  Set<String> _splitUidCsv(String raw) {
+    return raw
+        .split(',')
+        .map((value) => value.trim())
+        .where((value) => value.isNotEmpty)
+        .toSet();
+  }
+
+  AirportVisitRequest? _findTradeVisitRequestForReceiver({
+    required List<AirportVisitRequest> requests,
+    required String receiverUid,
+  }) {
+    final normalizedReceiverUid = receiverUid.trim();
+    if (normalizedReceiverUid.isEmpty) {
+      return null;
+    }
+    for (final request in requests) {
+      if (request.requesterUid.trim() == normalizedReceiverUid) {
+        return request;
+      }
+    }
+    return null;
+  }
+
+  bool _hasActiveTradeInvite(AirportVisitRequest? request) {
+    if (request == null) {
+      return false;
+    }
+    final hasInviteCode = request.inviteCode?.trim().isNotEmpty ?? false;
+    return hasInviteCode || request.isInvited || request.isArrived;
   }
 
   Future<void> _reportOffer(BuildContext context, WidgetRef ref) async {

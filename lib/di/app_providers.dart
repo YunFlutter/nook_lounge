@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nook_lounge_app/core/constants/firestore_paths.dart';
 import 'package:nook_lounge_app/core/utils/app_version_comparator.dart';
 import 'package:nook_lounge_app/core/telemetry/app_telemetry_provider.dart';
 import 'package:nook_lounge_app/data/datasource/app_version_firestore_data_source.dart';
@@ -391,13 +390,37 @@ final marketTradeAgreedReceiverUidsProvider =
 
       return ref
           .watch(firestoreProvider)
-          .doc(FirestorePaths.marketTradeCode(normalizedOfferId))
+          .collectionGroup('requests')
+          .where('sourceOfferId', isEqualTo: normalizedOfferId)
           .snapshots()
           .map((snapshot) {
-            final data = snapshot.data() ?? const <String, dynamic>{};
-            return _splitUidCsv(
-              (data['receiverRuleAgreedUid'] as String?)?.trim() ?? '',
-            );
+            final agreedReceiverUids = <String>{};
+            for (final doc in snapshot.docs) {
+              final data = doc.data();
+              final sourceType = (data['sourceType'] as String?)?.trim() ?? '';
+              if (sourceType.isNotEmpty && sourceType != 'market_trade') {
+                continue;
+              }
+              final status = (data['status'] as String?)?.trim() ?? '';
+              if (status == AirportVisitRequestStatus.cancelled.name ||
+                  status == AirportVisitRequestStatus.completed.name) {
+                continue;
+              }
+              final requesterUid =
+                  (data['requesterUid'] as String?)?.trim() ?? '';
+              final inviteCode =
+                  (data['inviteCode'] as String?)?.trim().toUpperCase() ?? '';
+              final agreedCode =
+                  (data['ruleAgreedCode'] as String?)?.trim().toUpperCase() ??
+                  '';
+              if (requesterUid.isEmpty ||
+                  inviteCode.isEmpty ||
+                  inviteCode != agreedCode) {
+                continue;
+              }
+              agreedReceiverUids.add(requesterUid);
+            }
+            return agreedReceiverUids;
           });
     });
 
@@ -692,14 +715,6 @@ int _tradeVisitLookupStatusRank(AirportVisitRequestStatus status) {
     case AirportVisitRequestStatus.completed:
       return 4;
   }
-}
-
-Set<String> _splitUidCsv(String raw) {
-  return raw
-      .split(',')
-      .map((value) => value.trim())
-      .where((value) => value.isNotEmpty)
-      .toSet();
 }
 
 String _extractAirportIslandId(String path) {

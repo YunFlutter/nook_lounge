@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nook_lounge_app/domain/model/market_offer.dart';
+import 'package:nook_lounge_app/domain/model/market_trade_code_session.dart';
 import 'package:nook_lounge_app/domain/repository/auth_repository.dart';
 import 'package:nook_lounge_app/domain/repository/market_repository.dart';
 import 'package:nook_lounge_app/domain/repository/user_block_repository.dart';
@@ -165,6 +166,74 @@ void main() {
 
       expect(viewModel.proposalOffers, isEmpty);
     });
+
+    test('같은 거래 승낙은 동시에 한 번만 처리한다', () async {
+      final completer = Completer<MarketTradeCodeSession>();
+      marketRepository.acceptTradeProposalCompleter = completer;
+      final offer = _buildOffer(id: 'touching-offer', ownerUid: 'me');
+
+      final firstCall = viewModel.acceptTradeProposalAsOwner(
+        offer: offer,
+        proposerUid: 'guest-a',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      await expectLater(
+        () => viewModel.acceptTradeProposalAsOwner(
+          offer: offer,
+          proposerUid: 'guest-b',
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'trade_accept_in_progress',
+          ),
+        ),
+      );
+
+      completer.complete(_buildCodeSession(offerId: offer.id));
+      await firstCall;
+
+      expect(marketRepository.acceptTradeProposalCallCount, 1);
+      expect(viewModel.state.errorMessage, isNull);
+    });
+
+    test('같은 거래 코드는 동시에 한 번만 전송한다', () async {
+      final completer = Completer<void>();
+      marketRepository.sendTradeCodeCompleter = completer;
+      final offer = _buildOffer(id: 'touching-offer', ownerUid: 'me');
+
+      final firstCall = viewModel.sendTradeCode(
+        offer: offer,
+        receiverUid: 'guest-a',
+        code: 'AB123',
+        islandRules: '꽃은 뛰지 말아 주세요.',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      await expectLater(
+        () => viewModel.sendTradeCode(
+          offer: offer,
+          receiverUid: 'guest-a',
+          code: 'AB123',
+          islandRules: '꽃은 뛰지 말아 주세요.',
+        ),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'trade_code_send_in_progress',
+          ),
+        ),
+      );
+
+      completer.complete();
+      await firstCall;
+
+      expect(marketRepository.sendTradeCodeCallCount, 1);
+      expect(viewModel.state.errorMessage, isNull);
+    });
   });
 }
 
@@ -202,6 +271,22 @@ MarketOffer _buildOffer({
   );
 }
 
+MarketTradeCodeSession _buildCodeSession({required String offerId}) {
+  final now = DateTime(2026, 3, 10, 12);
+  return MarketTradeCodeSession(
+    offerId: offerId,
+    ownerUid: 'me',
+    proposerUid: 'guest-a',
+    moveType: MarketMoveType.host,
+    code: '',
+    codeSenderUid: 'me',
+    codeReceiverUid: 'guest-a',
+    senderIslandRules: '',
+    acceptedAt: now,
+    updatedAt: now,
+  );
+}
+
 class _FakeMarketRepository implements MarketRepository {
   final StreamController<List<MarketOffer>> offersController =
       StreamController<List<MarketOffer>>.broadcast();
@@ -210,6 +295,10 @@ class _FakeMarketRepository implements MarketRepository {
   final StreamController<Set<String>> activeProposalOfferIdsController =
       StreamController<Set<String>>.broadcast();
   int sendTradeProposalCallCount = 0;
+  int acceptTradeProposalCallCount = 0;
+  int sendTradeCodeCallCount = 0;
+  Completer<MarketTradeCodeSession>? acceptTradeProposalCompleter;
+  Completer<void>? sendTradeCodeCompleter;
 
   Future<void> dispose() async {
     await offersController.close();
@@ -247,6 +336,38 @@ class _FakeMarketRepository implements MarketRepository {
     required String requesterUid,
     required String offerTitle,
   }) async {}
+
+  @override
+  Future<MarketTradeCodeSession> acceptTradeProposal({
+    required String offerId,
+    required String ownerUid,
+    required String proposerUid,
+    required MarketMoveType moveType,
+    required String offerTitle,
+  }) async {
+    acceptTradeProposalCallCount += 1;
+    final completer = acceptTradeProposalCompleter;
+    if (completer != null) {
+      return completer.future;
+    }
+    return _buildCodeSession(offerId: offerId);
+  }
+
+  @override
+  Future<void> sendTradeCode({
+    required String offerId,
+    required String senderUid,
+    required String receiverUid,
+    required String code,
+    required String islandRules,
+    required String offerTitle,
+  }) async {
+    sendTradeCodeCallCount += 1;
+    final completer = sendTradeCodeCompleter;
+    if (completer != null) {
+      await completer.future;
+    }
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

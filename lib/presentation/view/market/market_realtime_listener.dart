@@ -368,8 +368,11 @@ class _MarketRealtimeListenerState
       await Navigator.of(context).push(
         AppPageRoute<void>(
           screenName: AppScreenNames.marketTradeCodeSend,
-          builder: (_) =>
-              MarketTradeCodeSendPage(offer: offer, session: session),
+          builder: (_) => MarketTradeCodeSendPage(
+            offer: offer,
+            session: session,
+            targetReceiverUid: proposerUid,
+          ),
         ),
       );
       return;
@@ -378,7 +381,10 @@ class _MarketRealtimeListenerState
     await Navigator.of(context).push(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketTradeCodeView,
-        builder: (_) => MarketTradeCodeViewPage(offer: offer),
+        builder: (_) => MarketTradeCodeViewPage(
+          offer: offer,
+          targetReceiverUid: proposerUid,
+        ),
       ),
     );
   }
@@ -525,8 +531,7 @@ class _MarketRealtimeListenerState
     final offerId = notification.offerId.trim();
     final senderUid = notification.senderUid.trim();
     if (notification.isTradeCode) {
-      final tradeCode = notification.tradeCode.trim().toUpperCase();
-      return '${notification.type}|$offerId|$senderUid|$tradeCode';
+      return '${notification.type}|$offerId|$senderUid|${notification.id}';
     }
     return '${notification.type}|$offerId|$senderUid';
   }
