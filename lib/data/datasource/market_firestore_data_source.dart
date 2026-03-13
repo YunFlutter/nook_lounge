@@ -209,9 +209,12 @@ class MarketFirestoreDataSource {
         counterpartUids.add(codeProposerUid);
       }
     }
-    if (counterpartUids.isEmpty) {
+    final isOwnerSelfClosingWithoutCounterpart =
+        counterpartUids.isEmpty && normalizedRequesterUid == ownerUid;
+    if (counterpartUids.isEmpty && !isOwnerSelfClosingWithoutCounterpart) {
       // 유지보수 포인트:
-      // 승낙 제안과 코드 세션 모두 참여자 식별이 불가하면 완료를 막습니다.
+      // 상대 UID를 특정할 수 없을 때는 소유자만 거래글 자체를 종료할 수 있습니다.
+      // 참여자 확인이 불가능한 비소유자는 기존처럼 완료를 막아 둡니다.
       throw StateError('trade_complete_no_active_proposal');
     }
 
@@ -222,7 +225,8 @@ class MarketFirestoreDataSource {
       throw StateError('trade_complete_permission_denied');
     }
 
-    final remainingQueuedProposalDocs = supportsQueuedTouchingTrade
+    final remainingQueuedProposalDocs =
+        supportsQueuedTouchingTrade && !isOwnerSelfClosingWithoutCounterpart
         ? proposalsSnapshot.docs
               .where((doc) {
                 final proposalUid = doc.id.trim();
@@ -265,7 +269,7 @@ class MarketFirestoreDataSource {
       if (supportsQueuedTouchingTrade && hasRemainingQueuedProposals) {
         if (isCurrentCounterpart) {
           batch.set(doc.reference, <String, dynamic>{
-            'status': MarketTradeProposalStatus.cancelled.name,
+            'status': MarketTradeProposalStatus.completed.name,
             'acceptedAt': FieldValue.delete(),
             'acceptedAtMillis': FieldValue.delete(),
             'updatedAt': FieldValue.serverTimestamp(),
@@ -276,7 +280,9 @@ class MarketFirestoreDataSource {
       }
       if (isCurrentCounterpart) {
         batch.set(doc.reference, <String, dynamic>{
-          'status': MarketTradeProposalStatus.accepted.name,
+          'status': MarketTradeProposalStatus.completed.name,
+          'acceptedAt': FieldValue.delete(),
+          'acceptedAtMillis': FieldValue.delete(),
           'updatedAt': FieldValue.serverTimestamp(),
           'updatedAtMillis': FieldValue.delete(),
         }, SetOptions(merge: true));
@@ -330,12 +336,16 @@ class MarketFirestoreDataSource {
         await _syncAirportRequestStatusesForTradeCompletion(
           offerId: normalizedOfferId,
           completedRequesterUids: counterpartUids,
-          cancelRemainingRequests: !hasRemainingQueuedProposals,
+          cancelRemainingRequests:
+              isOwnerSelfClosingWithoutCounterpart ||
+              !hasRemainingQueuedProposals,
         );
       } else {
         await _syncAirportRequestStatusByOffer(
           offerId: normalizedOfferId,
-          status: AirportVisitRequestStatus.completed,
+          status: isOwnerSelfClosingWithoutCounterpart
+              ? AirportVisitRequestStatus.cancelled
+              : AirportVisitRequestStatus.completed,
         );
       }
     } catch (_) {}
@@ -1751,7 +1761,8 @@ class MarketFirestoreDataSource {
           (myProposalData['status'] as String?) ??
           MarketTradeProposalStatus.pending.name;
       if (status == MarketTradeProposalStatus.cancelled.name ||
-          status == MarketTradeProposalStatus.rejected.name) {
+          status == MarketTradeProposalStatus.rejected.name ||
+          status == MarketTradeProposalStatus.completed.name) {
         return;
       }
 
@@ -2935,10 +2946,12 @@ class MarketFirestoreDataSource {
         return 0;
       case MarketTradeProposalStatus.accepted:
         return 1;
-      case MarketTradeProposalStatus.rejected:
+      case MarketTradeProposalStatus.completed:
         return 2;
-      case MarketTradeProposalStatus.cancelled:
+      case MarketTradeProposalStatus.rejected:
         return 3;
+      case MarketTradeProposalStatus.cancelled:
+        return 4;
     }
   }
 

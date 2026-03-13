@@ -91,11 +91,6 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return '거래 상세';
   }
 
-  bool get _isCompletedOffer {
-    return offer.lifecycle == MarketLifecycleTab.completed ||
-        offer.status == MarketOfferStatus.closed;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentOffer = _resolveCurrentOffer(ref);
@@ -108,8 +103,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
       isMine: isMine,
       currentOffer: currentOffer,
     );
-    final showBottomActionBar =
-        !isMine || !_isCompletedOfferByStatus(currentOffer);
+    final showBottomActionBar = !isMine || !_isInactiveOffer(currentOffer);
 
     return Scaffold(
       appBar: AppBar(
@@ -151,7 +145,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
                     ref,
                     currentOffer: currentOffer,
                   )
-                : _buildMyProposalStatusSection(ref, currentUid),
+                : _buildMyProposalStatusSection(
+                    ref,
+                    currentUid,
+                    currentOffer: currentOffer,
+                  ),
           ),
           const SizedBox(height: AppSpacing.s18),
           _buildSectionCard(title: '거래 이동 방식', child: _buildMoveTypePanel()),
@@ -196,23 +194,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   bool _isInactiveOffer(MarketOffer target) {
-    final isCompleted =
-        target.lifecycle == MarketLifecycleTab.completed ||
-        target.status == MarketOfferStatus.closed;
-    final isCancelled =
-        target.lifecycle == MarketLifecycleTab.cancelled ||
-        target.status == MarketOfferStatus.offline;
-    return isCompleted || isCancelled;
+    return target.isInactive;
   }
 
   bool _isCancelledOffer(MarketOffer target) {
-    return target.lifecycle == MarketLifecycleTab.cancelled ||
-        target.status == MarketOfferStatus.offline;
-  }
-
-  bool _isCompletedOfferByStatus(MarketOffer target) {
-    return target.lifecycle == MarketLifecycleTab.completed ||
-        target.status == MarketOfferStatus.closed;
+    return target.isCancelled;
   }
 
   bool _supportsTouchingQueue(MarketOffer target) {
@@ -542,12 +528,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
 
     if (_isInactiveOffer(currentOffer)) {
-      final title = _isCancelledOffer(currentOffer) ? '취소된 거래예요' : '완료된 거래예요';
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           _buildPrimaryBottomButton(
-            label: title,
+            label: '거래가 종료되었어요',
             onPressed: null,
             backgroundColor: AppColors.catalogChipBg,
           ),
@@ -627,6 +612,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   )
                 : () => Navigator.of(context).pop();
           }
+        case MarketTradeProposalStatus.completed:
+          primaryLabel = '거래 완료';
+          primaryBackground = AppColors.catalogChipBg;
+          primaryOnPressed = null;
+          secondaryLabel = '닫기';
+          secondaryOnPressed = () => Navigator.of(context).pop();
         case MarketTradeProposalStatus.rejected:
           primaryLabel = '거절된 제안';
           primaryBackground = AppColors.catalogChipBg;
@@ -680,20 +671,14 @@ class MarketOfferDetailPage extends ConsumerWidget {
     WidgetRef ref, {
     required MarketOffer currentOffer,
   }) {
-    if (_isCompletedOfferByStatus(currentOffer)) {
+    if (_isInactiveOffer(currentOffer)) {
       return const SizedBox.shrink();
     }
 
     final bool canCancelTrade =
         currentOffer.lifecycle == MarketLifecycleTab.ongoing &&
         !_isCancelledOffer(currentOffer);
-    final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
-    final hasAcceptedProposal =
-        proposalsAsync.valueOrNull?.any(
-          (proposal) => proposal.status == MarketTradeProposalStatus.accepted,
-        ) ??
-        false;
-    final canCompleteTrade = canCancelTrade && hasAcceptedProposal;
+    final canCompleteTrade = canCancelTrade;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -763,7 +748,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildMyProposalStatusSection(WidgetRef ref, String currentUid) {
+  Widget _buildMyProposalStatusSection(
+    WidgetRef ref,
+    String currentUid, {
+    required MarketOffer currentOffer,
+  }) {
     if (currentUid.trim().isEmpty) {
       return _buildInsetPanel(
         child: Text(
@@ -810,7 +799,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
             children: <Widget>[
               _buildProposalStatusBadge(
                 proposal.status,
-                isOfferCompleted: _isCompletedOffer,
+                isOfferInactive: _isInactiveOffer(currentOffer),
               ),
               const SizedBox(width: AppSpacing.s8),
               Expanded(
@@ -865,7 +854,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
           );
         }
 
-        final isCompletedOffer = _isCompletedOfferByStatus(currentOffer);
+        final isInactiveOffer = _isInactiveOffer(currentOffer);
         final activeInviteRequesterUids =
             tradeVisitRequestsAsync.valueOrNull
                 ?.where((request) => _hasActiveTradeInvite(request))
@@ -878,12 +867,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              if (!isCompletedOffer)
+              if (!isInactiveOffer)
                 Text(
                   '대기열 제안 ${proposals.length}건',
                   style: AppTextStyles.bodySecondaryStrong,
                 ),
-              if (!isCompletedOffer &&
+              if (!isInactiveOffer &&
                   activeInviteRequesterUids.isNotEmpty) ...<Widget>[
                 const SizedBox(height: AppSpacing.s8),
                 Text(
@@ -894,7 +883,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   ),
                 ),
               ],
-              if (!isCompletedOffer) const SizedBox(height: AppSpacing.s10),
+              if (!isInactiveOffer) const SizedBox(height: AppSpacing.s10),
               ...proposals.asMap().entries.map((entry) {
                 final index = entry.key;
                 final proposal = entry.value;
@@ -955,7 +944,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                                 children: <Widget>[
                                   _buildProposalStatusBadge(
                                     proposal.status,
-                                    isOfferCompleted: isCompletedOffer,
+                                    isOfferInactive: isInactiveOffer,
                                   ),
                                   Text(
                                     formatRelativeTime(proposal.updatedAt),
@@ -1054,10 +1043,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
 
   Widget _buildProposalStatusBadge(
     MarketTradeProposalStatus status, {
-    bool isOfferCompleted = false,
+    bool isOfferInactive = false,
   }) {
     final bool isCompletedTarget =
-        isOfferCompleted && status == MarketTradeProposalStatus.accepted;
+        isOfferInactive &&
+        (status == MarketTradeProposalStatus.accepted ||
+            status == MarketTradeProposalStatus.completed);
     final String label = isCompletedTarget ? '거래 종료 된 상대' : status.label;
     Color bgColor = AppColors.catalogChipBg;
     Color textColor = AppColors.textMuted;
@@ -1072,6 +1063,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
         case MarketTradeProposalStatus.accepted:
           bgColor = const Color(0xff9ee476).withValues(alpha: 0.3);
           textColor = AppColors.catalogSuccessText;
+        case MarketTradeProposalStatus.completed:
+          bgColor = AppColors.catalogChipBg;
+          textColor = AppColors.textSecondary;
         case MarketTradeProposalStatus.rejected:
           bgColor = AppColors.badgeRedBg;
           textColor = AppColors.badgeRedText;
@@ -1511,7 +1505,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
     required MarketOffer currentOffer,
     required String requesterName,
   }) async {
-    if (_isCompletedOfferByStatus(currentOffer)) {
+    if (_isInactiveOffer(currentOffer)) {
       if (!context.mounted) {
         return;
       }
@@ -1519,7 +1513,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _snackContent(context, '완료된 거래에는 제안을 보낼 수 없어요.'),
+            content: _snackContent(context, '종료된 거래에는 제안을 보낼 수 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -2604,7 +2598,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
   }
 
   Future<void> _deleteMyOffer(BuildContext context, WidgetRef ref) async {
-    if (_isCompletedOffer) {
+    if (offer.isInactive) {
       if (!context.mounted) {
         return;
       }
@@ -2612,7 +2606,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: _snackContent(context, '완료된 거래는 삭제할 수 없어요.'),
+            content: _snackContent(context, '종료된 거래는 삭제할 수 없어요.'),
             behavior: SnackBarBehavior.floating,
           ),
         );

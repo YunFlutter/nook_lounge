@@ -25,12 +25,20 @@ class MarketRepositoryImpl implements MarketRepository {
 
   @override
   Stream<List<MarketOffer>> watchOffers() {
-    return _firestoreDataSource.watchOffers();
+    return _firestoreDataSource.watchOffers().map((offers) {
+      return offers
+          .where((offer) => !offer.isTouchingTrade)
+          .toList(growable: false);
+    });
   }
 
   @override
-  Future<MarketOffer?> fetchOfferById(String offerId) {
-    return _firestoreDataSource.fetchOfferById(offerId);
+  Future<MarketOffer?> fetchOfferById(String offerId) async {
+    final offer = await _firestoreDataSource.fetchOfferById(offerId);
+    if (offer == null || offer.isTouchingTrade) {
+      return null;
+    }
+    return offer;
   }
 
   @override
@@ -39,6 +47,7 @@ class MarketRepositoryImpl implements MarketRepository {
     required MarketOffer offer,
   }) async {
     try {
+      _throwIfTouchingTradeUnsupported(offer);
       var next = offer;
       // 유지보수 포인트:
       // Firestore에는 로컬 파일 경로를 절대 저장하지 않고
@@ -82,6 +91,7 @@ class MarketRepositoryImpl implements MarketRepository {
     required MarketOffer offer,
   }) async {
     try {
+      _throwIfTouchingTradeUnsupported(offer);
       var next = offer;
       // 유지보수 포인트:
       // 수정 시에도 로컬 파일 경로 저장을 금지하고
@@ -116,6 +126,13 @@ class MarketRepositoryImpl implements MarketRepository {
       );
       rethrow;
     }
+  }
+
+  void _throwIfTouchingTradeUnsupported(MarketOffer offer) {
+    if (!offer.isTouchingTrade) {
+      return;
+    }
+    throw StateError('touching_trade_removed');
   }
 
   @override

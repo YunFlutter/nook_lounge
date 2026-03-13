@@ -94,6 +94,32 @@ sealed class MarketOffer with _$MarketOffer {
 
   String get statusLabel => status.label;
 
+  bool get isCompleted {
+    return lifecycle == MarketLifecycleTab.completed ||
+        status == MarketOfferStatus.closed;
+  }
+
+  bool get isCancelled {
+    return lifecycle == MarketLifecycleTab.cancelled ||
+        status == MarketOfferStatus.offline;
+  }
+
+  bool get isInactive {
+    // 유지보수 포인트:
+    // 완료/취소 종료 상태를 화면마다 따로 비교하지 않도록
+    // 공통 판별식을 모델에 모아 일관되게 사용합니다.
+    return isCompleted || isCancelled;
+  }
+
+  bool get isTouchingTrade {
+    // 유지보수 포인트:
+    // 레거시 문서가 tradeType/category/boardType 중 어디에만 남아 있어도
+    // 동일하게 "만지작 거래"로 판단할 수 있도록 판별식을 한 곳에 둡니다.
+    return tradeType == MarketTradeType.touching ||
+        boardType == MarketBoardType.touching ||
+        category == MarketFilterCategory.touching;
+  }
+
   factory MarketOffer.fromMap({
     required String id,
     required Map<String, dynamic> data,

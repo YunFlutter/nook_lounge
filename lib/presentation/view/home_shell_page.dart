@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nook_lounge_app/app/theme/app_colors.dart';
 import 'package:nook_lounge_app/app/theme/app_text_styles.dart';
 import 'package:nook_lounge_app/core/constants/app_spacing.dart';
+import 'package:nook_lounge_app/core/constants/home_shell_page_guides.dart';
 import 'package:nook_lounge_app/core/telemetry/app_page_route.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_names.dart';
 import 'package:nook_lounge_app/core/telemetry/app_screen_view.dart';
@@ -14,6 +15,7 @@ import 'package:nook_lounge_app/domain/model/airport_session.dart';
 import 'package:nook_lounge_app/domain/model/island_profile.dart';
 import 'package:nook_lounge_app/presentation/view/airport/airport_tab_page.dart';
 import 'package:nook_lounge_app/presentation/view/common/island_rules_edit_sheet.dart';
+import 'package:nook_lounge_app/presentation/view/common/app_page_guide_overlay.dart';
 import 'package:nook_lounge_app/presentation/view/catalog/catalog_dashboard_tab.dart';
 import 'package:nook_lounge_app/presentation/view/create_island_page.dart';
 import 'package:nook_lounge_app/presentation/view/home/home_dashboard_tab.dart';
@@ -49,66 +51,67 @@ class HomeShellPage extends ConsumerWidget {
     final homeState = ref.watch(homeShellViewModelProvider);
     final tabController = ref.read(homeShellViewModelProvider.notifier);
     final currentTab = homeState.selectedTabIndex;
+    final guideContent = resolveHomeShellPageGuide(currentTab);
     final selectedIslandId =
         ref.watch(homeDashboardPrimaryIslandIdProvider(uid)).valueOrNull ?? '';
+
+    final scaffold = Scaffold(
+      appBar: _buildAppBar(context, currentTab, ref, selectedIslandId),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 260),
+        child: KeyedSubtree(
+          key: ValueKey<int>(currentTab),
+          child: _buildTabBody(currentTab, selectedIslandId),
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: AppColors.navBackground,
+
+        selectedIndex: currentTab,
+        onDestinationSelected: tabController.changeTab,
+        destinations: const <NavigationDestination>[
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
+            selectedIcon: _NavPngIcon(
+              assetPath: 'assets/icon/boarding_pass_act.png',
+            ),
+            label: '비행장',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
+            selectedIcon: _NavPngIcon(assetPath: 'assets/icon/shop_act.png'),
+            label: '마켓',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
+            selectedIcon: _NavPngIcon(assetPath: 'assets/icon/house_act.png'),
+            label: '홈',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
+            selectedIcon: _NavPngIcon(
+              assetPath: 'assets/icon/book_stack_act.png',
+            ),
+            label: '도감',
+          ),
+          NavigationDestination(
+            icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
+            selectedIcon: _NavPngIcon(
+              assetPath: 'assets/icon/combo_chart_act.png',
+            ),
+            label: '무주식',
+          ),
+        ],
+      ),
+    );
 
     return AppScreenView(
       screenName: AppScreenNames.homeShell,
       child: MarketRealtimeListener(
         uid: uid,
-        child: Scaffold(
-          appBar: _buildAppBar(context, currentTab, ref, selectedIslandId),
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 260),
-            child: KeyedSubtree(
-              key: ValueKey<int>(currentTab),
-              child: _buildTabBody(currentTab, ref, selectedIslandId),
-            ),
-          ),
-          bottomNavigationBar: NavigationBar(
-            backgroundColor: AppColors.navBackground,
-
-            selectedIndex: currentTab,
-            onDestinationSelected: tabController.changeTab,
-            destinations: const <NavigationDestination>[
-              NavigationDestination(
-                icon: _NavPngIcon(assetPath: 'assets/icon/boarding_pass.png'),
-                selectedIcon: _NavPngIcon(
-                  assetPath: 'assets/icon/boarding_pass_act.png',
-                ),
-                label: '비행장',
-              ),
-              NavigationDestination(
-                icon: _NavPngIcon(assetPath: 'assets/icon/shop.png'),
-                selectedIcon: _NavPngIcon(
-                  assetPath: 'assets/icon/shop_act.png',
-                ),
-                label: '마켓',
-              ),
-              NavigationDestination(
-                icon: _NavPngIcon(assetPath: 'assets/icon/house.png'),
-                selectedIcon: _NavPngIcon(
-                  assetPath: 'assets/icon/house_act.png',
-                ),
-                label: '홈',
-              ),
-              NavigationDestination(
-                icon: _NavPngIcon(assetPath: 'assets/icon/book_stack.png'),
-                selectedIcon: _NavPngIcon(
-                  assetPath: 'assets/icon/book_stack_act.png',
-                ),
-                label: '도감',
-              ),
-              NavigationDestination(
-                icon: _NavPngIcon(assetPath: 'assets/icon/combo_chart.png'),
-                selectedIcon: _NavPngIcon(
-                  assetPath: 'assets/icon/combo_chart_act.png',
-                ),
-                label: '무주식',
-              ),
-            ],
-          ),
-        ),
+        child: guideContent == null
+            ? scaffold
+            : AppPageGuideOverlay(content: guideContent, child: scaffold),
       ),
     );
   }
@@ -162,6 +165,7 @@ class HomeShellPage extends ConsumerWidget {
               textStyle: AppTextStyles.captionSecondary,
             ),
           ),
+          _buildGuideAction(ref, tabIndex),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -172,6 +176,10 @@ class HomeShellPage extends ConsumerWidget {
         centerTitle: false,
         titleSpacing: AppSpacing.pageHorizontal,
         title: _buildStaticHomeStyleTitle('도감 관리'),
+        actions: <Widget>[
+          _buildGuideAction(ref, tabIndex),
+          const SizedBox(width: AppSpacing.s6),
+        ],
       );
     }
 
@@ -226,6 +234,7 @@ class HomeShellPage extends ConsumerWidget {
         actions: <Widget>[
           _buildNotificationAction(context),
           _buildSettingsAction(context),
+          _buildGuideAction(ref, tabIndex),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -245,6 +254,7 @@ class HomeShellPage extends ConsumerWidget {
             ),
             tooltip: '내 거래관리',
           ),
+          _buildGuideAction(ref, tabIndex),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -273,6 +283,7 @@ class HomeShellPage extends ConsumerWidget {
             ),
             tooltip: '초기화',
           ),
+          _buildGuideAction(ref, tabIndex),
           const SizedBox(width: AppSpacing.s6),
         ],
       );
@@ -325,21 +336,49 @@ class HomeShellPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildTabBody(int tabIndex, WidgetRef ref, String selectedIslandId) {
+  Widget _buildGuideAction(WidgetRef ref, int tabIndex) {
+    final guideContent = resolveHomeShellPageGuide(tabIndex);
+    if (guideContent == null) {
+      return const SizedBox.shrink();
+    }
+
+    return IconButton(
+      onPressed: () {
+        final notifier = ref.read(
+          pageGuidePresentationTickProvider(guideContent.storageKey).notifier,
+        );
+        notifier.state = notifier.state + 1;
+      },
+      icon: const Icon(Icons.help_outline_rounded),
+      color: AppColors.textSecondary,
+      tooltip: '가이드 다시 보기',
+    );
+  }
+
+  Widget _buildTabBody(int tabIndex, String selectedIslandId) {
+    late final Widget tabChild;
+
     switch (tabIndex) {
       case 0:
-        return _buildAirportTab(selectedIslandId);
+        tabChild = _buildAirportTab(selectedIslandId);
+        break;
       case 1:
-        return _buildMarketTab();
+        tabChild = _buildMarketTab();
+        break;
       case 2:
-        return _buildHomeTab();
+        tabChild = _buildHomeTab();
+        break;
       case 3:
-        return CatalogDashboardTab(uid: uid, islandId: selectedIslandId);
+        tabChild = CatalogDashboardTab(uid: uid, islandId: selectedIslandId);
+        break;
       case 4:
-        return _buildTurnipTab(selectedIslandId);
+        tabChild = _buildTurnipTab(selectedIslandId);
+        break;
       default:
-        return const SizedBox.shrink();
+        tabChild = const SizedBox.shrink();
     }
+
+    return tabChild;
   }
 
   Widget _buildAirportTab(String selectedIslandId) {

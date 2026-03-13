@@ -439,7 +439,7 @@ class AirportVisitorManifestPage extends ConsumerWidget {
         case 'trade_complete_unavailable':
           return '이미 종료된 거래예요.';
         case 'trade_complete_no_active_proposal':
-          return '진행 중인 거래 상대가 없어 완료 처리할 수 없어요.';
+          return '거래 상대 정보를 확인할 수 없어 완료 처리할 수 없어요.';
         case 'trade_complete_permission_denied':
         case 'trade_cancel_permission_denied':
           return '거래 처리 권한이 없어요.';

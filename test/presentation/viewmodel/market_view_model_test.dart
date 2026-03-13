@@ -52,6 +52,27 @@ void main() {
       ]);
     });
 
+    test('만지작 거래글은 목록에서 숨긴다', () async {
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.offersController.add(<MarketOffer>[
+        _buildOffer(id: 'visible', ownerUid: 'visible-user'),
+        _buildOffer(
+          id: 'legacy-touching',
+          ownerUid: 'touching-user',
+          category: MarketFilterCategory.touching,
+          boardType: MarketBoardType.touching,
+          tradeType: MarketTradeType.touching,
+        ),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(viewModel.state.offers.map((offer) => offer.id), <String>[
+        'visible',
+      ]);
+    });
+
     test('차단 관계인 유저에게는 거래 제안을 보내지 않는다', () async {
       final blockedOffer = _buildOffer(id: 'blocked', ownerUid: 'blocked-user');
       userBlockRepository.hasBlockRelationshipResult = true;
@@ -105,7 +126,11 @@ void main() {
       });
       marketRepository.offersController.add(<MarketOffer>[
         _buildOffer(id: 'mine', ownerUid: 'me'),
-        _buildOffer(id: 'proposal', ownerUid: 'other-user'),
+        _buildOffer(
+          id: 'proposal',
+          ownerUid: 'other-user',
+          status: MarketOfferStatus.waiting,
+        ),
         _buildOffer(
           id: 'cancelled',
           ownerUid: 'me',
@@ -165,6 +190,60 @@ void main() {
       );
 
       expect(viewModel.proposalOffers, isEmpty);
+    });
+
+    test('상대방이 없어도 내 거래를 완료할 수 있다', () async {
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.offersController.add(<MarketOffer>[
+        _buildOffer(id: 'mine', ownerUid: 'me'),
+      ]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      await viewModel.completeTrade(
+        offer: _buildOffer(id: 'mine', ownerUid: 'me'),
+      );
+
+      expect(marketRepository.completeTradeCallCount, 1);
+      expect(marketRepository.completedOfferId, 'mine');
+      expect(marketRepository.completedRequesterUid, 'me');
+      expect(
+        viewModel.state.offers.single.lifecycle,
+        MarketLifecycleTab.completed,
+      );
+      expect(viewModel.state.offers.single.status, MarketOfferStatus.closed);
+      expect(viewModel.state.errorMessage, isNull);
+    });
+
+    test('상대 정보를 확인할 수 없으면 완료 실패 메시지를 갱신한다', () async {
+      marketRepository.completeTradeError = StateError(
+        'trade_complete_no_active_proposal',
+      );
+      final offer = _buildOffer(id: 'mine', ownerUid: 'me');
+      marketRepository.hiddenOfferIdsController.add(const <String>{});
+      userBlockRepository.invisibleUserIdsController.add(const <String>{});
+      marketRepository.offersController.add(<MarketOffer>[offer]);
+
+      await Future<void>.delayed(Duration.zero);
+
+      await expectLater(
+        () => viewModel.completeTrade(offer: offer),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'trade_complete_no_active_proposal',
+          ),
+        ),
+      );
+
+      expect(
+        viewModel.state.offers.single.lifecycle,
+        MarketLifecycleTab.ongoing,
+      );
+      expect(viewModel.state.offers.single.status, MarketOfferStatus.open);
+      expect(viewModel.state.errorMessage, '거래 상태를 확인할 수 없어 완료할 수 없어요.');
     });
 
     test('같은 거래 승낙은 동시에 한 번만 처리한다', () async {
@@ -241,15 +320,19 @@ MarketOffer _buildOffer({
   required String id,
   required String ownerUid,
   MarketLifecycleTab lifecycle = MarketLifecycleTab.ongoing,
+  MarketOfferStatus status = MarketOfferStatus.open,
+  MarketFilterCategory category = MarketFilterCategory.item,
+  MarketBoardType boardType = MarketBoardType.exchange,
+  MarketTradeType tradeType = MarketTradeType.exchange,
 }) {
   final now = DateTime(2026, 3, 10, 12);
   return MarketOffer(
     id: id,
     ownerUid: ownerUid,
-    category: MarketFilterCategory.item,
-    boardType: MarketBoardType.exchange,
+    category: category,
+    boardType: boardType,
     lifecycle: lifecycle,
-    status: MarketOfferStatus.open,
+    status: status,
     ownerName: ownerUid,
     ownerAvatarUrl: '',
     title: '$id title',
@@ -264,7 +347,7 @@ MarketOffer _buildOffer({
     touchingTags: const <String>[],
     entryFeeText: '무료',
     description: '설명',
-    tradeType: MarketTradeType.exchange,
+    tradeType: tradeType,
     moveType: MarketMoveType.host,
     createdAt: now,
     updatedAt: now,
@@ -295,8 +378,13 @@ class _FakeMarketRepository implements MarketRepository {
   final StreamController<Set<String>> activeProposalOfferIdsController =
       StreamController<Set<String>>.broadcast();
   int sendTradeProposalCallCount = 0;
+  int completeTradeCallCount = 0;
   int acceptTradeProposalCallCount = 0;
   int sendTradeCodeCallCount = 0;
+  Object? completeTradeError;
+  String? completedOfferId;
+  String? completedRequesterUid;
+  String? completedOfferTitle;
   Completer<MarketTradeCodeSession>? acceptTradeProposalCompleter;
   Completer<void>? sendTradeCodeCompleter;
 
@@ -336,6 +424,22 @@ class _FakeMarketRepository implements MarketRepository {
     required String requesterUid,
     required String offerTitle,
   }) async {}
+
+  @override
+  Future<void> completeTrade({
+    required String offerId,
+    required String requesterUid,
+    required String offerTitle,
+  }) async {
+    completeTradeCallCount += 1;
+    completedOfferId = offerId;
+    completedRequesterUid = requesterUid;
+    completedOfferTitle = offerTitle;
+    final error = completeTradeError;
+    if (error != null) {
+      throw error;
+    }
+  }
 
   @override
   Future<MarketTradeCodeSession> acceptTradeProposal({

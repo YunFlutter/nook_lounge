@@ -57,7 +57,7 @@ class MarketOfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCompletedStyle = _isCompletedOffer;
+    final isInactiveStyle = offer.isInactive;
     final card = Material(
       color: AppColors.bgCard,
       borderRadius: BorderRadius.circular(22),
@@ -78,19 +78,14 @@ class MarketOfferCard extends StatelessWidget {
     );
 
     return Opacity(
-      opacity: offer.dimmed ? 0.42 : (isCompletedStyle ? 0.74 : 1),
-      child: isCompletedStyle
+      opacity: offer.dimmed ? 0.42 : (isInactiveStyle ? 0.74 : 1),
+      child: isInactiveStyle
           ? ColorFiltered(
               colorFilter: const ColorFilter.matrix(_grayscaleMatrix),
               child: card,
             )
           : card,
     );
-  }
-
-  bool get _isCompletedOffer {
-    return offer.lifecycle == MarketLifecycleTab.completed ||
-        offer.status == MarketOfferStatus.closed;
   }
 
   bool get _supportsTouchingQueue {
@@ -679,8 +674,9 @@ class MarketOfferCard extends StatelessWidget {
 
   Widget _buildActionArea() {
     // 유지보수 포인트:
-    // 완료된 거래는 소유자 액션(수정/삭제/완료)을 표시하지 않습니다.
-    if (_isCompletedOffer && offer.isMine) {
+    // 종료된 거래(완료/취소)는 소유자 액션을 숨겨
+    // 메인 목록에서도 완료 상태와 동일한 인상을 유지합니다.
+    if (offer.isInactive && offer.isMine) {
       return const SizedBox.shrink();
     }
 
@@ -707,9 +703,7 @@ class MarketOfferCard extends StatelessWidget {
     final isProposalAction = actionLabel == '거래 제안';
     final isQueueAction = actionLabel == '줄 서기  →';
     final bool disabled =
-        _isCompletedOffer ||
-        offer.status == MarketOfferStatus.closed ||
-        offer.status == MarketOfferStatus.offline ||
+        offer.isInactive ||
         (offer.status == MarketOfferStatus.trading &&
             !_supportsTouchingQueue) ||
         offer.dimmed;

@@ -59,6 +59,12 @@ class _MarketTradeRegisterPageState
       'https://dodo.ac/np/images/1/1e/99k_Bells_NH_Inv_Icon.png';
   static const String _nookMilesTicketImageUrl =
       'https://dodo.ac/np/images/f/f5/Nook_Miles_Ticket_NH_Icon.png';
+  static const List<MarketTradeType> _supportedTradeTypes =
+      <MarketTradeType>[
+        MarketTradeType.sharing,
+        MarketTradeType.exchange,
+        MarketTradeType.crafting,
+      ];
   static const int _touchingPreviewLimit = 5;
   static const int _touchingCategoryBadgeThreshold = 5;
   static const List<MapEntry<String, String>> _touchingPickerCategories =
@@ -284,6 +290,10 @@ class _MarketTradeRegisterPageState
 
   @override
   Widget build(BuildContext context) {
+    if (_isEditMode && (widget.initialOffer?.isTouchingTrade ?? false)) {
+      return _buildRemovedTouchingTradeScaffold();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -313,6 +323,74 @@ class _MarketTradeRegisterPageState
           ),
           _buildBottomActionBar(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRemovedTouchingTradeScaffold() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '거래 수정하기',
+          style: AppTextStyles.appBarHomeTitle,
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(AppSpacing.pageHorizontal),
+        child: Center(
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.bgCard,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.borderDefault),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const CircleAvatar(
+                  radius: 28,
+                  backgroundColor: AppColors.catalogChipBg,
+                  child: Icon(
+                    Icons.block_rounded,
+                    color: AppColors.textHint,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '만지작 거래는 더 이상 지원하지 않아요.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 20),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '기존 만지작 글은 수정할 수 없어요. 필요하면 일반 거래 유형으로 새 글을 등록해 주세요.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodyHintStrong,
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: FilledButton.styleFrom(
+                      overlayColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory,
+                      backgroundColor: AppColors.accentDeepOrange,
+                      minimumSize: const Size.fromHeight(54),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    child: const Text('이전으로'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -457,7 +535,6 @@ class _MarketTradeRegisterPageState
   Widget _buildStepOne() {
     final guideText = switch (_tradeType) {
       MarketTradeType.crafting => '거래 유형을 먼저 고르면 다음 단계에서 레시피만 보여드려요.',
-      MarketTradeType.touching => '만지작을 열지, 내가 구할지 먼저 정한 뒤 흐름에 맞게 입력할 수 있어요.',
       _ => '거래 유형에 맞춰 다음 단계의 선택지를 자동으로 조정해드릴게요.',
     };
 
@@ -478,7 +555,7 @@ class _MarketTradeRegisterPageState
           ),
         ),
         const SizedBox(height: 16),
-        ...MarketTradeType.values.map((type) {
+        ..._supportedTradeTypes.map((type) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: _buildTradeTypeTile(type),
@@ -2294,6 +2371,9 @@ class _MarketTradeRegisterPageState
   }
 
   void _applyTradeTypeSelection(MarketTradeType type) {
+    if (type == MarketTradeType.touching) {
+      return;
+    }
     setState(() {
       final previousTradeType = _tradeType;
       _tradeType = type;
@@ -3057,16 +3137,9 @@ class _MarketTradeRegisterPageState
       MarketTradeType.exchange,
     ];
     final normalizedCategory = (category ?? '').replaceAll(' ', '');
-    final isVillagerCategory = normalizedCategory.contains('주민');
     final isRecipeCategory =
         normalizedCategory.contains('레시피') ||
         normalizedCategory.contains('DIY');
-    // 유지보수 포인트:
-    // 주민/레시피(문자열 변형 포함)에서는 만지작을 숨기고,
-    // 나머지(아이템/벽지/패션/재화 등)에서는 만지작을 노출합니다.
-    if (!isVillagerCategory && !isRecipeCategory) {
-      types.add(MarketTradeType.touching);
-    }
 
     if (isRecipeCategory) {
       types.add(MarketTradeType.crafting);

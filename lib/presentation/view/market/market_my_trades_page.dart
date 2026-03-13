@@ -18,7 +18,7 @@ import 'package:nook_lounge_app/presentation/view/market/market_trade_register_p
 
 enum _MarketMyTradeTab {
   ongoing('진행중'),
-  cancelled('거래취소'),
+  responseWaiting('응답대기중'),
   completed('완료');
 
   const _MarketMyTradeTab(this.label);
@@ -64,16 +64,13 @@ class MarketMyTradesPage extends ConsumerWidget {
     final selectedTab = ref.watch(_marketMyTradeTabProvider);
     final counts = <_MarketMyTradeTab, int>{
       _MarketMyTradeTab.ongoing: viewModel.ongoingTradeCount,
-      _MarketMyTradeTab.cancelled:
-          viewModel.myOfferCounts[MarketLifecycleTab.cancelled] ?? 0,
+      _MarketMyTradeTab.responseWaiting: viewModel.responseWaitingTradeCount,
       _MarketMyTradeTab.completed:
           viewModel.myOfferCounts[MarketLifecycleTab.completed] ?? 0,
     };
     final offers = switch (selectedTab) {
       _MarketMyTradeTab.ongoing => viewModel.ongoingTradeOffers,
-      _MarketMyTradeTab.cancelled => viewModel.ownedOffersByLifecycle(
-        MarketLifecycleTab.cancelled,
-      ),
+      _MarketMyTradeTab.responseWaiting => viewModel.responseWaitingTradeOffers,
       _MarketMyTradeTab.completed => viewModel.ownedOffersByLifecycle(
         MarketLifecycleTab.completed,
       ),
@@ -103,7 +100,8 @@ class MarketMyTradesPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 12),
-          if (selectedTab == _MarketMyTradeTab.ongoing &&
+          if ((selectedTab == _MarketMyTradeTab.ongoing ||
+                  selectedTab == _MarketMyTradeTab.responseWaiting) &&
               state.proposalErrorMessage != null)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.s10),
@@ -116,7 +114,7 @@ class MarketMyTradesPage extends ConsumerWidget {
             _buildEmpty(
               message: switch (selectedTab) {
                 _MarketMyTradeTab.ongoing => '진행중인 거래가 없어요.',
-                _MarketMyTradeTab.cancelled => '취소된 거래가 없어요.',
+                _MarketMyTradeTab.responseWaiting => '응답을 기다리는 거래가 없어요.',
                 _MarketMyTradeTab.completed => '완료된 거래가 없어요.',
               },
             )
@@ -229,13 +227,11 @@ class MarketMyTradesPage extends ConsumerWidget {
         ) ??
         false;
     final hasCodeSession = codeSessionAsync.valueOrNull != null;
-    final isCompletedStyle =
-        offer.lifecycle == MarketLifecycleTab.completed ||
-        offer.status == MarketOfferStatus.closed;
+    final isInactiveStyle = offer.isInactive;
     final hasAcceptedMyProposal =
         myProposal?.status == MarketTradeProposalStatus.accepted;
     final canOpenCode =
-        !isCompletedStyle &&
+        !isInactiveStyle &&
         (hasCodeSession || hasAcceptedProposal || hasAcceptedMyProposal);
     final offerDisplayName = _resolvedDisplayName(
       offer.offerItemName,
@@ -381,85 +377,42 @@ class MarketMyTradesPage extends ConsumerWidget {
                           ),
                           Expanded(
                             child: _buildBottomAction(
-                              icon: Icons.schedule_rounded,
-                              label: '거래취소',
-                              onTap: () async {
-                                final shouldCancel = await _showConfirmDialog(
-                                  context: context,
-                                  title: '거래 취소',
-                                  message: '현재 진행 제안을 취소하고 거래글을 다시 열까요?',
-                                  confirmLabel: '취소',
-                                );
-                                if (shouldCancel != true) {
-                                  return;
-                                }
-                                await viewModel.cancelTrade(offer: offer);
-                                if (context.mounted) {
-                                  _showInfo(context, '거래를 취소하고 다시 열었어요.');
-                                }
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: _buildBottomAction(
                               icon: Icons.check_circle_rounded,
                               label: '완료',
-                              onTap: hasAcceptedProposal
-                                  ? () async {
-                                      final shouldComplete =
-                                          await _showConfirmDialog(
-                                            context: context,
-                                            title: '거래 완료 처리',
-                                            message: '이 거래를 완료 상태로 변경할까요?',
-                                            confirmLabel: '완료',
-                                          );
-                                      if (shouldComplete != true) {
-                                        return;
-                                      }
-                                      try {
-                                        await viewModel.completeTrade(
-                                          offer: offer,
-                                        );
-                                      } catch (_) {
-                                        if (!context.mounted) {
-                                          return;
-                                        }
-                                        final errorMessage =
-                                            ref
-                                                .read(marketViewModelProvider)
-                                                .errorMessage ??
-                                            '거래 완료에 실패했어요. 다시 시도해 주세요.';
-                                        _showInfo(context, errorMessage);
-                                        return;
-                                      }
-                                      if (context.mounted) {
-                                        _showInfo(context, '거래를 완료로 변경했어요.');
-                                      }
-                                    }
-                                  : null,
+                              onTap: () async {
+                                final shouldComplete = await _showConfirmDialog(
+                                  context: context,
+                                  title: '거래 완료 처리',
+                                  message: '이 거래를 완료 상태로 변경할까요?',
+                                  confirmLabel: '완료',
+                                );
+                                if (shouldComplete != true) {
+                                  return;
+                                }
+                                try {
+                                  await viewModel.completeTrade(offer: offer);
+                                } catch (_) {
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+                                  final errorMessage =
+                                      ref
+                                          .read(marketViewModelProvider)
+                                          .errorMessage ??
+                                      '거래 완료에 실패했어요. 다시 시도해 주세요.';
+                                  _showInfo(context, errorMessage);
+                                  return;
+                                }
+                                if (context.mounted) {
+                                  _showInfo(context, '거래를 완료로 변경했어요.');
+                                }
+                              },
                             ),
                           ),
                         ],
                       )
                     : _buildParticipantActionRow(
                         onOpenDetail: () => _openOfferDetail(context, offer),
-                        onCancelTrade: myProposal == null
-                            ? null
-                            : () async {
-                                final shouldCancel = await _showConfirmDialog(
-                                  context: context,
-                                  title: '거래 제안 취소',
-                                  message: '보낸 거래 제안을 취소할까요?',
-                                  confirmLabel: '취소',
-                                );
-                                if (shouldCancel != true) {
-                                  return;
-                                }
-                                await viewModel.cancelTrade(offer: offer);
-                                if (context.mounted) {
-                                  _showInfo(context, '거래 제안을 취소했어요.');
-                                }
-                              },
                         onOpenCode: canOpenCode
                             ? () => _openTradeCodePage(context, offer)
                             : null,
@@ -498,7 +451,7 @@ class MarketMyTradesPage extends ConsumerWidget {
       ),
     );
 
-    if (!isCompletedStyle) {
+    if (!isInactiveStyle) {
       return card;
     }
 
@@ -579,6 +532,7 @@ class MarketMyTradesPage extends ConsumerWidget {
   }) {
     final message = switch (proposalStatus) {
       MarketTradeProposalStatus.accepted => '거래가 승낙되었어요',
+      MarketTradeProposalStatus.completed => '거래가 완료되었어요',
       MarketTradeProposalStatus.pending => '내 제안이 대기 중이에요',
       MarketTradeProposalStatus.rejected => '내 제안이 거절되었어요',
       MarketTradeProposalStatus.cancelled => '내 제안이 취소되었어요',
@@ -634,7 +588,6 @@ class MarketMyTradesPage extends ConsumerWidget {
 
   Widget _buildParticipantActionRow({
     required VoidCallback onOpenDetail,
-    required VoidCallback? onCancelTrade,
     required VoidCallback? onOpenCode,
   }) {
     return Row(
@@ -644,13 +597,6 @@ class MarketMyTradesPage extends ConsumerWidget {
             icon: Icons.open_in_new_rounded,
             label: '상세',
             onTap: onOpenDetail,
-          ),
-        ),
-        Expanded(
-          child: _buildBottomAction(
-            icon: Icons.schedule_rounded,
-            label: '거래취소',
-            onTap: onCancelTrade,
           ),
         ),
         Expanded(
@@ -722,11 +668,8 @@ class MarketMyTradesPage extends ConsumerWidget {
     BuildContext context,
     MarketOffer offer,
   ) async {
-    final isCompleted =
-        offer.lifecycle == MarketLifecycleTab.completed ||
-        offer.status == MarketOfferStatus.closed;
-    if (isCompleted) {
-      _showInfo(context, '거래가 종료되어 코드를 확인할 수 없어요.');
+    if (offer.isInactive) {
+      _showInfo(context, '종료된 거래는 코드를 확인할 수 없어요.');
       return;
     }
 

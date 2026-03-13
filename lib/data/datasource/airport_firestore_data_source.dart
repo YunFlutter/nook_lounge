@@ -704,7 +704,8 @@ class AirportFirestoreDataSource {
         selectedStatus == MarketTradeProposalStatus.accepted.name;
     final shouldCancelProposal =
         selectedStatus != MarketTradeProposalStatus.cancelled.name &&
-        selectedStatus != MarketTradeProposalStatus.rejected.name;
+        selectedStatus != MarketTradeProposalStatus.rejected.name &&
+        selectedStatus != MarketTradeProposalStatus.completed.name;
 
     if (shouldCancelProposal) {
       batch.set(selectedProposal.reference, <String, dynamic>{

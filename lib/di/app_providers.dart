@@ -22,6 +22,7 @@ import 'package:nook_lounge_app/data/datasource/market_firestore_data_source.dar
 import 'package:nook_lounge_app/data/datasource/market_storage_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/settings_firestore_data_source.dart';
 import 'package:nook_lounge_app/data/service/local_notification_service.dart';
+import 'package:nook_lounge_app/data/service/page_guide_service.dart';
 import 'package:nook_lounge_app/data/service/push_message_service.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_api_data_source.dart';
 import 'package:nook_lounge_app/data/datasource/turnip_firestore_data_source.dart';
@@ -110,6 +111,17 @@ final localNotificationServiceProvider = Provider<LocalNotificationService>((
   return LocalNotificationService(
     plugin: ref.watch(flutterLocalNotificationsPluginProvider),
   );
+});
+
+final pageGuideServiceProvider = Provider<PageGuideService>((ref) {
+  return PageGuideService();
+});
+
+final pageGuidePresentationTickProvider = StateProvider.family<int, String>((
+  ref,
+  storageKey,
+) {
+  return 0;
 });
 
 final pushOfferIntentNotifierProvider =

@@ -88,12 +88,22 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   List<MarketOffer> get ongoingTradeOffers {
     final combined = <MarketOffer>[
       ...ownedOffersByLifecycle(MarketLifecycleTab.ongoing),
-      ...proposalOffers,
+      ...proposalOffers.where((offer) => !_isResponseWaitingTradeOffer(offer)),
     ];
     return _sortOffersForDisplay(combined);
   }
 
   int get ongoingTradeCount => ongoingTradeOffers.length;
+
+  List<MarketOffer> get responseWaitingTradeOffers {
+    return _sortOffersForDisplay(
+      proposalOffers
+          .where(_isResponseWaitingTradeOffer)
+          .toList(growable: false),
+    );
+  }
+
+  int get responseWaitingTradeCount => responseWaitingTradeOffers.length;
 
   Map<MarketLifecycleTab, int> get myOfferCounts {
     final counts = <MarketLifecycleTab, int>{
@@ -130,6 +140,16 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
               _activeProposalOfferIds.contains(offer.id);
         })
         .toList(growable: false);
+  }
+
+  bool _isResponseWaitingTradeOffer(MarketOffer offer) {
+    // 유지보수 포인트:
+    // 내가 보낸 제안 중 아직 작성자 응답 전인 거래만
+    // "응답대기중" 탭으로 분리합니다.
+    // 일반 거래는 승낙되면 offer.status 가 waiting/trading 으로 잠기므로
+    // 나머지 active proposal 은 응답 대기 상태로 봅니다.
+    return offer.status != MarketOfferStatus.waiting &&
+        offer.status != MarketOfferStatus.trading;
   }
 
   MarketOffer? findOfferById(String id) {
@@ -182,7 +202,10 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       await _repository.createOffer(uid: currentUid, offer: next);
       state = state.copyWith(errorMessage: null);
     } catch (error) {
-      final message = error is StateError
+      final errorCode = _readStateErrorCode(error);
+      final message = errorCode == 'touching_trade_removed'
+          ? '만지작 거래는 더 이상 지원하지 않아요.'
+          : error is StateError
           ? '이미지 업로드 후 URL 저장에 실패했어요. 다시 시도해 주세요.'
           : '거래 등록에 실패했어요.';
       state = state.copyWith(errorMessage: message);
@@ -210,7 +233,10 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       await _repository.updateOffer(uid: currentUid, offer: next);
       state = state.copyWith(errorMessage: null);
     } catch (error) {
-      final message = error is StateError
+      final errorCode = _readStateErrorCode(error);
+      final message = errorCode == 'touching_trade_removed'
+          ? '만지작 거래는 더 이상 지원하지 않아요.'
+          : error is StateError
           ? '이미지 업로드 후 URL 저장에 실패했어요. 다시 시도해 주세요.'
           : '거래 수정에 실패했어요.';
       state = state.copyWith(errorMessage: message);
@@ -247,6 +273,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   }
 
   Future<void> completeTrade({required MarketOffer offer}) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final requesterUid = currentUserId.trim();
     if (requesterUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 거래 완료를 처리할 수 있어요.');
@@ -286,7 +313,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       final errorMessage =
           errorCode == 'trade_complete_no_active_proposal' ||
               errorCode == 'trade_complete_unavailable'
-          ? '거래가 취소되었거나 상대가 없어 완료할 수 없어요.'
+          ? '거래 상태를 확인할 수 없어 완료할 수 없어요.'
           : errorCode == 'trade_complete_permission_denied'
           ? '거래 당사자만 완료할 수 있어요.'
           : '거래 완료 처리에 실패했어요.';
@@ -348,6 +375,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   }
 
   Future<void> sendTradeProposal({required MarketOffer offer}) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final proposerUid = (_authRepository.currentUserId ?? '').trim();
     if (proposerUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 거래 제안을 보낼 수 있어요.');
@@ -409,6 +437,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     required MarketOffer offer,
     required String proposerUid,
   }) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final ownerUid = currentUserId;
     if (ownerUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 거래 승낙을 진행할 수 있어요.');
@@ -479,6 +508,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     required String code,
     required String islandRules,
   }) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final senderUid = currentUserId;
     if (senderUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 코드를 보낼 수 있어요.');
@@ -507,6 +537,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     required MarketOffer offer,
     required String inviteCode,
   }) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final receiverUid = currentUserId.trim();
     if (receiverUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 규칙 동의를 진행해 주세요.');
@@ -555,6 +586,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   }
 
   Future<void> cancelTrade({required MarketOffer offer}) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final requesterUid = currentUserId.trim();
     if (requesterUid.isEmpty) {
       state = state.copyWith(errorMessage: '로그인 후 거래 취소를 진행할 수 있어요.');
@@ -598,6 +630,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
     required String reason,
     String detail = '',
   }) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final normalizedReason = reason.trim();
     final normalizedDetail = detail.trim();
     final reporterUid = currentUserId.trim();
@@ -636,6 +669,7 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
   }
 
   Future<void> hideOffer({required MarketOffer offer}) async {
+    _throwIfTouchingTradeUnsupported(offer);
     final offerId = offer.id.trim();
     if (offerId.isEmpty) {
       state = state.copyWith(errorMessage: '숨길 거래 글 정보를 찾지 못했어요.');
@@ -808,6 +842,9 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
           return offer.copyWith(isMine: isMine);
         })
         .where((offer) {
+          if (offer.isTouchingTrade) {
+            return false;
+          }
           if (offer.isMine) {
             return true;
           }
@@ -822,6 +859,14 @@ class MarketViewModel extends StateNotifier<MarketViewState> {
       offers: _sortOffersForDisplay(normalized),
       isLoading: false,
     );
+  }
+
+  void _throwIfTouchingTradeUnsupported(MarketOffer offer) {
+    if (!offer.isTouchingTrade) {
+      return;
+    }
+    state = state.copyWith(errorMessage: '만지작 거래는 더 이상 지원하지 않아요.');
+    throw StateError('touching_trade_removed');
   }
 
   void _setProposalOfferActiveLocally({

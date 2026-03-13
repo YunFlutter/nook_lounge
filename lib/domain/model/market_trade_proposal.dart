@@ -5,6 +5,7 @@ part 'market_trade_proposal.freezed.dart';
 enum MarketTradeProposalStatus {
   pending('대기중'),
   accepted('승낙됨'),
+  completed('거래 완료'),
   rejected('거절됨'),
   cancelled('취소됨');
 
@@ -31,6 +32,7 @@ sealed class MarketTradeProposal with _$MarketTradeProposal {
 
   bool get isPending => status == MarketTradeProposalStatus.pending;
   bool get isAccepted => status == MarketTradeProposalStatus.accepted;
+  bool get isCompleted => status == MarketTradeProposalStatus.completed;
 
   factory MarketTradeProposal.fromMap({
     required String id,
