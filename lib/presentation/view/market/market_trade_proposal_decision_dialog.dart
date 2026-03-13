@@ -60,6 +60,11 @@ class MarketTradeProposalDecisionDialog extends StatelessWidget {
     return perspective == MarketTradeProposalDecisionDialogPerspective.proposer;
   }
 
+  bool get _isTouchingRequestFlow {
+    return offer.tradeType == MarketTradeType.touching &&
+        offer.moveType == MarketMoveType.visitor;
+  }
+
   @override
   Widget build(BuildContext context) {
     final giveItem = _resolveGiveItem();
@@ -345,6 +350,9 @@ class MarketTradeProposalDecisionDialog extends StatelessWidget {
   ({String title, String imageUrl, int quantity, IconData fallbackIcon})
   _resolveGiveItem() {
     if (offer.tradeType == MarketTradeType.touching) {
+      if (_isTouchingRequestFlow) {
+        return _isProposerPerspective ? _touchingItem() : _entryFeeItem();
+      }
       return _isProposerPerspective ? _entryFeeItem() : _touchingItem();
     }
     if (offer.oneWayOffer) {
@@ -356,6 +364,9 @@ class MarketTradeProposalDecisionDialog extends StatelessWidget {
   ({String title, String imageUrl, int quantity, IconData fallbackIcon})
   _resolveReceiveItem() {
     if (offer.tradeType == MarketTradeType.touching) {
+      if (_isTouchingRequestFlow) {
+        return _isProposerPerspective ? _entryFeeItem() : _touchingItem();
+      }
       return _isProposerPerspective ? _touchingItem() : _entryFeeItem();
     }
     if (offer.oneWayOffer) {
@@ -388,7 +399,7 @@ class MarketTradeProposalDecisionDialog extends StatelessWidget {
   _entryFeeItem() {
     return (
       title: offer.offerItemName.trim().isEmpty
-          ? '입장료 없음'
+          ? (_isTouchingRequestFlow ? '보답 없음' : '입장료 없음')
           : offer.offerItemName,
       imageUrl: offer.offerItemImageUrl,
       quantity: offer.offerItemQuantity,
@@ -399,7 +410,9 @@ class MarketTradeProposalDecisionDialog extends StatelessWidget {
   ({String title, String imageUrl, int quantity, IconData fallbackIcon})
   _touchingItem() {
     final touchingCount = offer.touchingTags.length;
-    final touchingTitle = touchingCount <= 0 ? '만지작' : '만지작 $touchingCount개';
+    final touchingTitle = touchingCount <= 0
+        ? (_isTouchingRequestFlow ? '원하는 만지작' : '만지작')
+        : '만지작 $touchingCount개';
     return (
       title: touchingTitle,
       imageUrl: '',

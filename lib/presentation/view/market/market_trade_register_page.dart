@@ -95,11 +95,85 @@ class _MarketTradeRegisterPageState
 
   bool get _isEditMode => widget.initialOffer != null;
   bool get _isVillagerOffer => _offeredItem?.category == '주민';
+  bool get _isOneWayTrade =>
+      _tradeType == MarketTradeType.sharing ||
+      _tradeType == MarketTradeType.touching;
+  bool get _canUseOfferCurrency => _tradeType != MarketTradeType.crafting;
+  bool get _isTouchingRequestFlow =>
+      _tradeType == MarketTradeType.touching &&
+      _moveType == MarketMoveType.visitor;
 
-  List<MarketTradeType> get _availableTradeTypes =>
-      _availableTradeTypesForCategory(
-        _useOfferCurrency ? '재화' : _offeredItem?.category,
-      );
+  bool get _canMoveFromOfferStep {
+    if (_useOfferCurrency) {
+      return _canUseOfferCurrency &&
+          _isTradeTypeSupportedForCategory(
+            tradeType: _tradeType,
+            category: '재화',
+          );
+    }
+    final offeredItem = _offeredItem;
+    if (offeredItem == null) {
+      return false;
+    }
+    return _isTradeTypeSupportedForCategory(
+      tradeType: _tradeType,
+      category: offeredItem.category,
+    );
+  }
+
+  String get _offerItemPickerTitle {
+    return switch (_tradeType) {
+      MarketTradeType.touching =>
+        _isTouchingRequestFlow ? '드릴 아이템 검색' : '입장료 아이템 검색',
+      MarketTradeType.crafting => '레시피 검색',
+      _ => '아이템 검색',
+    };
+  }
+
+  String get _offerItemPickerInitialCategoryKey {
+    return switch (_tradeType) {
+      MarketTradeType.crafting => 'recipe',
+      _ => 'all',
+    };
+  }
+
+  List<String> get _offerItemPickerAllowedCategories {
+    return switch (_tradeType) {
+      MarketTradeType.crafting => const <String>['레시피'],
+      _ => const <String>[],
+    };
+  }
+
+  List<String> get _offerItemPickerExcludedCategories {
+    return switch (_tradeType) {
+      MarketTradeType.touching => const <String>['레시피', '주민'],
+      _ => const <String>[],
+    };
+  }
+
+  String get _touchingOfferTitle =>
+      _isTouchingRequestFlow ? '드릴 보답을 설정해주세요.' : '입장료를 설정해주세요.';
+
+  String get _touchingOfferGuide => _isTouchingRequestFlow
+      ? '원하는 만지작 글이라면 드릴 아이템이나 재화를 먼저 정해보세요.'
+      : '만지작을 열 때 받을 입장료를 현재 조건에 맞게 정해보세요.';
+
+  String get _touchingOfferSearchLabel =>
+      _isTouchingRequestFlow ? '드릴 아이템 검색하기' : '입장료 아이템 검색하기';
+
+  String get _touchingTitleHint =>
+      _isTouchingRequestFlow ? 'ex. 의상 만지작 구해요.' : 'ex. 의상 만지작 열어요.';
+
+  String get _touchingSelectionTitle =>
+      _isTouchingRequestFlow ? '원하는 만지작 아이템을 선택해주세요.' : '만지작할 아이템을 선택해주세요.';
+
+  String get _touchingSelectionGuide => _isTouchingRequestFlow
+      ? '상대가 만지작해 줄 아이템을 여러 개 선택할 수 있어요.'
+      : '아이템을 여러 개 선택할 수 있어요.';
+
+  String _defaultTouchingTitleForMoveType(MarketMoveType moveType) {
+    return moveType == MarketMoveType.host ? '만지작 열어요' : '만지작 구해요';
+  }
 
   void _initializeWithInitialOffer() {
     final initialOffer = widget.initialOffer;
@@ -148,10 +222,7 @@ class _MarketTradeRegisterPageState
       );
     }
 
-    final bool oneWayOffer =
-        initialOffer.oneWayOffer ||
-        _tradeType == MarketTradeType.sharing ||
-        _tradeType == MarketTradeType.touching;
+    final bool oneWayOffer = initialOffer.oneWayOffer || _isOneWayTrade;
     if (oneWayOffer) {
       _useCurrency = false;
       _wantedItem = null;
@@ -251,8 +322,8 @@ class _MarketTradeRegisterPageState
     final VoidCallback? onPreviousPressed = hasPrevious
         ? () => setState(() {
             // 유지보수 포인트:
-            // 나눔은 step3(최종 확인) 전에 교환 대상 선택(step2)을 건너뛰므로
-            // "이전"도 동일하게 step1(거래 타입 선택)으로 복귀시킵니다.
+            // 나눔은 거래 상세(step3)를 건너뛰고 바로 최종 확인(step4)으로 이동하므로
+            // "이전"도 드리는 것 선택(step2)으로 정확히 복귀시킵니다.
             if (_step == 3 && _tradeType == MarketTradeType.sharing) {
               _step = 1;
               return;
@@ -262,16 +333,16 @@ class _MarketTradeRegisterPageState
         : null;
 
     final VoidCallback? onPrimaryPressed = switch (_step) {
-      0 =>
-        (_useOfferCurrency || _offeredItem != null)
-            ? () => setState(() => _step = 1)
+      0 => () => setState(() => _step = 1),
+      1 =>
+        _canMoveFromOfferStep
+            ? () => setState(() {
+                // 유지보수 포인트:
+                // 거래 유형을 먼저 고른 뒤에는 현재 타입 기준으로
+                // 드리는 것(step2)을 검증한 후 다음 단계를 분기합니다.
+                _step = _tradeType == MarketTradeType.sharing ? 3 : 2;
+              })
             : null,
-      1 => () => setState(() {
-        // 유지보수 포인트:
-        // 나눔은 "받는 항목"이 없는 단방향 거래이므로,
-        // 교환 대상 선택(step 3)을 건너뛰고 바로 최종 확인(step 4)으로 이동합니다.
-        _step = _tradeType == MarketTradeType.sharing ? 3 : 2;
-      }),
       2 => _canMoveFromStepThree() ? () => setState(() => _step = 3) : null,
       3 => _isSubmitting ? null : _submit,
       _ => null,
@@ -384,16 +455,82 @@ class _MarketTradeRegisterPageState
   }
 
   Widget _buildStepOne() {
+    final guideText = switch (_tradeType) {
+      MarketTradeType.crafting => '거래 유형을 먼저 고르면 다음 단계에서 레시피만 보여드려요.',
+      MarketTradeType.touching => '만지작을 열지, 내가 구할지 먼저 정한 뒤 흐름에 맞게 입력할 수 있어요.',
+      _ => '거래 유형에 맞춰 다음 단계의 선택지를 자동으로 조정해드릴게요.',
+    };
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          '어떤 거래를 등록할까요?',
+          style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 24),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          guideText,
+          style: AppTextStyles.labelWithColor(
+            AppColors.textHint,
+            weight: FontWeight.w700,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...MarketTradeType.values.map((type) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _buildTradeTypeTile(type),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildStepTwo() {
     final isVillager = _isVillagerOffer;
-    final showTitleInStepOne = !_useOfferCurrency;
-    final showExtraItemFields = !_useOfferCurrency && !isVillager;
-    final showDetailSection = showTitleInStepOne || showExtraItemFields;
-    final titleText = isVillager ? '어떤 주민을 거래하시겠어요?' : '무엇을 거래하시겠어요?';
-    final guideText = _useOfferCurrency
-        ? '재화 선택을 통해\n보유한 재화를 등록해보세요.'
-        : isVillager
-        ? '주민 검색을 통해\n거래할 주민을 등록해보세요.'
-        : '아이템 검색을 통해\n보유한 아이템을 등록해보세요.';
+    final isOfferCurrencySelected = _canUseOfferCurrency && _useOfferCurrency;
+    final showTitleInStepTwo = switch (_tradeType) {
+      MarketTradeType.touching => false,
+      MarketTradeType.sharing => true,
+      _ => !isOfferCurrencySelected,
+    };
+    final showExtraItemFields = !isOfferCurrencySelected && !isVillager;
+    final showDetailSection = showTitleInStepTwo || showExtraItemFields;
+    final titleText = switch (_tradeType) {
+      MarketTradeType.sharing =>
+        isVillager
+            ? '어떤 주민을 나눔할까요?'
+            : (isOfferCurrencySelected ? '어떤 재화를 나눔할까요?' : '무엇을 나눔할까요?'),
+      MarketTradeType.exchange =>
+        isVillager
+            ? '어떤 주민을 거래하시겠어요?'
+            : (isOfferCurrencySelected ? '어떤 재화를 드릴까요?' : '무엇을 드릴까요?'),
+      MarketTradeType.touching => _touchingOfferTitle,
+      MarketTradeType.crafting => '어떤 레시피를 제작 중인가요?',
+    };
+    final guideText = switch (_tradeType) {
+      MarketTradeType.sharing =>
+        isOfferCurrencySelected
+            ? '보유한 재화를 나눔으로 등록할 수 있어요.'
+            : isVillager
+            ? '주민 검색을 통해 나눔할 주민을 선택해보세요.'
+            : '아이템 검색을 통해 나눔할 항목을 선택해보세요.',
+      MarketTradeType.exchange =>
+        isOfferCurrencySelected
+            ? '재화를 드리고 원하는 아이템이나 재화를 받아보세요.'
+            : isVillager
+            ? '주민 검색을 통해 거래할 주민을 선택해보세요.'
+            : '아이템 검색을 통해 드릴 항목을 선택해보세요.',
+      MarketTradeType.touching =>
+        isOfferCurrencySelected
+            ? _isTouchingRequestFlow
+                  ? '재화를 보답으로 제안할 수 있고, 0으로 두면 무료 요청으로도 올릴 수 있어요.'
+                  : '재화 수량을 0으로 두면 무료 입장으로도 등록할 수 있어요.'
+            : _touchingOfferGuide,
+      MarketTradeType.crafting => '현재 조건을 유지하기 위해 레시피만 선택할 수 있어요.',
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,13 +549,25 @@ class _MarketTradeRegisterPageState
           ),
         ),
         const SizedBox(height: 16),
-        _buildOfferModeToggle(),
-        const SizedBox(height: 14),
-        if (_useOfferCurrency)
+        if (_tradeType == MarketTradeType.touching) ...<Widget>[
+          _buildTouchingDirectionSelector(),
+          const SizedBox(height: 16),
+        ],
+        if (_canUseOfferCurrency) ...<Widget>[
+          _buildOfferModeToggle(),
+          const SizedBox(height: 14),
+        ],
+        if (isOfferCurrencySelected)
           _buildOfferCurrencyInput()
         else
           _buildSearchSelectBox(
-            label: _offeredItem?.name ?? '아이템 검색하기',
+            label:
+                _offeredItem?.name ??
+                (_tradeType == MarketTradeType.touching
+                    ? _touchingOfferSearchLabel
+                    : _tradeType == MarketTradeType.crafting
+                    ? '레시피 검색하기'
+                    : '아이템 검색하기'),
             selectedItem: _offeredItem,
             onTap: _openOfferItemPicker,
           ),
@@ -426,10 +575,14 @@ class _MarketTradeRegisterPageState
           const SizedBox(height: 12),
           _buildSectionDivider('상세 정보'),
           const SizedBox(height: 12),
-          if (showTitleInStepOne)
+          if (showTitleInStepTwo)
             _buildTextField(
               label: '제목',
-              hint: 'ex. 아이언우드 수납장 교환해요.',
+              hint: _tradeType == MarketTradeType.touching
+                  ? _touchingTitleHint
+                  : _tradeType == MarketTradeType.crafting
+                  ? 'ex. 장미 침대 제작 중이에요.'
+                  : 'ex. 아이언우드 수납장 교환해요.',
               controller: _titleController,
             ),
           if (showExtraItemFields) ...<Widget>[
@@ -463,37 +616,6 @@ class _MarketTradeRegisterPageState
     );
   }
 
-  Widget _buildStepTwo() {
-    final showCraftingHint =
-        !_useOfferCurrency && _offeredItem?.category == '레시피';
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          '거래 타입을 선택해주세요.',
-          style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 24),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          showCraftingHint
-              ? '레시피의 경우 제작 중 타입을 선택할 수 있어요.'
-              : '거래 목적에 맞는 타입을 선택해주세요.',
-          style: AppTextStyles.labelWithColor(
-            AppColors.textHint,
-            weight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 16),
-        ..._availableTradeTypes.map((type) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: _buildTradeTypeTile(type),
-          );
-        }),
-      ],
-    );
-  }
-
   Widget _buildStepThree() {
     if (_tradeType == MarketTradeType.touching) {
       return _buildTouchingStepThree();
@@ -502,9 +624,19 @@ class _MarketTradeRegisterPageState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('무엇과 교환할까요?', style: AppTextStyles.bodyPrimaryHeavy),
+        Text(
+          _tradeType == MarketTradeType.crafting
+              ? '무엇을 받고 싶으세요?'
+              : '무엇과 교환할까요?',
+          style: AppTextStyles.bodyPrimaryHeavy,
+        ),
         const SizedBox(height: 10),
-        Text('구체적인 아이템이나 재화를 선택해주세요.', style: AppTextStyles.bodyHintStrong),
+        Text(
+          _tradeType == MarketTradeType.crafting
+              ? '제작 보답으로 받을 아이템이나 재화를 선택해주세요.'
+              : '구체적인 아이템이나 재화를 선택해주세요.',
+          style: AppTextStyles.bodyHintStrong,
+        ),
         const SizedBox(height: 16),
         _buildReceiveModeToggle(),
         const SizedBox(height: 14),
@@ -578,16 +710,16 @@ class _MarketTradeRegisterPageState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          '만지작할 아이템을 선택해주세요.',
+          _touchingSelectionTitle,
           style: AppTextStyles.bodyPrimaryHeavy.copyWith(fontSize: 24),
         ),
 
         const SizedBox(height: 18),
-        Text('아이템을 여러 개 선택할 수 있어요.', style: AppTextStyles.bodyHintStrong),
+        Text(_touchingSelectionGuide, style: AppTextStyles.bodyHintStrong),
         const SizedBox(height: 20),
         _buildTextField(
           label: '제목',
-          hint: 'ex. 의상 만지작 열어요.',
+          hint: _touchingTitleHint,
           controller: _titleController,
         ),
         const SizedBox(height: 20),
@@ -803,8 +935,18 @@ class _MarketTradeRegisterPageState
           ),
         ),
         const SizedBox(height: 22),
-        Text('어떻게 거래할까요?', style: AppTextStyles.bodyPrimaryHeavy),
+        Text(
+          isTouchingSummary ? '방문 방향을 확인해주세요.' : '어떻게 거래할까요?',
+          style: AppTextStyles.bodyPrimaryHeavy,
+        ),
         const SizedBox(height: 10),
+        if (isTouchingSummary) ...<Widget>[
+          Text(
+            '만지작 열기/구하기에 따라 누가 코드를 보내는지 달라져요.',
+            style: AppTextStyles.bodyHintStrong,
+          ),
+          const SizedBox(height: 10),
+        ],
         Row(
           children: MarketMoveType.values
               .map((moveType) {
@@ -856,9 +998,13 @@ class _MarketTradeRegisterPageState
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              moveType == MarketMoveType.visitor
-                                  ? '상대방 섬으로'
-                                  : '나의 섬으로',
+                              _tradeType == MarketTradeType.touching
+                                  ? (moveType == MarketMoveType.visitor
+                                        ? '상대 섬에서 만지작해요'
+                                        : '내 섬에서 만지작을 열어요')
+                                  : (moveType == MarketMoveType.visitor
+                                        ? '상대방 섬으로'
+                                        : '나의 섬으로'),
                               style: AppTextStyles.labelWithColor(
                                 AppColors.textMuted,
                                 weight: FontWeight.w700,
@@ -891,26 +1037,7 @@ class _MarketTradeRegisterPageState
     final selected = _tradeType == type;
     return AppInkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: () => setState(() {
-        _tradeType = type;
-        if (type == MarketTradeType.sharing) {
-          // 유지보수 포인트:
-          // 나눔 전환 시 "받을 아이템/재화" 입력 상태를 제거해
-          // 의도치 않은 데이터가 저장되지 않도록 초기화합니다.
-          _useCurrency = false;
-          _wantedItem = null;
-          _wantQuantity = 1;
-          _wantStyle = '기본';
-        }
-        // 유지보수 포인트:
-        // 만지작 선택 직후 바로 다중 선택이 가능하도록 현재 등록 아이템을
-        // 기본 선택 목록에 자동으로 한 번만 추가합니다.
-        if (type == MarketTradeType.touching &&
-            _offeredItem != null &&
-            !_touchingItems.any((item) => item.id == _offeredItem!.id)) {
-          _touchingItems = <CatalogItem>[..._touchingItems, _offeredItem!];
-        }
-      }),
+      onTap: () => _applyTradeTypeSelection(type),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.all(14),
@@ -959,19 +1086,90 @@ class _MarketTradeRegisterPageState
     );
   }
 
+  Widget _buildTouchingDirectionSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('만지작 방향', style: AppTextStyles.bodyPrimaryHeavy),
+        const SizedBox(height: 10),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildTouchingDirectionTile(
+                moveType: MarketMoveType.host,
+                title: '만지작을 열어요',
+                description: '내 섬을 열고 입장료를 받을게요.',
+                icon: Icons.home_rounded,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildTouchingDirectionTile(
+                moveType: MarketMoveType.visitor,
+                title: '만지작을 구해요',
+                description: '상대 섬으로 가서 만지작을 받고 싶어요.',
+                icon: Icons.flight_takeoff_rounded,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTouchingDirectionTile({
+    required MarketMoveType moveType,
+    required String title,
+    required String description,
+    required IconData icon,
+  }) {
+    final selected = _moveType == moveType;
+    return AppInkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () => _applyTouchingMoveTypeSelection(moveType),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected ? AppColors.badgeBlueText : AppColors.borderDefault,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: selected
+                  ? AppColors.badgeBlueBg
+                  : AppColors.catalogChipBg,
+              child: Icon(
+                icon,
+                color: selected ? AppColors.badgeBlueText : AppColors.textHint,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(title, style: AppTextStyles.bodyPrimaryHeavy),
+            const SizedBox(height: 8),
+            Text(description, style: AppTextStyles.captionMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildOfferModeToggle() {
     return _buildItemCurrencyToggle(
-      isCurrencySelected: _useOfferCurrency,
+      isCurrencySelected: _canUseOfferCurrency && _useOfferCurrency,
       onSelect: (useCurrency) {
         if (_useOfferCurrency == useCurrency) {
           return;
         }
         setState(() {
           _useOfferCurrency = useCurrency;
-          final availableTypes = _availableTradeTypes;
-          if (!availableTypes.contains(_tradeType)) {
-            _tradeType = MarketTradeType.exchange;
-          }
         });
       },
     );
@@ -1402,9 +1600,13 @@ class _MarketTradeRegisterPageState
   }
 
   Widget _buildTradeDirectionIndicator() {
-    return const  Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Icon(Icons.sync_alt_outlined, size: 30, color: AppColors.textAccent,),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Icon(
+        Icons.sync_alt_outlined,
+        size: 30,
+        color: AppColors.textAccent,
+      ),
     );
   }
 
@@ -1450,7 +1652,9 @@ class _MarketTradeRegisterPageState
         ),
         const SizedBox(height: 8),
         Text(
-          '만지작 ${_touchingItems.length}개',
+          _isTouchingRequestFlow
+              ? '원하는 만지작 ${_touchingItems.length}개'
+              : '만지작 ${_touchingItems.length}개',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.bodyPrimaryHeavy,
@@ -2069,7 +2273,7 @@ class _MarketTradeRegisterPageState
       case MarketTradeType.exchange:
         return '원하는 아이템과 교환해요.';
       case MarketTradeType.touching:
-        return '아이템 만지작을 열어요.';
+        return '아이템 만지작을 열거나 구해요.';
       case MarketTradeType.crafting:
         return '주민이 제작하고 있어요.';
     }
@@ -2089,6 +2293,92 @@ class _MarketTradeRegisterPageState
     return _wantedItem != null;
   }
 
+  void _applyTradeTypeSelection(MarketTradeType type) {
+    setState(() {
+      final previousTradeType = _tradeType;
+      _tradeType = type;
+
+      // 유지보수 포인트:
+      // 거래 유형을 먼저 고르는 구조로 바뀌었기 때문에,
+      // 이후 단계에서 숨겨질 수 있는 입력값은 여기서 선제 정리합니다.
+      if (type == MarketTradeType.sharing || type == MarketTradeType.touching) {
+        _resetWantedSelection();
+      }
+      if (type == MarketTradeType.crafting) {
+        _useOfferCurrency = false;
+      }
+      if (type == MarketTradeType.touching &&
+          previousTradeType != MarketTradeType.touching) {
+        // 유지보수 포인트:
+        // 만지작은 기존 등록 플로우가 "열기" 기준이었으므로,
+        // 처음 진입할 때는 호스트 플로우를 기본값으로 유지합니다.
+        _moveType = MarketMoveType.host;
+        if (_titleController.text.trim().isEmpty) {
+          _titleController.text = _defaultTouchingTitleForMoveType(_moveType);
+        }
+      }
+      if (_offeredItem != null &&
+          !_isTradeTypeSupportedForCategory(
+            tradeType: type,
+            category: _offeredItem!.category,
+          )) {
+        _resetOfferedItemSelection();
+      }
+    });
+  }
+
+  void _applyTouchingMoveTypeSelection(MarketMoveType moveType) {
+    if (_tradeType != MarketTradeType.touching) {
+      return;
+    }
+    if (_moveType == moveType) {
+      return;
+    }
+    setState(() {
+      final previousDefaultTitle = _defaultTouchingTitleForMoveType(_moveType);
+      final currentTitle = _titleController.text.trim();
+      _moveType = moveType;
+      if (currentTitle.isEmpty || currentTitle == previousDefaultTitle) {
+        _titleController.text = _defaultTouchingTitleForMoveType(moveType);
+      }
+    });
+  }
+
+  void _resetWantedSelection() {
+    _useCurrency = false;
+    _wantedItem = null;
+    _wantQuantity = 1;
+    _wantStyle = '기본';
+    _currencyAmount = 1;
+  }
+
+  void _resetOfferedItemSelection() {
+    _offeredItem = null;
+    _offerQuantity = 1;
+    _offerStyle = '기본';
+  }
+
+  bool _isTradeTypeSupportedForCategory({
+    required MarketTradeType tradeType,
+    required String? category,
+  }) {
+    return _availableTradeTypesForCategory(category).contains(tradeType);
+  }
+
+  String _suggestTitleForOfferedSelection(CatalogItem selected) {
+    if (selected.category == '주민') {
+      return _tradeType == MarketTradeType.sharing
+          ? '${selected.name} 주민 나눔해요'
+          : '${selected.name} 주민 거래해요';
+    }
+    return switch (_tradeType) {
+      MarketTradeType.sharing => '${selected.name} 나눔해요',
+      MarketTradeType.exchange => '${selected.name} 교환해요',
+      MarketTradeType.touching => _defaultTouchingTitleForMoveType(_moveType),
+      MarketTradeType.crafting => '${selected.name} 제작 중이에요',
+    };
+  }
+
   Future<void> _openOfferItemPicker() async {
     final selected = await showModalBottomSheet<CatalogItem>(
       context: context,
@@ -2098,9 +2388,14 @@ class _MarketTradeRegisterPageState
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) => const FractionallySizedBox(
+      builder: (_) => FractionallySizedBox(
         heightFactor: 0.88,
-        child: MarketItemPickerSheet(title: '아이템 검색'),
+        child: MarketItemPickerSheet(
+          title: _offerItemPickerTitle,
+          initialCategoryKey: _offerItemPickerInitialCategoryKey,
+          allowedCategories: _offerItemPickerAllowedCategories,
+          excludedCategories: _offerItemPickerExcludedCategories,
+        ),
       ),
     );
     if (selected == null || !mounted) {
@@ -2109,25 +2404,11 @@ class _MarketTradeRegisterPageState
     setState(() {
       _useOfferCurrency = false;
       _offeredItem = selected;
-      final availableTypes = _availableTradeTypesForCategory(selected.category);
-      if (!availableTypes.contains(_tradeType)) {
-        _tradeType = MarketTradeType.exchange;
-      }
       _offerStyle = _resolveInitialStyle(selected);
-      // 유지보수 포인트:
-      // 거래 대상이 주민이면 주민 거래 문구를 사용해 의도를 명확히 합니다.
-      _titleController.text = selected.category == '주민'
-          ? '${selected.name} 주민 거래해요'
-          : _tradeType == MarketTradeType.touching
-          ? '${selected.name} 만지작 열어요'
-          : '${selected.name} 교환해요';
+      _titleController.text = _suggestTitleForOfferedSelection(selected);
       if (selected.category == '주민') {
         _offerQuantity = 1;
         _offerStyle = '기본';
-      }
-      if (_tradeType == MarketTradeType.touching &&
-          !_touchingItems.any((item) => item.id == selected.id)) {
-        _touchingItems = <CatalogItem>[..._touchingItems, selected];
       }
     });
   }
@@ -2146,7 +2427,7 @@ class _MarketTradeRegisterPageState
       builder: (_) => FractionallySizedBox(
         heightFactor: 0.88,
         child: MarketItemPickerSheet(
-          title: '만지작 아이템 검색',
+          title: _isTouchingRequestFlow ? '원하는 만지작 아이템 검색' : '만지작 아이템 검색',
           initialCategoryKey: initialCategoryKey,
           touchingOnlyCategories: true,
           multiSelectEnabled: true,
@@ -2576,9 +2857,7 @@ class _MarketTradeRegisterPageState
     final offeredVariant = _useOfferCurrency
         ? _offerCurrencyLabel
         : _offerStyle;
-    final bool oneWayOffer =
-        _tradeType == MarketTradeType.sharing ||
-        _tradeType == MarketTradeType.touching;
+    final bool oneWayOffer = _isOneWayTrade;
     final offeredTypeLabel = _resolveItemTypeLabel(
       category: _useOfferCurrency ? '재화' : _offeredItem!.category,
       imageUrl: offeredImageUrl,
@@ -2611,7 +2890,9 @@ class _MarketTradeRegisterPageState
     final ownerName = _resolveOwnerName(selectedIsland);
     final ownerAvatarUrl = (selectedIsland?.imageUrl ?? '').trim();
     final title = _titleController.text.trim().isEmpty
-        ? '$offeredName 거래'
+        ? (_tradeType == MarketTradeType.touching
+              ? _defaultTouchingTitleForMoveType(_moveType)
+              : '$offeredName 거래')
         : _titleController.text.trim();
     final mergedCoverImage = _proofImagePath.trim().isNotEmpty
         ? _proofImagePath.trim()

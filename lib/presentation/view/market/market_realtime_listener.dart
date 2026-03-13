@@ -365,7 +365,7 @@ class _MarketRealtimeListenerState
     }
 
     if (shouldSendCode) {
-      await Navigator.of(context).push(
+      await _pushRealtimeRoute(
         AppPageRoute<void>(
           screenName: AppScreenNames.marketTradeCodeSend,
           builder: (_) => MarketTradeCodeSendPage(
@@ -378,7 +378,7 @@ class _MarketRealtimeListenerState
       return;
     }
 
-    await Navigator.of(context).push(
+    await _pushRealtimeRoute(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketTradeCodeView,
         builder: (_) => MarketTradeCodeViewPage(
@@ -414,7 +414,7 @@ class _MarketRealtimeListenerState
     }
 
     if (shouldInputCode && session != null) {
-      await Navigator.of(context).push(
+      await _pushRealtimeRoute(
         AppPageRoute<void>(
           screenName: AppScreenNames.marketTradeCodeSend,
           builder: (_) =>
@@ -425,7 +425,7 @@ class _MarketRealtimeListenerState
     }
 
     if (session != null) {
-      await Navigator.of(context).push(
+      await _pushRealtimeRoute(
         AppPageRoute<void>(
           screenName: AppScreenNames.marketTradeCodeView,
           builder: (_) => MarketTradeCodeViewPage(offer: offer),
@@ -434,7 +434,7 @@ class _MarketRealtimeListenerState
       return;
     }
 
-    await Navigator.of(context).push(
+    await _pushRealtimeRoute(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
@@ -457,7 +457,7 @@ class _MarketRealtimeListenerState
     if (shouldOpen != true || !mounted || offer == null) {
       return;
     }
-    await Navigator.of(context).push(
+    await _pushRealtimeRoute(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
@@ -476,12 +476,24 @@ class _MarketRealtimeListenerState
     if (offer == null || !mounted) {
       return;
     }
-    await Navigator.of(context).push(
+    await _pushRealtimeRoute(
       AppPageRoute<void>(
         screenName: AppScreenNames.marketOfferDetail,
         builder: (_) => MarketOfferDetailPage(offer: offer),
       ),
     );
+  }
+
+  Future<void> _pushRealtimeRoute(Route<void> route) async {
+    if (!mounted) {
+      return;
+    }
+
+    // 유지보수 포인트:
+    // 실시간 알림 큐는 새 페이지를 연 뒤 사용자가 뒤로 갈 때까지 막히면 안 됩니다.
+    // push 완료(스택 반영)까지만 기다리고, pop 결과는 기다리지 않아 후속 알림을 즉시 처리합니다.
+    unawaited(Navigator.of(context).push(route));
+    await WidgetsBinding.instance.endOfFrame;
   }
 
   Future<void> _markAsRead(String notificationId) async {

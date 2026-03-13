@@ -115,6 +115,14 @@ class _MarketTradeCodeViewPageState
                   requests: tradeVisitRequests,
                   receiverUid: normalizedTargetReceiverUid,
                 );
+          final blockingTradeVisitRequest = isSender && supportsTouchingQueue
+              ? _findBlockingTradeInviteRequest(
+                  requests: tradeVisitRequests,
+                  targetReceiverUid: normalizedTargetReceiverUid,
+                )
+              : null;
+          final isCodeSendBlockedByActiveTrade =
+              blockingTradeVisitRequest != null;
           final shouldResetQueuedTouchingCode =
               isSender &&
               supportsTouchingQueue &&
@@ -167,6 +175,10 @@ class _MarketTradeCodeViewPageState
             tradeVisitRequest: tradeVisitRequest,
             isTradeVisitRequestLoading: tradeVisitRequestsAsync.isLoading,
             shouldResetQueuedTouchingCode: shouldResetQueuedTouchingCode,
+            isCodeSendBlockedByActiveTrade: isCodeSendBlockedByActiveTrade,
+            blockingTradeInviteMessage: _resolveBlockingTradeInviteMessage(
+              blockingTradeVisitRequest,
+            ),
           );
         },
       ),
@@ -260,6 +272,25 @@ class _MarketTradeCodeViewPageState
       if (request.requesterUid.trim() == normalizedReceiverUid) {
         return request;
       }
+    }
+    return null;
+  }
+
+  AirportVisitRequest? _findBlockingTradeInviteRequest({
+    required List<AirportVisitRequest> requests,
+    required String targetReceiverUid,
+  }) {
+    final normalizedTargetReceiverUid = targetReceiverUid.trim();
+    for (final request in requests) {
+      if (!_hasActiveTradeInvite(request)) {
+        continue;
+      }
+      final requesterUid = request.requesterUid.trim();
+      if (normalizedTargetReceiverUid.isNotEmpty &&
+          requesterUid == normalizedTargetReceiverUid) {
+        continue;
+      }
+      return request;
     }
     return null;
   }
@@ -361,6 +392,8 @@ class _MarketTradeCodeViewPageState
     required AirportVisitRequest? tradeVisitRequest,
     required bool isTradeVisitRequestLoading,
     required bool shouldResetQueuedTouchingCode,
+    required bool isCodeSendBlockedByActiveTrade,
+    required String blockingTradeInviteMessage,
   }) {
     final isSender = session.isCodeSender(currentUid);
     final requestCode =
@@ -393,6 +426,8 @@ class _MarketTradeCodeViewPageState
       isCodeLockedByRuleAgreement: isCodeLockedByRuleAgreement,
       canConfirmVisit: canConfirmVisit,
       isVisitConfirmed: isVisitConfirmed,
+      isCodeSendBlockedByActiveTrade: isCodeSendBlockedByActiveTrade,
+      blockingTradeInviteMessage: blockingTradeInviteMessage,
     );
 
     return SafeArea(
@@ -724,33 +759,41 @@ class _MarketTradeCodeViewPageState
                 ],
               ),
               child: FilledButton(
-                onPressed: () {
-                  final targetReceiverUid =
-                      _resolveTradeCodeSendTargetReceiverUid(
-                        session: session,
-                        tradeVisitRequest: tradeVisitRequest,
-                      );
-                  Navigator.of(context).push(
-                    AppPageRoute<void>(
-                      screenName: AppScreenNames.marketTradeCodeSend,
-                      builder: (_) => MarketTradeCodeSendPage(
-                        offer: widget.offer,
-                        session: session,
-                        targetReceiverUid: targetReceiverUid,
-                      ),
-                    ),
-                  );
-                },
+                onPressed: isCodeSendBlockedByActiveTrade
+                    ? null
+                    : () {
+                        final targetReceiverUid =
+                            _resolveTradeCodeSendTargetReceiverUid(
+                              session: session,
+                              tradeVisitRequest: tradeVisitRequest,
+                            );
+                        Navigator.of(context).push(
+                          AppPageRoute<void>(
+                            screenName: AppScreenNames.marketTradeCodeSend,
+                            builder: (_) => MarketTradeCodeSendPage(
+                              offer: widget.offer,
+                              session: session,
+                              targetReceiverUid: targetReceiverUid,
+                            ),
+                          ),
+                        );
+                      },
                 style: FilledButton.styleFrom(
                   overlayColor: Colors.transparent,
                   splashFactory: NoSplash.splashFactory,
                   minimumSize: const Size.fromHeight(58),
                   backgroundColor: AppColors.modalPrimaryAction,
+                  disabledBackgroundColor: AppColors.catalogChipBg,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
-                child: Text('코드 보내기', style: AppTextStyles.buttonPrimary),
+                child: Text(
+                  isCodeSendBlockedByActiveTrade ? '현재 손님 거래 진행 중' : '코드 보내기',
+                  style: isCodeSendBlockedByActiveTrade
+                      ? AppTextStyles.buttonSecondary
+                      : AppTextStyles.buttonPrimary,
+                ),
               ),
             ),
           ],
@@ -1208,6 +1251,8 @@ class _MarketTradeCodeViewPageState
     required bool isCodeLockedByRuleAgreement,
     required bool canConfirmVisit,
     required bool isVisitConfirmed,
+    required bool isCodeSendBlockedByActiveTrade,
+    required String blockingTradeInviteMessage,
   }) {
     if (isCodeLockedByRuleAgreement) {
       return '상대 섬 방문 규칙을 확인하고 동의하면 코드가 공개돼요.';
@@ -1218,10 +1263,19 @@ class _MarketTradeCodeViewPageState
     if (canConfirmVisit) {
       return '섬에 도착하면 방문 확인을 눌러 주세요.';
     }
+    if (isCodeSendBlockedByActiveTrade) {
+      return blockingTradeInviteMessage;
+    }
     if (hasCode) {
       return '코드가 전송되었어요. 준비가 되면 방문해 주세요.';
     }
     return isSender ? '아직 코드를 보내지 않았어요.' : '상대가 코드를 보내는 중이에요.';
+  }
+
+  String _resolveBlockingTradeInviteMessage(AirportVisitRequest? request) {
+    final requesterName = request?.requesterName.trim() ?? '';
+    final highlightedName = requesterName.isEmpty ? '현재 손님' : requesterName;
+    return '$highlightedName님 거래가 아직 진행 중이라 완료 후 다음 손님에게 코드를 보낼 수 있어요.';
   }
 
   String _resolveVisitConfirmErrorMessage(Object error) {

@@ -89,14 +89,17 @@ class AppSegmentedControl<T> extends StatelessWidget {
 
           return Stack(
             children: <Widget>[
-              IgnorePointer(
-                child: AnimatedPositioned(
-                  duration: animationDuration,
-                  curve: animationCurve,
-                  left: selectedLeft,
-                  top: outerPadding.top,
-                  bottom: outerPadding.bottom,
-                  width: segmentWidth,
+              AnimatedPositioned(
+                duration: animationDuration,
+                curve: animationCurve,
+                left: selectedLeft,
+                top: outerPadding.top,
+                bottom: outerPadding.bottom,
+                width: segmentWidth,
+                child: IgnorePointer(
+                  // 유지보수 포인트:
+                  // Positioned 계열 위젯은 Stack의 직접 자식이어야 하므로
+                  // 터치 무시는 배경 박스에만 적용합니다.
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: selectedBackgroundColor,

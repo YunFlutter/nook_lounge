@@ -126,6 +126,15 @@ class _MarketTradeCodeSendPageState
           );
     final isTradeCodeAlreadySent =
         supportsTouchingQueue && _hasActiveTradeInvite(targetTradeVisitRequest);
+    final blockingTradeVisitRequest = supportsTouchingQueue
+        ? _findBlockingTradeInviteRequest(
+            requests:
+                tradeVisitRequestsAsync.valueOrNull ??
+                const <AirportVisitRequest>[],
+            targetReceiverUid: queuedTouchingTargetUid,
+          )
+        : null;
+    final hasBlockingActiveInvite = blockingTradeVisitRequest != null;
     final targetReceiverUids = supportsTouchingQueue
         ? (queuedTouchingTargetUid.isEmpty
               ? const <String>{}
@@ -137,6 +146,7 @@ class _MarketTradeCodeSendPageState
         _dodoCodePattern.hasMatch(_normalizedCode) &&
         _normalizedRules.isNotEmpty &&
         (!supportsTouchingQueue || targetReceiverUids.isNotEmpty) &&
+        !hasBlockingActiveInvite &&
         !isTradeCodeAlreadySent;
 
     return Scaffold(
@@ -229,11 +239,18 @@ class _MarketTradeCodeSendPageState
               ),
               const SizedBox(height: AppSpacing.s10),
               Text(
-                isTradeCodeAlreadySent
+                hasBlockingActiveInvite
+                    ? '${_resolvedTradeVisitRequesterName(blockingTradeVisitRequest)}님 거래가 아직 진행 중이라 완료 후 다음 손님에게 코드를 보낼 수 있어요.'
+                    : isTradeCodeAlreadySent
                     ? '이미 이 손님에게 코드를 보냈어요. 코드 확인 화면에서 진행 상태를 확인해 주세요.'
                     : '이전 화면에서 선택한 손님 1명에게만 도도 코드와 규칙을 보내요.',
                 textAlign: TextAlign.center,
-                style: AppTextStyles.captionSecondary,
+                style: hasBlockingActiveInvite
+                    ? AppTextStyles.captionWithColor(
+                        AppColors.badgeRedText,
+                        weight: FontWeight.w800,
+                      )
+                    : AppTextStyles.captionSecondary,
               ),
             ],
             if (!isSender) ...<Widget>[
@@ -280,6 +297,8 @@ class _MarketTradeCodeSendPageState
                 child: Text(
                   _isSending
                       ? '코드 전송 중...'
+                      : hasBlockingActiveInvite
+                      ? '현재 손님 거래 진행 중'
                       : isTradeCodeAlreadySent
                       ? '이미 전송된 손님이에요'
                       : supportsTouchingQueue
@@ -541,12 +560,39 @@ class _MarketTradeCodeSendPageState
     return null;
   }
 
+  AirportVisitRequest? _findBlockingTradeInviteRequest({
+    required List<AirportVisitRequest> requests,
+    required String targetReceiverUid,
+  }) {
+    final normalizedTargetReceiverUid = targetReceiverUid.trim();
+    for (final request in requests) {
+      if (!_hasActiveTradeInvite(request)) {
+        continue;
+      }
+      final requesterUid = request.requesterUid.trim();
+      if (normalizedTargetReceiverUid.isNotEmpty &&
+          requesterUid == normalizedTargetReceiverUid) {
+        continue;
+      }
+      return request;
+    }
+    return null;
+  }
+
   bool _hasActiveTradeInvite(AirportVisitRequest? request) {
     if (request == null) {
       return false;
     }
     final hasInviteCode = request.inviteCode?.trim().isNotEmpty ?? false;
     return hasInviteCode || request.isInvited || request.isArrived;
+  }
+
+  String _resolvedTradeVisitRequesterName(AirportVisitRequest? request) {
+    final normalizedName = request?.requesterName.trim() ?? '';
+    if (normalizedName.isNotEmpty) {
+      return normalizedName;
+    }
+    return '현재 손님';
   }
 
   Widget _buildSelectionPanel({required Widget child}) {
@@ -910,6 +956,10 @@ class _MarketTradeCodeSendPageState
           return '현재 계정은 이 거래의 코드 발송자가 아니에요.';
         case 'trade_code_already_sent':
           return '이미 이 손님에게 코드를 보냈어요.';
+        case 'touching_trade_single_receiver_required':
+          return '만지작 줄서기는 대기열에서 한 사람씩만 코드를 보낼 수 있어요.';
+        case 'touching_trade_wait_for_current_completion':
+          return '현재 코드가 전달된 손님 거래가 끝난 뒤 다음 손님에게 코드를 보낼 수 있어요.';
         case 'trade_offer_not_found':
         case 'trade_offer_unavailable':
           return '이미 종료되었거나 취소된 거래라 코드를 보낼 수 없어요.';

@@ -220,6 +220,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
         target.moveType == MarketMoveType.host;
   }
 
+  bool _isTouchingRequestFlow(MarketOffer target) {
+    return target.tradeType == MarketTradeType.touching &&
+        target.moveType == MarketMoveType.visitor;
+  }
+
   bool _canOpenSimpleMenu({
     required bool isMine,
     required MarketOffer currentOffer,
@@ -827,6 +832,15 @@ class MarketOfferDetailPage extends ConsumerWidget {
     required MarketOffer currentOffer,
   }) {
     final proposalsAsync = ref.watch(marketTradeProposalsProvider(offer.id));
+    final tradeVisitRequestsAsync =
+        currentOffer.tradeType == MarketTradeType.touching &&
+            currentOffer.moveType == MarketMoveType.host
+        ? ref.watch(
+            airportTradeVisitRequestsProvider((offerId: offer.id, uid: '')),
+          )
+        : const AsyncValue<List<AirportVisitRequest>>.data(
+            <AirportVisitRequest>[],
+          );
     return proposalsAsync.when(
       loading: () => _buildInsetPanel(
         child: Row(
@@ -852,6 +866,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
         }
 
         final isCompletedOffer = _isCompletedOfferByStatus(currentOffer);
+        final activeInviteRequesterUids =
+            tradeVisitRequestsAsync.valueOrNull
+                ?.where((request) => _hasActiveTradeInvite(request))
+                .map((request) => request.requesterUid.trim())
+                .where((uid) => uid.isNotEmpty)
+                .toSet() ??
+            const <String>{};
         return _buildInsetPanel(
           padding: const EdgeInsets.all(14),
           child: Column(
@@ -862,6 +883,17 @@ class MarketOfferDetailPage extends ConsumerWidget {
                   '대기열 제안 ${proposals.length}건',
                   style: AppTextStyles.bodySecondaryStrong,
                 ),
+              if (!isCompletedOffer &&
+                  activeInviteRequesterUids.isNotEmpty) ...<Widget>[
+                const SizedBox(height: AppSpacing.s8),
+                Text(
+                  '현재 코드를 받은 손님 거래가 진행 중이라 완료 후 다음 손님에게 코드를 보낼 수 있어요.',
+                  style: AppTextStyles.captionWithColor(
+                    AppColors.badgeRedText,
+                    weight: FontWeight.w800,
+                  ),
+                ),
+              ],
               if (!isCompletedOffer) const SizedBox(height: AppSpacing.s10),
               ...proposals.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -872,6 +904,13 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 final canOpenCode =
                     !_isInactiveOffer(currentOffer) &&
                     proposal.status == MarketTradeProposalStatus.accepted;
+                final canOpenQueuedTouchingCode =
+                    canOpenCode &&
+                    _canOpenQueuedTouchingCode(
+                      currentOffer: currentOffer,
+                      proposal: proposal,
+                      activeInviteRequesterUids: activeInviteRequesterUids,
+                    );
                 return Padding(
                   padding: EdgeInsets.only(
                     bottom: index == proposals.length - 1 ? 0 : AppSpacing.s10,
@@ -952,7 +991,7 @@ class MarketOfferDetailPage extends ConsumerWidget {
                               ),
                             ),
                           )
-                        else if (canOpenCode)
+                        else if (canOpenQueuedTouchingCode)
                           OutlinedButton(
                             onPressed: () => _openTradeCodePage(
                               context,
@@ -983,6 +1022,22 @@ class MarketOfferDetailPage extends ConsumerWidget {
                                 AppColors.textPrimary,
                                 weight: FontWeight.w800,
                               ),
+                            ),
+                          )
+                        else if (canOpenCode)
+                          OutlinedButton(
+                            onPressed: null,
+                            style: OutlinedButton.styleFrom(
+                              overlayColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
+                              minimumSize: const Size(84, 40),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                            ),
+                            child: Text(
+                              '대기',
+                              style: AppTextStyles.captionMuted,
                             ),
                           ),
                       ],
@@ -1109,6 +1164,12 @@ class MarketOfferDetailPage extends ConsumerWidget {
   Widget _buildTouchingTradeSummaryCard({bool embedded = false}) {
     final touchingTags = _resolveTouchingTags();
     final touchingCount = touchingTags.length;
+    final isRequestFlow = _isTouchingRequestFlow(offer);
+    final rewardHeader = isRequestFlow ? '드려요' : '입장료';
+    final touchingHeader = isRequestFlow ? '원하는 만지작' : '만지작';
+    final touchingTitle = touchingCount > 0
+        ? '만지작 $touchingCount개'
+        : (isRequestFlow ? '원하는 만지작' : '만지작');
     final Widget content = Column(
       children: <Widget>[
         Stack(
@@ -1118,8 +1179,8 @@ class MarketOfferDetailPage extends ConsumerWidget {
               children: <Widget>[
                 Expanded(
                   child: _buildItemMiniCard(
-                    header: '입장료',
-                    defaultHeader: '입장료',
+                    header: rewardHeader,
+                    defaultHeader: rewardHeader,
                     headerColor: AppColors.primaryDefault,
                     imageUrl: offer.offerItemImageUrl,
                     title: offer.offerItemName,
@@ -1132,11 +1193,11 @@ class MarketOfferDetailPage extends ConsumerWidget {
                 const SizedBox(width: 22),
                 Expanded(
                   child: _buildItemMiniCard(
-                    header: '만지작',
-                    defaultHeader: '만지작',
+                    header: touchingHeader,
+                    defaultHeader: touchingHeader,
                     headerColor: AppColors.badgePurpleText,
                     imageUrl: '',
-                    title: touchingCount > 0 ? '만지작 $touchingCount개' : '만지작',
+                    title: touchingTitle,
                     quantity: 0,
                     categoryLabel: '만지작',
                     emptyImageIcon: Icons.touch_app_rounded,
@@ -1183,7 +1244,9 @@ class MarketOfferDetailPage extends ConsumerWidget {
 
   String _buildFoldedTouchingSummaryText(List<String> touchingTags) {
     if (touchingTags.isEmpty) {
-      return '선택된 만지작 아이템이 없어요';
+      return _isTouchingRequestFlow(offer)
+          ? '원하는 만지작 아이템이 아직 없어요'
+          : '선택된 만지작 아이템이 없어요';
     }
     const previewLimit = 3;
     final preview = touchingTags.take(previewLimit).join(', ');
@@ -1567,6 +1630,42 @@ class MarketOfferDetailPage extends ConsumerWidget {
     if (!context.mounted) {
       return;
     }
+    if (shouldSendCode &&
+        offer.tradeType == MarketTradeType.touching &&
+        offer.moveType == MarketMoveType.host) {
+      try {
+        final tradeVisitRequests = await ref.read(
+          airportTradeVisitRequestsProvider((
+            offerId: offer.id,
+            uid: '',
+          )).future,
+        );
+        final blockingTradeVisitRequest = _findBlockingTradeInviteRequest(
+          requests: tradeVisitRequests,
+          targetReceiverUid: proposal.proposerUid,
+        );
+        if (blockingTradeVisitRequest != null) {
+          if (!context.mounted) {
+            return;
+          }
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: _snackContent(
+                  context,
+                  '제안을 승낙했어요. ${_resolveBlockingTradeInviteMessage(blockingTradeVisitRequest)}',
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          return;
+        }
+      } catch (_) {}
+    }
+    if (!context.mounted) {
+      return;
+    }
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -1771,6 +1870,27 @@ class MarketOfferDetailPage extends ConsumerWidget {
             uid: currentUid,
           )).future,
         );
+        final blockingTradeVisitRequest = _findBlockingTradeInviteRequest(
+          requests: tradeVisitRequests,
+          targetReceiverUid: normalizedTargetProposerUid,
+        );
+        if (blockingTradeVisitRequest != null) {
+          if (!context.mounted) {
+            return;
+          }
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: _snackContent(
+                  context,
+                  _resolveBlockingTradeInviteMessage(blockingTradeVisitRequest),
+                ),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          return;
+        }
         final targetTradeVisitRequest = _findTradeVisitRequestForReceiver(
           requests: tradeVisitRequests,
           receiverUid: normalizedTargetProposerUid,
@@ -1864,12 +1984,52 @@ class MarketOfferDetailPage extends ConsumerWidget {
     return null;
   }
 
+  AirportVisitRequest? _findBlockingTradeInviteRequest({
+    required List<AirportVisitRequest> requests,
+    required String targetReceiverUid,
+  }) {
+    final normalizedTargetReceiverUid = targetReceiverUid.trim();
+    for (final request in requests) {
+      if (!_hasActiveTradeInvite(request)) {
+        continue;
+      }
+      final requesterUid = request.requesterUid.trim();
+      if (normalizedTargetReceiverUid.isNotEmpty &&
+          requesterUid == normalizedTargetReceiverUid) {
+        continue;
+      }
+      return request;
+    }
+    return null;
+  }
+
+  bool _canOpenQueuedTouchingCode({
+    required MarketOffer currentOffer,
+    required MarketTradeProposal proposal,
+    required Set<String> activeInviteRequesterUids,
+  }) {
+    if (currentOffer.tradeType != MarketTradeType.touching ||
+        currentOffer.moveType != MarketMoveType.host) {
+      return true;
+    }
+    if (activeInviteRequesterUids.isEmpty) {
+      return true;
+    }
+    return activeInviteRequesterUids.contains(proposal.proposerUid.trim());
+  }
+
   bool _hasActiveTradeInvite(AirportVisitRequest? request) {
     if (request == null) {
       return false;
     }
     final hasInviteCode = request.inviteCode?.trim().isNotEmpty ?? false;
     return hasInviteCode || request.isInvited || request.isArrived;
+  }
+
+  String _resolveBlockingTradeInviteMessage(AirportVisitRequest? request) {
+    final requesterName = request?.requesterName.trim() ?? '';
+    final highlightedName = requesterName.isEmpty ? '현재 손님' : requesterName;
+    return '$highlightedName님 거래가 아직 진행 중이에요. 거래 완료 후 다음 손님에게 코드를 보내 주세요.';
   }
 
   Future<void> _reportOffer(BuildContext context, WidgetRef ref) async {

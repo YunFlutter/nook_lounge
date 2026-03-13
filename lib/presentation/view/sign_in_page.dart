@@ -61,6 +61,8 @@ class _SignInPageState extends ConsumerState<SignInPage>
     final signInState = ref.watch(signInViewModelProvider);
     final viewModel = ref.read(signInViewModelProvider.notifier);
     final loading = signInState.isLoading;
+    final shouldShowAppleSignInButton =
+        Theme.of(context).platform != TargetPlatform.android;
 
     return AppScreenView(
       screenName: AppScreenNames.signIn,
@@ -112,43 +114,48 @@ class _SignInPageState extends ConsumerState<SignInPage>
                   ),
                 ),
                 const Spacer(flex: 2),
-                AnimatedFadeSlide(
-                  delay: const Duration(milliseconds: 120),
-                  child: AnimatedScaleButton(
-                    onTap: loading ? () {} : viewModel.signInWithApple,
-                    child: FilledButton(
-                      onPressed: loading ? null : viewModel.signInWithApple,
-                      style: FilledButton.styleFrom(
-                        overlayColor: Colors.transparent,
-                        splashFactory: NoSplash.splashFactory,
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
+                if (shouldShowAppleSignInButton) ...<Widget>[
+                  // 유지보수 포인트:
+                  // Apple 로그인은 Android에서 노출하지 않습니다.
+                  // 다른 플랫폼 정책이 바뀌면 이 분기만 수정하면 됩니다.
+                  AnimatedFadeSlide(
+                    delay: const Duration(milliseconds: 120),
+                    child: AnimatedScaleButton(
+                      onTap: loading ? () {} : viewModel.signInWithApple,
+                      child: FilledButton(
+                        onPressed: loading ? null : viewModel.signInWithApple,
+                        style: FilledButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Image(
-                            image: AssetImage('assets/images/apple.png'),
-                            width: 22,
-                            height: 22,
-                            fit: BoxFit.contain,
-                          ),
-                          const SizedBox(width: AppSpacing.s10),
-                          Text(
-                            AppStrings.appleLogin,
-                            style: AppTextStyles.labelWithColor(
-                              AppColors.textInverse,
-                              weight: FontWeight.w700,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Image(
+                              image: AssetImage('assets/images/apple.png'),
+                              width: 22,
+                              height: 22,
+                              fit: BoxFit.contain,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: AppSpacing.s10),
+                            Text(
+                              AppStrings.appleLogin,
+                              style: AppTextStyles.labelWithColor(
+                                AppColors.textInverse,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: AppSpacing.s12),
+                  const SizedBox(height: AppSpacing.s12),
+                ],
                 AnimatedFadeSlide(
                   delay: const Duration(milliseconds: 160),
                   child: AnimatedScaleButton(

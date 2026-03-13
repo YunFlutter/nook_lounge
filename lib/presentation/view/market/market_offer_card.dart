@@ -98,6 +98,11 @@ class MarketOfferCard extends StatelessWidget {
         offer.moveType == MarketMoveType.host;
   }
 
+  bool get _isTouchingRequestFlow {
+    return offer.tradeType == MarketTradeType.touching &&
+        offer.moveType == MarketMoveType.visitor;
+  }
+
   Widget _buildExchangeBody(BuildContext context) {
     return Column(
       children: <Widget>[
@@ -305,6 +310,7 @@ class MarketOfferCard extends StatelessWidget {
   Widget _buildTouchingBody(BuildContext context) {
     final touchingItems = _touchingPreviewItems;
     final touchingTitle = _resolvedTouchingTitle;
+    final rewardLabel = _isTouchingRequestFlow ? '드릴 보답' : '입장료';
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       child: Column(
@@ -345,7 +351,8 @@ class MarketOfferCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (touchingWaitingCount != null) ...<Widget>[
+              if (_supportsTouchingQueue &&
+                  touchingWaitingCount != null) ...<Widget>[
                 const SizedBox(width: 10),
                 _buildTouchingWaitingBadge(touchingWaitingCount!),
               ],
@@ -370,7 +377,7 @@ class MarketOfferCard extends StatelessWidget {
           const SizedBox(height: 20),
           Row(
             children: <Widget>[
-              Text('입장료', style: AppTextStyles.captionMuted),
+              Text(rewardLabel, style: AppTextStyles.captionMuted),
               const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -408,7 +415,7 @@ class MarketOfferCard extends StatelessWidget {
     if (normalized.isNotEmpty) {
       return normalized;
     }
-    return '만지작 거래';
+    return _isTouchingRequestFlow ? '만지작 구해요' : '만지작 열어요';
   }
 
   Widget _buildTouchingWaitingBadge(int waitingCount) {
@@ -902,7 +909,7 @@ class MarketOfferCard extends StatelessWidget {
   }
 
   String _resolveActionLabel() {
-    if (offer.tradeType == MarketTradeType.touching) {
+    if (_supportsTouchingQueue) {
       return '줄 서기  →';
     }
     return '거래 제안';

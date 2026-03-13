@@ -170,18 +170,27 @@ class MarketFirestoreDataSource {
         .map((doc) => doc.id.trim())
         .where((uid) => uid.isNotEmpty)
         .toSet();
+    final codeData = codeSnapshot.data() ?? const <String, dynamic>{};
     final counterpartUids = <String>{};
     if (supportsQueuedTouchingTrade) {
       counterpartUids.addAll(
         await _findArrivedTradeRequesterUids(normalizedOfferId),
       );
-    }
-    if (counterpartUids.isEmpty) {
+      if (counterpartUids.isEmpty) {
+        counterpartUids.addAll(
+          await _loadTradeInviteReadyReceiverUids(normalizedOfferId),
+        );
+      }
+      if (counterpartUids.isEmpty) {
+        counterpartUids.addAll(
+          _splitUidCsv((codeData['codeReceiverUid'] as String?)?.trim() ?? ''),
+        );
+      }
+    } else {
       counterpartUids.addAll(acceptedProposalUids);
     }
 
     if (counterpartUids.isEmpty) {
-      final codeData = codeSnapshot.data() ?? const <String, dynamic>{};
       final codeOwnerUid = (codeData['ownerUid'] as String?)?.trim() ?? '';
       final codeProposerUid =
           (codeData['proposerUid'] as String?)?.trim() ?? '';
@@ -213,10 +222,38 @@ class MarketFirestoreDataSource {
       throw StateError('trade_complete_permission_denied');
     }
 
+    final remainingQueuedProposalDocs = supportsQueuedTouchingTrade
+        ? proposalsSnapshot.docs
+              .where((doc) {
+                final proposalUid = doc.id.trim();
+                final proposalStatus =
+                    (doc.data()['status'] as String?)?.trim() ?? '';
+                if (counterpartUids.contains(proposalUid)) {
+                  return false;
+                }
+                return proposalStatus ==
+                        MarketTradeProposalStatus.pending.name ||
+                    proposalStatus == MarketTradeProposalStatus.accepted.name;
+              })
+              .toList(growable: false)
+        : const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    final hasRemainingQueuedProposals =
+        supportsQueuedTouchingTrade && remainingQueuedProposalDocs.isNotEmpty;
+    final hasRemainingAcceptedQueue = remainingQueuedProposalDocs.any((doc) {
+      final proposalStatus = (doc.data()['status'] as String?)?.trim() ?? '';
+      return proposalStatus == MarketTradeProposalStatus.accepted.name;
+    });
+
     final batch = _firestore.batch();
     batch.set(offerRef, <String, dynamic>{
-      'lifecycle': MarketLifecycleTab.completed.name,
-      'status': MarketOfferStatus.closed.name,
+      'lifecycle': hasRemainingQueuedProposals
+          ? MarketLifecycleTab.ongoing.name
+          : MarketLifecycleTab.completed.name,
+      'status': hasRemainingQueuedProposals
+          ? (hasRemainingAcceptedQueue
+                ? MarketOfferStatus.waiting.name
+                : MarketOfferStatus.open.name)
+          : MarketOfferStatus.closed.name,
       'updatedAt': FieldValue.serverTimestamp(),
       'updatedAtMillis': FieldValue.delete(),
       'actionLabel': FieldValue.delete(),
@@ -225,6 +262,18 @@ class MarketFirestoreDataSource {
     for (final doc in proposalsSnapshot.docs) {
       final status = (doc.data()['status'] as String?) ?? '';
       final isCurrentCounterpart = counterpartUids.contains(doc.id.trim());
+      if (supportsQueuedTouchingTrade && hasRemainingQueuedProposals) {
+        if (isCurrentCounterpart) {
+          batch.set(doc.reference, <String, dynamic>{
+            'status': MarketTradeProposalStatus.cancelled.name,
+            'acceptedAt': FieldValue.delete(),
+            'acceptedAtMillis': FieldValue.delete(),
+            'updatedAt': FieldValue.serverTimestamp(),
+            'updatedAtMillis': FieldValue.delete(),
+          }, SetOptions(merge: true));
+        }
+        continue;
+      }
       if (isCurrentCounterpart) {
         batch.set(doc.reference, <String, dynamic>{
           'status': MarketTradeProposalStatus.accepted.name,
@@ -246,12 +295,33 @@ class MarketFirestoreDataSource {
     }
 
     if (codeSnapshot.exists) {
-      batch.set(codeRef, <String, dynamic>{
-        'completedAt': FieldValue.serverTimestamp(),
-        'completedByUid': normalizedRequesterUid,
+      final codePayload = <String, dynamic>{
+        'completedAt': hasRemainingQueuedProposals
+            ? FieldValue.delete()
+            : FieldValue.serverTimestamp(),
+        'completedByUid': hasRemainingQueuedProposals
+            ? FieldValue.delete()
+            : normalizedRequesterUid,
         'updatedAt': FieldValue.serverTimestamp(),
         'updatedAtMillis': FieldValue.delete(),
-      }, SetOptions(merge: true));
+      };
+      if (supportsQueuedTouchingTrade && hasRemainingQueuedProposals) {
+        // 유지보수 포인트:
+        // 만지작 줄서기는 현재 손님 거래가 끝나면 다음 손님에게 새로 코드를
+        // 보내야 하므로, 완료된 상대의 활성 코드/수신자 상태를 비워 둡니다.
+        codePayload['code'] = FieldValue.delete();
+        codePayload['codeReceiverUid'] = FieldValue.delete();
+        codePayload['codeSentAt'] = FieldValue.delete();
+        codePayload['codeSentAtMillis'] = FieldValue.delete();
+        _applyReceiverRuleAgreementPayload(
+          codePayload,
+          agreements: _removeReceiverRuleAgreementsForReceivers(
+            _extractReceiverRuleAgreementMap(codeData),
+            receiverUids: counterpartUids,
+          ),
+        );
+      }
+      batch.set(codeRef, codePayload, SetOptions(merge: true));
     }
 
     await batch.commit();
@@ -260,6 +330,7 @@ class MarketFirestoreDataSource {
         await _syncAirportRequestStatusesForTradeCompletion(
           offerId: normalizedOfferId,
           completedRequesterUids: counterpartUids,
+          cancelRemainingRequests: !hasRemainingQueuedProposals,
         );
       } else {
         await _syncAirportRequestStatusByOffer(
@@ -1358,6 +1429,19 @@ class MarketFirestoreDataSource {
       final alreadySentReceiverUids = await _loadTradeInviteReadyReceiverUids(
         normalizedOfferId,
       );
+      if (receiverUids.length > 1) {
+        throw StateError('touching_trade_single_receiver_required');
+      }
+      final hasBlockingActiveInvite =
+          alreadySentReceiverUids.isNotEmpty &&
+          !receiverUids.any(alreadySentReceiverUids.contains);
+      if (hasBlockingActiveInvite) {
+        // 유지보수 포인트:
+        // 만지작 줄서기는 한 번에 한 사람만 입장할 수 있으므로, 현재
+        // invited/arrived 손님 거래가 완료되기 전에는 다음 손님에게
+        // 코드를 전송하지 못하게 막습니다.
+        throw StateError('touching_trade_wait_for_current_completion');
+      }
       receiverUids = receiverUids.difference(alreadySentReceiverUids);
       if (receiverUids.isEmpty) {
         throw StateError('trade_code_already_sent');
@@ -2278,6 +2362,7 @@ class MarketFirestoreDataSource {
   Future<void> _syncAirportRequestStatusesForTradeCompletion({
     required String offerId,
     required Set<String> completedRequesterUids,
+    required bool cancelRemainingRequests,
   }) async {
     final requestRefs = await _findAirportTradeRequestRefs(offerId);
     if (requestRefs.isEmpty) {
@@ -2303,21 +2388,26 @@ class MarketFirestoreDataSource {
           requesterUid.isNotEmpty &&
           normalizedCompletedRequesterUids.contains(requesterUid);
       final payload = <String, dynamic>{
-        'status': isCompletedTarget
-            ? AirportVisitRequestStatus.completed.name
-            : AirportVisitRequestStatus.cancelled.name,
-        'inviteCode': FieldValue.delete(),
-        'senderIslandRules': FieldValue.delete(),
-        'ruleAgreedCode': FieldValue.delete(),
-        'ruleAgreedAt': FieldValue.delete(),
         'updatedAt': FieldValue.serverTimestamp(),
       };
       if (isCompletedTarget) {
+        payload['status'] = AirportVisitRequestStatus.completed.name;
+        payload['inviteCode'] = FieldValue.delete();
+        payload['senderIslandRules'] = FieldValue.delete();
+        payload['ruleAgreedCode'] = FieldValue.delete();
+        payload['ruleAgreedAt'] = FieldValue.delete();
         payload['arrivedAt'] =
             data['arrivedAt'] ?? FieldValue.serverTimestamp();
-      } else {
+      } else if (cancelRemainingRequests) {
+        payload['status'] = AirportVisitRequestStatus.cancelled.name;
+        payload['inviteCode'] = FieldValue.delete();
+        payload['senderIslandRules'] = FieldValue.delete();
+        payload['ruleAgreedCode'] = FieldValue.delete();
+        payload['ruleAgreedAt'] = FieldValue.delete();
         payload['invitedAt'] = FieldValue.delete();
         payload['arrivedAt'] = FieldValue.delete();
+      } else {
+        continue;
       }
       batch.set(ref, payload, SetOptions(merge: true));
     }

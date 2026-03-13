@@ -14,6 +14,8 @@ class MarketItemPickerSheet extends ConsumerStatefulWidget {
     this.initialKeyword = '',
     this.initialCategoryKey = _allCategoryKey,
     this.touchingOnlyCategories = false,
+    this.allowedCategories = const <String>[],
+    this.excludedCategories = const <String>[],
     this.multiSelectEnabled = false,
     this.initialSelectedItemIds = const <String>[],
     super.key,
@@ -23,6 +25,8 @@ class MarketItemPickerSheet extends ConsumerStatefulWidget {
   final String initialKeyword;
   final String initialCategoryKey;
   final bool touchingOnlyCategories;
+  final List<String> allowedCategories;
+  final List<String> excludedCategories;
   final bool multiSelectEnabled;
   final List<String> initialSelectedItemIds;
 
@@ -82,13 +86,39 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
   final Set<String> _selectedItemIds = <String>{};
   List<CatalogItem> _allItems = <CatalogItem>[];
 
-  List<String> get _visibleCategoryKeys => widget.touchingOnlyCategories
-      ? const <String>[
-          MarketItemPickerSheet._furnitureCategoryKey,
-          MarketItemPickerSheet._wallpaperCategoryKey,
-          MarketItemPickerSheet._fashionCategoryKey,
-        ]
-      : MarketItemPickerSheet._categoryKeys;
+  List<String> get _visibleCategoryKeys {
+    final baseCategoryKeys = widget.touchingOnlyCategories
+        ? const <String>[
+            MarketItemPickerSheet._furnitureCategoryKey,
+            MarketItemPickerSheet._wallpaperCategoryKey,
+            MarketItemPickerSheet._fashionCategoryKey,
+          ]
+        : MarketItemPickerSheet._categoryKeys;
+    final filteredCategoryKeys = baseCategoryKeys
+        .where((categoryKey) {
+          final label =
+              MarketItemPickerSheet._categoryLabels[categoryKey] ?? '';
+          if (widget.excludedCategories.contains(label)) {
+            return false;
+          }
+          if (categoryKey == MarketItemPickerSheet._allCategoryKey) {
+            return widget.allowedCategories.isEmpty ||
+                widget.allowedCategories.length > 1;
+          }
+          if (widget.allowedCategories.isEmpty) {
+            return true;
+          }
+          return widget.allowedCategories.contains(label);
+        })
+        .toList(growable: false);
+
+    // 유지보수 포인트:
+    // 등록 화면에서 잘못된 카테고리 키를 넘겨도 picker 자체는 항상 열리도록
+    // 최소 1개 이상의 카테고리를 보장합니다.
+    return filteredCategoryKeys.isEmpty
+        ? baseCategoryKeys
+        : filteredCategoryKeys;
+  }
 
   @override
   void initState() {
@@ -758,6 +788,9 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
     final keyword = _searchController.text.trim().toLowerCase();
     return source
         .where((item) {
+          if (!_matchesVisibilityRules(item)) {
+            return false;
+          }
           if (!_matchesSelectedCategory(item)) {
             return false;
           }
@@ -769,6 +802,17 @@ class _MarketItemPickerSheetState extends ConsumerState<MarketItemPickerSheet> {
         })
         .take(100)
         .toList(growable: false);
+  }
+
+  bool _matchesVisibilityRules(CatalogItem item) {
+    if (widget.allowedCategories.isNotEmpty &&
+        !widget.allowedCategories.contains(item.category)) {
+      return false;
+    }
+    if (widget.excludedCategories.contains(item.category)) {
+      return false;
+    }
+    return true;
   }
 
   bool _matchesSelectedCategory(CatalogItem item) {

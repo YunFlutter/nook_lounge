@@ -530,12 +530,12 @@ class HomeDashboardTab extends ConsumerWidget {
                         const Row(
                           children: <Widget>[
                             TurnipLegendDot(
-                              color: AppColors.badgeYellowText,
+                              color: AppColors.turnipPredictionMinLine,
                               label: '최소',
                             ),
                             SizedBox(width: AppSpacing.s8),
                             TurnipLegendDot(
-                              color: AppColors.primaryDefault,
+                              color: AppColors.turnipPredictionMaxLine,
                               label: '최대',
                             ),
                           ],
@@ -583,21 +583,13 @@ class HomeDashboardTab extends ConsumerWidget {
         children: <Widget>[
           Text(
             '예측 결과',
-            style: AppTextStyles.bodyWithSize(
-              18,
-              color: AppColors.textPrimary,
-              weight: FontWeight.w700,
-            ),
+            // 유지보수 포인트:
+            // 홈 무주식 카드 헤더는 무주식 본문 결과 카드와 같은 토큰을 써야
+            // 폰트 크기/두께가 화면별로 따로 어긋나지 않습니다.
+            style: AppTextStyles.headingH2,
           ),
           const SizedBox(height: AppSpacing.s12),
-          Text(
-            '입력된 정보를 기반으로 한 결과입니다.',
-            style: AppTextStyles.bodyWithSize(
-              15,
-              color: AppColors.textMuted,
-              weight: FontWeight.w700,
-            ),
-          ),
+          Text('입력된 정보를 기반으로 한 결과입니다.', style: AppTextStyles.captionMuted),
           if (hasError) ...<Widget>[
             const SizedBox(height: AppSpacing.s6),
             Text(
